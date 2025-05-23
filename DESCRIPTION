@@ -12,9 +12,9 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    pkgdown
-    remotes
-    devtools
+    pkgdown,
+    remotes,
+    devtools,
 Imports: 
     data.table,
     dplyr,
@@ -26,7 +26,12 @@ Imports:
     zoo,
     zetadiv,
     ggplot2,
-    viridis
+    viridis,
+    geosphere,
+    reshape2,
+    entropy,
+    caret,
+    corrplot
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

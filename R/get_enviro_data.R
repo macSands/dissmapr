@@ -27,152 +27,92 @@
 #' @import dplyr
 #' @import geodata
 #' @import zoo
-#' @import tidyselect
 #' @export
 #'
 #' @examples
 #' # Example usage:
 #' data = data.frame(site_id = 1:5, x = c(10, 12, 14, 16, 18), y = c(20, 22, 24, 26, 28))
 #' env_data = get_enviro_data(data, buffer_km = 5, var = "bio", res = 2.5, path = "data/")
-#' terra::plot(env_data$env_rast[[1]])
+#' plot(env_data$env_rast[[1]])
 #' points(env_data$sites_sf)
-
-get_enviro_data = function(data,
-                           buffer_km = 10,
-                           source = "geodata", # Options: 'local'
-                           var = "bio", # Options: c('bio','elev','footprint','population','soil_world')
-                           res = 2.5, # Resolution needed for 'worldclim_global','elev', 'population'
-                           path = "data/",
-                           year = NULL, # Needed for 'footprint' and 'population' data
-                           depth = NULL, # Needed for 'soil_world'
-                           stat = "mean", # Needed for 'soil_world'
-                           model = NULL, # Needed for climate CMIP6 projections
-                           ssp = NULL, # Needed for climate CMIP6 projections
-                           time = NULL # Needed for climate CMIP6 projections
+get_enviro_data <- function(data,
+                            buffer_km = 10,
+                            source = "geodata",
+                            var = "bio",
+                            res = 2.5, # 10,5,2.5,0.30
+                            path = "data/",
+                            year = NULL,
+                            depth = NULL,
+                            stat = "mean",
+                            model = NULL,
+                            ssp = NULL,
+                            time = NULL,
+                            temporal = FALSE,
+                            time_col = "year",
+                            layer_split_char = NULL,
+                            sp_cols = NULL,
+                            ext_cols = NULL
 ) {
-  # Load required packages
-  required_packages = c("terra", "sf", "dplyr", "geodata", "zoo", "tidyselect")
+  required_packages <- c("terra", "sf", "dplyr", "geodata", "zoo")
   lapply(required_packages, function(pkg) {
-    if (!requireNamespace(pkg, quietly = TRUE)) stop("Package '", pkg, "' is required but not installed.")
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      stop("Package '", pkg, "' is required but not installed.")
+    }
   })
 
-  # Ensure the output directory exists
   if (!dir.exists(path)) {
     dir.create(path, recursive = TRUE)
     message("Created directory: ", path)
   }
 
-  # Validate input data
-  if (!is.data.frame(data)) stop("Input must be a data frame.")
+  is_sf_data <- inherits(data, "sf")
+  is_polygons <- FALSE
+  is_points   <- FALSE
 
-  # Identify coordinate columns
-  x_cols = c("x", "lon", "longitude", "x_coord", "decimalLongitude")
-  y_cols = c("y", "lat", "latitude", "y_coord", "decimalLatitude")
-  site_cols = c("site_id", "grid_id")
-
-  find_col = function(cols) {
-    match = intersect(tolower(names(data)), tolower(cols))
-    if (length(match) == 0) return(NULL)
-    names(data)[tolower(names(data)) %in% match]
+  if (is_sf_data) {
+    geom_type <- unique(sf::st_geometry_type(data))
+    is_polygons <- any(grepl("POLYGON", geom_type, ignore.case = TRUE))
+    is_points   <- any(grepl("POINT",   geom_type, ignore.case = TRUE))
+    if (!is_polygons && !is_points) stop("Unsupported geometry type in 'data'.")
+    sites_sf <- data
+  } else {
+    x_cols <- c("x", "lon", "longitude", "decimalLongitude","centroid_lon")
+    y_cols <- c("y", "lat", "latitude", "decimalLatitude","centroid_lat")
+    find_col <- function(cols) intersect(tolower(names(data)), tolower(cols))[1]
+    x <- find_col(x_cols)
+    y <- find_col(y_cols)
+    if (is.na(x) || is.na(y)) stop("Coordinate columns not found.")
+    sites_sf <- sf::st_as_sf(data, coords = c(x, y), crs = 4326, remove = FALSE)
+    is_points <- TRUE
   }
 
-  site_col = find_col(site_cols)
-  x = find_col(x_cols)
-  y = find_col(y_cols)
-  if (is.null(x) || is.null(y)) stop("Coordinate columns (x, y) not found in the input data.")
+  aoi_extent <- if (is_polygons) sf::st_union(sites_sf) else sf::st_buffer(sf::st_convex_hull(sf::st_union(sites_sf)), dist = buffer_km * 1000)
 
-  # Generate AOI
-  message("Generating Area of Interest (AOI)...")
-  data_xy = data %>% dplyr::select(all_of(c(site_col, x, y))) %>% dplyr::distinct()
-  sites_sf = sf::st_as_sf(data_xy, coords = c(x, y), crs = 4326)
-  aoi_extent = sf::st_buffer(sf::st_convex_hull(sf::st_union(sites_sf)), dist = buffer_km * 1000)
+  env_rast <- switch(source,
+                     geodata = geodata::worldclim_global(var, res, path),
+                     local = terra::rast(var),
+                     stop("Unsupported source."))
 
-  # Download or load environmental data
-  env_rast = switch(
-    source,
-    geodata = {
-      message("Downloading data using geodata...")
-      switch(
-        var,
-        bio = geodata::worldclim_global(var, res, path),
-        elev = geodata::worldclim_global(var, res, path),
-        footprint = geodata::footprint(year, path),
-        population = geodata::population(year, res, path),
-        soil_world = geodata::soil_world(var, depth, stat, path),
-        stop("Unsupported variable for geodata source.")
-      )
-    },
-    local = {
-      message("Using local raster data...")
-      if (inherits(var, "SpatRaster")) {
-        var
-      } else if (is.character(var) && file.exists(var)) {
-        terra::rast(var)
-      } else {
-        stop("Invalid input for `var`. Must be a SpatRaster object or valid file path.")
-      }
-    },
-    stop("Unsupported data source. Use 'geodata' or 'local'.")
-  )
+  env_rast <- terra::crop(env_rast, terra::vect(aoi_extent))
+  names(env_rast) <- sub(".*_", "", names(env_rast))
 
-  if (!is.null(env_rast)) {
-    env_rast = terra::crop(env_rast, terra::vect(aoi_extent))
-    names(env_rast) = sub(".*_", "", names(env_rast))  # Simplify names
+  if (is_polygons) {
+    env_data <- terra::extract(env_rast, terra::vect(sites_sf), fun = mean, na.rm = TRUE, ID = TRUE)
+    env_df   <- dplyr::bind_cols(as.data.frame(sites_sf), env_data[, -1])
+  } else {
+    env_data <- terra::extract(env_rast, terra::vect(sites_sf))
+    env_df   <- dplyr::bind_cols(as.data.frame(sites_sf), env_data)
   }
 
-  if (is.null(env_rast)) stop("Failed to load environmental data.")
+  if (!is.null(ext_cols)) env_df <- dplyr::bind_cols(env_df, data[, ext_cols, drop=FALSE])
 
-  # Extract data for input points
-  message("Extracting environmental data for input points...")
-  env_data = terra::extract(env_rast, terra::vect(sites_sf))
-  env_df = dplyr::bind_cols(data_xy, env_data)
-  # Interpolate missing values
-  env_df = env_df %>% dplyr::mutate(across(where(is.numeric), ~ zoo::na.approx(.x, na.rm = FALSE, rule = 2)))
+  env_df <- env_df %>%
+    dplyr::mutate(across(where(is.numeric), ~ zoo::na.approx(.x, na.rm = FALSE, rule = 2)))
 
-  # # Extract raster values at site locations
-  # env_data = terra::extract(env_rast, terra::vect(sites_sf))
-  #
-  # # Combine the site coordinates with the extracted data
-  # env_df = dplyr::bind_cols(data_xy, env_data)
-  # # print(str(env_df))
-  #
-  # # Interpolate missing values using nearby points
-  # interpolate_missing_values = function(df) {
-  #   # Select coordinates and numeric columns
-  #   coords = df %>% dplyr::select(x, y)
-  #   # print(head(coords))
-  #   # numeric_cols = df %>% dplyr::select(where(is.numeric))
-  #   numeric_cols <- df %>% dplyr::select(where(is.numeric), -ID) %>% names()
-  #   # print(numeric_cols)
-  #
-  #   # Use spatial interpolation for each numeric column
-  #   for (col in colnames(numeric_cols)) {
-  #     missing_idx = which(is.na(df[[col]]))
-  #     if (length(missing_idx) > 0) {
-  #       # Create a spatial object for interpolation
-  #       known_points = terra::vect(coords[!is.na(df[[col]]), ], crs = crs(env_rast))
-  #       known_values = numeric_cols[[col]][!is.na(df[[col]])]
-  #
-  #       # Convert missing points to spatial object
-  #       missing_points = terra::vect(coords[missing_idx, ], crs = crs(env_rast))
-  #
-  #       # Perform interpolation (bilinear or nearest neighbor)
-  #       interpolated_values = terra::interpolate(known_points, known_values, missing_points, method = "bilinear")
-  #
-  #       # Assign interpolated values back to missing indices
-  #       df[[col]][missing_idx] = interpolated_values
-  #     }
-  #   }
-  #   return(df)
-  # }
-  #
-  # # Apply interpolation function to fill missing values
-  # env_df = interpolate_missing_values(env_df)
+  if (!is.null(sp_cols)) {
+    env_df   <- dplyr::select(env_df,  -dplyr::any_of(sp_cols))
+    sites_sf <- dplyr::select(sites_sf, -dplyr::any_of(sp_cols))
+  }
 
-  # Save results in the global environment
-  assign("env_rast", env_rast, envir = .GlobalEnv)
-  assign("sites_sf", sites_sf, envir = .GlobalEnv)
-  assign("env_df", env_df, envir = .GlobalEnv)
-
-  return(list(env_rast = env_rast, sites_sf = sites_sf, env_df = env_df))
+  list(env_rast = env_rast, sites_sf = sites_sf, env_df = env_df)
 }
