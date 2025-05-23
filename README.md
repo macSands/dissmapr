@@ -1,21 +1,4 @@
----
-title: "dissmapr: Workflow for Compositional Dissimilarity & Biodiversity Turnover Analysis"
-output:
-  github_document:
-    toc: true
-    toc_depth: 2
-  html_document:
-    toc: true
-    theme: cerulean     # or bootstrap, etc.
-    mathjax: default
----
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# `dissmapr`
-
 <!-- badges: start -->
-
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/nithecs-biomath/RBasicPack/master?urlpath=rstudio)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
