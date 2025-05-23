@@ -1,3 +1,3 @@
 testthat::test_that("hello works", {
-  expect_message(hello("Alice"), "Hello, Alice!")
+  expect_message(hello("Sandra"), "Hello, Sandra!")
 })

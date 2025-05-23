@@ -1,10 +1,9 @@
 ^renv$
 ^renv\.lock$
-^.*\.Rproj$
+^dissmapr\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
-^\.github$
+^CODE_OF_CONDUCT\.md$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^LICENSE\.md$

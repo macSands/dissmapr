@@ -1,0 +1,34 @@
+cff-version: 0.1.0
+message: "If you use this software, please cite it using these metadata."
+title: "dissmapr: A Novel Framework for Compositional Dissimilarity and Biodiversity Turnover Analysis"
+version: 0.1.0
+authors:
+  - given-names: Sandra
+    family-names: MacFadyen
+    affiliation: Stellenbosch University
+    # orcid: 0000-0002-5316-440X
+keywords:
+  - dissimilarity
+  - biodiversity turnover
+  - compositional analysis
+  - spatiotemporal statistics
+  - B-Cubed
+  - R
+contact:
+  - given-names: Sandra
+    family-names: MacFadyen
+    affiliation: Stellenbosch University
+    # orcid: 0000-0002-5316-440X
+license: MIT
+repository-code: https://github.com/macSands/dissmapr/
+type: software
+abstract: >
+  `dissmapr` provides a reproducible, end-to-end workflow for computing and mapping
+  compositional dissimilarity and biodiversity turnover across large spatial scales.
+  Core features include occurrence data retrieval, environmental data extraction,
+  flexible grid generation, order-wise dissimilarity computations, and intuitive bioregional mapping.
+identifiers:
+  - type: url
+    value: https://github.com/macSands/dissmapr/
+  - type: doi
+    value: 10.xxxx/dissmapr

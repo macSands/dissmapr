@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(templateB3)
+library(dissmapr)
 
-test_check("templateB3")
+test_check("dissmapr")

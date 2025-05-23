@@ -1,10 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# templateB3
+# dissmapr
 
 <!-- badges: start -->
-
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/nithecs-biomath/RBasicPack/master?urlpath=rstudio)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![test-coverage](https://github.com/macSands/templateB3/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/macSands/templateB3/actions/workflows/test-coverage.yaml)
@@ -13,7 +13,7 @@ coverage](https://codecov.io/gh/macSands/templateB3/graph/badge.svg)](https://ap
 [![R-CMD-check](https://github.com/macSands/templateB3/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/macSands/templateB3/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-# dissMapR: A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+# dissmapr: A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 ## Tutorial
 
@@ -25,11 +25,22 @@ using various commonly used packages (e.g., `sf`, `terra`, `dplyr`,
 Please note that paths to data, package names, or exact functions may
 need adjustment depending on your local setup.
 
-``` r
-# library(dissMapR)
-library(templateB3)
 
-# setwd('D:\\Methods\\R\\myR_Packages\\templateB3')
+``` r
+# install remotes if needed
+# install.packages("remotes")
+remotes::install_github("macSands/dissmapr")
+```
+
+``` r
+# Load your package 
+# library(dissMapR)
+library(dissmapr)
+
+# Make sure so all exported functions are available
+devtools::load_all()
+
+# setwd('D:\\Methods\\R\\myR_Packages\\myCompletePks\\dissmapr')
 ```
 
 ## 1. User-Defined Area of Interest and Grid Resolution
@@ -84,6 +95,8 @@ library(zoo)
 #> The following objects are masked from 'package:base':
 #> 
 #>     as.Date, as.Date.numeric
+library(zetadiv)
+library(viridis)
 ```
 
 #### Define the AOI (e.g., using a shapefile ‘rsa.shp’)
@@ -92,9 +105,9 @@ library(zoo)
 # Adjust the path and layer name as needed
 # aoi <- st_read("D:/Methods/R/myR_Packages/all_B3_packages/dissMapR/data/rsa.shp")
 # aoi <- st_read(system.file("data", "rsa.shp", package = "dissMapR"))
-aoi <- sf::st_read("D:/Methods/R/myR_Packages/templateB3/inst/extdata/rsa.shp")
+aoi <- sf::st_read("inst/extdata/rsa.shp")
 #> Reading layer `rsa' from data source 
-#>   `D:\Methods\R\myR_Packages\templateB3\inst\extdata\rsa.shp' 
+#>   `inst/extdata/rsa.shp' 
 #>   using driver `ESRI Shapefile'
 #> Simple feature collection with 1 feature and 1 field
 #> Geometry type: POLYGON
