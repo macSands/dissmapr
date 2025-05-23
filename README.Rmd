@@ -67,11 +67,13 @@ Install and load the `dissmapr` package from GitHub, ensuring all functions are 
 # install remotes if needed
 # install.packages("remotes")
 remotes::install_github("macSands/dissmapr")
+```
 
-# Load the `dissmapr` package 
+```{r load-dissmapr, include=FALSE}
+# Ensure the package is loaded when knitting
 library(dissmapr)
 
-# Make sure so all exported functions are available
+# Make sure all the functions are loaded
 devtools::load_all()
 ```
 
@@ -562,22 +564,22 @@ summary(zeta2$model)
 
 ### 14. Predict(zeta2) with 'sam.eff'
 
-- In the 'sbe' add 'sam.max', a constant for all sites = max(sam.eff)\
-- Predict for the updated sbe and xy\
-- Produce a site by site matrix of predicted zeta 'zeta.now' :::
+-   In the 'sbe' add 'sam.max', a constant for all sites = max(sam.eff)\
+-   Predict for the updated sbe and xy\
+-   Produce a site by site matrix of predicted zeta 'zeta.now' :::
 
 ```{r predict-zeta2}
 # sbe_now = sbe %>% mutate(sam_max = max(obs_sum))
 # zeta_now = Predict.zeta(zeta2, sbe_now, xy[,3:4])
 ```
 
-- Run nmds for the predicted zeta matrix\
-- Plot RGB of the 3 component scores ::: ------------------------------------------------------------------------
+-   Run nmds for the predicted zeta matrix\
+-   Plot RGB of the 3 component scores ::: ------------------------------------------------------------------------
 
 ### 15. Clustering analyses directly using zeta.now
 
-- Generate maps of dissimilarity (the rgb plot)\
-- Generate map of bioregions (from clustering) :::
+-   Generate maps of dissimilarity (the rgb plot)\
+-   Generate map of bioregions (from clustering) :::
 
 ```{r zeta-cluster}
 # e.g. perform clustering on zeta_now & plot bioregions
@@ -587,23 +589,23 @@ summary(zeta2$model)
 
 ### 16. Predict(zeta2)
 
-- with appended (future scenarios) environmental variables and 'sam.max' in sbe\
-- For m number of scenarios plus the present scenario (step 14) and n sites of xy\
-- Updated sbe.future will have k = (m+1) x n number of rows\
-- 'xy' also updated with k rows\
-- Predict a k by k matrix of predicted zeta 'zeta.future' :::
+-   with appended (future scenarios) environmental variables and 'sam.max' in sbe\
+-   For m number of scenarios plus the present scenario (step 14) and n sites of xy\
+-   Updated sbe.future will have k = (m+1) x n number of rows\
+-   'xy' also updated with k rows\
+-   Predict a k by k matrix of predicted zeta 'zeta.future' :::
 
 ```{r predict-future}
 # e.g. perform clustering on zeta_now & plot bioregions
 ```
 
-- Nmds of zeta.future\
-- clustering of zeta.future\
-- Map sub matrices to indicate predicted future dissimilarity\
-- Map predicted future bioregions\
-- Map temporal turnover.\
-*Note: step 14 is redundant if step 16 is needed*\
-*Note: step 16 has the same code but more results including those from step 6 but potentially computational demanding*
+-   Nmds of zeta.future\
+-   clustering of zeta.future\
+-   Map sub matrices to indicate predicted future dissimilarity\
+-   Map predicted future bioregions\
+-   Map temporal turnover.\
+    *Note: step 14 is redundant if step 16 is needed*\
+    *Note: step 16 has the same code but more results including those from step 6 but potentially computational demanding*
 
 ------------------------------------------------------------------------
 
