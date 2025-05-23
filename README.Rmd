@@ -8,6 +8,9 @@ output:
     toc: true
     theme: cerulean     # or bootstrap, etc.
     mathjax: default
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -24,54 +27,59 @@ knitr::opts_chunk$set(
 )
 ```
 
-# `dissmapr`
-
 <!-- badges: start -->
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/nithecs-biomath/RBasicPack/master?urlpath=rstudio)
-[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![test-coverage](https://github.com/macSands/dissmapr/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/macSands/dissmapr/actions/workflows/test-coverage.yaml)
-[![Codecov test coverage](https://codecov.io/gh/macSands/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/macSands/dissmapr)
-[![R-CMD-check](https://github.com/macSands/dissmapr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/macSands/dissmapr/actions/workflows/R-CMD-check.yaml)
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/nithecs-biomath/RBasicPack/master?urlpath=rstudio) [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable) [![test-coverage](https://github.com/macSands/dissmapr/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/macSands/dissmapr/actions/workflows/test-coverage.yaml) [![Codecov test coverage](https://codecov.io/gh/macSands/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/macSands/dissmapr) [![R-CMD-check](https://github.com/macSands/dissmapr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/macSands/dissmapr/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
-# `dissmapr`: A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 ## Introduction
 
-**dissmapr** provides a reproducible, end-to-end workflow for computing and mapping compositional dissimilarity and biodiversity turnover across large spatial and temporal scales. Core modules handle occurrence retrieval, grid generation, environmental extraction, order-wise dissimilarity, and bioregional mapping.
----
+`dissmapr` is an R package for analysing compositional dissimilarity and biodiversity turnover across spatial gradients.
+It provides scalable, modular workflows that integrate species occurrence, environmental data, and multi-site metrics to quantify and predict biodiversity patterns.
+A core feature is the use of zeta diversity, which extends beyond pairwise comparisons to capture shared species across multiple sites---offering deeper insight into community assembly, turnover, and connectivity.
+By incorporating modern approaches such as multi-site Generalised Dissimilarity Modelling (MS-GDM), `dissmapr` enables robust mapping, bioregional classification, and scenario-based forecasting.
+Designed for flexibility and reproducibility, it supports biodiversity monitoring and conservation planning at landscape to regional scales.
 
-## Tutorial
+------------------------------------------------------------------------
 
-This document outlines a step-by-step workflow for analyzing compositional dissimilarity and bioregionalization using **dissmapr**.  
-All code chunks below illustrate how one might implement each step in R, using various commonly used packages (e.g., `sf`, `terra`, `dplyr`, `ggplot2`, etc.).  
-Please note that paths to data, package names, or exact functions may need adjustment depending on your local setup.
----
+## Workflow Overview
 
-## Installation
+`dissmapr` implements a structured, reproducible workflow for analysing biodiversity patterns and delineating bioregions.
+Each function aligns with a specific step, guiding users from data acquisition to predictive mapping.
+The workflow begins with sourcing species occurrence and georeferenced environmental data, followed by data formatting and calculation of compositional turnover using zeta diversity metrics (via the `zetadiv` package).
+Multi-Site Generalized Dissimilarity Modelling (MS-GDM) is then applied to model and predict dissimilarity across landscapes.
+These predictions feed into the Dissimilarity Cube, which classifies spatial clusters of species composition into distinct bioregions.
+The framework supports the integration of historical and future climate data to assess shifts in biodiversity and detect emerging, shifting, or dissolving bioregions under global change.
+This step-by-step structure, mirrored in the accompanying tutorial sections, promotes accessibility, transparency, and ecological insight at multiple spatial and temporal scales.
+
+------------------------------------------------------------------------
+
+### 1. Install and load `dissmapr`
+
+Install and load the `dissmapr` package from GitHub, ensuring all functions are available for use in the analysis workflow.
 
 ```{r install, eval=FALSE, include=FALSE}
 # install remotes if needed
 # install.packages("remotes")
 remotes::install_github("macSands/dissmapr")
-```
----
 
-## Setup
-
-```{r load-dissmapr}
-# Load your package 
-# library(dissmapr)
+# Load the `dissmapr` package 
 library(dissmapr)
 
 # Make sure so all exported functions are available
 devtools::load_all()
-
-# setwd('D:\\Methods\\R\\myR_Packages\\myCompletePks\\dissmapr')
 ```
----
 
-## Load libraries
+------------------------------------------------------------------------
+
+### 2. Load other R libraries
+
+Load core libraries for spatial processing, biodiversity modelling, and visualization required across the `dissmapr` analysis pipeline.
 
 ```{r libraries}
 # Load necessary libraries
@@ -87,17 +95,35 @@ library(zetadiv)    # Multi-site biodiversity turnover
 library(ggplot2)    # Grammar of graphics  
 library(viridis)    # Perceptual color scales  
 ```
----
 
-## 1. User-defined area of interest and grid resolution 
-### Read RSA shape file 
+------------------------------------------------------------------------
+
+### 3. User-defined area of interest and grid resolution
+
+Load the spatial boundary data for South Africa to serve as the geographic reference for all subsequent biodiversity analyses and visualizations.
+
 ```{r aoi}
+# Read RSA shape file
 rsa = sf::st_read('inst/extdata/rsa.shp')
 ```
----
 
-## 2. Site by species matrix and sampling effort 
-### Access occurrences of user-specified taxon or species list using `get_occurrence_data`
+------------------------------------------------------------------------
+
+### 4. Site by species matrix and sampling effort
+
+This section focuses on automating the retrieval and pre-processing of core data, including species occurrence and environmental variables.
+These data form the basis for further ecological analysis and model building.
+
+#### Access occurrences of user-specified taxon or species list using `get_occurrence_data`
+
+Use `get_occurrence_data` to automate the retrieval and pre-processing of species occurrence data from multiple sources, including:
+
+i)  local databases,
+ii) the Global Biodiversity Information Facility (GBIF), and
+iii) species occurrence cubes from B3 (specification) [\*work in progress].
+
+The function assembles data on species distributions across specified taxonomic groups and regions, producing presence-absence or abundance matrices that quantify species co-occurrence within locations.
+
 ```{r get-occurrence}
 bfly_data = get_occurrence_data(
   data        = 'inst/extdata/gbif_butterflies.csv',
@@ -106,10 +132,20 @@ bfly_data = get_occurrence_data(
 )
 dim(bfly_data)
 ```
----
 
-## 3. Format data using `format_df`
-### Format data into long and wide formats
+------------------------------------------------------------------------
+
+### 5. Format data using `format_df`
+
+Use `format_df` to standardise and reshape biodiversity data into long or wide formats.
+The function automatically identifies key columns (e.g., coordinates, species, and values), assigns missing site IDs, and reformats the data for analysis.
+Outputs include a cleaned dataset and species-site matrices for further processing:
+
+• site_xy: Holds spatial coordinates of sampled sites.\
+• site_sp: Site-by-species matrix for biodiversity assessments.
+
+#### Format data into long and wide formats
+
 ```{r format-df}
 bfly_result = format_df(
   data        = bfly_data,
@@ -124,17 +160,28 @@ dim(site_obs)
 dim(site_spp)
 ```
 
-### Get parameters to use later
+#### Get parameters to use later
+
 ```{r spp-cols}
 # Get parameters from processed data
 # Number of species columns
 (n_sp = dim(site_spp)[2] - 3)
 sp_cols = names(site_spp)[-c(1:3)]
 ```
----
 
-## 4. Summarise records by grid using `generate_grid`
-### Assign records to a grid at a set resolution (e.g. 0.5°)
+------------------------------------------------------------------------
+
+### 6. Summarise records by grid using `generate_grid`
+
+Use `generate_grid` to divide the study area, derived from the geographic extent of the occurrence data above, into grids of user-defined resolution, creating a spatial grid over a specified geographic extent.
+It assigns unique grid IDs to points and summarizes selected data columns within each grid cell.
+The function outputs a raster grid, grid polygons for visualization, and a data frame summarizing the contents of each grid cell, including totals and centroids.
+It is particularly useful for aggregating spatial data, such as biodiversity observations, into predefined spatial units for further analysis.
+
+#### Assign records to a grid at a set resolution (e.g. 0.5°)
+
+Aggregate species records into equal-area grid cells to enable spatially standardized biodiversity analyses.
+
 ```{r grid}
 grid_list = generate_grid(
   data       = site_spp,
@@ -151,7 +198,10 @@ dim(aoi_grid)
 dim(grid_spp)
 ```
 
-### Generate a data frame ‘xy’ of site centroids
+#### Generate a data frame 'xy' of site centroids
+
+Extract longitude--latitude coordinates and summary metrics for each occupied grid cell.
+
 ```{r site-xy}
 # Grid centroids with 'gird_id', 'centroid_lon', 'centroid_lat', 'obs_sum' and `spp_rich`
 grid_xy = grid_spp[,c(1:3,5:6)]
@@ -160,7 +210,10 @@ spp_obs = site_obs
 dim(spp_obs)
 ```
 
-### Generate a map of RSA with occupied grid cells as centroid points
+#### Generate a map of RSA with occupied grid cells as centroid points
+
+Visualize observation density across South Africa using centroid-based mapping of gridded biodiversity data.
+
 ```{r map-aoi}
 ggplot() +
   geom_sf(data = aoi_grid, fill = NA, color = "darkgrey", alpha = 0.5) +
@@ -174,10 +227,13 @@ ggplot() +
   labs(title = "0.5° Grid with Observation Counts",
        x = "Longitude", y = "Latitude")
 ```
----
 
-## 5. Summarise records by grid using `generate_grid`
-#### Generate site by species matrix \>\> `site_spp`
+------------------------------------------------------------------------
+
+### 7. Generate site by species matrix called `site_spp`
+
+Create a matrix of species counts per site for use in biodiversity and dissimilarity analyses.
+
 ```{r site-spp}
 xy = grid_spp[,2:3]
 site_spp = grid_spp[,c(1:3,5:ncol(grid_spp))]
@@ -185,14 +241,20 @@ head(site_spp[,1:10])
 dim(site_spp)
 ```
 
-### Generate a raster of occurrence counts called `sam_eff`
+#### Generate record of occurrence counts called `sam_eff`
+
+Summarize the number of species observations per grid cell to assess sampling effort.
+
 ```{r sam-eff}
 sam_eff = grid_spp[, c("grid_id","centroid_lon","centroid_lat","obs_sum")]
 obs_cnt = grid_spp[,c(1:3,5)]
 dim(obs_cnt)
 ```
 
-### Generate a binary data frame ‘sbs’
+#### Generate a binary data frame 'sbs'
+
+Convert species abundance data to presence--absence format (`site_spp_pa`) for binary dissimilarity analyses.
+
 ```{r sbs}
 sp_cols = names(site_spp)[-(1:5)]
 sbs     = site_spp %>%
@@ -206,23 +268,37 @@ head(site_spp_pa[,1:10])
 dim(site_spp_pa)
 ```
 
-### Generate richness of sbs row sums and map
+#### Generate richness of sbs row sums and map
+
+Calculate species richness per site based on binary presence--absence data.
+
 ```{r spp-rich}
 spp_rich = grid_spp[, c("grid_id","centroid_lon","centroid_lat","spp_rich")]
 ```
 
-### Generate ‘sam.eff’ and ‘spp_rich’ raster map
+#### Generate 'sam.eff' and 'spp_rich' raster map
+
+Visualise sampling effort and species richness as raster layers over the study area.
+
 ```{r eff-rich}
 ras_effRich = grid_list$grid[[2:3]]
 plot(sqrt(ras_effRich), col = turbo(100))
 ```
 
-### Note: occurrence coordinates are only used for assigning then into grids; they are not needed beyond this step.
+***Note**: occurrence coordinates are only used for assigning then into grids; they are not needed beyond this step.*
 
----
+------------------------------------------------------------------------
 
-## 6. Site by environment matrix
-### Stack environmental variables into raster using `get_enviro_data`
+### 8. Site by environment matrix
+
+#### Retrieve Environmental Data with `get_enviro_data`
+
+Use `get_enviro_data` to extract environmental variables for spatial points from either species observations or grid centroids.
+Data can be sourced from online repositories (e.g. *WorldClim*, *SoilGrids* via `geodata`) or local rasters.
+The function defines an area of interest with a buffer, extracts selected variables, and interpolates missing values using nearby non-NA points.
+Outputs include cropped rasters, spatial points (as an `sf` object), and a combined site-by-environment data frame (`site_env`) for downstream ecological analyses.
+Future support will extend to *CHELSA* (`climenv`), *Google Earth Engine* (`rgee`), and `mapme.biodiversity` for expanded environmental and biodiversity data access.
+
 ```{r get-enviro}
 enviro_list = get_enviro_data(
   data      = sbs,
@@ -234,34 +310,37 @@ enviro_list = get_enviro_data(
   sp_cols   = 6:ncol(sbs),
   ext_cols  = c('obs_sum','spp_rich')
 )
-# ras_enviro = enviro_list$env_rast
-
-# Rename the layers
-names(enviro_list$env_rast) = c("temp_mean", "mdr", "iso", "temp_sea", "temp_max",
-                      "temp_min", "temp_rang","temp_wetQ", "temp_dryQ", "temp_warmQ",
-                      "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
-                      "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
-
 ras_enviro = enviro_list$env_rast
 ```
 
-### Add ‘eff-rich’ raster to the enviro stack raster
+#### Add 'eff-rich' raster to the enviro stack raster
+
+Combine environmental rasters with sampling effort and species richness layers for joint spatial analysis.
+
 ```{r ras}
 ras_enviro_effRich = c(ras_effRich, resample(ras_enviro, ras_effRich))
 plot(ras_enviro_effRich[[1:4]])
 ```
 
-### Extract environmental variables for site centroids ‘xy’ 
+#### Extract environmental variables for site centroids 'xy'
+
+Link environmental data to grid centroids and visualize spatial variation in selected climate variables.
+
 ```{r env-df}
 env_df = enviro_list$env_df[,c(1:5,8:26)]
 head(env_df)
 head(env_df[,15:24])
+
+# Rename `env_df` column names
 names(env_df) = c('grid_id','x','y','obs_sum','spp_rich',"temp_mean", "mdr", "iso", "temp_sea", "temp_max",
                                 "temp_min", "temp_rang","temp_wetQ", "temp_dryQ", "temp_warmQ",
                                 "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
                                 "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
 
+# Check the first few rows
 head(env_df)
+
+# Plot the results to check the conversion is accurate
 ggplot() +
   # Add 0.25deg grid layer
   geom_sf(data = aoi_grid, fill = NA, color = "darkgrey", alpha = 0.5) +
@@ -280,14 +359,19 @@ ggplot() +
     y = "Latitude")   
 ```
 
-### Generate data frame ‘sbe’
-Extract environmental variables and sampling effort and species richness `ras_enviro` for site centroids `xy`
+#### Generate *Species-by-Environment* data frame 'sbe'
+
+Create a unified data frame of site coordinates, sampling effort, richness, and environmental variables for modelling called `sbe`.
+
 ```{r sbe}
 sbe = env_df %>%
   select(grid_id, x, y, obs_sum, spp_rich, everything())
 ```
 
-## 7. If necessary project coordinates into meters projection (e.g. UTM)
+### 9. If necessary project coordinates into meters projection (e.g. UTM) using `sf::st_transform`
+
+Reproject spatial coordinates from geographic (WGS84) to a projected system (e.g. Albers Equal Area) for analyses requiring distance in meters, such as spatial clustering or environmental modelling.
+
 ```{r reproject}
 # Convert to sf object with WGS84 geographic CRS
 head(xy)
@@ -302,7 +386,11 @@ xy_utm_df = cbind(xy, st_coordinates(xy_utm))
 head(xy_utm_df)
 ```
 
-## 8. Check for inter-correlation and remove highly corrected variables
+### 10. Check for inter-correlation and remove highly corrected variables using `rm_correlated`.
+
+Identify and remove highly correlated environmental variables to reduce multicollinearity in subsequent analyses.
+This step ensures model stability by retaining only informative, non-redundant predictors based on a user-defined correlation threshold.
+
 ```{r remove_var}
 # Remove the highly correlated variables
 env_vars_reduced = rm_correlated(data = env_df[,c(4,6:24)],
@@ -312,26 +400,32 @@ env_vars_reduced = rm_correlated(data = env_df[,c(4,6:24)],
 head(env_vars_reduced)
 dim(env_vars_reduced)
 ```
----
 
-## 9. Zeta decline (sbs), orders 2:15
-### Expectation of zeta diversity decline using `zetadiv::Zeta.decline.ex`
-#### Generate statistics and figures, no maps
+------------------------------------------------------------------------
+
+### 11. Zeta decline (sbs), orders 2:15
+
+#### Expectation of zeta diversity decline using `zetadiv::Zeta.decline.ex`
+
+Computes the expectation of zeta diversity, the number of species shared by multiple assemblages for a range of orders (number of assemblages or sites), using a formula based on the occupancy of the species, and fits the decline to an exponential and a power law relationship.
+*Generate statistics and figures, no maps*
+
 ```{r zeta-decline-ex}
 zeta_decline_ex = Zeta.decline.ex(site_spp_pa[,6:ncol(site_spp_pa)], 
                                   orders = 1:15)
 # zeta_decline_ex
 ```
-> > -   **Panel 1 (Zeta diversity decline)**: Shows how rapidly species that are common across multiple sites decline as you look at groups of more and more sites simultaneously (increasing zeta order). The sharp drop means fewer species are shared among many sites compared to just a few.
-> >
-> > -   **Panel 2 (Ratio of zeta diversity decline)**: Illustrates the proportion of shared species that remain as the number of sites compared increases. A steeper curve indicates that common species quickly become rare across multiple sites.
-> >
-> > -   **Panel 3 (Exponential regression)**: Tests if the decline in shared species fits an exponential decrease. A straight line here indicates that species commonness decreases rapidly and consistently as more sites are considered together. Exponential regression represents [**stochastic assembly**]{.underline} (**randomness determining species distributions**).
-> >
-> > -   **Panel 4 (Power law regression)**: Tests if the decline follows a power law relationship. A straight line suggests that the loss of common species follows a predictable pattern, where initially many species are shared among fewer sites, but rapidly fewer are shared among larger groups. Power law regression represents [**niche-based sorting**]{.underline} (**environmental factors shaping species distributions**).
 
-### Zeta diversity decline using Monte Carlo sampling `zetadiv::Zeta.decline.mc`
-#### Generate statistics and figures, no maps
+> -   **Panel 1 (Zeta diversity decline)**: Shows how rapidly species that are common across multiple sites decline as you look at groups of more and more sites simultaneously (increasing zeta order). The sharp drop means fewer species are shared among many sites compared to just a few.
+> -   **Panel 2 (Ratio of zeta diversity decline)**: Illustrates the proportion of shared species that remain as the number of sites compared increases. A steeper curve indicates that common species quickly become rare across multiple sites.
+> -   **Panel 3 (Exponential regression)**: Tests if the decline in shared species fits an exponential decrease. A straight line here indicates that species commonness decreases rapidly and consistently as more sites are considered together. Exponential regression represents [**stochastic assembly**]{.underline} (**randomness determining species distributions**).
+> -   **Panel 4 (Power law regression)**: Tests if the decline follows a power law relationship. A straight line suggests that the loss of common species follows a predictable pattern, where initially many species are shared among fewer sites, but rapidly fewer are shared among larger groups. Power law regression represents [**niche-based sorting**]{.underline} (**environmental factors shaping species distributions**).
+
+#### Zeta diversity decline using Monte Carlo sampling `zetadiv::Zeta.decline.mc`
+
+Computes zeta diversity, the number of species shared by multiple assemblages, for a range of orders (number of assemblages or sites), using combinations of sampled sites, and fits the decline to an exponential and a power law relationship.
+*Generate statistics and figures, no maps*
+
 ```{r zeta-decline-mc}
 zeta_mc_utm = Zeta.decline.mc(site_spp_pa[,-(1:6)],
                                xy_utm_df[,3:4],
@@ -341,18 +435,19 @@ zeta_mc_utm = Zeta.decline.mc(site_spp_pa[,-(1:6)],
                                normalize = "Jaccard")
 # zeta_mc_utm
 ```
-> > -   **Panel 1 (Zeta diversity decline)**: Rapidly declining zeta diversity, similar to previous plots, indicates very few species remain shared across increasingly larger sets of sites, emphasizing strong species turnover and spatial specialization.
-> >
-> > -   **Panel 2 (Ratio of zeta diversity decline)**: More irregular fluctuations suggest a spatial effect: nearby sites might occasionally share more species by chance due to proximity. The spikes mean certain groups of neighboring sites have higher-than-average species overlap.
-> >
-> > -   **Panel 3 & 4 (Exponential and Power law regressions)**: Both remain linear, clearly indicating the zeta diversity declines consistently following a predictable spatial pattern. However, the exact pattern remains similar to previous cases, highlighting that despite spatial constraints, common species become rare quickly as more sites are considered.
->
-> **This result demonstrates clear spatial structuring of biodiversity—species are locally clustered, not randomly distributed across the landscape. Spatial proximity influences which species co-occur more frequently.**
----
 
-## 10. Zeta decays (sbs, xy), orders 2:15
-### Zeta distance decay for a range of numbers of assemblages or sites using `zetadiv::Zeta.ddecays`
-#### Generate statistics and figures, no maps
+> -   **Panel 1 (Zeta diversity decline)**: Rapidly declining zeta diversity, similar to previous plots, indicates very few species remain shared across increasingly larger sets of sites, emphasizing strong species turnover and spatial specialization.
+> -   **Panel 2 (Ratio of zeta diversity decline)**: More irregular fluctuations suggest a spatial effect: nearby sites might occasionally share more species by chance due to proximity. The spikes mean certain groups of neighboring sites have higher-than-average species overlap.
+> -   **Panel 3 & 4 (Exponential and Power law regressions)**: Both remain linear, clearly indicating the zeta diversity declines consistently following a predictable spatial pattern. However, the exact pattern remains similar to previous cases, highlighting that despite spatial constraints, common species become rare quickly as more sites are considered.\
+>     *This result demonstrates clear spatial structuring of biodiversity---species are locally clustered, not randomly distributed across the landscape. Spatial proximity influences which species co-occur more frequently.*
+
+### 12. Zeta decays (sbs, xy), orders 2:15
+
+#### Zeta distance decay for a range of numbers of assemblages or sites using `zetadiv::Zeta.ddecays`
+
+Computes the distance decay of zeta diversity for a range of orders (number of assemblages or sites), using generalised linear models.
+*Generate statistics and figures, no maps*
+
 ```{r zeta-decays}
 # zeta_decay = Zeta.ddecays(
 #   xy      = xy[,c("centroid_lon","centroid_lat")],
@@ -371,21 +466,31 @@ zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
 )
 # zeta_decays
 ```
-> > This plot shows how zeta diversity (a metric that captures shared species composition among multiple sites) changes with spatial distance across different orders of zeta (i.e., the number of sites considered at once).
-> >
-> > -   On the **x-axis**, we have the **order of zeta** (from 2 to 7). For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.
-> > -   On the **y-axis**, we see the slope of the **relationship between zeta diversity and distance** (i.e., how quickly species similarity declines with distance).
-> > -   A **negative slope** means that **sites farther apart have fewer species in common**—so there's a clear distance decay of biodiversity.
-> > -   A **slope near zero** means **distance doesn’t strongly affect how many species are shared among sites**.
 
-> **Key observations:** - At low orders (2 and 3), the slope is strongly negative, indicating that species turnover is high over distance when looking at pairs or triplets of sites. - From order 4 and up, the slope becomes close to zero, suggesting that at broader spatial scales (more sites), species similarity is less affected by distance. This may reflect widespread or core species that are consistently shared regardless of location. - The confidence intervals (error bars) shrink with increasing order, indicating greater stability and reliability of the estimate as more sites are included.
+> This plot shows how zeta diversity (a metric that captures shared species composition among multiple sites) changes with spatial distance across different orders of zeta (i.e., the number of sites considered at once).
 
-> **Summary:** This figure shows that biodiversity patterns across space are strongly shaped by distance at small scales, but this effect weakens as you include more sites. In other words, rare or localized species contribute to strong distance decay, but widespread species dominate at higher spatial scales, leading to more uniformity. 
----
+> -   On the **x-axis**, we have the **order of zeta** (from 2 to 7).\
+>     For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.
+> -   On the **y-axis**, we see the slope of the **relationship between zeta diversity and distance** (i.e., how quickly species similarity declines with distance).
+> -   A **negative slope** means that **sites farther apart have fewer species in common** --- so there's a clear distance decay of biodiversity.
+> -   A **slope near zero** means **distance doesn't strongly affect how many species are shared among sites**.
 
-## 11. Zeta.msgdm(sbs, sbe, xy), order 2, 3, 5, 10
-### Multi-site generalised dissimilarity modelling for a set of environmental variables and distances using `zetadiv::Zeta.msgdm`
-#### Generate statistics and figures, no maps and save fitted order 2 model ‘zeta2’
+> **Key observations:** - At low orders (2 and 3), the slope is strongly negative, indicating that species turnover is high over distance when looking at pairs or triplets of sites.
+> - From order 4 and up, the slope becomes close to zero, suggesting that at broader spatial scales (more sites), species similarity is less affected by distance.\
+> This may reflect widespread or core species that are consistently shared regardless of location.
+> - The confidence intervals (error bars) shrink with increasing order, indicating greater stability and reliability of the estimate as more sites are included.
+
+> **Summary:** This figure shows that biodiversity patterns across space are strongly shaped by distance at small scales, but this effect weakens as you include more sites.
+> In other words, rare or localized species contribute to strong distance decay, but widespread species dominate at higher spatial scales, leading to more uniformity.
+
+### 13. Zeta.msgdm(sbs, sbe, xy), order 2, 3, 5, 10
+
+#### Multi-site generalised dissimilarity modelling for a set of environmental variables and distances using `zetadiv::Zeta.msgdm`
+
+Computes a regression model of zeta diversity for a given order (number of assemblages or sites) against a set of environmental variables and distances between sites.
+The different regression models available are generalised linear models, generalised linear models with negative constraints, generalised additive models, shape constrained additive models, and I-splines.
+*Generate statistics and figures, no maps and save fitted order 2 model 'zeta2'*
+
 ```{r zeta-msgdm}
 # zeta2 = Zeta.msgdm(
 #   sbs[,-(1:5)],
@@ -416,26 +521,30 @@ zeta2.ispline = Return.ispline(zeta2,
 # zeta2.ispline
 Plot.ispline(isplines = zeta2.ispline, distance = TRUE)
 ```
->> This I-spline plot represents how different environmental variables (including distance) contribute to explaining zeta diversity of order 2 — that is, how many species are shared between pairs of sites, based on environmental similarity and geographic distance.
 
-**Imagine you're comparing pairs of locations and asking: "Do these two places have similar species, and if so, why?"**
->> How to Read the Graph: This graph shows which factors matter most for explaining how similar the species are between those pairs of places.
-\- X-axis (Rescaled range): Each variable has been normalized from 0 to 1, so we can compare their effects on the same scale.
-\- Y-axis (I-splines): This shows how much each variable contributes to the similarity in species between two locations.
-\- A steeper or higher curve = more important variable.
+> This I-spline plot represents how different environmental variables (including distance) contribute to explaining zeta diversity of order 2 --- that is, how many species are shared between pairs of sites, based on environmental similarity and geographic distance.
 
->> **Main Takeaways from the Plot**
--   Geographic **distance** (blue line) has the strongest effect:
--   As distance increases (from 0 to 1), species similarity drops — locations far apart share fewer species.
--   This confirms classic distance decay in ecology.
--   The **obs_sum** variable (likely representing total observed richness or sampling effort per site) shows a high and rapidly increasing I-spline curve, which then levels off but remains high across the rescaled range.
--   Strong initial effect: Differences in species richness between sites are a key driver of how many species they share — especially when the difference is large.
--   Plateau effect: After a certain point, increasing obs_sum further doesn't increase shared species much more, possibly due to saturation in species detection or common species already being captured.
--   Overall importance: Because the curve remains high, this variable is consistently influential across its range.
--   **Temperature** and **rainfall seasonality** also matter, but less: Variables like temp_mean, rain_warmQ, and temp_wetQ contribute, but their curves are lower. This suggests that climate seasonality explains some turnover in species, though not as strongly as distance.
--   Other climatic variables (e.g., isothermality, coldest quarter rain) have much smaller contributions. These environmental gradients do affect biodiversity, but only slightly.
+> **Imagine you're comparing pairs of locations and asking:** *"Do these two places have similar species, and if so, why?"*
 
-In summary, besides geographic distance, the total number of species observed at each site (obs_sum) has a strong influence on how similar two places are in terms of species. When one site has many more species than another, they tend to share fewer species. However, once species richness becomes high enough, its additional effect on shared species plateaus.
+> **How to Read the Graph:** This graph shows which factors matter most for explaining how similar the species are between those pairs of places.\
+> - **X-axis (Rescaled range):** Each variable has been normalized from 0 to 1, so we can compare their effects on the same scale.\
+> - **Y-axis (I-splines):** This shows how much each variable contributes to the similarity in species between two locations.\
+> - A **steeper or higher curve** indicates a more important variable.
+
+> **Main Takeaways from the Plot:**
+>
+> \- **Geographic distance** (blue line) has the strongest effect:\
+> As distance increases (from 0 to 1), species similarity drops --- locations far apart share fewer species.
+> This confirms classic distance decay in ecology.\
+> - **obs_sum** (sampling effort or richness) shows a steep, high I-spline curve: - Strong initial effect: Differences in richness between sites strongly influence shared species, especially when large.
+> Plateau effect: Beyond a point, further increases in richness don't lead to more shared species, possibly due to detection limits or saturation.
+> Overall importance: The curve remains high, indicating consistent influence.\
+> - **Temperature** and **rainfall seasonality** have moderate effects: \> Variables like `temp_mean`, `rain_warmQ`, and `temp_wetQ` contribute, but their curves are lower, indicating weaker influence.
+> - Other climatic variables (e.g., isothermality, coldest quarter rain) show minimal contribution: These gradients affect biodiversity weakly in this context.
+
+> **Summary:**\
+> Beyond geographic distance, the total number of species observed at a site (`obs_sum`) is a strong predictor of shared species.
+> However, once richness is high enough, its added influence plateaus.
 
 ```{r model-results}
 # Deviance explained summary results
@@ -448,53 +557,61 @@ with(summary(zeta2$model), 1 - deviance/null.deviance)
 # Model summary results
 summary(zeta2$model)
 ```
----
 
-## 12. Predict(zeta2) with ‘sam.eff’
-### In the ‘sbe’ add ‘sam.max’, a constant for all sites = max(sam.eff)
-### Predict for the updated sbe and xy 
-### Produce a site by site matrix of predicted zeta ‘zeta.now’
+------------------------------------------------------------------------
+
+### 14. Predict(zeta2) with 'sam.eff'
+
+- In the 'sbe' add 'sam.max', a constant for all sites = max(sam.eff)\
+- Predict for the updated sbe and xy\
+- Produce a site by site matrix of predicted zeta 'zeta.now' :::
+
 ```{r predict-zeta2}
 # sbe_now = sbe %>% mutate(sam_max = max(obs_sum))
 # zeta_now = Predict.zeta(zeta2, sbe_now, xy[,3:4])
 ```
 
-### Run nmds for the predicted zeta matrix 
-### Plot RGB of the 3 component scores
+- Run nmds for the predicted zeta matrix\
+- Plot RGB of the 3 component scores ::: ------------------------------------------------------------------------
 
-## 13. Clustering analyses directly using zeta.now
-### Generate maps of dissimilarity (the rgb plot)
-### Generate map of bioregions (from clustering)
+### 15. Clustering analyses directly using zeta.now
+
+- Generate maps of dissimilarity (the rgb plot)\
+- Generate map of bioregions (from clustering) :::
+
 ```{r zeta-cluster}
 # e.g. perform clustering on zeta_now & plot bioregions
 ```
 
----
+------------------------------------------------------------------------
 
-## 14. Predict(zeta2) 
-### with appended (future scenarios) environmental variables and ‘sam.max’ in sbe
-### For m number of scenarios plus the present scenario (step 6a) and n sites of xy
-### Updated sbe.future will have k = (m+1) x n number of rows
-### ‘xy’ also updated with k rows
-### Predict a k by k matrix of predicted zeta ‘zeta.future’
+### 16. Predict(zeta2)
+
+- with appended (future scenarios) environmental variables and 'sam.max' in sbe\
+- For m number of scenarios plus the present scenario (step 14) and n sites of xy\
+- Updated sbe.future will have k = (m+1) x n number of rows\
+- 'xy' also updated with k rows\
+- Predict a k by k matrix of predicted zeta 'zeta.future' :::
+
 ```{r predict-future}
 # e.g. perform clustering on zeta_now & plot bioregions
 ```
 
-### Nmds of zeta.future
-### clustering of zeta.future
-### Map sub matrices to indicate predicted future dissimilarity
-### Map predicted future bioregions
-### Map temporal turnover. 
-### Note: step 6a is redundant if step 7 is needed
-### Note: step 7 has the same code but more results including those from step 6 but potentially computational demanding
+- Nmds of zeta.future\
+- clustering of zeta.future\
+- Map sub matrices to indicate predicted future dissimilarity\
+- Map predicted future bioregions\
+- Map temporal turnover.\
+*Note: step 14 is redundant if step 16 is needed*\
+*Note: step 16 has the same code but more results including those from step 6 but potentially computational demanding*
 
----
+------------------------------------------------------------------------
 
-## 15. Deposit all data frames, tables, maps, and standard metadata to zenodo
+### 17. Deposit all data frames, tables, maps, and standard metadata to zenodo
+
 ```{r zenodo}
 # save(occ, sbs, sbe, zeta2, zeta_now, zeta_future, file="dissmapr_results.Rdata")
 # use zen4R or Zenodo UI to upload archive
 ```
 
----
+------------------------------------------------------------------------
