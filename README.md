@@ -1,55 +1,14 @@
-dissmapr: Workflow for Compositional Dissimilarity & Biodiversity
-Turnover Analysis
-================
-
-- [`dissmapr`](#dissmapr)
-- [`dissmapr`: A Novel Framework for Automated Compositional
-  Dissimilarity and Biodiversity Turnover
-  Analysis](#dissmapr-a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis)
-  - [Introduction](#introduction)
-  - [**dissmapr** provides a reproducible, end-to-end workflow for
-    computing and mapping compositional dissimilarity and biodiversity
-    turnover across large spatial and temporal scales. Core modules
-    handle occurrence retrieval, grid generation, environmental
-    extraction, order-wise dissimilarity, and bioregional
-    mapping.](#dissmapr-provides-a-reproducible-end-to-end-workflow-for-computing-and-mapping-compositional-dissimilarity-and-biodiversity-turnover-across-large-spatial-and-temporal-scales-core-modules-handle-occurrence-retrieval-grid-generation-environmental-extraction-order-wise-dissimilarity-and-bioregional-mapping)
-  - [Tutorial](#tutorial)
-  - [Installation](#installation)
-  - [Setup](#setup)
-  - [Load libraries](#load-libraries)
-  - [1. User-defined area of interest and grid
-    resolution](#1-user-defined-area-of-interest-and-grid-resolution)
-  - [2. Site by species matrix and sampling
-    effort](#2-site-by-species-matrix-and-sampling-effort)
-  - [3. Format data using `format_df`](#3-format-data-using-format_df)
-  - [4. Summarise records by grid using
-    `generate_grid`](#4-summarise-records-by-grid-using-generate_grid)
-  - [<img src="man/figures/README-map-aoi-1.png" width="100%" />](#section)
-  - [5. Summarise records by grid using
-    `generate_grid`](#5-summarise-records-by-grid-using-generate_grid)
-  - [6. Site by environment matrix](#6-site-by-environment-matrix)
-  - [7. If necessary project coordinates into meters projection
-    (e.g. UTM)](#7-if-necessary-project-coordinates-into-meters-projection-eg-utm)
-  - [8. Check for inter-correlation and remove highly corrected
-    variables](#8-check-for-inter-correlation-and-remove-highly-corrected-variables)
-  - [9. Zeta decline (sbs), orders 2:15](#9-zeta-decline-sbs-orders-215)
-  - [10. Zeta decays (sbs, xy), orders
-    2:15](#10-zeta-decays-sbs-xy-orders-215)
-  - [\> **Summary:** This figure shows that biodiversity patterns across
-    space are strongly shaped by distance at small scales, but this
-    effect weakens as you include more sites. In other words, rare or
-    localized species contribute to strong distance decay, but
-    widespread species dominate at higher spatial scales, leading to
-    more
-    uniformity.](#-summary-this-figure-shows-that-biodiversity-patterns-across-space-are-strongly-shaped-by-distance-at-small-scales-but-this-effect-weakens-as-you-include-more-sites-in-other-words-rare-or-localized-species-contribute-to-strong-distance-decay-but-widespread-species-dominate-at-higher-spatial-scales-leading-to-more-uniformity)
-  - [11. Zeta.msgdm(sbs, sbe, xy), order 2, 3, 5,
-    10](#11-zetamsgdmsbs-sbe-xy-order-2-3-5-10)
-  - [12. Predict(zeta2) with ‘sam.eff’](#12-predictzeta2-with-sameff)
-  - [13. Clustering analyses directly using
-    zeta.now](#13-clustering-analyses-directly-using-zetanow)
-  - [14. Predict(zeta2)](#14-predictzeta2)
-  - [15. Deposit all data frames, tables, maps, and standard metadata to
-    zenodo](#15-deposit-all-data-frames-tables-maps-and-standard-metadata-to-zenodo)
+---
+title: "dissmapr: Workflow for Compositional Dissimilarity & Biodiversity Turnover Analysis"
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
+  html_document:
+    toc: true
+    theme: cerulean     # or bootstrap, etc.
+    mathjax: default
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -765,7 +724,7 @@ plateaus.
 ``` r
 # Deviance explained summary results
 with(summary(zeta2$model), 1 - deviance/null.deviance) 
-#> [1] 0.2414894
+#> [1] 0.2613988
 # [1] 0.04414301
 # 0.04414301 means that approximately 4.41% of the variability in the response
 # variable is explained by your model. This is relatively low, suggesting that the
@@ -780,40 +739,40 @@ summary(zeta2$model)
 #>     cons.inter = cons.inter)
 #> 
 #> Coefficients:
-#>               Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)  8.869e-02  7.351e-03  12.066  < 2e-16 ***
-#> obs_sum1    -4.665e-02  3.312e-03 -14.086  < 2e-16 ***
-#> obs_sum2     0.000e+00  1.332e-02   0.000 1.000000    
-#> obs_sum3     0.000e+00  1.944e-02   0.000 1.000000    
-#> temp_mean1   0.000e+00  3.417e-02   0.000 1.000000    
-#> temp_mean2  -5.005e-03  1.092e-02  -0.458 0.646968    
-#> temp_mean3   0.000e+00  1.455e-02   0.000 1.000000    
-#> iso1        -1.257e-02  1.319e-02  -0.953 0.340971    
-#> iso2         0.000e+00  8.702e-03   0.000 1.000000    
-#> iso3         0.000e+00  1.137e-02   0.000 1.000000    
-#> temp_wetQ1   0.000e+00  9.971e-03   0.000 1.000000    
-#> temp_wetQ2  -3.370e-03  8.526e-03  -0.395 0.692751    
-#> temp_wetQ3  -2.627e-05  1.186e-02  -0.002 0.998233    
-#> temp_dryQ1  -6.591e-03  3.064e-02  -0.215 0.829718    
-#> temp_dryQ2   0.000e+00  9.984e-03   0.000 1.000000    
-#> temp_dryQ3   0.000e+00  1.091e-02   0.000 1.000000    
-#> rain_dry1   -1.026e-02  6.911e-03  -1.485 0.137882    
-#> rain_dry2    0.000e+00  7.889e-03   0.000 1.000000    
-#> rain_dry3    0.000e+00  1.172e-02   0.000 1.000000    
-#> rain_warmQ1 -5.756e-03  7.521e-03  -0.765 0.444250    
-#> rain_warmQ2  0.000e+00  8.907e-03   0.000 1.000000    
-#> rain_warmQ3 -5.231e-04  1.504e-02  -0.035 0.972258    
-#> distance1   -3.636e-02  1.066e-02  -3.409 0.000678 ***
-#> distance2    0.000e+00  1.046e-02   0.000 1.000000    
-#> distance3   -2.042e-02  1.386e-02  -1.473 0.141060    
+#>              Estimate Std. Error t value Pr(>|t|)    
+#> (Intercept)  0.093383   0.008003  11.669   <2e-16 ***
+#> obs_sum1    -0.054336   0.003652 -14.879   <2e-16 ***
+#> obs_sum2     0.000000   0.016067   0.000   1.0000    
+#> obs_sum3    -0.004141   0.023890  -0.173   0.8624    
+#> temp_mean1   0.000000   0.041238   0.000   1.0000    
+#> temp_mean2  -0.016894   0.012707  -1.329   0.1840    
+#> temp_mean3   0.000000   0.016232   0.000   1.0000    
+#> iso1        -0.004153   0.014175  -0.293   0.7696    
+#> iso2         0.000000   0.009543   0.000   1.0000    
+#> iso3        -0.007738   0.014430  -0.536   0.5919    
+#> temp_wetQ1   0.000000   0.011846   0.000   1.0000    
+#> temp_wetQ2  -0.006330   0.010348  -0.612   0.5409    
+#> temp_wetQ3  -0.002776   0.013578  -0.204   0.8380    
+#> temp_dryQ1   0.000000   0.037884   0.000   1.0000    
+#> temp_dryQ2  -0.007393   0.012023  -0.615   0.5387    
+#> temp_dryQ3   0.000000   0.012874   0.000   1.0000    
+#> rain_dry1   -0.016038   0.007734  -2.074   0.0384 *  
+#> rain_dry2    0.000000   0.009204   0.000   1.0000    
+#> rain_dry3    0.000000   0.013271   0.000   1.0000    
+#> rain_warmQ1 -0.002311   0.008153  -0.283   0.7769    
+#> rain_warmQ2 -0.004569   0.009971  -0.458   0.6469    
+#> rain_warmQ3  0.000000   0.016865   0.000   1.0000    
+#> distance1   -0.024473   0.011760  -2.081   0.0377 *  
+#> distance2    0.000000   0.012084   0.000   1.0000    
+#> distance3   -0.022584   0.014932  -1.512   0.1308    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> (Dispersion parameter for gaussian family taken to be 0.001350902)
+#> (Dispersion parameter for gaussian family taken to be 0.001759128)
 #> 
-#>     Null deviance: 1.7365  on 999  degrees of freedom
-#> Residual deviance: 1.3171  on 975  degrees of freedom
-#> AIC: -3742.4
+#>     Null deviance: 2.3222  on 999  degrees of freedom
+#> Residual deviance: 1.7151  on 975  degrees of freedom
+#> AIC: -3478.4
 #> 
 #> Number of Fisher Scoring iterations: 2
 ```
