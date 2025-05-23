@@ -1,19 +1,59 @@
+dissmapr: Automated Compositional Dissimilarity & Biodiversity Turnover
+================
+
+- [`dissmapr`](#dissmapr)
+- [`dissmapr`: A Novel Framework for Automated Compositional
+  Dissimilarity and Biodiversity Turnover
+  Analysis](#dissmapr-a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis)
+  - [Tutorial](#tutorial)
+  - [1. User-Defined Area of Interest and Grid
+    Resolution](#1-user-defined-area-of-interest-and-grid-resolution)
+  - [2. Site-by-Species Matrix and Sampling
+    Effort](#2-site-by-species-matrix-and-sampling-effort)
+  - [3. Site-by-Environment Matrix](#3-site-by-environment-matrix)
+  - [4. Zeta Decline and Zeta Decay](#4-zeta-decline-and-zeta-decay)
+  - [5. MS-GDM with
+    `Zeta.msgdm(sbs, sbe, xy)`](#5-ms-gdm-with-zetamsgdmsbs-sbe-xy)
+  - [6. Prediction with `zeta2` (Present
+    Scenario)](#6-prediction-with-zeta2-present-scenario)
+  - [7. Prediction with `zeta2` (Future
+    Scenarios)](#7-prediction-with-zeta2-future-scenarios)
+  - [8. Data Publication to Zenodo](#8-data-publication-to-zenodo)
+- [Basic Dissimilarity Workflow](#basic-dissimilarity-workflow)
+  - [1. User-defined area of interest and grid
+    resolution](#1-user-defined-area-of-interest-and-grid-resolution-1)
+  - [2. Site by species matrix and sampling
+    effort](#2-site-by-species-matrix-and-sampling-effort-1)
+  - [3. Site by environment matrix](#3-site-by-environment-matrix-1)
+  - [4a. Zeta decline (sbs), orders
+    2:15](#4a-zeta-decline-sbs-orders-215)
+  - [4b. Zeta decay (sbs, xy), orders
+    2:15](#4b-zeta-decay-sbs-xy-orders-215)
+  - [5. Zeta.msgdm(sbs, sbe, xy), order 2, 3, 5,
+    10](#5-zetamsgdmsbs-sbe-xy-order-2-3-5-10)
+  - [6a. Predict(zeta2) with ‘sam.eff’](#6a-predictzeta2-with-sameff)
+  - [6b. Clustering analyses directly using
+    zeta.now](#6b-clustering-analyses-directly-using-zetanow)
+  - [7. Predict(zeta2)](#7-predictzeta2)
+  - [8. Deposit all data frames, tables, maps, and standard metadata to
+    zenodo](#8-deposit-all-data-frames-tables-maps-and-standard-metadata-to-zenodo)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# dissmapr
+# `dissmapr`
 
 <!-- badges: start -->
+
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/nithecs-biomath/RBasicPack/master?urlpath=rstudio)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![test-coverage](https://github.com/macSands/templateB3/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/macSands/templateB3/actions/workflows/test-coverage.yaml)
+[![test-coverage](https://github.com/macSands/dissmapr/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/macSands/dissmapr/actions/workflows/test-coverage.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/macSands/templateB3/graph/badge.svg)](https://app.codecov.io/gh/macSands/templateB3)
-[![R-CMD-check](https://github.com/macSands/templateB3/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/macSands/templateB3/actions/workflows/R-CMD-check.yaml)
+coverage](https://codecov.io/gh/macSands/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/macSands/dissmapr)
+[![R-CMD-check](https://github.com/macSands/dissmapr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/macSands/dissmapr/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-# dissmapr: A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+# `dissmapr`: A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 ## Tutorial
 
@@ -24,7 +64,6 @@ using various commonly used packages (e.g., `sf`, `terra`, `dplyr`,
 `ggplot2`, etc.).  
 Please note that paths to data, package names, or exact functions may
 need adjustment depending on your local setup.
-
 
 ``` r
 # install remotes if needed
@@ -50,51 +89,14 @@ devtools::load_all()
 ``` r
 # Load necessary libraries
 library(sf)      # for vector spatial data
-#> Linking to GEOS 3.13.0, GDAL 3.10.1, PROJ 9.5.1; sf_use_s2() is TRUE
 library(terra)   # for raster/grid operations
-#> terra 1.8.29
 library(dplyr)   # for data manipulation
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:terra':
-#> 
-#>     intersect, union
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 library(ggplot2) # for plotting
 library(tidyr)
-#> 
-#> Attaching package: 'tidyr'
-#> The following object is masked from 'package:terra':
-#> 
-#>     extract
 library(data.table)
-#> 
-#> Attaching package: 'data.table'
-#> The following objects are masked from 'package:dplyr':
-#> 
-#>     between, first, last
-#> The following object is masked from 'package:terra':
-#> 
-#>     shift
 library(httr)
 library(geodata)
 library(zoo)
-#> 
-#> Attaching package: 'zoo'
-#> The following objects are masked from 'package:data.table':
-#> 
-#>     yearmon, yearqtr
-#> The following object is masked from 'package:terra':
-#> 
-#>     time<-
-#> The following objects are masked from 'package:base':
-#> 
-#>     as.Date, as.Date.numeric
 library(zetadiv)
 library(viridis)
 ```
@@ -107,7 +109,7 @@ library(viridis)
 # aoi <- st_read(system.file("data", "rsa.shp", package = "dissMapR"))
 aoi <- sf::st_read("inst/extdata/rsa.shp")
 #> Reading layer `rsa' from data source 
-#>   `inst/extdata/rsa.shp' 
+#>   `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' 
 #>   using driver `ESRI Shapefile'
 #> Simple feature collection with 1 feature and 1 field
 #> Geometry type: POLYGON
@@ -199,12 +201,12 @@ dim(occ_data)
 occ_data <- subset(occ_data, !is.na(cell_id))
 head(occ_data)
 #>    species        x         y cell_id
-#> 1 SpeciesA 21.31359 -24.14628     109
-#> 2 SpeciesA 27.62681 -34.56023     815
-#> 3 SpeciesB 19.05475 -23.78736     105
-#> 4 SpeciesC 28.13970 -24.33725     156
-#> 5 SpeciesA 22.90552 -32.16872     640
-#> 6 SpeciesC 25.08964 -29.07542     447
+#> 1 SpeciesA 20.41523 -24.80435     173
+#> 2 SpeciesC 32.82557 -33.63629     759
+#> 3 SpeciesA 16.91499 -29.33862     463
+#> 4 SpeciesB 19.91814 -25.29544     205
+#> 5 SpeciesC 27.14923 -26.33642     286
+#> 6 SpeciesA 25.55753 -23.70720     118
 dim(occ_data)
 #> [1] 1000    4
 ```
@@ -218,8 +220,6 @@ sites_xy <- occ_data %>%
   dplyr::group_by(cell_id, x, y) %>%
   dplyr::summarise(effort = n(),
             richness = n_distinct(species))
-#> `summarise()` has grouped output by 'cell_id', 'x'. You can override using the
-#> `.groups` argument.
 names(sites_xy) = c("cell_id","x","y","effort","richness")
 dim(sites_xy)
 #> [1] 1000    5
@@ -228,12 +228,12 @@ head(sites_xy)
 #> # Groups:   cell_id, x [6]
 #>   cell_id     x     y effort richness
 #>     <dbl> <dbl> <dbl>  <int>    <int>
-#> 1       3  17.6 -22.3      1        1
-#> 2       3  17.9 -22.4      1        1
-#> 3       3  17.9 -22.2      1        1
-#> 4       4  18.0 -22.4      1        1
-#> 5       4  18.1 -22.4      1        1
-#> 6       5  18.7 -22.5      1        1
+#> 1       1  16.7 -22.2      1        1
+#> 2       2  17.0 -22.2      1        1
+#> 3       4  18.3 -22.4      1        1
+#> 4       4  18.3 -22.6      1        1
+#> 5       5  18.8 -22.2      1        1
+#> 6       5  18.8 -22.1      1        1
 ```
 
 #### Sampling Effort
@@ -244,7 +244,7 @@ effort_df <- occ_data %>%
   dplyr::group_by(cell_id) %>% # ,decimalLongitude,decimalLatitude
   dplyr::summarise(n_occurrences = n())
 dim(effort_df)
-#> [1] 595   2
+#> [1] 582   2
 
 # Rasterize sampling effort (optional for mapping)
 sam_eff_rast <- r_id
@@ -261,7 +261,7 @@ sbs_long <- occ_data %>%
   dplyr::distinct(cell_id, species) %>%
   dplyr::mutate(presence = 1)
 dim(sbs_long)
-#> [1] 820   3
+#> [1] 818   3
 
 # Ensure we have a row for every cell (site) in 'xy'
 all_cells <- data.frame(cell_id = 1:ncell(r_id))
@@ -331,8 +331,8 @@ env_stack
 #> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
 #> source(s)   : memory
 #> names       :     temp,    precip 
-#> min values  : 10.02008,  102.5856 
-#> max values  : 29.97091, 2999.7811
+#> min values  : 10.05075,  103.2148 
+#> max values  : 29.99374, 2996.0352
 ```
 
 #### Extract Environmental Values
@@ -341,13 +341,13 @@ env_stack
 # Extract environmental values at each site centroid
 env_vals <- terra::extract(env_stack, cbind(sites_xy$x, sites_xy$y))
 head(env_vals)
-#>       temp    precip
-#> 1 10.42225 1892.7073
-#> 2 10.42225 1892.7073
-#> 3 10.42225 1892.7073
-#> 4 22.49751 1798.8709
-#> 5 22.49751 1798.8709
-#> 6 25.87650  561.6971
+#>       temp   precip
+#> 1 21.65641 2239.760
+#> 2 17.93873 1074.091
+#> 3 16.94905 1703.231
+#> 4 16.94905 1703.231
+#> 5 17.72020 1334.781
+#> 6 17.72020 1334.781
 # env_vals <- env_vals[ , -1]  # remove ID column returned by extract()
 ```
 
@@ -373,8 +373,8 @@ env_stack_all
 #> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
 #> source(s)   : memory
 #> names       :     temp,    precip, sam.eff 
-#> min values  : 10.02008,  102.5856,       0 
-#> max values  : 29.97091, 2999.7811,       5
+#> min values  : 10.05075,  103.2148,       0 
+#> max values  : 29.99374, 2996.0352,       6
 ```
 
 **Outcome**:  
@@ -652,40 +652,79 @@ multiple future scenarios
 | \## Final Remarks                                                                                                                                                                                                                                                                                                                                                                                     |
 | \- This script demonstrates the **core** steps for dissecting compositional turnover and bioregional patterns under present or future scenarios using `dissMapR` (and related packages). - Each step can be adapted to use your specific data sources and packages. - Always verify spatial extents, coordinate reference systems, and the validity of environmental data before scaling up analyses. |
 
-### Draft notes from CangH:
+# Basic Dissimilarity Workflow
 
-Dissimilarity workflow  
-1. User-defined area of interest and grid resolution (incl. rsa shape
-file, 0.5 degree), generate a map of AOI and a data frame ‘xy’ of site
-centroids.  
-2. Site by species matrix and sampling effort (incl. access occurrences
-of user-specified taxon or species list, assign records to the grids,
-generate a raster of occurrence counts called sampling effort), generate
-a binary data frame ‘sbs’, a richness map of sbs row sums, a single
-variable data frame of sampling effort ‘sam.eff’ and its raster map.
-Note, occurrence coordinates are only used for assigning then into
-grids; they are not needed beyond this step.  
-3. Site by environment matrix; extract environmental variables only for
-site centroids ‘xy’ and stack them into raster and data frame ‘sbe’; add
-‘sam.eff’ to the stack raster and sbe.  
-4. Zeta decline (sbs) and zeta decay (sbs, xy), orders 2:15. Generate
-statistics and figures, no maps.  
-5. Zeta.msgdm(sbs, sbe, xy), order 2, 3, 5, 10. Generate statistics and
-figures, no maps. Save fitted order 2 model ‘zeta2’.  
-6. Predict(zeta2) with ‘sam.eff’ in the ‘sbe’ replaced by ‘sam.max’ a
-constant for all sites = max(sam.eff). Predict for the updated sbe and
-xy and produce a site by site matrix of predicted zeta ‘zeta.now’. Run
-nmds for the predicted zeta matrix and plot RGB of the 3 component
-scores. Clustering analyses directly using zeta.now. Generate main maps
-of dissimilarity (the rgb plot) and bioregions (from clustering).  
-7. Predict(zeta2) with appended (future scenarios) environmental
-variables and ‘sam.max’ in sbe. For m number of scenarios plus the
-present scenario (step6) and n sites of xy, this updated sbe.future will
-have k = (m+1) x n number of rows. ‘xy’ also updated with k rows.
-Predict a k by k matrix of predicted zeta ‘zeta.future’. Nmds and
-clustering of zeta.future, map sub matrices to indicate predicted future
-dissimilarity, bioregions, and temporal turnover. Note, step6 is
-redundant if step7 is needed; step7 has the same code but more results
-including those from step6 but potentially computational demanding.  
-8. Deposit all data frames, tables, maps, and standard metadata to
-zenodo
+## 1. User-defined area of interest and grid resolution
+
+> > Read RSA shape file and set resolution e.g. 0.5 degree Generate a
+> > map of AOI Generate a data frame ‘xy’ of site centroids
+
+------------------------------------------------------------------------
+
+## 2. Site by species matrix and sampling effort
+
+> > Access occurrences of user-specified taxon or species list Assign
+> > records to the grids Generate a raster of occurrence counts called
+> > `sam_eff` Generate a binary data frame ‘sbs’ Generate richness of
+> > sbs row sums and map Generate a single variable data frame of
+> > sampling effort ‘sam.eff’ Generate ‘sam.eff’ raster map Note:
+> > occurrence coordinates are only used for assigning then into grids;
+> > they are not needed beyond this step.
+
+------------------------------------------------------------------------
+
+## 3. Site by environment matrix
+
+> > Stack environmental variables into raster Add ‘sam.eff’ raster to
+> > the stack raster Extract environmental variables for site centroids
+> > ‘xy’ Generate data frame ‘sbe’
+
+------------------------------------------------------------------------
+
+## 4a. Zeta decline (sbs), orders 2:15
+
+> > Generate statistics and figures, no maps
+
+## 4b. Zeta decay (sbs, xy), orders 2:15
+
+> > Generate statistics and figures, no maps
+
+------------------------------------------------------------------------
+
+## 5. Zeta.msgdm(sbs, sbe, xy), order 2, 3, 5, 10
+
+> > Generate statistics and figures, no maps Save fitted order 2 model
+> > ‘zeta2’
+
+------------------------------------------------------------------------
+
+## 6a. Predict(zeta2) with ‘sam.eff’
+
+> > In the ‘sbe’ add ‘sam.max’, a constant for all sites = max(sam.eff)
+> > Predict for the updated sbe and xy Produce a site by site matrix of
+> > predicted zeta ‘zeta.now’ Run nmds for the predicted zeta matrix
+> > Plot RGB of the 3 component scores
+
+## 6b. Clustering analyses directly using zeta.now
+
+> > Generate maps of dissimilarity (the rgb plot) Generate map of
+> > bioregions (from clustering)
+
+------------------------------------------------------------------------
+
+## 7. Predict(zeta2)
+
+> > with appended (future scenarios) environmental variables and
+> > ‘sam.max’ in sbe For m number of scenarios plus the present scenario
+> > (step 6a) and n sites of xy Updated sbe.future will have k = (m+1) x
+> > n number of rows ‘xy’ also updated with k rows Predict a k by k
+> > matrix of predicted zeta ‘zeta.future’ Nmds of zeta.future
+> > clustering of zeta.future Map sub matrices to indicate predicted
+> > future dissimilarity Map predicted future bioregions Map temporal
+> > turnover. Note: step 6a is redundant if step 7 is needed Note: step
+> > 7 has the same code but more results including those from step 6 but
+> > potentially computational demanding
+
+------------------------------------------------------------------------
+
+## 8. Deposit all data frames, tables, maps, and standard metadata to zenodo

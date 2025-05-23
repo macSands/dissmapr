@@ -13,6 +13,8 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0),
     pkgdown
+    remotes
+    devtools
 Imports: 
     data.table,
     dplyr,

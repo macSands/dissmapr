@@ -49,7 +49,7 @@ remotes::install_github("macSands/dissmapr")
 ```
 
 
-```{r setup}
+```{r load}
 # Load your package 
 # library(dissMapR)
 library(dissmapr)
