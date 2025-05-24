@@ -23,8 +23,6 @@ invisible(lapply(required_packages, function(pkg) {
   }
 }))
 
-
-
 # DISTANCE BETWEEN SITES
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate geographic distance via Haversine formula (helper)

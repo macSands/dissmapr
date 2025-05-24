@@ -31,7 +31,13 @@ Imports:
     reshape2,
     entropy,
     caret,
-    corrplot
+    corrplot,
+    pbapply,
+    NbClust,
+    factoextra,
+    fields,
+    mclust,
+    patchwork
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

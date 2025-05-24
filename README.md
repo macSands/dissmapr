@@ -1,6 +1,3 @@
-dissmapr: Workflow for Compositional Dissimilarity & Biodiversity
-Turnover Analysis
-================
 
 - [`dissmapr`](#dissmapr)
   - [A Novel Framework for Automated Compositional Dissimilarity and
@@ -842,7 +839,7 @@ Plot.ispline(isplines = zeta2.ispline, distance = TRUE)
 ``` r
 # Deviance explained summary results
 with(summary(zeta2$model), 1 - deviance/null.deviance) 
-#> [1] 0.2167637
+#> [1] 0.2670619
 # [1] 0.04414301
 # 0.04414301 means that approximately 4.41% of the variability in the response
 # variable is explained by your model. This is relatively low, suggesting that the
@@ -858,39 +855,39 @@ summary(zeta2$model)
 #> 
 #> Coefficients:
 #>              Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)  0.104533   0.008100  12.905  < 2e-16 ***
-#> obs_sum1    -0.047917   0.003873 -12.371  < 2e-16 ***
-#> obs_sum2     0.000000   0.017630   0.000 1.000000    
-#> obs_sum3     0.000000   0.033889   0.000 1.000000    
-#> temp_mean1   0.000000   0.039416   0.000 1.000000    
-#> temp_mean2   0.000000   0.012329   0.000 1.000000    
-#> temp_mean3   0.000000   0.016198   0.000 1.000000    
-#> iso1        -0.022323   0.014887  -1.500 0.134065    
-#> iso2         0.000000   0.009515   0.000 1.000000    
-#> iso3        -0.010248   0.014151  -0.724 0.469113    
-#> temp_wetQ1   0.000000   0.012014   0.000 1.000000    
-#> temp_wetQ2  -0.007877   0.010394  -0.758 0.448703    
-#> temp_wetQ3   0.000000   0.013552   0.000 1.000000    
-#> temp_dryQ1   0.000000   0.037535   0.000 1.000000    
-#> temp_dryQ2  -0.004234   0.012762  -0.332 0.740152    
-#> temp_dryQ3   0.000000   0.013171   0.000 1.000000    
-#> rain_dry1   -0.008304   0.007821  -1.062 0.288590    
-#> rain_dry2    0.000000   0.010092   0.000 1.000000    
-#> rain_dry3    0.000000   0.014942   0.000 1.000000    
-#> rain_warmQ1  0.000000   0.008756   0.000 1.000000    
-#> rain_warmQ2 -0.010978   0.011193  -0.981 0.326939    
-#> rain_warmQ3 -0.009394   0.016323  -0.576 0.565057    
-#> distance1   -0.046762   0.012326  -3.794 0.000158 ***
-#> distance2    0.000000   0.013237   0.000 1.000000    
-#> distance3   -0.007505   0.018452  -0.407 0.684289    
+#> (Intercept)  0.095647   0.007472  12.801  < 2e-16 ***
+#> obs_sum1    -0.053489   0.003637 -14.708  < 2e-16 ***
+#> obs_sum2     0.000000   0.014658   0.000  1.00000    
+#> obs_sum3     0.000000   0.023603   0.000  1.00000    
+#> temp_mean1   0.000000   0.038493   0.000  1.00000    
+#> temp_mean2  -0.011615   0.012392  -0.937  0.34885    
+#> temp_mean3   0.000000   0.016568   0.000  1.00000    
+#> iso1        -0.007920   0.014633  -0.541  0.58844    
+#> iso2        -0.001799   0.009469  -0.190  0.84935    
+#> iso3         0.000000   0.014331   0.000  1.00000    
+#> temp_wetQ1   0.000000   0.011254   0.000  1.00000    
+#> temp_wetQ2   0.000000   0.009887   0.000  1.00000    
+#> temp_wetQ3  -0.008404   0.013725  -0.612  0.54048    
+#> temp_dryQ1  -0.014851   0.035747  -0.415  0.67791    
+#> temp_dryQ2  -0.004152   0.011290  -0.368  0.71315    
+#> temp_dryQ3   0.000000   0.011385   0.000  1.00000    
+#> rain_dry1   -0.020625   0.007384  -2.793  0.00532 ** 
+#> rain_dry2    0.000000   0.009091   0.000  1.00000    
+#> rain_dry3    0.000000   0.012874   0.000  1.00000    
+#> rain_warmQ1 -0.006883   0.008114  -0.848  0.39648    
+#> rain_warmQ2 -0.010844   0.010124  -1.071  0.28439    
+#> rain_warmQ3  0.000000   0.015120   0.000  1.00000    
+#> distance1   -0.027423   0.011233  -2.441  0.01481 *  
+#> distance2    0.000000   0.012244   0.000  1.00000    
+#> distance3   -0.019272   0.018465  -1.044  0.29688    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> (Dispersion parameter for gaussian family taken to be 0.001987652)
+#> (Dispersion parameter for gaussian family taken to be 0.001730039)
 #> 
-#>     Null deviance: 2.4743  on 999  degrees of freedom
-#> Residual deviance: 1.9380  on 975  degrees of freedom
-#> AIC: -3356.2
+#>     Null deviance: 2.3014  on 999  degrees of freedom
+#> Residual deviance: 1.6868  on 975  degrees of freedom
+#> AIC: -3495.1
 #> 
 #> Number of Fisher Scoring iterations: 2
 ```
