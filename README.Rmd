@@ -62,13 +62,13 @@ This step-by-step structure, mirrored in the accompanying tutorial sections, pro
 
 Install and load the `dissmapr` package from GitHub, ensuring all functions are available for use in the analysis workflow.
 
-```{r install, eval=FALSE, include=FALSE}
+```{r install, eval=FALSE, include=TRUE}
 # install remotes if needed
 # install.packages("remotes")
 remotes::install_github("macSands/dissmapr")
 ```
 
-```{r load-dissmapr, include=FALSE}
+```{r load-dissmapr, include=TRUE}
 # Ensure the package is loaded when knitting
 library(dissmapr)
 
@@ -461,7 +461,7 @@ Computes the distance decay of zeta diversity for a range of orders (number of a
 zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
                           site_spp_pa[,-(1:6)],
                           sam = 1000,
-                          orders = 2:7,
+                          orders = 2:10,
                           plot = TRUE,
                           confint.level = 0.95
 )

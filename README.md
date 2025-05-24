@@ -66,6 +66,20 @@ spatial and temporal scales.
 Install and load the `dissmapr` package from GitHub, ensuring all
 functions are available for use in the analysis workflow.
 
+``` r
+# install remotes if needed
+# install.packages("remotes")
+remotes::install_github("macSands/dissmapr")
+```
+
+``` r
+# Ensure the package is loaded when knitting
+library(dissmapr)
+
+# Make sure all the functions are loaded
+devtools::load_all()
+```
+
 ------------------------------------------------------------------------
 
 ### 2. Load other R libraries
@@ -698,7 +712,7 @@ Computes the distance decay of zeta diversity for a range of orders
 zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
                           site_spp_pa[,-(1:6)],
                           sam = 1000,
-                          orders = 2:7,
+                          orders = 2:10,
                           plot = TRUE,
                           confint.level = 0.95
 )
@@ -708,6 +722,9 @@ zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
 #> [1] 5
 #> [1] 6
 #> [1] 7
+#> [1] 8
+#> [1] 9
+#> [1] 10
 ```
 
 <img src="man/figures/README-zeta-decays-1.png" width="100%" />
@@ -839,7 +856,7 @@ Plot.ispline(isplines = zeta2.ispline, distance = TRUE)
 ``` r
 # Deviance explained summary results
 with(summary(zeta2$model), 1 - deviance/null.deviance) 
-#> [1] 0.2670619
+#> [1] 0.2033946
 # [1] 0.04414301
 # 0.04414301 means that approximately 4.41% of the variability in the response
 # variable is explained by your model. This is relatively low, suggesting that the
@@ -855,39 +872,39 @@ summary(zeta2$model)
 #> 
 #> Coefficients:
 #>              Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)  0.095647   0.007472  12.801  < 2e-16 ***
-#> obs_sum1    -0.053489   0.003637 -14.708  < 2e-16 ***
-#> obs_sum2     0.000000   0.014658   0.000  1.00000    
-#> obs_sum3     0.000000   0.023603   0.000  1.00000    
-#> temp_mean1   0.000000   0.038493   0.000  1.00000    
-#> temp_mean2  -0.011615   0.012392  -0.937  0.34885    
-#> temp_mean3   0.000000   0.016568   0.000  1.00000    
-#> iso1        -0.007920   0.014633  -0.541  0.58844    
-#> iso2        -0.001799   0.009469  -0.190  0.84935    
-#> iso3         0.000000   0.014331   0.000  1.00000    
-#> temp_wetQ1   0.000000   0.011254   0.000  1.00000    
-#> temp_wetQ2   0.000000   0.009887   0.000  1.00000    
-#> temp_wetQ3  -0.008404   0.013725  -0.612  0.54048    
-#> temp_dryQ1  -0.014851   0.035747  -0.415  0.67791    
-#> temp_dryQ2  -0.004152   0.011290  -0.368  0.71315    
-#> temp_dryQ3   0.000000   0.011385   0.000  1.00000    
-#> rain_dry1   -0.020625   0.007384  -2.793  0.00532 ** 
-#> rain_dry2    0.000000   0.009091   0.000  1.00000    
-#> rain_dry3    0.000000   0.012874   0.000  1.00000    
-#> rain_warmQ1 -0.006883   0.008114  -0.848  0.39648    
-#> rain_warmQ2 -0.010844   0.010124  -1.071  0.28439    
-#> rain_warmQ3  0.000000   0.015120   0.000  1.00000    
-#> distance1   -0.027423   0.011233  -2.441  0.01481 *  
-#> distance2    0.000000   0.012244   0.000  1.00000    
-#> distance3   -0.019272   0.018465  -1.044  0.29688    
+#> (Intercept)  0.084272   0.007866  10.713  < 2e-16 ***
+#> obs_sum1    -0.049532   0.003942 -12.565  < 2e-16 ***
+#> obs_sum2     0.000000   0.018984   0.000  1.00000    
+#> obs_sum3    -0.004360   0.033647  -0.130  0.89693    
+#> temp_mean1   0.000000   0.043960   0.000  1.00000    
+#> temp_mean2   0.000000   0.014570   0.000  1.00000    
+#> temp_mean3  -0.002049   0.017560  -0.117  0.90713    
+#> iso1         0.000000   0.014279   0.000  1.00000    
+#> iso2         0.000000   0.009377   0.000  1.00000    
+#> iso3         0.000000   0.015613   0.000  1.00000    
+#> temp_wetQ1   0.000000   0.012651   0.000  1.00000    
+#> temp_wetQ2   0.000000   0.011376   0.000  1.00000    
+#> temp_wetQ3   0.000000   0.014879   0.000  1.00000    
+#> temp_dryQ1  -0.015966   0.037311  -0.428  0.66881    
+#> temp_dryQ2  -0.014025   0.012191  -1.151  0.25022    
+#> temp_dryQ3   0.000000   0.012423   0.000  1.00000    
+#> rain_dry1   -0.021985   0.007853  -2.800  0.00522 ** 
+#> rain_dry2    0.000000   0.009982   0.000  1.00000    
+#> rain_dry3    0.000000   0.014310   0.000  1.00000    
+#> rain_warmQ1  0.000000   0.008823   0.000  1.00000    
+#> rain_warmQ2 -0.010885   0.010973  -0.992  0.32143    
+#> rain_warmQ3  0.000000   0.018963   0.000  1.00000    
+#> distance1   -0.018723   0.012071  -1.551  0.12122    
+#> distance2    0.000000   0.012773   0.000  1.00000    
+#> distance3   -0.030636   0.019029  -1.610  0.10773    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> (Dispersion parameter for gaussian family taken to be 0.001730039)
+#> (Dispersion parameter for gaussian family taken to be 0.001993948)
 #> 
-#>     Null deviance: 2.3014  on 999  degrees of freedom
-#> Residual deviance: 1.6868  on 975  degrees of freedom
-#> AIC: -3495.1
+#>     Null deviance: 2.4405  on 999  degrees of freedom
+#> Residual deviance: 1.9441  on 975  degrees of freedom
+#> AIC: -3353.1
 #> 
 #> Number of Fisher Scoring iterations: 2
 ```
