@@ -1,13 +1,84 @@
-optimized_compute_orderwise <- function(df,
-                                        func,
-                                        site_col,
-                                        sp_cols,      # used for non-geodist functions
-                                        order = 2,
-                                        sample_no = NULL,
-                                        sample_portion = 1,  # proportion of combinations to sample (default 1 = 100%)
-                                        parallel = TRUE,
-                                        n_workers = parallel::detectCores() - 1,
-                                        coord_cols = NULL) {  # new parameter for coordinate columns (e.g. c("x", "y"))
+#' Compute order‐wise ecological indices across multiple sites
+#'
+#' This function computes ecological index values (e.g. dissimilarity metrics,
+#' distances, turnover) for sets of sites at specified orders (single‐sites,
+#' pairs, higher‐order combinations). It supports both specialized
+#' vectorized implementations (for Gower dissimilarity) and generic or
+#' parallel looped approaches.
+#'
+#' @param df A `data.frame` or `data.table` containing site identifiers,
+#'   species abundances, and optionally spatial coordinates.
+#' @param func A function that computes the index for a single‐site (when
+#'   `order = 1`) or between‐site vectors (`order >= 2`). Must accept one
+#'   vector (for `order = 1`) or two vectors (for `order >= 2`), with an
+#'   optional `coord_cols` argument when using geographic distance.
+#' @param site_col A string naming the column in `df` that contains site IDs.
+#' @param sp_cols A character vector of column names in `df` representing
+#'   species counts or presence–absence data; ignored if `func` is
+#'   `geodist_helper`.
+#' @param order Integer scalar (or vector) of the combination order(s) to
+#'   compute (e.g. `1` for single sites, `2` for pairs, `3` for triplets).
+#'   Default is `2`.
+#' @param sample_no Optional integer: maximum number of combinations to
+#'   sample for higher orders (`order >= 3`). If `NULL` (default), all
+#'   combinations are used (subject to `sample_portion`).
+#' @param sample_portion Numeric in (0, 1], proportion of all possible
+#'   combinations to sample when `order >= 3`. Defaults to `1` (100%).
+#' @param parallel Logical; whether to use parallel processing via
+#'   the **future** framework. Default is `TRUE`.
+#' @param n_workers Integer; number of parallel workers
+#'   (defaults to `parallel::detectCores() - 1`).
+#' @param coord_cols Optional character vector of column names for spatial
+#'   coordinates (e.g. `c("x", "y")`). Required when `func` is
+#'   `geodist_helper`.
+#'
+#' @return A `data.table` with columns:
+#'   - `site_from`: origin site ID
+#'   - `site_to`: target site ID(s) (or `NA` for single‐site)
+#'   - `value`: computed index value
+#'   - `order`: combination order used
+#'
+#' @details
+#' - **Order 1** returns single‐site values (calls `func(vec)` once per site).
+#' - **Order 2** uses a fast path for `orderwise_diss_gower`, a pairwise loop
+#'   for `geodist_helper`, or a generic loop for other functions.
+#' - **Higher orders** (`≥ 3`) sample or exhaustively generate site‐sets,
+#'   then compute values (optionally in parallel).
+#'
+#' @examples
+#' # Single‐site sum of abundances
+#' df <- data.frame(site = rep(letters[1:3], each = 5),
+#'                  sp1  = sample(0:5, 15, TRUE))
+#' compute_orderwise(df,
+#'                   func     = function(x) sum(x),
+#'                   site_col = "site",
+#'                   sp_cols  = "sp1",
+#'                   order    = 1)
+#'
+#' # Pairwise Gower dissimilarity (vectorized path)
+#' compute_orderwise(df,
+#'                   func     = orderwise_diss_gower,
+#'                   site_col = "site",
+#'                   sp_cols  = "sp1",
+#'                   order    = 2)
+#'
+#' @import pbapply
+#' @import data.table
+#' @import future.apply
+#' @import dplyr
+#' @import reshape2
+#' @import cluster
+#' @export
+compute_orderwise <- function(df,
+                              func,
+                              site_col,
+                              sp_cols,
+                              order           = 2,
+                              sample_no       = NULL,
+                              sample_portion  = 1,
+                              parallel        = TRUE,
+                              n_workers       = parallel::detectCores() - 1,
+                              coord_cols      = NULL) {  # new parameter for coordinate columns (e.g. c("x", "y"))
   # Required packages check
   required_packages <- c("pbapply", "data.table", "future.apply", "reshape2", "dplyr")
   invisible(lapply(required_packages, function(pkg) {

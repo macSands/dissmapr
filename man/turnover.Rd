@@ -17,3 +17,4 @@ The species turnover value.
 \description{
 Calculate Species Turnover or Beta Diversity
 }
+\keyword{internal}

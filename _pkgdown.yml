@@ -25,3 +25,41 @@ navbar:
       icon: fa-cube
       href: https://b-cubed.eu/
       aria-label: B-Cubed website
+
+reference:
+  # 1. Overview block
+  - title: "Overview of dissMapR functions"
+    desc: |
+      The package consists of 10 core functions that address key steps in biodiversity data analysis, from sourcing raw occurrence and environmental data to mapping bioregions and predicting compositional turnover. It also leverages existing tools, such as the `zetadiv` package (specifically the `zetadiv::Zeta.msgdm` function) for MS-GDM, alongside widely used R libraries like `terra`, `sf`, and `ggplot2`.
+
+  # 2. First five functions, in order
+  - contents:
+      - get_occurrence_data
+      - generate_grid
+      - assign_mapsheet
+      - get_enviro_data
+      - format_df
+      - compute_orderwise
+
+  # 3. Last four core functions
+  - contents:
+      - rm_correlated
+      - predict_dissim
+      - map_bioreg
+      - map_bioregDiff
+
+  # 4. The helper_indices “section”, with indented sub-functions
+  - title: "helper_indices"
+    desc: |
+      Provides supporting functions to compute various ecological indices and metrics for data exploration. Use `helper_indices` to choose a specific function for the `func` parameter in `compute_orderwise`, enabling the calculation of one of the following metrics:
+
+      - **`distance`**: Calculates the geographic distance between sites using their coordinates (Haversine formula; metres).
+      - **`richness`**: Counts unique species per site; reports absolute differences for pairwise and summary stats (range, variance, mean) for multi-site.
+      - **`abund`**: Sums total individuals per site; reports absolute pairwise differences and dispersion metrics for higher orders.
+      - **`turnover`**: Computes beta diversity as proportion unshared; 0–1 for pairwise, extended to multi-site averages or totals.
+      - **`phi_coef`**: Phi coefficient for presence–absence; –1 to +1 pairwise, summary of means/variances across combinations.
+      - **`cor_spear`**: Spearman’s rank correlation for abundances; pairwise and averaged multi-site.
+      - **`cor_pears`**: Pearson’s correlation for linear abundance relationships; aggregated across sites.
+      - **`diss_bcurt`**: Bray–Curtis dissimilarity on abundances; 0–1 for pairwise, averages or totals for multi-site.
+      - **`diss_gower`**: Gower’s dissimilarity for mixed data; pairwise and multi-site summaries.
+      - **`mutual_info`**: Mutual information for dependence (linear + non-linear); pairwise or cumulative multi-site.

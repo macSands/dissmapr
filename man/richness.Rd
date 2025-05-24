@@ -17,3 +17,4 @@ The species richness value.
 \description{
 Calculate Species Richness
 }
+\keyword{internal}

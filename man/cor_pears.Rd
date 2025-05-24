@@ -17,3 +17,4 @@ Pearson's correlation coefficient.
 \description{
 Calculate Pearson's Correlation
 }
+\keyword{internal}

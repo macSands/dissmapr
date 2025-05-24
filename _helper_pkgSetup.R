@@ -15,3 +15,17 @@ pkgdown::build_site()
 # - Produce docs/reference/index.html, with links to all functions (and any groupings you specified in _pkgdown.yml).
 # >> Now push your docs/ directory up to GitHub Pages (e.g. via gh-pages), and voilà—you get exactly the style of page you linked.
 
+# Save that as _pkgdown.yml, then rebuild:
+devtools::document()
+pkgdown::build_site()
+
+
+# Pkgdown will skip anything that your package’s .Rbuildignore file tells R to ignore.
+# So the easiest way is to add _oldREADME.md to .Rbuildignore.
+# You can do it by hand—or let usethis do it for you:
+usethis::use_build_ignore("_oldREADME.md")
+
+# That writes a line like
+# ^_oldREADME\.md$
+# into .Rbuildignore.
+# Once that’s in place, pkgdown::build_site() will no longer copy or process _oldREADME.md.

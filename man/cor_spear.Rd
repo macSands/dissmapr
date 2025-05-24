@@ -17,3 +17,4 @@ Spearman's rank correlation coefficient.
 \description{
 Calculate Spearman's Rank Correlation
 }
+\keyword{internal}

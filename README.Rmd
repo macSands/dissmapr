@@ -1,5 +1,4 @@
 ---
-title: "dissmapr: Workflow for Compositional Dissimilarity & Biodiversity Turnover Analysis"
 output:
   github_document:
     toc: true

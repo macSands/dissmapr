@@ -1,32 +1,58 @@
-#' Helper Functions for `compute_orderwise`
+#' Helper functions for compute_orderwise
 #'
-#' These functions are designed to be used as the `func` parameter in the `compute_orderwise` function.
-#' They calculate various metrics, including distances, dissimilarities, correlations, and mutual information.
+#' A suite of internal helper functions to compute ecological indices used by
+#' `compute_orderwise()`, including geographic distance, dissimilarity metrics,
+#' correlations, and mutual information.
 #'
-#' @import data.table
+#' @name required_packages
+#' @keywords internal
+#' @importFrom data.table as.data.table rbindlist
 #' @importFrom geosphere distHaversine
 #' @importFrom vegan vegdist
 #' @importFrom cluster daisy
 #' @importFrom reshape2 melt
 #' @importFrom entropy mi.plugin
+#' @keywords internal
+NULL
 
-# Verify required packages
+# Verify required packages for helpers
 required_packages <- c("geosphere", "vegan", "cluster", "reshape2", "entropy")
-lapply(required_packages, function(pkg) {
-  if (!requireNamespace(pkg, quietly = TRUE)) stop("Package '", pkg, "' is required but not installed.")
-})
+invisible(lapply(required_packages, function(pkg) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    stop("Package '", pkg, "' is required but not installed.")
+  }
+}))
+
+
 
 # DISTANCE BETWEEN SITES
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+#' Calculate geographic distance via Haversine formula (helper)
+#'
+#' Computes the geographic (Haversine) distance in meters between two coordinate
+#' pairs, or returns 0 for single-site (order=1) calculations when `vec_to` is `NULL`.
+#'
+#' @param vec_from Numeric vector of length 2, or a named vector containing
+#'   coordinates. If named, should include names given by `coord_cols`.
+#' @param vec_to Optional numeric vector of length 2 (destination coordinates);
+#'   if `NULL` (default), the function returns 0.
+#' @param coord_cols Character vector of length 2 giving the names of the longitude
+#'   and latitude elements in `vec_from`/`vec_to` when those are named vectors.
+#'   Defaults to `c("x", "y")`.
+#'
+#' @return Numeric distance in meters between the two points, or 0 if `vec_to` is `NULL`.
+#'
+#' @importFrom geosphere distHaversine
+#' @export
+#' @keywords internal
+#'
 geodist_helper <- function(vec_from, vec_to = NULL, coord_cols = c("x", "y")) {
   # For single-site (order 1) calculations, return 0.
   if (is.null(vec_to)) {
     return(0)
   }
 
-  # If the input vector has names that include the specified coord_cols,
-  # subset the vector; otherwise assume the vector is already the coordinate pair.
+  # Extract coordinates from named vectors or assume order if unnamed
   if (!is.null(names(vec_from)) && all(coord_cols %in% names(vec_from))) {
     vec_from_coords <- as.numeric(vec_from[coord_cols])
   } else {
@@ -39,15 +65,16 @@ geodist_helper <- function(vec_from, vec_to = NULL, coord_cols = c("x", "y")) {
     vec_to_coords <- as.numeric(vec_to)
   }
 
-  # Ensure that both coordinate vectors have length 2.
+  # Validate coordinate lengths
   if (length(vec_from_coords) != 2 || length(vec_to_coords) != 2) {
     stop("Both input vectors must be coordinate pairs of length 2 according to coord_cols: ",
-         paste(coord_cols, collapse = ","))
+         paste(coord_cols, collapse = ", "))
   }
 
-  # Compute and return the geographic (Haversine) distance in meters.
-  return(geosphere::distHaversine(vec_from_coords, vec_to_coords))
+  # Compute and return Haversine distance
+  geosphere::distHaversine(vec_from_coords, vec_to_coords)
 }
+
 
 
 
@@ -62,6 +89,7 @@ geodist_helper <- function(vec_from, vec_to = NULL, coord_cols = c("x", "y")) {
 #'
 #' @return Distance(s) in meters between the specified sites.
 #' @export
+#' @keywords internal
 #'
 distance <- function(df, site_col, vec_from, vec_to = NULL) {
   library(geosphere)
@@ -100,6 +128,7 @@ distance <- function(df, site_col, vec_from, vec_to = NULL) {
 #'
 #' @return A data frame containing pairwise distances between sites.
 #' @export
+#' @keywords internal
 #'
 calculate_pairwise_distances_matrix <- function(data, distance_fun = distGeo) {
   if (!all(c("grid_id", "x", "y") %in% colnames(data))) {
@@ -126,6 +155,7 @@ calculate_pairwise_distances_matrix <- function(data, distance_fun = distGeo) {
 #'
 #' @return The species richness value.
 #' @export
+#' @keywords internal
 #'
 richness <- function(vec_from, vec_to = NULL) {
   if (is.null(vec_to)) {
@@ -147,6 +177,7 @@ richness <- function(vec_from, vec_to = NULL) {
 #'
 #' @return The species turnover value.
 #' @export
+#' @keywords internal
 #'
 turnover <- function(vec_from, vec_to = NULL) {
   if (is.null(vec_to)) {
@@ -186,6 +217,7 @@ turnover <- function(vec_from, vec_to = NULL) {
 #'
 #' @return The species abundance value.
 #' @export
+#' @keywords internal
 #'
 abund <- function(vec_from, vec_to = NULL) {
   if (is.null(vec_to)) {
@@ -206,6 +238,7 @@ abund <- function(vec_from, vec_to = NULL) {
 #'
 #' @return The Phi Coefficient value.
 #' @export
+#' @keywords internal
 #'
 phi_coef <- function(vec_from, vec_to) {
   data_i <- as.numeric(vec_from > 0)
@@ -244,6 +277,7 @@ phi_coef <- function(vec_from, vec_to) {
 #'
 #' @return Spearman's rank correlation coefficient.
 #' @export
+#' @keywords internal
 #'
 cor_spear <- function(vec_from, vec_to) {
   if (length(vec_from) > 1 && length(vec_to) > 1) {
@@ -278,6 +312,7 @@ cor_spear <- function(vec_from, vec_to) {
 #'
 #' @return Pearson's correlation coefficient.
 #' @export
+#' @keywords internal
 #'
 cor_pears <- function(vec_from, vec_to) {
   if (length(vec_from) > 1 && length(vec_to) > 1) {
@@ -302,6 +337,7 @@ cor_pears <- function(vec_from, vec_to) {
 #'
 #' @return The Bray-Curtis dissimilarity value.
 #' @export
+#' @keywords internal
 #'
 diss_bcurt <- function(vec_from, vec_to) {
   if (length(vec_from) > 1 && length(vec_to) > 1) {
@@ -328,6 +364,7 @@ diss_bcurt <- function(vec_from, vec_to) {
 #'
 #' @return The Gower dissimilarity value.
 #' @export
+#' @keywords internal
 #'
 gower_dissimilarity <- function(vec_from, vec_to) {
   if (length(vec_from) > 1 && length(vec_to) > 1) {
@@ -383,6 +420,7 @@ orderwise_diss_gower <- function(vec_from, vec_to = NULL) {
 #'
 #' @return A data frame containing pairwise Gower dissimilarities between sites.
 #' @export
+#' @keywords internal
 #'
 calculate_pairwise_gower_dist_matrix <- function(df, sp_cols) {
   sbs_gower_df <- as.data.frame(as.matrix(cluster::daisy(df[, sp_cols], metric = "gower", stand = FALSE)))
@@ -407,6 +445,7 @@ calculate_pairwise_gower_dist_matrix <- function(df, sp_cols) {
 #'
 #' @return The mutual information value between the two variables.
 #' @export
+#' @keywords internal
 #'
 mutual_info <- function(vec_from, vec_to) {
   library(entropy)

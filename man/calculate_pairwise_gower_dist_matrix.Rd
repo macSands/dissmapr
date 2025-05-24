@@ -17,3 +17,4 @@ A data frame containing pairwise Gower dissimilarities between sites.
 \description{
 Calculate Pairwise Gower Dissimilarity Matrix
 }
+\keyword{internal}

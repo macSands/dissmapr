@@ -17,3 +17,4 @@ The Phi Coefficient value.
 \description{
 Calculate Phi Coefficient
 }
+\keyword{internal}

@@ -15,3 +15,4 @@ Prints a greeting message.
 \description{
 Prints a greeting message.
 }
+\keyword{internal}

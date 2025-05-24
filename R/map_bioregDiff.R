@@ -1,112 +1,123 @@
-# library(terra)
-# library(viridis)
-# library(purrr)
-
-# Function to map bioregional differences
-map_bioregDiff <- function(raster_input, approach = "all") {
-  # Check if input is a SpatRaster
+#' Map bioregional difference metrics across raster layers
+#'
+#' Computes a suite of change indices—including difference count, Shannon entropy,
+#' stability, transition frequency, and weighted change index—across sequential layers
+#' of a `SpatRaster`. Returns either a single selected metric or all metrics as a
+#' multi-layer `SpatRaster`.
+#'
+#' @param raster_input A `SpatRaster` with at least two layers representing categorical
+#'   cluster assignments (e.g., bioregions) over time or scenarios.
+#' @param approach Character specifying which metric to return. Options:
+#'   \describe{
+#'     \item{"difference_count"}{Count of pixel value changes across layers.}
+#'     \item{"shannon_entropy"}{Shannon entropy of pixel value distribution.}
+#'     \item{"stability"}{Proportion of layers where pixel value remains constant.}
+#'     \item{"transition_frequency"}{Number of transitions (binary change) per pixel.}
+#'     \item{"weighted_change_index"}{Sum of transition weights from the normalized dissimilarity matrix.}
+#'     \item{"all"}{All metrics combined into a multi-layer `SpatRaster`.}
+#'   }
+#'   Default is "all".
+#'
+#' @return A `SpatRaster`: a single-layer raster if `approach` is specific;
+#'   or a multi-layer raster with layers:
+#'   `Difference_Count`, `Shannon_Entropy`, `Stability`,
+#'   `Transition_Frequency`, `Weighted_Change_Index` when `approach = "all"`.
+#'
+#' @details
+#' 1. Builds a transition matrix of cluster changes between consecutive layers and
+#'    normalizes it to create a dissimilarity matrix.
+#' 2. `difference_count`: counts how many times each pixel changes value.
+#' 3. `shannon_entropy`: computes entropy of pixel value distribution across layers.
+#' 4. `stability`: calculates 1 minus the indicator of constant pixel values.
+#' 5. `transition_frequency`: sums per-layer binary change maps.
+#' 6. `weighted_change_index`: accumulates weighted transitions using the dissimilarity matrix.
+#'
+#' @importFrom terra nlyr values app
+#' @importFrom stats dist
+#' @importFrom purrr reduce
+#' @export
+map_bioregDiff <- function(raster_input,
+                           approach = "all") {
   if (!inherits(raster_input, "SpatRaster")) {
     stop("Input must be a SpatRaster object.")
   }
 
-  library(terra)
-  library(viridis)
-  library(purrr)
-
-  # Get the number of layers
-  nlyr <- nlyr(raster_input)
-
-  # Ensure there are at least two layers for comparison
-  if (nlyr < 2) {
+  nlyr_val <- terra::nlyr(raster_input)
+  if (nlyr_val < 2) {
     stop("The SpatRaster must have at least two layers for comparison.")
   }
 
-  # Calculate the dissimilarity matrix dynamically
-  unique_clusters <- sort(unique(values(raster_input)))
-  n_clusters <- length(unique_clusters)
+  # Build transition dissimilarity matrix
+  vals <- terra::values(raster_input)
+  unique_clusters <- sort(unique(vals))
+  dissim <- matrix(0,
+                   nrow = length(unique_clusters),
+                   ncol = length(unique_clusters),
+                   dimnames = list(unique_clusters, unique_clusters))
 
-  # Initialize the dissimilarity matrix
-  dissimilarity_matrix <- matrix(0, nrow = n_clusters, ncol = n_clusters,
-                                 dimnames = list(as.character(unique_clusters), as.character(unique_clusters)))
-
-  # Calculate pairwise transitions across layers
-  for (i in 1:(nlyr - 1)) {
-    layer1 <- values(raster_input[[i]])
-    layer2 <- values(raster_input[[i + 1]])
-
-    transitions <- table(layer1, layer2)
-
-    for (row in 1:nrow(transitions)) {
-      for (col in 1:ncol(transitions)) {
-        dissimilarity_matrix[rownames(transitions)[row], colnames(transitions)[col]] <-
-          dissimilarity_matrix[rownames(transitions)[row], colnames(transitions)[col]] +
-          transitions[row, col]
+  for (i in seq_len(nlyr_val - 1)) {
+    layer1 <- vals[, i]
+    layer2 <- vals[, i + 1]
+    trans <- stats::table(layer1, layer2)
+    for (r in seq_len(nrow(trans))) {
+      for (c in seq_len(ncol(trans))) {
+        dissim[rownames(trans)[r], colnames(trans)[c]] <-
+          dissim[rownames(trans)[r], colnames(trans)[c]] + trans[r, c]
       }
     }
   }
+  max_t <- max(dissim)
+  dissim <- (max_t - dissim + t(dissim)) / 2
+  dissim <- dissim / max(dissim)
 
-  # Normalize the dissimilarity matrix
-  max_transition <- max(dissimilarity_matrix)
-  dissimilarity_matrix <- max_transition - dissimilarity_matrix
-  dissimilarity_matrix <- (dissimilarity_matrix + t(dissimilarity_matrix)) / 2
-  dissimilarity_matrix <- dissimilarity_matrix / max(dissimilarity_matrix)
+  # difference count
+  diff_count <- terra::app(raster_input, fun = function(x) sum(x != x[1]))
 
-  # Function: Difference Count
-  diff_count <- app(raster_input, fun = function(x) sum(x != x[1]))
-
-  # Function: Shannon Entropy
-  shannon_entropy <- function(values) {
-    p <- table(values) / length(values)
+  # Shannon entropy
+  entropy_map <- terra::app(raster_input, fun = function(x) {
+    p <- stats::table(x) / length(x)
     p <- p[p > 0]
     -sum(p * log(p))
-  }
-  entropy_map <- app(raster_input, fun = shannon_entropy)
+  })
 
-  # Function: Stability Map
-  stable_map <- app(raster_input, fun = function(x) all(x == x[1]))
+  # stability
+  stable_map <- terra::app(raster_input, fun = function(x) all(x == x[1]))
   stability_map <- 1 - stable_map
 
-  # Function: Transition Frequency
-  transition_maps <- list()
-  for (i in 1:(nlyr - 1)) {
-    transition_maps[[i]] <- raster_input[[i]] != raster_input[[i + 1]]
-  }
-  total_transitions <- reduce(transition_maps, `+`)
+  # transition frequency
+  transition_layers <- lapply(
+    seq_len(nlyr_val - 1),
+    function(i) raster_input[[i]] != raster_input[[i + 1]]
+  )
+  total_transitions <- purrr::reduce(transition_layers, `+`)
 
-  # Function: Weighted Change Index
-  weighted_change_index <- function(values) {
+  # weighted change index
+  wci_map <- terra::app(raster_input, fun = function(x) {
     wci <- 0
-    for (i in 1:(length(values) - 1)) {
-      cluster1 <- as.character(values[i])
-      cluster2 <- as.character(values[i + 1])
-      if (cluster1 %in% rownames(dissimilarity_matrix) && cluster2 %in% colnames(dissimilarity_matrix)) {
-        weight <- dissimilarity_matrix[cluster1, cluster2]
-      } else {
-        weight <- 0
-      }
-      wci <- wci + weight
+    for (j in seq_len(length(x) - 1)) {
+      c1 <- as.character(x[j]); c2 <- as.character(x[j + 1])
+      wt <- if (c1 %in% rownames(dissim) && c2 %in% colnames(dissim))
+        dissim[c1, c2] else 0
+      wci <- wci + wt
     }
-    return(wci)
-  }
-  wci_map <- app(raster_input, fun = weighted_change_index)
+    wci
+  })
 
-  # Return selected approach or all
+  # return selected
   if (approach == "difference_count") return(diff_count)
-  if (approach == "shannon_entropy") return(entropy_map)
-  if (approach == "stability") return(stability_map)
+  if (approach == "shannon_entropy")  return(entropy_map)
+  if (approach == "stability")        return(stability_map)
   if (approach == "transition_frequency") return(total_transitions)
   if (approach == "weighted_change_index") return(wci_map)
 
-  # Return all as a SpatRaster with multiple layers
-  result <- c(diff_count, entropy_map, stability_map, total_transitions, wci_map)
-  names(result) <- c("Difference_Count", "Shannon_Entropy", "Stability", "Transition_Frequency", "Weighted_Change_Index")
-
-  return(result)
+  result <- terra::c(
+    diff_count, entropy_map, stability_map,
+    total_transitions, wci_map
+  )
+  names(result) <- c(
+    "Difference_Count", "Shannon_Entropy",
+    "Stability", "Transition_Frequency",
+    "Weighted_Change_Index"
+  )
+  result
 }
-
-# # Example Usage
-# # Assuming 'bioreg_result$clusters' is a SpatRaster
-# result_bioregDiff <- map_bioregDiff(bioreg_result$clusters, approach = "all")
-# result_bioregDiff = mask(result_bioregDiff, masked_grid)
-# # Plot all layers
-# plot(result_bioregDiff, col = viridis(100, direction = -1))

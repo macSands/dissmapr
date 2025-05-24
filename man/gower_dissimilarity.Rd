@@ -17,3 +17,4 @@ The Gower dissimilarity value.
 \description{
 Calculate Gower's Dissimilarity
 }
+\keyword{internal}

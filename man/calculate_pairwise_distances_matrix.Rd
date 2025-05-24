@@ -17,3 +17,4 @@ A data frame containing pairwise distances between sites.
 \description{
 Calculate Pairwise Distance Matrix
 }
+\keyword{internal}

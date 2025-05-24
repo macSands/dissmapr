@@ -17,3 +17,4 @@ The mutual information value between the two variables.
 \description{
 Calculate Mutual Information
 }
+\keyword{internal}

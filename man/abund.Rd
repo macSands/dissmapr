@@ -17,3 +17,4 @@ The species abundance value.
 \description{
 Calculate Species Abundance
 }
+\keyword{internal}

@@ -17,3 +17,4 @@ The Bray-Curtis dissimilarity value.
 \description{
 Calculate Bray-Curtis Dissimilarity
 }
+\keyword{internal}

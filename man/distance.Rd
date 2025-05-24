@@ -21,3 +21,4 @@ Distance(s) in meters between the specified sites.
 \description{
 Calculate Distance Between Sites
 }
+\keyword{internal}
