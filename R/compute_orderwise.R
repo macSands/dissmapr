@@ -1,292 +1,302 @@
-#' Compute order‐wise ecological indices across multiple sites
+#' Compute Order-wise Metrics
 #'
-#' This function computes ecological index values (e.g. dissimilarity metrics,
-#' distances, turnover) for sets of sites at specified orders (single‐sites,
-#' pairs, higher‐order combinations). It supports both specialized
-#' vectorized implementations (for Gower dissimilarity) and generic or
-#' parallel looped approaches. `compute_orderwise` computes user-defined metrics (e.g., distances,
-#' correlations, dissimilarities) between sites or site combinations at specified
-#' "orders" (1 = single-site, 2 = pairwise, higher = multi-site).
-#' It supports parallel processing for efficiency, handles large datasets, and
-#' returns a unified table summarizing calculated values across all orders.
-#' Results can assess, for example:
-#' i) how often different species are found together, providing a foundation for analysing species associations;
-#' ii) variations in species composition and environmental properties across sites,
-#' highlighting patterns of compositional turnover; and
-#' iii) spatial patterns of community assemblage.
-#' Use `helper_indices` to choose a specific function for the func parameter to calculate different metrics.
+#' This function computes metrics for ecological data across specified order levels.
+#' It supports single-site, pairwise, and higher-order calculations, and allows for
+#' parallel processing for efficiency.
 #'
-#' @param df A `data.frame` or `data.table` containing site identifiers,
-#'   species abundances, and optionally spatial coordinates.
-#' @param func A function that computes the index for a single‐site (when
-#'   `order = 1`) or between‐site vectors (`order >= 2`). Must accept one
-#'   vector (for `order = 1`) or two vectors (for `order >= 2`), with an
-#'   optional `coord_cols` argument when using geographic distance.
-#' @param site_col A string naming the column in `df` that contains site IDs.
-#' @param sp_cols A character vector of column names in `df` representing
-#'   species counts or presence–absence data; ignored if `func` is
-#'   `geodist_helper`.
-#' @param order Integer scalar (or vector) of the combination order(s) to
-#'   compute (e.g. `1` for single sites, `2` for pairs, `3` for triplets).
-#'   Default is `2`.
-#' @param sample_no Optional integer: maximum number of combinations to
-#'   sample for higher orders (`order >= 3`). If `NULL` (default), all
-#'   combinations are used (subject to `sample_portion`).
-#' @param sample_portion Numeric in (0, 1], proportion of all possible
-#'   combinations to sample when `order >= 3`. Defaults to `1` (100%).
-#' @param parallel Logical; whether to use parallel processing via
-#'   the **future** framework. Default is `TRUE`.
-#' @param n_workers Integer; number of parallel workers
-#'   (defaults to `parallel::detectCores() - 1`).
-#' @param coord_cols Optional character vector of column names for spatial
-#'   coordinates (e.g. `c("x", "y")`). Required when `func` is
-#'   `geodist_helper`.
+#' @param df A data frame containing the ecological data.
+#' @param func A function to compute metrics. It must accept inputs in the form
+#'   of species vectors or site information depending on the order.
+#' @param site_col A character string specifying the column name in `df` representing site IDs.
+#' @param sp_cols A vector of column names in `df` representing species data (default: NULL).
+#' @param order An integer or vector of integers specifying the order(s) of computation.
+#'   - `1`: Single-site computations.
+#'   - `2`: Pairwise computations.
+#'   - `>= 3`: Higher-order computations.
+#' @param sample_no An integer specifying the maximum number of combinations to sample for
+#'   higher-order computations (default: NULL for all combinations).
+#' @param sample_portion A numeric value between 0 and 1 indicating the proportion of
+#'   combinations to sample for higher-order computations (default: 1, meaning 100%).
+#' @param parallel A logical value indicating whether to enable parallel computation
+#'   (default: TRUE).
+#' @param n_workers An integer specifying the number of parallel workers to use
+#'   (default: one less than the number of available cores).
 #'
-#' @return A `data.table` with columns:
-#'   - `site_from`: origin site ID
-#'   - `site_to`: target site ID(s) (or `NA` for single‐site)
-#'   - `value`: computed index value
-#'   - `order`: combination order used
+#' @return A `data.table` containing the results of computations. Columns include:
+#'   - `site_from`: The source site.
+#'   - `site_to`: The target site(s) (NA for order = 1).
+#'   - `order`: The computation order.
+#'   - `value`: The computed metric value.
 #'
-#' @details
-#' - **Order 1** returns single‐site values (calls `func(vec)` once per site).
-#' - **Order 2** uses a fast path for `orderwise_diss_gower`, a pairwise loop
-#'   for `geodist_helper`, or a generic loop for other functions.
-#' - **Higher orders** (`≥ 3`) sample or exhaustively generate site‐sets,
-#'   then compute values (optionally in parallel).
+#' @export
 #'
 #' @examples
-#' # Single‐site sum of abundances
-#' df <- data.frame(site = rep(letters[1:3], each = 5),
-#'                  sp1  = sample(0:5, 15, TRUE))
-#' compute_orderwise(df,
-#'                   func     = function(x) sum(x),
-#'                   site_col = "site",
-#'                   sp_cols  = "sp1",
-#'                   order    = 1)
+#' # Example usage with a custom metric function
+#' metric_func <- function(vec1, vec2 = NULL) {
+#'   if (is.null(vec2)) {
+#'     return(sum(vec1))  # Example: species richness
+#'   } else {
+#'     return(sum((vec1 - vec2)^2))  # Example: pairwise dissimilarity
+#'   }
+#' }
 #'
-#' # Pairwise Gower dissimilarity (vectorized path)
-#' compute_orderwise(df,
-#'                   func     = orderwise_diss_gower,
-#'                   site_col = "site",
-#'                   sp_cols  = "sp1",
-#'                   order    = 2)
+#' data <- data.frame(
+#'   site = rep(letters[1:3], each = 3),
+#'   sp1 = c(1, 0, 2, 1, 2, 0, 0, 1, 1),
+#'   sp2 = c(0, 1, 1, 2, 0, 0, 1, 0, 2)
+#' )
 #'
-#' @import pbapply
-#' @import data.table
-#' @import future.apply
-#' @import dplyr
-#' @import reshape2
-#' @import cluster
-#' @export
-compute_orderwise <- function(df,
+#'# SPECIES RICHNESS
+#'# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#'richness <- function(vec_from, vec_to = NULL) {
+#'  if (is.null(vec_to)) {
+#'    # Handle single-site calculations (order = 1)
+#'    return(sum(vec_from != 0, na.rm = TRUE))
+#'  } else if (length(vec_from) > 1 && length(vec_to) > 1) {
+#'    # Handle pairwise or higher-order comparisons
+#'    return(abs(sum(vec_from != 0, na.rm = TRUE) - sum(vec_to != 0, na.rm = TRUE)))
+#'  } else {
+#'    # Invalid input case
+#'    return(NA)
+#'  }
+#'}
+#'
+#'rich_o12 = compute_orderwise(
+#'  df = block_sp,
+#'  func = richness,
+#'  site_col = 'grid_id',
+#'  sp_cols = sp_cols,
+#'  # sample_no = 1000,
+#'  # sample_portion = 0.5,  # Default is 1 (100%)
+#'  order = 1:2,  # Compute for pairwise and higher-order comparisons
+#'  parallel = TRUE,
+#'  n_workers = 4
+#')
+#'head(rich_o12)
+
+#' compute_orderwise(df = data, func = metric_func, site_col = "site", sp_cols = c("sp1", "sp2"), order = 2)
+compute_orderwise <- function(df,# Optimized Compute_Orderwise Function
                               func,
                               site_col,
-                              sp_cols,
-                              order           = 2,
-                              sample_no       = NULL,
-                              sample_portion  = 1,
-                              parallel        = TRUE,
-                              n_workers       = parallel::detectCores() - 1,
-                              coord_cols      = NULL) {  # new parameter for coordinate columns (e.g. c("x", "y"))
-  # Required packages check
-  required_packages <- c("pbapply", "data.table", "future.apply", "reshape2", "dplyr")
-  invisible(lapply(required_packages, function(pkg) {
-    if (!requireNamespace(pkg, quietly = TRUE))
-      stop("Package '", pkg, "' is required but not installed.")
-  }))
+                              sp_cols = NULL,
+                              order = 2,
+                              sample_no = NULL,
+                              sample_portion = 1,  # Default is 1 (100%)
+                              parallel = TRUE,
+                              n_workers = parallel::detectCores() - 1) {
 
-  suppressPackageStartupMessages({
-    library(pbapply)       # progress bars in loops
-    library(data.table)    # efficient manipulation
-    library(future.apply)  # parallel processing
-    library(dplyr)         # data manipulation
-    library(reshape2)      # melt() function
+  # Load required packages
+  required_packages <- c("pbapply", "data.table", "future.apply")
+  lapply(required_packages, function(pkg) {
+    if (!requireNamespace(pkg, quietly = TRUE)) stop("Package '", pkg, "' is required but not installed.")
   })
 
-  # Convert input data frame to data.table and ensure site IDs are characters.
+  # Load Required Libraries
+  suppressPackageStartupMessages({
+    library(pbapply)       # For progress bar
+    library(data.table)    # For data manipulation
+    library(cluster)       # For dissimilarity calculations
+    library(future.apply)  # For parallel processing
+    library(dplyr)         # For data manipulation
+  })
+
+  # Convert to data.table for efficiency
   dt <- data.table::as.data.table(df)
+
+  # Ensure `site_col` is character
   dt[[site_col]] <- as.character(dt[[site_col]])
+
+  # Get all unique site IDs
   site_ids <- unique(dt[[site_col]])
 
-  # Precompute each site's "vector":
-  # If using geodist_helper, ignore sp_cols and use coord_cols.
-  if (identical(func, geodist_helper)) {
-    if (is.null(coord_cols)) {
-      stop("For geodist_helper, please supply coord_cols.")
-    }
-    site_vectors <- lapply(site_ids, function(site) {
-      vec <- as.numeric(unlist(dt[dt[[site_col]] == site, ..coord_cols, with = FALSE]))
-      names(vec) <- coord_cols  # so the helper can extract "x" and "y"
-      return(vec)
-    })
-  } else if (identical(func, orderwise_diss_gower)) {
-    # When using orderwise_diss_gower, use sp_cols.
+  # Precompute site vectors if sp_cols are provided
+  if (!is.null(sp_cols)) {
     site_vectors <- lapply(site_ids, function(site) {
       as.numeric(unlist(dt[dt[[site_col]] == site, ..sp_cols, with = FALSE]))
     })
+    names(site_vectors) <- site_ids
   } else {
-    # Otherwise default to sp_cols.
-    site_vectors <- lapply(site_ids, function(site) {
-      as.numeric(unlist(dt[dt[[site_col]] == site, ..sp_cols, with = FALSE]))
-    })
+    site_vectors <- NULL
   }
-  names(site_vectors) <- site_ids
 
-  start_time <- Sys.time()
+  # Initialize a list to store results
   results_list <- list()
 
-  ### --- Order 1: Single-Site Computations --- ###
-  if (order == 1) {
-    result_dt <- data.table::rbindlist(lapply(site_ids, function(site) {
-      # For geodist_helper, we define distance from a site to itself as 0.
-      val <- if (identical(func, geodist_helper)) 0 else func(site_vectors[[site]])
-      data.table::data.table(site_from = site, site_to = NA, value = val, order = 1L)
-    }), use.names = TRUE)
-    message("Order 1 (single-site) computations done.")
-    return(result_dt)
-  }
+  # Start timing
+  start_time <- Sys.time()
 
-  ### --- Order 2: Fast Path or Loop over Pairs --- ###
-  if (order == 2) {
-    if (identical(func, orderwise_diss_gower)) {
-      # Fast, vectorized computation for orderwise_diss_gower using sp_cols.
-      species_mat <- as.matrix(dt[, ..sp_cols])
-      rownames(species_mat) <- dt[[site_col]]  # Set site IDs as row names.
-      diss_matrix <- as.matrix(cluster::daisy(species_mat, metric = "gower", stand = FALSE))
-      diag(diss_matrix) <- NA  # Exclude self-comparisons.
-      melted <- reshape2::melt(diss_matrix,
-                               varnames = c("site_from", "site_to"),
-                               value.name = "value",
-                               na.rm = TRUE)
-      melted <- data.table::as.data.table(melted)
-      melted[, order := 2L]
-      message("Fast vectorized computation used for order 2 with orderwise_diss_gower.")
-      return(melted)
-    } else if (identical(func, geodist_helper)) {
-      # For geodist_helper order 2, loop over pairs.
-      comb_data <- expand.grid(site_from = site_ids, site_to = site_ids, stringsAsFactors = FALSE)
-      comb_data <- comb_data[comb_data$site_from != comb_data$site_to, ]
-      comb_indices <- data.table::as.data.table(comb_data)
-      comb_indices[, order := 2L]
+  # Define Compute Value Function
+  compute_value <- function(site_from, site_to, ord) {
+    if (is.null(sp_cols)) {
+      # If sp_cols is NULL, func should handle df, site_col, site_from, site_to directly
+      return(func(df, site_col, site_from, site_to))
+    }
 
-      compute_order2 <- function(i) {
-        site_from <- comb_indices$site_from[i]
-        site_to <- comb_indices$site_to[i]
-        value <- func(site_vectors[[site_from]], site_vectors[[site_to]], coord_cols = coord_cols)
-        return(value)
-      }
+    vec_from <- site_vectors[[site_from]]
 
-      if (parallel && n_workers > 0) {
-        future::plan(future::multisession, workers = n_workers)
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order2)
-        future::plan(future::sequential)
-      } else {
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order2)
-      }
-      comb_indices[, value := unlist(values)]
-      results_list[["2"]] <- comb_indices
+    if (ord == 1) {
+      # Single-site calculation
+      return(func(vec_from))
+    } else if (ord == 2) {
+      # Pairwise comparison
+      vec_to <- site_vectors[[site_to]]
+      return(func(vec_from, vec_to))
     } else {
-      # Generic looped approach for order 2.
-      comb_data <- expand.grid(site_from = site_ids, site_to = site_ids, stringsAsFactors = FALSE)
-      comb_data <- comb_data[comb_data$site_from != comb_data$site_to, ]
-      comb_indices <- data.table::as.data.table(comb_data)
-      comb_indices[, order := 2L]
-
-      compute_order2 <- function(i) {
-        site_from <- comb_indices$site_from[i]
-        site_to <- comb_indices$site_to[i]
-        value <- func(site_vectors[[site_from]], site_vectors[[site_to]])
-        return(value)
-      }
-      if (parallel && n_workers > 0) {
-        future::plan(future::multisession, workers = n_workers)
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order2)
-        future::plan(future::sequential)
-      } else {
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order2)
-      }
-      comb_indices[, value := unlist(values)]
-      results_list[["2"]] <- comb_indices
+      # Higher-order comparison
+      sites <- unlist(strsplit(as.character(site_to), ","))
+      vec_list <- lapply(sites, function(s) site_vectors[[s]])
+      vec_to <- Reduce("+", vec_list)
+      return(func(vec_from, vec_to))
     }
   }
 
-  ### --- Higher Orders (>= 3) --- ###
-  for (ord in order) {
-    if (ord <= 2) next
+  # Iterate over each order value
+  if (length(order) > 1) {
+    ord_sequence <- order
+  } else {
+    ord_sequence <- order
+  }
 
-    comb_list <- list()
-    for (site in site_ids) {
-      remaining_sites <- setdiff(site_ids, site)
-      total_possible <- choose(length(remaining_sites), ord - 1)
-      max_samples <- if (is.null(sample_no)) total_possible else min(sample_no, total_possible)
+  for (ord in ord_sequence) {
+    if (ord == 1) {
+      # Single-site calculations
+      comb_indices <- data.table::data.table(site_from = site_ids, site_to = NA, order = ord)
 
-      if (total_possible <= max_samples) {
-        combinations <- combn(remaining_sites, ord - 1, simplify = FALSE)
+      # Define a wrapper function for progress bar
+      compute_order1 <- function(i) {
+        site_from <- comb_indices$site_from[i]
+        value <- compute_value(site_from, NA, ord)
+        return(value)
+      }
+
+      # Parallel Processing Setup
+      if (parallel && n_workers > 0) {
+        plan(future::multisession, workers = n_workers)
+        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order1)
+        plan(future::sequential)  # Reset to sequential
       } else {
-        set.seed(123)
-        combinations <- replicate(max_samples, sort(sample(remaining_sites, ord - 1)), simplify = FALSE)
-        combinations <- unique(combinations)
-        while (length(combinations) < max_samples) {
-          additional <- replicate(max_samples - length(combinations),
-                                  sort(sample(remaining_sites, ord - 1)),
-                                  simplify = FALSE)
-          combinations <- unique(c(combinations, additional))
+        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order1)
+      }
+
+      # Assign values
+      comb_indices[, value := unlist(values)]
+
+      # Append to results
+      results_list[[as.character(ord)]] <- comb_indices
+
+    } else if (ord == 2) {
+      # Pairwise comparisons
+      comb_data <- expand.grid(site_from = site_ids, site_to = site_ids, stringsAsFactors = FALSE)
+      # Exclude self-pairs
+      comb_data <- comb_data[comb_data$site_from != comb_data$site_to, ]
+      comb_indices <- data.table::as.data.table(comb_data)
+      comb_indices[, order := ord]
+
+      # Define a wrapper function for progress bar
+      compute_order2 <- function(i) {
+        site_from <- comb_indices$site_from[i]
+        site_to <- comb_indices$site_to[i]
+        value <- compute_value(site_from, site_to, ord)
+        return(value)
+      }
+
+      # Parallel Processing Setup
+      if (parallel && n_workers > 0) {
+        plan(future::multisession, workers = n_workers)
+        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order2)
+        plan(future::sequential)  # Reset to sequential
+      } else {
+        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order2)
+      }
+
+      # Assign values
+      comb_indices[, value := unlist(values)]
+
+      # Append to results
+      results_list[[as.character(ord)]] <- comb_indices
+
+    } else if (ord >= 3) {
+      # Higher-order comparisons
+      comb_list <- list()
+
+      for (site in site_ids) {
+        remaining_sites <- setdiff(site_ids, site)
+        total_possible_combinations <- choose(length(remaining_sites), ord - 1)
+        max_samples <- ifelse(is.null(sample_no), total_possible_combinations, sample_no)
+        max_samples <- min(max_samples, total_possible_combinations)
+
+        if (total_possible_combinations <= max_samples) {
+          # Generate all combinations
+          combinations <- combn(remaining_sites, ord - 1, simplify = FALSE)
+        } else {
+          # Sample combinations directly
+          set.seed(123)  # For reproducibility (optional)
+          combinations <- replicate(max_samples, sort(sample(remaining_sites, ord - 1)), simplify = FALSE)
+          # Remove duplicates
+          combinations <- unique(combinations)
+          # If duplicates were removed and we have fewer than max_samples, resample
+          while (length(combinations) < max_samples) {
+            additional_combos <- replicate(max_samples - length(combinations), sort(sample(remaining_sites, ord - 1)), simplify = FALSE)
+            combinations <- unique(c(combinations, additional_combos))
+          }
+        }
+
+        if (length(combinations) > 0) {
+          comb_to <- sapply(combinations, function(x) paste(x, collapse = ","))
+          comb_list[[site]] <- data.table::data.table(
+            site_from = site,
+            site_to = comb_to,
+            order = ord
+          )
         }
       }
 
-      if (length(combinations) > 0) {
-        comb_to <- sapply(combinations, function(x) paste(x, collapse = ","))
-        comb_list[[site]] <- data.table::data.table(
-          site_from = site,
-          site_to = comb_to,
-          order = ord
-        )
-      }
-    }
-    if (length(comb_list) == 0) next
-    comb_indices <- data.table::rbindlist(comb_list, use.names = TRUE)
+      comb_indices <- data.table::rbindlist(comb_list, use.names = TRUE)
 
-    compute_higher_order <- function(i) {
-      site_from <- comb_indices$site_from[i]
-      site_to <- comb_indices$site_to[i]
-      sites <- unlist(strsplit(as.character(site_to), ","))
-      if (identical(func, geodist_helper)) {
-        # For geodist_helper, compute centroid (mean coordinates) of the 'to' sites.
-        vec_list <- lapply(sites, function(s) site_vectors[[s]])
-        M <- do.call(rbind, vec_list)
-        vec_to <- colMeans(M)
-        value <- func(site_vectors[[site_from]], vec_to, coord_cols = coord_cols)
+      # Define a wrapper function for progress bar
+      compute_higher_order <- function(i) {
+        site_from <- comb_indices$site_from[i]
+        site_to <- comb_indices$site_to[i]
+        value <- compute_value(site_from, site_to, ord)
+        return(value)
+      }
+
+      # Parallel Processing Setup
+      if (parallel && n_workers > 0) {
+        plan(future::multisession, workers = n_workers)
+        values <- pbapply::pblapply(1:nrow(comb_indices), compute_higher_order)
+        plan(future::sequential)  # Reset to sequential
       } else {
-        vec_list <- lapply(sites, function(s) site_vectors[[s]])
-        vec_to <- Reduce("+", vec_list)
-        value <- func(site_vectors[[site_from]], vec_to)
+        values <- pbapply::pblapply(1:nrow(comb_indices), compute_higher_order)
       }
-      return(value)
-    }
 
-    if (parallel && n_workers > 0) {
-      future::plan(future::multisession, workers = n_workers)
-      values <- pbapply::pblapply(1:nrow(comb_indices), compute_higher_order)
-      future::plan(future::sequential)
+      # Assign values
+      comb_indices[, value := unlist(values)]
+
+      # Append to results
+      results_list[[as.character(ord)]] <- comb_indices
     } else {
-      values <- pbapply::pblapply(1:nrow(comb_indices), compute_higher_order)
+      warning(paste("Order", ord, "is not supported. Skipping."))
+      next
     }
-    comb_indices[, value := unlist(values)]
-    results_list[[as.character(ord)]] <- comb_indices
 
-    elapsed_ord <- difftime(Sys.time(), start_time, units = "secs")
-    message(sprintf("Time elapsed for order %d: %.2f seconds", ord, as.numeric(elapsed_ord)))
+    # Print elapsed time for this order
+    end_time_ord <- Sys.time()
+    elapsed_time_ord <- difftime(end_time_ord, start_time, units = "secs")
+    elapsed_minutes_ord <- floor(as.numeric(elapsed_time_ord) / 60)
+    elapsed_seconds_ord <- as.numeric(elapsed_time_ord) %% 60
+    cat(sprintf("Time elapsed for order %d: %d minutes and %.2f seconds\n", ord, elapsed_minutes_ord, elapsed_seconds_ord))
   }
 
-  if (length(results_list) > 0) {
-    final_results <- data.table::rbindlist(results_list, use.names = TRUE, fill = TRUE)
-  } else {
-    final_results <- NULL
-  }
+  # Combine all results into a single data.table
+  final_results <- data.table::rbindlist(results_list, use.names = TRUE, fill = TRUE)
 
-  total_elapsed <- difftime(Sys.time(), start_time, units = "secs")
-  message(sprintf("Total computation time: %.2f seconds", as.numeric(total_elapsed)))
+  # End timing
+  end_time <- Sys.time()
+  total_elapsed <- difftime(end_time, start_time, units = "secs")
+  total_minutes <- floor(as.numeric(total_elapsed) / 60)
+  total_seconds <- as.numeric(total_elapsed) %% 60
+  cat(sprintf("Total computation time: %d minutes and %.2f seconds\n", total_minutes, total_seconds))
 
   return(final_results)
 }

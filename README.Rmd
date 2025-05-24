@@ -312,6 +312,12 @@ enviro_list = get_enviro_data(
   ext_cols  = c('obs_sum','spp_rich')
 )
 ras_enviro = enviro_list$env_rast
+
+# Optional: Rename the columns to something more descriptive
+names(ras_enviro) = c("temp_mean", "mdr", "iso", "temp_sea", "temp_max",
+                    "temp_min", "temp_rang","temp_wetQ","temp_dryQ", "temp_warmQ",
+                    "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
+                    "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
 ```
 
 #### Add 'eff-rich' raster to the enviro stack raster
@@ -387,7 +393,7 @@ xy_utm_df = cbind(xy, st_coordinates(xy_utm))
 head(xy_utm_df)
 ```
 
-### 10. Check for inter-correlation and remove highly corrected variables using `rm_correlated`.
+### 10. Check for multi-colinearity and remove highly corrected variables using `rm_correlated`.
 
 Identify and remove highly correlated environmental variables to reduce multicollinearity in subsequent analyses.
 This step ensures model stability by retaining only informative, non-redundant predictors based on a user-defined correlation threshold.

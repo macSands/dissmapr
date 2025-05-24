@@ -1,8 +1,5 @@
 
 - [`dissmapr`](#dissmapr)
-  - [A Novel Framework for Automated Compositional Dissimilarity and
-    Biodiversity Turnover
-    Analysis](#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis)
   - [Introduction](#introduction)
   - [Workflow Overview](#workflow-overview)
 

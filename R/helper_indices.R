@@ -87,11 +87,11 @@ geodist_helper <- function(vec_from, vec_to = NULL, coord_cols = c("x", "y")) {
 #' @export
 #' @keywords internal
 #'
-distance <- function(df, site_col, vec_from, vec_to = NULL) {
+distance <- function(df, site_col, vec_from, vec_to = NULL, coord_cols = c("x", "y")) {
   library(geosphere)
 
   # Subset 'from' data
-  site_from_data <- df[df[[site_col]] == vec_from, c("x", "y"), drop = FALSE]
+  site_from_data <- df[df[[site_col]] == vec_from, coord_cols, drop = FALSE]
 
   # Handle missing or invalid inputs
   if (nrow(site_from_data) == 0) stop("Invalid 'from' site ID: ", vec_from)
@@ -100,12 +100,12 @@ distance <- function(df, site_col, vec_from, vec_to = NULL) {
     stop("Order = 1 calculations are not supported for the distance function.")
   } else if (length(vec_to) == 1) {
     # Pairwise comparison
-    site_to_data <- df[df[[site_col]] == vec_to, c("x", "y"), drop = FALSE]
+    site_to_data <- df[df[[site_col]] == vec_to, coord_cols, drop = FALSE]
     if (nrow(site_to_data) == 0) stop("Invalid 'to' site ID: ", vec_to)
     return(distHaversine(site_from_data, site_to_data))
   } else {
     # Higher-order comparisons
-    site_to_data <- df[df[[site_col]] %in% vec_to, c("x", "y"), drop = FALSE]
+    site_to_data <- df[df[[site_col]] %in% vec_to, coord_cols, drop = FALSE]
     if (nrow(site_to_data) == 0) stop("Invalid 'to' site IDs: ", paste(vec_to, collapse = ", "))
     distances <- apply(site_to_data, 1, function(to_coords) {
       distHaversine(site_from_data, to_coords)
