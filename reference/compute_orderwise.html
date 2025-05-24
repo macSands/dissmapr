@@ -185,12 +185,13 @@ then compute values (optionally in parallel).</p></li>
 <span class="r-in"><span>                  site_col <span class="op">=</span> <span class="st">"site"</span>,</span></span>
 <span class="r-in"><span>                  sp_cols  <span class="op">=</span> <span class="st">"sp1"</span>,</span></span>
 <span class="r-in"><span>                  order    <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Order 1 (single-site) computations done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    site_from site_to value order</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;char&gt;  &lt;lgcl&gt; &lt;num&gt; &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:         a      NA    51     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:         b      NA    51     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:         c      NA    51     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Time elapsed for order 1: 0 minutes and 0.87 seconds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total computation time: 0 minutes and 0.87 seconds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    site_from site_to order value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;char&gt;  &lt;lgcl&gt; &lt;num&gt; &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:         a      NA     1    51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:         b      NA     1    51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:         c      NA     1    51</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pairwise Gower dissimilarity (vectorized path)</span></span></span>
 <span class="r-in"><span><span class="fu">compute_orderwise</span><span class="op">(</span><span class="va">df</span>,</span></span>
@@ -198,20 +199,16 @@ then compute values (optionally in parallel).</p></li>
 <span class="r-in"><span>                  site_col <span class="op">=</span> <span class="st">"site"</span>,</span></span>
 <span class="r-in"><span>                  sp_cols  <span class="op">=</span> <span class="st">"sp1"</span>,</span></span>
 <span class="r-in"><span>                  order    <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Fast vectorized computation used for order 2 with orderwise_diss_gower.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      site_from site_to value order</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;fctr&gt;  &lt;fctr&gt; &lt;num&gt; &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:         a       a   0.2     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:         a       a   0.0     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:         a       a   0.2     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:         a       a   0.2     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:         b       a   0.2     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206:         b       c   0.4     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207:         c       c   0.2     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 208:         c       c   0.6     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 209:         c       c   0.0     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 210:         c       c   0.6     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Time elapsed for order 2: 0 minutes and 0.39 seconds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total computation time: 0 minutes and 0.39 seconds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    site_from site_to order value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;char&gt;  &lt;char&gt; &lt;num&gt; &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:         b       a     2     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:         c       a     2     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:         a       b     2     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:         c       b     2     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5:         a       c     2     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6:         b       c     2     0</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
