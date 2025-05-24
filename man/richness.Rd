@@ -15,6 +15,5 @@ richness(vec_from, vec_to = NULL)
 The species richness value.
 }
 \description{
-Calculate Species Richness
+Counts unique species per site; reports absolute differences for pairwise and summary stats (range, variance, mean) for multi-site.
 }
-\keyword{internal}

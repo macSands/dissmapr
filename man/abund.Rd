@@ -15,6 +15,5 @@ abund(vec_from, vec_to = NULL)
 The species abundance value.
 }
 \description{
-Calculate Species Abundance
+Sums total individuals per site; reports absolute pairwise differences and dispersion metrics for higher orders.
 }
-\keyword{internal}

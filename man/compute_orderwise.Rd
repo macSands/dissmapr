@@ -67,7 +67,17 @@ This function computes ecological index values (e.g. dissimilarity metrics,
 distances, turnover) for sets of sites at specified orders (single‐sites,
 pairs, higher‐order combinations). It supports both specialized
 vectorized implementations (for Gower dissimilarity) and generic or
-parallel looped approaches.
+parallel looped approaches. \code{compute_orderwise} computes user-defined metrics (e.g., distances,
+correlations, dissimilarities) between sites or site combinations at specified
+"orders" (1 = single-site, 2 = pairwise, higher = multi-site).
+It supports parallel processing for efficiency, handles large datasets, and
+returns a unified table summarizing calculated values across all orders.
+Results can assess, for example:
+i) how often different species are found together, providing a foundation for analysing species associations;
+ii) variations in species composition and environmental properties across sites,
+highlighting patterns of compositional turnover; and
+iii) spatial patterns of community assemblage.
+Use \code{helper_indices} to choose a specific function for the func parameter to calculate different metrics.
 }
 \details{
 \itemize{

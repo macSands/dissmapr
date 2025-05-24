@@ -15,6 +15,5 @@ cor_spear(vec_from, vec_to)
 Spearman's rank correlation coefficient.
 }
 \description{
-Calculate Spearman's Rank Correlation
+Spearman’s rank correlation for abundances; pairwise and averaged multi-site.
 }
-\keyword{internal}

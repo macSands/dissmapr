@@ -24,4 +24,3 @@ Numeric distance in meters between the two points, or 0 if \code{vec_to} is \cod
 Computes the geographic (Haversine) distance in meters between two coordinate
 pairs, or returns 0 for single-site (order=1) calculations when \code{vec_to} is \code{NULL}.
 }
-\keyword{internal}

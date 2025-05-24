@@ -15,6 +15,5 @@ diss_bcurt(vec_from, vec_to)
 The Bray-Curtis dissimilarity value.
 }
 \description{
-Calculate Bray-Curtis Dissimilarity
+Bray–Curtis dissimilarity on abundances; 0–1 for pairwise, averages or totals for multi-site.
 }
-\keyword{internal}

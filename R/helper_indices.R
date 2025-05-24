@@ -1,4 +1,5 @@
 #' Helper functions for compute_orderwise
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #'
 #' A suite of internal helper functions to compute ecological indices used by
 #' `compute_orderwise()`, including geographic distance, dissimilarity metrics,
@@ -42,7 +43,7 @@ invisible(lapply(required_packages, function(pkg) {
 #'
 #' @importFrom geosphere distHaversine
 #' @export
-#' @keywords internal
+# @keywords internal
 #'
 geodist_helper <- function(vec_from, vec_to = NULL, coord_cols = c("x", "y")) {
   # For single-site (order 1) calculations, return 0.
@@ -72,9 +73,6 @@ geodist_helper <- function(vec_from, vec_to = NULL, coord_cols = c("x", "y")) {
   # Compute and return Haversine distance
   geosphere::distHaversine(vec_from_coords, vec_to_coords)
 }
-
-
-
 
 # !! CURRENTLY DOESN'T WORK WITH `compute_orderwise` !!
 
@@ -148,12 +146,13 @@ calculate_pairwise_distances_matrix <- function(data, distance_fun = distGeo) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Species Richness
 #'
+#' Counts unique species per site; reports absolute differences for pairwise and summary stats (range, variance, mean) for multi-site.
 #' @param vec_from A numeric vector representing species counts at the first site.
 #' @param vec_to (Optional) A numeric vector for pairwise or higher-order comparisons.
 #'
 #' @return The species richness value.
 #' @export
-#' @keywords internal
+# @keywords internal
 #'
 richness <- function(vec_from, vec_to = NULL) {
   if (is.null(vec_to)) {
@@ -170,12 +169,14 @@ richness <- function(vec_from, vec_to = NULL) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Species Turnover or Beta Diversity
 #'
+#' Computes beta diversity as proportion unshared; 0–1 for pairwise, extended to multi-site averages or totals.
+#'
 #' @param vec_from A numeric vector representing species counts at the first site.
 #' @param vec_to (Optional) A numeric vector for pairwise or higher-order comparisons.
 #'
 #' @return The species turnover value.
 #' @export
-#' @keywords internal
+# @keywords internal
 #'
 turnover <- function(vec_from, vec_to = NULL) {
   if (is.null(vec_to)) {
@@ -210,12 +211,14 @@ turnover <- function(vec_from, vec_to = NULL) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Species Abundance
 #'
+#' Sums total individuals per site; reports absolute pairwise differences and dispersion metrics for higher orders.
+#'
 #' @param vec_from A numeric vector representing species counts at the first site.
 #' @param vec_to (Optional) A numeric vector for pairwise or higher-order comparisons.
 #'
 #' @return The species abundance value.
 #' @export
-#' @keywords internal
+# @keywords internal
 #'
 abund <- function(vec_from, vec_to = NULL) {
   if (is.null(vec_to)) {
@@ -231,12 +234,14 @@ abund <- function(vec_from, vec_to = NULL) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Phi Coefficient
 #'
+#' Phi coefficient for presence–absence; –1 to +1 pairwise, summary of means/variances across combinations.
+#'
 #' @param vec_from A binary presence-absence vector for the first site.
 #' @param vec_to A binary presence-absence vector for the second site.
 #'
 #' @return The Phi Coefficient value.
 #' @export
-#' @keywords internal
+# @keywords internal
 #'
 phi_coef <- function(vec_from, vec_to) {
   data_i <- as.numeric(vec_from > 0)
@@ -270,12 +275,14 @@ phi_coef <- function(vec_from, vec_to) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Spearman's Rank Correlation
 #'
+#' Spearman’s rank correlation for abundances; pairwise and averaged multi-site.
+#'
 #' @param vec_from A numeric vector representing species abundances at the first site.
 #' @param vec_to A numeric vector representing species abundances at the second site.
 #'
 #' @return Spearman's rank correlation coefficient.
 #' @export
-#' @keywords internal
+# @keywords internal
 #'
 cor_spear <- function(vec_from, vec_to) {
   if (length(vec_from) > 1 && length(vec_to) > 1) {
@@ -305,12 +312,14 @@ cor_spear <- function(vec_from, vec_to) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Pearson's Correlation
 #'
+#' Pearson’s correlation for linear abundance relationships; aggregated across sites.
+#'
 #' @param vec_from A numeric vector representing species abundances at the first site.
 #' @param vec_to A numeric vector representing species abundances at the second site.
 #'
 #' @return Pearson's correlation coefficient.
 #' @export
-#' @keywords internal
+# @keywords internal
 #'
 cor_pears <- function(vec_from, vec_to) {
   if (length(vec_from) > 1 && length(vec_to) > 1) {
@@ -330,12 +339,14 @@ cor_pears <- function(vec_from, vec_to) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Bray-Curtis Dissimilarity
 #'
+#' Bray–Curtis dissimilarity on abundances; 0–1 for pairwise, averages or totals for multi-site.
+#'
 #' @param vec_from A numeric vector representing species abundances at the first site.
 #' @param vec_to A numeric vector for species abundances at the second site.
 #'
 #' @return The Bray-Curtis dissimilarity value.
 #' @export
-#' @keywords internal
+# @keywords internal
 #'
 diss_bcurt <- function(vec_from, vec_to) {
   if (length(vec_from) > 1 && length(vec_to) > 1) {
@@ -374,7 +385,23 @@ gower_dissimilarity <- function(vec_from, vec_to) {
   }
 }
 
-
+#' Compute Gower dissimilarity between two site vectors
+#'
+#' Calculates the Gower dissimilarity (a bounded 0–1 measure) between two numeric
+#' vectors (e.g., species abundances) using the `cluster::daisy()` function. When
+#' the second vector is `NULL` (order 1), returns `NA_real_` since a pairwise
+#' comparison is not meaningful.
+#'
+#' @param vec_from Numeric vector representing the first site's attributes (e.g.,
+#'   species counts or trait values).
+#' @param vec_to Optional numeric vector for the second site; if `NULL`, the
+#'   function returns `NA_real_`.
+#'
+#' @return A single numeric dissimilarity value between 0 and 1, or `NA_real_` if
+#'   `vec_to` is `NULL`.
+#'
+#' @importFrom cluster daisy
+#' @export
 orderwise_diss_gower <- function(vec_from, vec_to = NULL) {
   # If the second vector is missing, we cannot compute a dissimilarity between two groups.
   # (For order=1 this function returns NA because comparing a single site to nothing isn’t meaningful.)
@@ -438,12 +465,14 @@ calculate_pairwise_gower_dist_matrix <- function(df, sp_cols) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Mutual Information
 #'
+#' Mutual information for dependence (linear + non-linear); pairwise or cumulative multi-site.
+#'
 #' @param vec_from A numeric or categorical vector for the first variable.
 #' @param vec_to A numeric or categorical vector for the second variable.
 #'
 #' @return The mutual information value between the two variables.
 #' @export
-#' @keywords internal
+# @keywords internal
 #'
 mutual_info <- function(vec_from, vec_to) {
   library(entropy)

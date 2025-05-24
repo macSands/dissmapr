@@ -15,6 +15,5 @@ mutual_info(vec_from, vec_to)
 The mutual information value between the two variables.
 }
 \description{
-Calculate Mutual Information
+Mutual information for dependence (linear + non-linear); pairwise or cumulative multi-site.
 }
-\keyword{internal}

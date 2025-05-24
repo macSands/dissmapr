@@ -15,6 +15,5 @@ turnover(vec_from, vec_to = NULL)
 The species turnover value.
 }
 \description{
-Calculate Species Turnover or Beta Diversity
+Computes beta diversity as proportion unshared; 0–1 for pairwise, extended to multi-site averages or totals.
 }
-\keyword{internal}
