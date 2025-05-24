@@ -42,6 +42,12 @@
 
 
     </div><div class="section level2">
+      <h2 id="core-functions">Core Functions<a class="anchor" aria-label="anchor" href="#core-functions"></a></h2>
+
+
+
+
+    </div><div class="section level2">
 
 
 
@@ -82,12 +88,7 @@
 
         </dt>
         <dd>Compute order‐wise ecological indices across multiple sites</dd>
-      </dl></div><div class="section level2">
-
-
-
-
-      <dl><dt>
+      </dl><dl><dt>
 
           <code><a href="rm_correlated.html">rm_correlated()</a></code>
 
@@ -112,32 +113,77 @@
         </dt>
         <dd>Map bioregional difference metrics across raster layers</dd>
       </dl></div><div class="section level2">
-      <h2 id="helper-indices">helper_indices<a class="anchor" aria-label="anchor" href="#helper-indices"></a></h2>
+      <h2 id="available-metrics">Available Metrics<a class="anchor" aria-label="anchor" href="#available-metrics"></a></h2>
 
-      <div class="section-desc"><p>Provides supporting functions to compute various ecological indices and metrics for data exploration. Use <code>helper_indices</code> to choose a specific function for the <code>func</code> parameter in <code>compute_orderwise</code>, enabling the calculation of one of the following metrics:</p><ul><li>
-<strong><code>distance</code></strong>: Calculates the geographic distance between sites using their coordinates (Haversine formula; metres).</li>
-<li>
-<strong><code>richness</code></strong>: Counts unique species per site; reports absolute differences for pairwise and summary stats (range, variance, mean) for multi-site.</li>
-<li>
-<strong><code>abund</code></strong>: Sums total individuals per site; reports absolute pairwise differences and dispersion metrics for higher orders.</li>
-<li>
-<strong><code>turnover</code></strong>: Computes beta diversity as proportion unshared; 0–1 for pairwise, extended to multi-site averages or totals.</li>
-<li>
-<strong><code>phi_coef</code></strong>: Phi coefficient for presence–absence; –1 to +1 pairwise, summary of means/variances across combinations.</li>
-<li>
-<strong><code>cor_spear</code></strong>: Spearman’s rank correlation for abundances; pairwise and averaged multi-site.</li>
-<li>
-<strong><code>cor_pears</code></strong>: Pearson’s correlation for linear abundance relationships; aggregated across sites.</li>
-<li>
-<strong><code>diss_bcurt</code></strong>: Bray–Curtis dissimilarity on abundances; 0–1 for pairwise, averages or totals for multi-site.</li>
-<li>
-<strong><code>diss_gower</code></strong>: Gower’s dissimilarity for mixed data; pairwise and multi-site summaries.</li>
-<li>
-<strong><code>mutual_info</code></strong>: Mutual information for dependence (linear + non-linear); pairwise or cumulative multi-site.</li>
-</ul></div>
+      <div class="section-desc"><p>Use <code>helper_indices</code> to choose a specific function for the func parameter in <code>compute_orderwise</code>, enabling the calculation of one of the following metrics:</p></div>
 
 
-    </div>
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="geodist_helper.html">geodist_helper()</a></code>
+
+        </dt>
+        <dd>Calculate geographic distance via Haversine formula (helper)</dd>
+      </dl><dl><dt>
+
+          <code><a href="richness.html">richness()</a></code>
+
+        </dt>
+        <dd>Calculate Species Richness</dd>
+      </dl><dl><dt>
+
+          <code><a href="turnover.html">turnover()</a></code>
+
+        </dt>
+        <dd>Calculate Species Turnover or Beta Diversity</dd>
+      </dl><dl><dt>
+
+          <code><a href="abund.html">abund()</a></code>
+
+        </dt>
+        <dd>Calculate Species Abundance</dd>
+      </dl><dl><dt>
+
+          <code><a href="phi_coef.html">phi_coef()</a></code>
+
+        </dt>
+        <dd>Calculate Phi Coefficient</dd>
+      </dl><dl><dt>
+
+          <code><a href="cor_spear.html">cor_spear()</a></code>
+
+        </dt>
+        <dd>Calculate Spearman's Rank Correlation</dd>
+      </dl><dl><dt>
+
+          <code><a href="cor_pears.html">cor_pears()</a></code>
+
+        </dt>
+        <dd>Calculate Pearson's Correlation</dd>
+      </dl><dl><dt>
+
+          <code><a href="diss_bcurt.html">diss_bcurt()</a></code>
+
+        </dt>
+        <dd>Calculate Bray-Curtis Dissimilarity</dd>
+      </dl><dl><dt>
+
+          <code><a href="orderwise_diss_gower.html">orderwise_diss_gower()</a></code>
+
+        </dt>
+        <dd>Compute Gower dissimilarity between two site vectors</dd>
+      </dl><dl><dt>
+
+          <code><a href="mutual_info.html">mutual_info()</a></code>
+
+        </dt>
+        <dd>Calculate Mutual Information</dd>
+      </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
