@@ -7,40 +7,50 @@
 map_bioregDiff(raster_input, approach = "all")
 }
 \arguments{
-\item{raster_input}{A \code{SpatRaster} with at least two layers representing categorical
-cluster assignments (e.g., bioregions) over time or scenarios.}
+\item{raster_input}{A \code{SpatRaster} or a \strong{list} of single‐layer \code{SpatRaster} objects.}
 
-\item{approach}{Character specifying which metric to return. Options:
+\item{approach}{Character; one of
 \describe{
-\item{"difference_count"}{Count of pixel value changes across layers.}
-\item{"shannon_entropy"}{Shannon entropy of pixel value distribution.}
-\item{"stability"}{Proportion of layers where pixel value remains constant.}
-\item{"transition_frequency"}{Number of transitions (binary change) per pixel.}
-\item{"weighted_change_index"}{Sum of transition weights from the normalized dissimilarity matrix.}
-\item{"all"}{All metrics combined into a multi-layer \code{SpatRaster}.}
+\item{\code{"difference_count"}}{Count of label changes per cell.}
+\item{\code{"shannon_entropy"}}{Entropy of the cell's label distribution.}
+\item{\code{"stability"}}{Proportion of layers where the label stays the same.}
+\item{\code{"transition_frequency"}}{Sum of binary change maps across layers.}
+\item{\code{"weighted_change_index"}}{Sum of dissimilarity‐weighted transitions.}
+\item{\code{"all"}}{All five metrics combined into a multi‐layer \code{SpatRaster}.}
 }
-Default is "all".}
+Default: \code{"all"}.}
 }
 \value{
-A \code{SpatRaster}: a single-layer raster if \code{approach} is specific;
-or a multi-layer raster with layers:
-\code{Difference_Count}, \code{Shannon_Entropy}, \code{Stability},
-\code{Transition_Frequency}, \code{Weighted_Change_Index} when \code{approach = "all"}.
+A \code{SpatRaster}:
+\itemize{
+\item A single layer if \code{approach} is one metric,
+\item A 5‐layer raster (\code{Difference_Count}, \code{Shannon_Entropy}, \code{Stability},
+\code{Transition_Frequency}, \code{Weighted_Change_Index}) if \code{approach = "all"}.
+}
 }
 \description{
-Computes a suite of change indices—including difference count, Shannon entropy,
-stability, transition frequency, and weighted change index—across sequential layers
-of a \code{SpatRaster}. Returns either a single selected metric or all metrics as a
-multi-layer \code{SpatRaster}.
+Takes two or more categorical raster layers (or a list of them) and computes how
+each cell's region label changes over time.  You can return:
+\itemize{
+\item the \strong{difference count} (number of times a cell's label changes),
+\item \strong{Shannon entropy} of its label sequence,
+\item \strong{stability} (proportion of time unchanged),
+\item \strong{transition frequency} (sum of per-step changes),
+\item \strong{weighted change index} (sum of pairwise-change weights),
+or all five as a multi‐layer \code{SpatRaster}.
 }
-\details{
-\enumerate{
-\item Builds a transition matrix of cluster changes between consecutive layers and
-normalizes it to create a dissimilarity matrix.
-\item \code{difference_count}: counts how many times each pixel changes value.
-\item \code{shannon_entropy}: computes entropy of pixel value distribution across layers.
-\item \code{stability}: calculates 1 minus the indicator of constant pixel values.
-\item \code{transition_frequency}: sums per-layer binary change maps.
-\item \code{weighted_change_index}: accumulates weighted transitions using the dissimilarity matrix.
 }
+\examples{
+\dontrun{
+# Combine four single‐layer rasters into one multi‐layer object:
+rlist <- list(km=km_rast, pam=pam_rast, hc=hc_rast, gmm=gmm_rast)
+multi <- rast(rlist)
+
+# Compute all metrics:
+diff_metrics <- map_bioregDiff(multi, approach="all")
+
+# Just the entropy map:
+ent_map <- map_bioregDiff(multi, approach="shannon_entropy")
+}
+
 }

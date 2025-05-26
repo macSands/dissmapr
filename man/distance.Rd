@@ -4,7 +4,7 @@
 \alias{distance}
 \title{Calculate Distance Between Sites}
 \usage{
-distance(df, site_col, vec_from, vec_to = NULL)
+distance(df, site_col, vec_from, vec_to = NULL, coord_cols = c("x", "y"))
 }
 \arguments{
 \item{df}{A data frame containing site coordinates.}

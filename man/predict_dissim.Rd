@@ -11,33 +11,33 @@ predict_dissim(
   mean_rich,
   mean_turn,
   sbs_xy,
-  rsa
+  rsa = NULL,
+  x_col = "x",
+  y_col = "y"
 )
 }
 \arguments{
-\item{block_sp}{Data frame containing geographic and environmental data.}
+\item{block_sp}{Data frame containing geographic and environmental data; must include \code{grid_id}, and the columns named by \code{x_col} & \code{y_col}.}
 
-\item{sbe_scaled}{Scaled environmental predictors.}
+\item{sbe_scaled}{Scaled environmental predictors (same number of rows as \code{block_sp}).}
 
 \item{zeta_model}{Model object from \code{zetadiv::Zeta.msgdm}.}
 
-\item{mean_rich}{Data frame with mean richness values for calibration.}
+\item{mean_rich}{Data frame with mean richness values (\code{order}, \code{value}).}
 
-\item{mean_turn}{Data frame with mean turnover values for calibration.}
+\item{mean_turn}{Data frame with mean turnover values (\code{order}, \code{value}).}
 
-\item{sbs_xy}{Data frame with spatial coordinates.}
+\item{sbs_xy}{Data frame with the same sites in the same order as \code{sbe_scaled}; must include the columns named by \code{x_col} & \code{y_col}.}
 
-\item{rsa}{Spatial object for overlaying boundaries on plots.}
+\item{rsa}{(Optional) an \code{sf} or \code{SpatVector} boundary layer to overlay (default: \code{NULL}).}
+
+\item{x_col}{Name of the longitude column in both \code{block_sp} & \code{sbs_xy} (default: \code{"x"}).}
+
+\item{y_col}{Name of the latitude  column in both \code{block_sp} & \code{sbs_xy} (default: \code{"y"}).}
 }
 \value{
-A data frame with predicted dissimilarity and other metrics.
+A data frame with all predictors plus the dissimilarity predictions.
 }
 \description{
-This function predicts turnover or zeta diversity values using models from \code{zetadiv::Zeta.msgdm} and new environmental data.
-}
-\examples{
-# Example usage:
-result <- predict_dissim(block_sp, sbe_scaled, zeta_model, mean_rich, mean_turn, sbs_xy, rsa)
-head(result)
-
+Predict Dissimilarity Using Environmental Data
 }

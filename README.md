@@ -1,7 +1,11 @@
 
 - [`dissmapr`](#dissmapr)
+  - [A Novel Framework for Automated Compositional Dissimilarity and
+    Biodiversity Turnover
+    Analysis](#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis)
   - [Introduction](#introduction)
   - [Workflow Overview](#workflow-overview)
+
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
@@ -410,6 +414,12 @@ enviro_list = get_enviro_data(
   ext_cols  = c('obs_sum','spp_rich')
 )
 ras_enviro = enviro_list$env_rast
+
+# Optional: Rename the columns to something more descriptive
+names(ras_enviro) = c("temp_mean", "mdr", "iso", "temp_sea", "temp_max",
+                    "temp_min", "temp_rang","temp_wetQ","temp_dryQ", "temp_warmQ",
+                    "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
+                    "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
 ```
 
 #### Add ‘eff-rich’ raster to the enviro stack raster
@@ -463,49 +473,49 @@ head(env_df[,15:24])
 #> 6 27.88800 20.00150 463 97  2 94.23997 281 10 281 10
 
 # Rename `env_df` column names
-names(env_df) = c('grid_id','x','y','obs_sum','spp_rich',"temp_mean", "mdr", "iso", "temp_sea", "temp_max",
+names(env_df) = c('grid_id','centroid_lon','centroid_lat','obs_sum','spp_rich',"temp_mean", "mdr", "iso", "temp_sea", "temp_max",
                                 "temp_min", "temp_rang","temp_wetQ", "temp_dryQ", "temp_warmQ",
                                 "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
                                 "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
 
 # Check the first few rows
 head(env_df)
-#>   grid_id     x         y obs_sum spp_rich temp_mean      mdr      iso temp_sea
-#> 1    1026 28.75 -22.25004       3        2  21.88425 14.47900 55.67347 427.1824
-#> 2    1027 29.25 -22.25004      41       31  21.76921 14.61358 53.90477 453.1160
-#> 3    1028 29.75 -22.25004      10       10  21.53492 14.00267 56.31250 392.8977
-#> 4    1029 30.25 -22.25004       7        7  23.01796 13.67825 57.83615 357.9102
-#> 5    1030 30.75 -22.25004       6        6  23.59879 13.83525 59.58590 334.4157
-#> 6    1031 31.25 -22.25004     107       76  24.57367 14.64933 61.67101 332.0319
-#>   temp_max temp_min temp_rang temp_wetQ temp_dryQ temp_warmQ temp_coldQ
-#> 1   32.446    6.439    26.007  26.13383  16.05333   26.13383   16.05333
-#> 2   32.977    5.867    27.110  26.47767  15.63300   26.47767   15.63300
-#> 3   31.662    6.796    24.866  25.51400  16.11067   25.51400   16.11067
-#> 4   32.791    9.141    23.650  26.64050  18.05417   26.64050   18.05417
-#> 5   33.509   10.290    23.219  26.95950  18.99083   26.95950   18.99083
-#> 6   34.788   11.034    23.754  27.88800  20.00150   27.88800   20.00150
-#>   rain_mean rain_wet rain_dry rain_sea rain_wetQ rain_dryQ rain_warmQ
-#> 1       334       68        1 88.32125       185         5        185
-#> 2       354       74        1 85.64050       191         6        191
-#> 3       429       90        2 86.95976       236         9        236
-#> 4       425       88        1 90.60240       245         8        245
-#> 5       456       98        2 93.44035       274         8        274
-#> 6       463       97        2 94.23997       281        10        281
-#>   rain_coldQ
-#> 1          5
-#> 2          6
-#> 3          9
-#> 4          8
-#> 5          8
-#> 6         10
+#>   grid_id centroid_lon centroid_lat obs_sum spp_rich temp_mean      mdr
+#> 1    1026        28.75    -22.25004       3        2  21.88425 14.47900
+#> 2    1027        29.25    -22.25004      41       31  21.76921 14.61358
+#> 3    1028        29.75    -22.25004      10       10  21.53492 14.00267
+#> 4    1029        30.25    -22.25004       7        7  23.01796 13.67825
+#> 5    1030        30.75    -22.25004       6        6  23.59879 13.83525
+#> 6    1031        31.25    -22.25004     107       76  24.57367 14.64933
+#>        iso temp_sea temp_max temp_min temp_rang temp_wetQ temp_dryQ temp_warmQ
+#> 1 55.67347 427.1824   32.446    6.439    26.007  26.13383  16.05333   26.13383
+#> 2 53.90477 453.1160   32.977    5.867    27.110  26.47767  15.63300   26.47767
+#> 3 56.31250 392.8977   31.662    6.796    24.866  25.51400  16.11067   25.51400
+#> 4 57.83615 357.9102   32.791    9.141    23.650  26.64050  18.05417   26.64050
+#> 5 59.58590 334.4157   33.509   10.290    23.219  26.95950  18.99083   26.95950
+#> 6 61.67101 332.0319   34.788   11.034    23.754  27.88800  20.00150   27.88800
+#>   temp_coldQ rain_mean rain_wet rain_dry rain_sea rain_wetQ rain_dryQ
+#> 1   16.05333       334       68        1 88.32125       185         5
+#> 2   15.63300       354       74        1 85.64050       191         6
+#> 3   16.11067       429       90        2 86.95976       236         9
+#> 4   18.05417       425       88        1 90.60240       245         8
+#> 5   18.99083       456       98        2 93.44035       274         8
+#> 6   20.00150       463       97        2 94.23997       281        10
+#>   rain_warmQ rain_coldQ
+#> 1        185          5
+#> 2        191          6
+#> 3        236          9
+#> 4        245          8
+#> 5        274          8
+#> 6        281         10
 
 # Plot the results to check the conversion is accurate
 ggplot() +
   # Add 0.25deg grid layer
   geom_sf(data = aoi_grid, fill = NA, color = "darkgrey", alpha = 0.5) +
   # Add bfly points layer
-  geom_point(data = env_df, aes(x = x,
-                                  y = y,
+  geom_point(data = env_df, aes(x = centroid_lon,
+                                  y = centroid_lat,
                                   color = temp_mean)) +
   scale_size_continuous(range = c(0.5, 5)) +  # Adjust the point size range (min, max)
   scale_color_viridis_c(option = "turbo") +  # Use turbo color scale
@@ -527,7 +537,7 @@ richness, and environmental variables for modelling called `sbe`.
 
 ``` r
 sbe = env_df %>%
-  select(grid_id, x, y, obs_sum, spp_rich, everything())
+  select(grid_id, centroid_lon, centroid_lat, obs_sum, spp_rich, everything())
 ```
 
 ### 9. If necessary project coordinates into meters projection (e.g. UTM) using `sf::st_transform`
@@ -564,7 +574,110 @@ head(xy_utm_df)
 #> 6        31.25    -22.25004 6831955 -6692770
 ```
 
-### 10. Check for inter-correlation and remove highly corrected variables using `rm_correlated`.
+|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| \### Example 1 - Species Richness —-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| \# Here we calculate species richness across sites in the block_sp dataset, again using the compute_orderwise function. The richness function is applied to the grid_id column for site identification, with species data specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders. |
+| \`\`\` r \# Compute species richness (order 1) and the difference thereof for orders 2 to 4 rich_o1234 = compute_orderwise( df = grid_spp, func = richness, site_col = ‘grid_id’, sp_cols = sp_cols, sample_no = 1000, order = 1:4, parallel = TRUE, n_workers = 4) \#\> Time elapsed for order 1: 0 minutes and 4.57 seconds \#\> Time elapsed for order 2: 0 minutes and 11.10 seconds \#\> Time elapsed for order 3: 0 minutes and 38.29 seconds \#\> Time elapsed for order 4: 1 minutes and 10.54 seconds \#\> Total computation time: 1 minutes and 10.55 seconds                                                                                                                                                        |
+| head(rich_o1234) \#\> site_from site_to order value \#\> <char> <char> <int> <int> \#\> 1: 1026 <NA> 1 2 \#\> 2: 1027 <NA> 1 31 \#\> 3: 1028 <NA> 1 10 \#\> 4: 1029 <NA> 1 7 \#\> 5: 1030 <NA> 1 6 \#\> 6: 1031 <NA> 1 76 \`\`\`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `r # Plot species richness distribution by order head(rich_o1234) #>    site_from site_to order value #>       <char>  <char> <int> <int> #> 1:      1026    <NA>     1     2 #> 2:      1027    <NA>     1    31 #> 3:      1028    <NA>     1    10 #> 4:      1029    <NA>     1     7 #> 5:      1030    <NA>     1     6 #> 6:      1031    <NA>     1    76 boxplot(value ~ order, data = rich_o1234, col = c('#4575b4', '#99ce8f', '#fefab8', '#d73027'), horizontal = TRUE, outline = FALSE, main = 'Distribution of Species Richness by Order')`                                                                                                                                                                      |
+| <img src="man/figures/README-richness-plot-1.png" width="100%" />                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| \`\`\` r                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| rich_o1234$centroid_lon = grid_spp$centroid_lon\[match(rich_o1234$site_from, grid_spp$grid_id)\] rich_o1234$centroid_lat = grid_spp$centroid_lat\[match(rich_o1234$site_from, grid_spp$grid_id)\]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| \# Summarise turnover by site (spatial location) mean_rich_o1234 = rich_o1234 %\>% group_by(order, site_from, centroid_lon, centroid_lat) %\>% summarize(value = mean(value, na.rm = TRUE)) head(mean_rich_o1234) \#\> \# A tibble: 6 × 5 \#\> \# Groups: order, site_from, centroid_lon \[6\] \#\> order site_from centroid_lon centroid_lat value \#\> <int> <chr> <dbl> <dbl> <dbl> \#\> 1 1 1026 28.8 -22.3 2 \#\> 2 1 1027 29.2 -22.3 31 \#\> 3 1 1028 29.7 -22.3 10 \#\> 4 1 1029 30.3 -22.3 7 \#\> 5 1 1030 30.8 -22.3 6 \#\> 6 1 1031 31.3 -22.3 76 \`\`\`                                                                                                                                                             |
+
+### Example 2 - Community Turnover —-
+
+# Here we calculate species turnover (beta diversity) across sites in the block_sp dataset using the compute_orderwise function again. The turnover function is applied to the grid_id column for site identification, with species data specified by sp_cols. Order = 1 is not an option because turnover requires a comparison between sites. For orders 2 to 5, it computes turnover for pairwise and higher-order site combinations, representing the proportion of species not shared between sites. A subset of 1000 samples is used for higher-order comparisons. Parallel processing with 4 worker threads improves efficiency, and the output is a table summarizing species turnover across the specified orders.
+
+``` r
+# Compute community turnover for orders 2 to 5
+turn_o2345 = compute_orderwise(
+  df = grid_spp,
+  func = turnover,
+  site_col = 'grid_id',
+  sp_cols = sp_cols, # OR `names(grid_spp)[-c(1:4)]`
+  sample_no = 1000, # Reduce to speed-up computation
+  order = 2:5,
+  parallel = TRUE,
+  n_workers = 4)
+#> Time elapsed for order 2: 0 minutes and 9.84 seconds
+#> Time elapsed for order 3: 0 minutes and 43.83 seconds
+#> Time elapsed for order 4: 1 minutes and 23.78 seconds
+#> Time elapsed for order 5: 2 minutes and 9.59 seconds
+#> Total computation time: 2 minutes and 9.60 seconds
+
+# Check results
+head(turn_o2345)
+#>    site_from site_to order     value
+#>       <char>  <char> <int>     <num>
+#> 1:      1027    1026     2 0.9354839
+#> 2:      1028    1026     2 0.9090909
+#> 3:      1029    1026     2 1.0000000
+#> 4:      1030    1026     2 1.0000000
+#> 5:      1031    1026     2 0.9870130
+#> 6:       117    1026     2 1.0000000
+```
+
+To visualize the spatial patterns of turnover across sites, geographic
+coordinates are added back to the results. This allows spatial
+exploration of turnover patterns across different orders, highlighting
+regions of high or low turnover and enabling comparisons across orders.
+These visualizations provide valuable insights into spatial biodiversity
+dynamics. Below we assign the geographic coordinates (x and y) from the
+block_sp dataset to the turn_o2345 results. Using match, it aligns the
+coordinates to the site_from column in turn_o2345 based on the
+corresponding grid_id values in block_sp. This prepares the dataset for
+spatial plotting.
+
+``` r
+# Add coordinates back to 'turn_o2345' for plotting
+# turn_o2345$x = grid_spp$x[match(turn_o2345$site_from, grid_spp$grid_id)]
+# turn_o2345$y = grid_spp$y[match(turn_o2345$site_from, block_sp$grid_id)]
+
+turn_o2345$centroid_lon = grid_spp$centroid_lon[match(turn_o2345$site_from, grid_spp$grid_id)]
+turn_o2345$centroid_lat = grid_spp$centroid_lat[match(turn_o2345$site_from, grid_spp$grid_id)]
+
+# Summarise turnover by site (spatial location)
+mean_turn_o2345 = turn_o2345 %>%
+  group_by(order, site_from, centroid_lon, centroid_lat) %>%
+  summarize(value = mean(value, na.rm = TRUE))
+
+# Plot Beta Diversity (pairwise turnover) from code above
+ggplot() +
+  geom_tile(data = mean_turn_o2345[mean_turn_o2345$order==2,],
+            aes(x = centroid_lon, y = centroid_lat, fill = value)) +
+  scale_fill_gradientn(colors = viridis(8)) + #Apply viridis color palette
+  geom_sf(data = rsa, fill = NA, color = "black", alpha = 0.5) +
+  theme_minimal() +
+  labs(x = "Longitude", y = "Latitude", fill = "Beta Diversity") +
+  theme(panel.grid = element_blank(),panel.border = element_blank()
+  )
+```
+
+<img src="man/figures/README-turnover-plot-1.png" width="100%" />
+
+``` r
+
+# Plot results to help visualise spatial patterns of turnover across different orders. This can highlight regions of high or low turnover and facilitate comparison across orders, providing insights into spatial biodiversity dynamics.
+ggplot() +
+  geom_tile(data = mean_turn_o2345, aes(x = centroid_lon, y = centroid_lat, fill = value)) +
+  scale_fill_viridis_c(option = "turbo", name = "Turnover") +
+  geom_sf(data = rsa, fill = NA, color = "black", alpha = 0.5) +
+  theme_minimal() +
+  labs(
+    title = "Mean Turnover by Order",
+    x = "Longitude",
+    y = "Latitude"
+  ) +
+  facet_wrap(~ order, ncol = 2)
+```
+
+<img src="man/figures/README-turnover-plot-2.png" width="100%" />
+
+------------------------------------------------------------------------
+
+### 10. Check for multi-colinearity and remove highly corrected variables using `rm_correlated`.
 
 Identify and remove highly correlated environmental variables to reduce
 multicollinearity in subsequent analyses. This step ensures model
@@ -599,6 +712,7 @@ env_vars_reduced = rm_correlated(data = env_df[,c(4,6:24)],
     #> 6     107  24.57367 61.67101  27.88800  20.00150        2        281
     dim(env_vars_reduced)
     #> [1] 415   7
+    env_vars_reduced$obs_max = max(env_vars_reduced$obs_sum)
 
 ------------------------------------------------------------------------
 
@@ -646,6 +760,14 @@ zeta_decline_ex = Zeta.decline.ex(site_spp_pa[,6:ncol(site_spp_pa)],
 >   <u>**niche-based sorting**</u> (**environmental factors shaping
 >   species distributions**).
 
+> **Interpretation**: The near‐perfect straight line in the exponential
+> panel (high R²) indicates that an exponential model provides the most
+> parsimonious description of how species shared across sites decline as
+> you add more sites—consistent with a stochastic, memory-less decline
+> in common species. A power law will also fit in broad strokes, but
+> deviates at high orders, suggesting exponential decay is the better
+> choice for these data.
+
 #### Zeta diversity decline using Monte Carlo sampling `zetadiv::Zeta.decline.mc`
 
 Computes zeta diversity, the number of species shared by multiple
@@ -687,7 +809,10 @@ zeta_mc_utm = Zeta.decline.mc(site_spp_pa[,-(1:6)],
 >   *This result demonstrates clear spatial structuring of
 >   biodiversity—species are locally clustered, not randomly distributed
 >   across the landscape. Spatial proximity influences which species
->   co-occur more frequently.*
+>   co-occur more frequently. In practice use `Zeta.decline.mc` for
+>   real‐world biodiversity data—both because it scales and because the
+>   Monte Carlo envelope is invaluable when ζₖ gets noisier at higher
+>   orders.*
 
 ### 12. Zeta decays (sbs, xy), orders 2:15
 
@@ -709,7 +834,7 @@ Computes the distance decay of zeta diversity for a range of orders
 zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
                           site_spp_pa[,-(1:6)],
                           sam = 1000,
-                          orders = 2:10,
+                          orders = 2:8,
                           plot = TRUE,
                           confint.level = 0.95
 )
@@ -720,8 +845,6 @@ zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
 #> [1] 6
 #> [1] 7
 #> [1] 8
-#> [1] 9
-#> [1] 10
 ```
 
 <img src="man/figures/README-zeta-decays-1.png" width="100%" />
@@ -762,6 +885,11 @@ zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
 > weakens as you include more sites. In other words, rare or localized
 > species contribute to strong distance decay, but widespread species
 > dominate at higher spatial scales, leading to more uniformity.
+> *Species that occur in just two or three sites show a clear “farther
+> apart → fewer shared species” pattern. But when you ask about the
+> handful of really widespread species (those present in four, five, or
+> more sites), their shared‐species counts no longer decline with
+> distance—they form a spatially uniform core.*
 
 ### 13. Zeta.msgdm(sbs, sbe, xy), order 2, 3, 5, 10
 
@@ -788,8 +916,9 @@ save fitted order 2 model ‘zeta2’*
 
 # Compute a regression model of zeta diversity order 2
 zeta2 = Zeta.msgdm(site_spp_pa[,-(1:6)],
-                   env_vars_reduced,
-                   xy_utm_df[,3:4],
+                   env_vars_reduced[,-8],
+                   # xy_utm_df[,3:4],
+                   xy[,1:2],
                    sam = 1000,
                    order = 2,
                    distance.type = "Euclidean",# "ortho",
@@ -799,7 +928,7 @@ zeta2 = Zeta.msgdm(site_spp_pa[,-(1:6)],
 
 # Compute splines coordinates from I-spline-based MSGDM
 zeta2.ispline = Return.ispline(zeta2,
-                               env_vars_reduced,
+                               env_vars_reduced[,-8],
                                # legend = FALSE,
                                distance = TRUE)
 # zeta2.ispline
@@ -827,23 +956,23 @@ Plot.ispline(isplines = zeta2.ispline, distance = TRUE)
 
 > **Main Takeaways from the Plot:**
 >
-> \- **Geographic distance** (blue line) has the strongest effect:  
-> As distance increases (from 0 to 1), species similarity drops —
-> locations far apart share fewer species. This confirms classic
-> distance decay in ecology.  
+> - **Geographic distance** (blue line) has the strongest effect:  
+>   As distance increases (from 0 to 1), species similarity drops —
+>   locations far apart share fewer species. This confirms classic
+>   distance decay in ecology.  
 > - **obs_sum** (sampling effort or richness) shows a steep, high
-> I-spline curve: - Strong initial effect: Differences in richness
-> between sites strongly influence shared species, especially when
-> large. Plateau effect: Beyond a point, further increases in richness
-> don’t lead to more shared species, possibly due to detection limits or
-> saturation. Overall importance: The curve remains high, indicating
-> consistent influence.  
+>   I-spline curve: - Strong initial effect: Differences in richness
+>   between sites strongly influence shared species, especially when
+>   large. Plateau effect: Beyond a point, further increases in richness
+>   don’t lead to more shared species, possibly due to detection limits
+>   or saturation. Overall importance: The curve remains high,
+>   indicating consistent influence.  
 > - **Temperature** and **rainfall seasonality** have moderate effects:
-> \> Variables like `temp_mean`, `rain_warmQ`, and `temp_wetQ`
-> contribute, but their curves are lower, indicating weaker influence. -
-> Other climatic variables (e.g., isothermality, coldest quarter rain)
-> show minimal contribution: These gradients affect biodiversity weakly
-> in this context.
+>   \> Variables like `temp_mean`, `rain_warmQ`, and `temp_wetQ`
+>   contribute, but their curves are lower, indicating weaker influence.
+> - Other climatic variables (e.g., isothermality, coldest quarter rain)
+>   show minimal contribution: These gradients affect biodiversity
+>   weakly in this context.
 
 > **Summary:**  
 > Beyond geographic distance, the total number of species observed at a
@@ -853,7 +982,7 @@ Plot.ispline(isplines = zeta2.ispline, distance = TRUE)
 ``` r
 # Deviance explained summary results
 with(summary(zeta2$model), 1 - deviance/null.deviance) 
-#> [1] 0.2033946
+#> [1] 0.264315
 # [1] 0.04414301
 # 0.04414301 means that approximately 4.41% of the variability in the response
 # variable is explained by your model. This is relatively low, suggesting that the
@@ -869,39 +998,39 @@ summary(zeta2$model)
 #> 
 #> Coefficients:
 #>              Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)  0.084272   0.007866  10.713  < 2e-16 ***
-#> obs_sum1    -0.049532   0.003942 -12.565  < 2e-16 ***
-#> obs_sum2     0.000000   0.018984   0.000  1.00000    
-#> obs_sum3    -0.004360   0.033647  -0.130  0.89693    
-#> temp_mean1   0.000000   0.043960   0.000  1.00000    
-#> temp_mean2   0.000000   0.014570   0.000  1.00000    
-#> temp_mean3  -0.002049   0.017560  -0.117  0.90713    
-#> iso1         0.000000   0.014279   0.000  1.00000    
-#> iso2         0.000000   0.009377   0.000  1.00000    
-#> iso3         0.000000   0.015613   0.000  1.00000    
-#> temp_wetQ1   0.000000   0.012651   0.000  1.00000    
-#> temp_wetQ2   0.000000   0.011376   0.000  1.00000    
-#> temp_wetQ3   0.000000   0.014879   0.000  1.00000    
-#> temp_dryQ1  -0.015966   0.037311  -0.428  0.66881    
-#> temp_dryQ2  -0.014025   0.012191  -1.151  0.25022    
-#> temp_dryQ3   0.000000   0.012423   0.000  1.00000    
-#> rain_dry1   -0.021985   0.007853  -2.800  0.00522 ** 
-#> rain_dry2    0.000000   0.009982   0.000  1.00000    
-#> rain_dry3    0.000000   0.014310   0.000  1.00000    
-#> rain_warmQ1  0.000000   0.008823   0.000  1.00000    
-#> rain_warmQ2 -0.010885   0.010973  -0.992  0.32143    
-#> rain_warmQ3  0.000000   0.018963   0.000  1.00000    
-#> distance1   -0.018723   0.012071  -1.551  0.12122    
-#> distance2    0.000000   0.012773   0.000  1.00000    
-#> distance3   -0.030636   0.019029  -1.610  0.10773    
+#> (Intercept)  0.103685   0.007458  13.903  < 2e-16 ***
+#> obs_sum1    -0.047222   0.003601 -13.112  < 2e-16 ***
+#> obs_sum2     0.000000   0.016421   0.000 1.000000    
+#> obs_sum3     0.000000   0.021894   0.000 1.000000    
+#> temp_mean1   0.000000   0.035343   0.000 1.000000    
+#> temp_mean2  -0.009559   0.012775  -0.748 0.454502    
+#> temp_mean3   0.000000   0.015940   0.000 1.000000    
+#> iso1        -0.004022   0.013746  -0.293 0.769874    
+#> iso2         0.000000   0.009277   0.000 1.000000    
+#> iso3         0.000000   0.013286   0.000 1.000000    
+#> temp_wetQ1   0.000000   0.011252   0.000 1.000000    
+#> temp_wetQ2  -0.004848   0.009588  -0.506 0.613246    
+#> temp_wetQ3  -0.003618   0.013219  -0.274 0.784346    
+#> temp_dryQ1  -0.005572   0.033097  -0.168 0.866337    
+#> temp_dryQ2  -0.006185   0.010479  -0.590 0.555161    
+#> temp_dryQ3   0.000000   0.011843   0.000 1.000000    
+#> rain_dry1   -0.018325   0.007454  -2.458 0.014127 *  
+#> rain_dry2    0.000000   0.009306   0.000 1.000000    
+#> rain_dry3    0.000000   0.014403   0.000 1.000000    
+#> rain_warmQ1 -0.002312   0.008321  -0.278 0.781217    
+#> rain_warmQ2 -0.015782   0.010613  -1.487 0.137324    
+#> rain_warmQ3  0.000000   0.020082   0.000 1.000000    
+#> distance1   -0.040602   0.011229  -3.616 0.000315 ***
+#> distance2    0.000000   0.011820   0.000 1.000000    
+#> distance3   -0.013797   0.015469  -0.892 0.372669    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> (Dispersion parameter for gaussian family taken to be 0.001993948)
+#> (Dispersion parameter for gaussian family taken to be 0.001674497)
 #> 
-#>     Null deviance: 2.4405  on 999  degrees of freedom
-#> Residual deviance: 1.9441  on 975  degrees of freedom
-#> AIC: -3353.1
+#>     Null deviance: 2.2192  on 999  degrees of freedom
+#> Residual deviance: 1.6326  on 975  degrees of freedom
+#> AIC: -3527.7
 #> 
 #> Number of Fisher Scoring iterations: 2
 ```
@@ -917,6 +1046,84 @@ summary(zeta2$model)
 ``` r
 # sbe_now = sbe %>% mutate(sam_max = max(obs_sum))
 # zeta_now = Predict.zeta(zeta2, sbe_now, xy[,3:4])
+
+# env_vars_reduced$obs_max = max(env_vars_reduced$obs_sum)
+head(mean_rich_o1234)
+#> # A tibble: 6 × 5
+#> # Groups:   order, site_from, centroid_lon [6]
+#>   order site_from centroid_lon centroid_lat value
+#>   <int> <chr>            <dbl>        <dbl> <dbl>
+#> 1     1 1026              28.8        -22.3     2
+#> 2     1 1027              29.2        -22.3    31
+#> 3     1 1028              29.7        -22.3    10
+#> 4     1 1029              30.3        -22.3     7
+#> 5     1 1030              30.8        -22.3     6
+#> 6     1 1031              31.3        -22.3    76
+head(mean_turn_o2345)
+#> # A tibble: 6 × 5
+#> # Groups:   order, site_from, centroid_lon [6]
+#>   order site_from centroid_lon centroid_lat value
+#>   <int> <chr>            <dbl>        <dbl> <dbl>
+#> 1     2 1026              28.8        -22.3 0.997
+#> 2     2 1027              29.2        -22.3 0.976
+#> 3     2 1028              29.7        -22.3 0.992
+#> 4     2 1029              30.3        -22.3 0.974
+#> 5     2 1030              30.8        -22.3 0.989
+#> 6     2 1031              31.3        -22.3 0.961
+
+predictors_df = predict_dissim(
+  block_sp   = grid_spp[,-c(4:6)],
+  sbe        = sbe[,-c(1:3)],# env_vars_reduced[,-8]
+  zeta_model = zeta2,
+  mean_rich  = mean_rich_o1234,
+  mean_turn  = mean_turn_o2345,
+  sbs_xy     = xy,
+  x_col      = "centroid_lon",
+  y_col      = "centroid_lat",
+  rsa        = rsa
+)
+```
+
+<img src="man/figures/README-predict-zeta2-1.png" width="100%" />
+
+``` r
+
+head(predictors_df)
+#>   obs_sum spp_rich temp_mean      mdr      iso temp_sea temp_max temp_min
+#> 1       3        2  21.88425 14.47900 55.67347 427.1824   32.446    6.439
+#> 2      41       31  21.76921 14.61358 53.90477 453.1160   32.977    5.867
+#> 3      10       10  21.53492 14.00267 56.31250 392.8977   31.662    6.796
+#> 4       7        7  23.01796 13.67825 57.83615 357.9102   32.791    9.141
+#> 5       6        6  23.59879 13.83525 59.58590 334.4157   33.509   10.290
+#> 6     107       76  24.57367 14.64933 61.67101 332.0319   34.788   11.034
+#>   temp_rang temp_wetQ temp_dryQ temp_warmQ temp_coldQ rain_mean rain_wet
+#> 1    26.007  26.13383  16.05333   26.13383   16.05333       334       68
+#> 2    27.110  26.47767  15.63300   26.47767   15.63300       354       74
+#> 3    24.866  25.51400  16.11067   25.51400   16.11067       429       90
+#> 4    23.650  26.64050  18.05417   26.64050   18.05417       425       88
+#> 5    23.219  26.95950  18.99083   26.95950   18.99083       456       98
+#> 6    23.754  27.88800  20.00150   27.88800   20.00150       463       97
+#>   rain_dry rain_sea rain_wetQ rain_dryQ rain_warmQ rain_coldQ distance rich_o1
+#> 1        1 88.32125       185         5        185          5 903.0437       2
+#> 2        1 85.64050       191         6        191          6 915.4655      31
+#> 3        2 86.95976       236         9        236          9 931.1100      10
+#> 4        1 90.60240       245         8        245          8 949.9390       7
+#> 5        2 93.44035       274         8        274          8 971.8672       6
+#> 6        2 94.23997       281        10        281         10 996.7561      76
+#>     turn_o2    pred_zeta pred_zetaExp log_pred_zetaExp centroid_lon
+#> 1 0.9968715  0.002292689    0.5005732       -0.6920015        28.75
+#> 2 0.9759713 -0.032351315    0.4919129       -0.7094537        29.25
+#> 3 0.9920062 -0.027529907    0.4931180       -0.7070069        29.75
+#> 4 0.9744736 -0.019598603    0.4951005       -0.7029945        30.25
+#> 5 0.9888661 -0.023244502    0.4941891       -0.7048370        30.75
+#> 6 0.9612030 -0.048896387    0.4877783       -0.7178942        31.25
+#>   centroid_lat
+#> 1    -22.25004
+#> 2    -22.25004
+#> 3    -22.25004
+#> 4    -22.25004
+#> 5    -22.25004
+#> 6    -22.25004
 ```
 
 - Run nmds for the predicted zeta matrix  
@@ -929,7 +1136,60 @@ summary(zeta2$model)
 
 ``` r
 # e.g. perform clustering on zeta_now & plot bioregions
+# Run `map_bioreg` function
+# ‘data’: Input data containing coordinates (x, y) and environmental variables.
+# ‘scale_cols’: Columns to be scaled and used for clustering.
+# ‘clus_method’: Clustering method to apply ("kmeans", "pam", "hclust", "gmm", or "all" for all methods).
+# ‘plot’: Logical flag; if TRUE, plots spatial maps of clustering results.
+# ‘interp’: Specifies interpolation method ("NN", "Tps", "both") for filling spatial gaps using nearest neighbour (NN) or thin-plate splines (TPS).
+head(predictors_df)
+#>   obs_sum spp_rich temp_mean      mdr      iso temp_sea temp_max temp_min
+#> 1       3        2  21.88425 14.47900 55.67347 427.1824   32.446    6.439
+#> 2      41       31  21.76921 14.61358 53.90477 453.1160   32.977    5.867
+#> 3      10       10  21.53492 14.00267 56.31250 392.8977   31.662    6.796
+#> 4       7        7  23.01796 13.67825 57.83615 357.9102   32.791    9.141
+#> 5       6        6  23.59879 13.83525 59.58590 334.4157   33.509   10.290
+#> 6     107       76  24.57367 14.64933 61.67101 332.0319   34.788   11.034
+#>   temp_rang temp_wetQ temp_dryQ temp_warmQ temp_coldQ rain_mean rain_wet
+#> 1    26.007  26.13383  16.05333   26.13383   16.05333       334       68
+#> 2    27.110  26.47767  15.63300   26.47767   15.63300       354       74
+#> 3    24.866  25.51400  16.11067   25.51400   16.11067       429       90
+#> 4    23.650  26.64050  18.05417   26.64050   18.05417       425       88
+#> 5    23.219  26.95950  18.99083   26.95950   18.99083       456       98
+#> 6    23.754  27.88800  20.00150   27.88800   20.00150       463       97
+#>   rain_dry rain_sea rain_wetQ rain_dryQ rain_warmQ rain_coldQ distance rich_o1
+#> 1        1 88.32125       185         5        185          5 903.0437       2
+#> 2        1 85.64050       191         6        191          6 915.4655      31
+#> 3        2 86.95976       236         9        236          9 931.1100      10
+#> 4        1 90.60240       245         8        245          8 949.9390       7
+#> 5        2 93.44035       274         8        274          8 971.8672       6
+#> 6        2 94.23997       281        10        281         10 996.7561      76
+#>     turn_o2    pred_zeta pred_zetaExp log_pred_zetaExp centroid_lon
+#> 1 0.9968715  0.002292689    0.5005732       -0.6920015        28.75
+#> 2 0.9759713 -0.032351315    0.4919129       -0.7094537        29.25
+#> 3 0.9920062 -0.027529907    0.4931180       -0.7070069        29.75
+#> 4 0.9744736 -0.019598603    0.4951005       -0.7029945        30.25
+#> 5 0.9888661 -0.023244502    0.4941891       -0.7048370        30.75
+#> 6 0.9612030 -0.048896387    0.4877783       -0.7178942        31.25
+#>   centroid_lat
+#> 1    -22.25004
+#> 2    -22.25004
+#> 3    -22.25004
+#> 4    -22.25004
+#> 5    -22.25004
+#> 6    -22.25004
+bioreg_result = map_bioreg(
+  data = predictors_df,
+  scale_cols = c("pred_zeta", "centroid_lon", "centroid_lat"),
+  clus_method = "all", # K-means, PAM, Hierarchical and GMM clustering
+  plot = TRUE,
+  interp = "both",
+  x_col ='centroid_lon',
+  y_col ='centroid_lat'
+)
 ```
+
+<img src="man/figures/README-zeta-cluster-1.png" width="100%" />
 
 ------------------------------------------------------------------------
 
@@ -944,8 +1204,59 @@ summary(zeta2$model)
 - Predict a k by k matrix of predicted zeta ‘zeta.future’ :::
 
 ``` r
-# e.g. perform clustering on zeta_now & plot bioregions
+# future_df = predict_dissim(
+#   block_sp   = grid_spp[,-c(4:6)],
+#   sbe        = sbe[,-c(1:3)],
+#   zeta_model = zeta2,
+#   mean_rich  = mean_rich_o1234,
+#   mean_turn  = mean_turn_o2345,
+#   sbs_xy     = sbs_xy,
+#   x_col      = "centroid_lon",
+#   y_col      = "centroid_lat",
+#   rsa        = rsa
+# )
+# 
+# head(future_df)
+
+# Run `map_bioregDiff`
+# Assuming 'bioreg_result$clusters' is a SpatRaster
+# ‘raster_input’: A SpatRaster object with multiple layers to compare.
+# approach: Specifies which metric to compute:
+# >> "difference_count": Counts cells with differing values across layers
+# >> "shannon_entropy": Calculates Shannon entropy, measuring diversity within layers
+# >> "stability": Identifies stable regions where values remain unchanged.
+# >> "transition_frequency": Quantifies the frequency of changes between layers
+# >> "weighted_change_index": Weighted score to changes based on a dissimilarity matrix
+# >> "all" (default): Returns all metrics as a combined SpatRaster
+result_bioregDiff = map_bioregDiff(bioreg_result$clusters, approach = "all")
+result_bioregDiff
+#> class       : SpatRaster 
+#> dimensions  : 25, 32, 5  (nrow, ncol, nlyr)
+#> resolution  : 0.5, 0.4999984  (x, y)
+#> extent      : 16.75, 32.75, -34.75, -22.25004  (xmin, xmax, ymin, ymax)
+#> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+#> source(s)   : memory
+#> names       : Differ~_Count, Shanno~ntropy, Stability, Transi~quency, Weight~_Index 
+#> min values  :             0,      0.000000,         0,             0,       0.00000 
+#> max values  :             3,      1.039721,         1,             3,       2.52819
+
+# Mask the raster grid using the boundary of South Africa
+# Convert to a terra vector
+rsa_vect <- vect(rsa)
+# Create an empty raster over RSA at your desired resolution
+# Here we use the extent of rsa_vect and a 0.05-degree cell size:
+grid <- rast(rsa_vect, resolution = 0.2489884, crs = crs(rsa_vect))
+values(grid) <- 1   # fill with dummy values
+
+# Mask that grid to the RSA boundary
+grid_masked <- mask(grid, rsa_vect)
+mask_bioregDiff = mask(resample(result_bioregDiff, grid_masked, method = "near"), grid_masked)
+
+# Plot all change results
+plot(mask_bioregDiff, col = viridis(100, direction = -1))
 ```
+
+<img src="man/figures/README-predict-future-1.png" width="100%" />
 
 - Nmds of zeta.future  
 - clustering of zeta.future  

@@ -4,17 +4,39 @@
 \alias{calculate_pairwise_distances_matrix}
 \title{Calculate Pairwise Distance Matrix}
 \usage{
-calculate_pairwise_distances_matrix(data, distance_fun = distGeo)
+calculate_pairwise_distances_matrix(
+  data,
+  x_col = "x",
+  y_col = "y",
+  distance_fun = distGeo
+)
 }
 \arguments{
 \item{data}{A data frame containing site coordinates and IDs.}
 
+\item{x_col}{Name of the longitude column in \code{data} (default: "x").}
+
+\item{y_col}{Name of the latitude  column in \code{data} (default: "y").}
+
 \item{distance_fun}{The distance function to use (default: \code{distGeo}).}
 }
 \value{
-A data frame containing pairwise distances between sites.
+A data frame containing pairwise distances between sites (in km).
 }
 \description{
 Calculate Pairwise Distance Matrix
+}
+\examples{
+# default usage when your coords are in columns "x" and "y"
+dist_df_default <- calculate_pairwise_distances_matrix(data = my_sites_df)
+head(dist_df_default)
+
+# specify custom column names for longitude and latitude
+dist_df <- calculate_pairwise_distances_matrix(
+  data  = my_sites_df,
+  x_col = "centroid_lon",
+  y_col = "centroid_lat"
+)
+head(dist_df)
 }
 \keyword{internal}

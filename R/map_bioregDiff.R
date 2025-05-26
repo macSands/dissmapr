@@ -1,123 +1,148 @@
 #' Map bioregional difference metrics across raster layers
 #'
-#' Computes a suite of change indices—including difference count, Shannon entropy,
-#' stability, transition frequency, and weighted change index—across sequential layers
-#' of a `SpatRaster`. Returns either a single selected metric or all metrics as a
-#' multi-layer `SpatRaster`.
+#' Takes two or more categorical raster layers (or a list of them) and computes how
+#' each cell's region label changes over time.  You can return:
+#' - the **difference count** (number of times a cell's label changes),
+#' - **Shannon entropy** of its label sequence,
+#' - **stability** (proportion of time unchanged),
+#' - **transition frequency** (sum of per-step changes),
+#' - **weighted change index** (sum of pairwise-change weights),
+#' or all five as a multi‐layer `SpatRaster`.
 #'
-#' @param raster_input A `SpatRaster` with at least two layers representing categorical
-#'   cluster assignments (e.g., bioregions) over time or scenarios.
-#' @param approach Character specifying which metric to return. Options:
+#' @aliases map_bioregDiff
+#' @param raster_input A `SpatRaster` or a **list** of single‐layer `SpatRaster` objects.
+#' @param approach Character; one of
 #'   \describe{
-#'     \item{"difference_count"}{Count of pixel value changes across layers.}
-#'     \item{"shannon_entropy"}{Shannon entropy of pixel value distribution.}
-#'     \item{"stability"}{Proportion of layers where pixel value remains constant.}
-#'     \item{"transition_frequency"}{Number of transitions (binary change) per pixel.}
-#'     \item{"weighted_change_index"}{Sum of transition weights from the normalized dissimilarity matrix.}
-#'     \item{"all"}{All metrics combined into a multi-layer `SpatRaster`.}
+#'     \item{`"difference_count"`}{Count of label changes per cell.}
+#'     \item{`"shannon_entropy"`}{Entropy of the cell's label distribution.}
+#'     \item{`"stability"`}{Proportion of layers where the label stays the same.}
+#'     \item{`"transition_frequency"`}{Sum of binary change maps across layers.}
+#'     \item{`"weighted_change_index"`}{Sum of dissimilarity‐weighted transitions.}
+#'     \item{`"all"`}{All five metrics combined into a multi‐layer `SpatRaster`.}
 #'   }
-#'   Default is "all".
+#'   Default: `"all"`.
+#' @return A `SpatRaster`:
+#' - A single layer if `approach` is one metric,
+#' - A 5‐layer raster (`Difference_Count`, `Shannon_Entropy`, `Stability`,
+#'   `Transition_Frequency`, `Weighted_Change_Index`) if `approach = "all"`.
 #'
-#' @return A `SpatRaster`: a single-layer raster if `approach` is specific;
-#'   or a multi-layer raster with layers:
-#'   `Difference_Count`, `Shannon_Entropy`, `Stability`,
-#'   `Transition_Frequency`, `Weighted_Change_Index` when `approach = "all"`.
+#' @examples
+#' \dontrun{
+#' # Combine four single‐layer rasters into one multi‐layer object:
+#' rlist <- list(km=km_rast, pam=pam_rast, hc=hc_rast, gmm=gmm_rast)
+#' multi <- rast(rlist)
 #'
-#' @details
-#' 1. Builds a transition matrix of cluster changes between consecutive layers and
-#'    normalizes it to create a dissimilarity matrix.
-#' 2. `difference_count`: counts how many times each pixel changes value.
-#' 3. `shannon_entropy`: computes entropy of pixel value distribution across layers.
-#' 4. `stability`: calculates 1 minus the indicator of constant pixel values.
-#' 5. `transition_frequency`: sums per-layer binary change maps.
-#' 6. `weighted_change_index`: accumulates weighted transitions using the dissimilarity matrix.
+#' # Compute all metrics:
+#' diff_metrics <- map_bioregDiff(multi, approach="all")
 #'
-#' @importFrom terra nlyr values app
-#' @importFrom stats dist
+#' # Just the entropy map:
+#' ent_map <- map_bioregDiff(multi, approach="shannon_entropy")
+#' }
+#'
+#' @import terra
 #' @importFrom purrr reduce
 #' @export
-map_bioregDiff <- function(raster_input,
-                           approach = "all") {
-  if (!inherits(raster_input, "SpatRaster")) {
-    stop("Input must be a SpatRaster object.")
+map_bioregDiff <- function(raster_input, approach = "all") {
+  library(terra)
+  library(viridis)
+  library(purrr)
+  ## if it's a plain list, assume it's a list of SpatRasters and catenate them
+  if (is.list(raster_input)) {
+    raster_input <- rast(raster_input)
   }
 
-  nlyr_val <- terra::nlyr(raster_input)
-  if (nlyr_val < 2) {
+  ## now require a SpatRaster
+  if (!inherits(raster_input, "SpatRaster")) {
+    stop("Input must be a SpatRaster object (or a list of SpatRaster layers).")
+  }
+
+  # Get the number of layers
+  nlyr <- nlyr(raster_input)
+
+  # Ensure there are at least two layers for comparison
+  if (nlyr < 2) {
     stop("The SpatRaster must have at least two layers for comparison.")
   }
 
-  # Build transition dissimilarity matrix
-  vals <- terra::values(raster_input)
-  unique_clusters <- sort(unique(vals))
-  dissim <- matrix(0,
-                   nrow = length(unique_clusters),
-                   ncol = length(unique_clusters),
-                   dimnames = list(unique_clusters, unique_clusters))
+  # Calculate the dissimilarity matrix dynamically
+  unique_clusters <- sort(unique(values(raster_input)))
+  n_clusters <- length(unique_clusters)
 
-  for (i in seq_len(nlyr_val - 1)) {
-    layer1 <- vals[, i]
-    layer2 <- vals[, i + 1]
-    trans <- stats::table(layer1, layer2)
-    for (r in seq_len(nrow(trans))) {
-      for (c in seq_len(ncol(trans))) {
-        dissim[rownames(trans)[r], colnames(trans)[c]] <-
-          dissim[rownames(trans)[r], colnames(trans)[c]] + trans[r, c]
+  # Initialize the dissimilarity matrix
+  dissimilarity_matrix <- matrix(0, nrow = n_clusters, ncol = n_clusters,
+                                 dimnames = list(as.character(unique_clusters), as.character(unique_clusters)))
+
+  # Calculate pairwise transitions across layers
+  for (i in 1:(nlyr - 1)) {
+    layer1 <- values(raster_input[[i]])
+    layer2 <- values(raster_input[[i + 1]])
+
+    transitions <- table(layer1, layer2)
+
+    for (row in 1:nrow(transitions)) {
+      for (col in 1:ncol(transitions)) {
+        dissimilarity_matrix[rownames(transitions)[row], colnames(transitions)[col]] <-
+          dissimilarity_matrix[rownames(transitions)[row], colnames(transitions)[col]] +
+          transitions[row, col]
       }
     }
   }
-  max_t <- max(dissim)
-  dissim <- (max_t - dissim + t(dissim)) / 2
-  dissim <- dissim / max(dissim)
 
-  # difference count
-  diff_count <- terra::app(raster_input, fun = function(x) sum(x != x[1]))
+  # Normalize the dissimilarity matrix
+  max_transition <- max(dissimilarity_matrix)
+  dissimilarity_matrix <- max_transition - dissimilarity_matrix
+  dissimilarity_matrix <- (dissimilarity_matrix + t(dissimilarity_matrix)) / 2
+  dissimilarity_matrix <- dissimilarity_matrix / max(dissimilarity_matrix)
 
-  # Shannon entropy
-  entropy_map <- terra::app(raster_input, fun = function(x) {
-    p <- stats::table(x) / length(x)
+  # Function: Difference Count
+  diff_count <- app(raster_input, fun = function(x) sum(x != x[1]))
+
+  # Function: Shannon Entropy
+  shannon_entropy <- function(values) {
+    p <- table(values) / length(values)
     p <- p[p > 0]
     -sum(p * log(p))
-  })
+  }
+  entropy_map <- app(raster_input, fun = shannon_entropy)
 
-  # stability
-  stable_map <- terra::app(raster_input, fun = function(x) all(x == x[1]))
+  # Function: Stability Map
+  stable_map <- app(raster_input, fun = function(x) all(x == x[1]))
   stability_map <- 1 - stable_map
 
-  # transition frequency
-  transition_layers <- lapply(
-    seq_len(nlyr_val - 1),
-    function(i) raster_input[[i]] != raster_input[[i + 1]]
-  )
-  total_transitions <- purrr::reduce(transition_layers, `+`)
+  # Function: Transition Frequency
+  transition_maps <- list()
+  for (i in 1:(nlyr - 1)) {
+    transition_maps[[i]] <- raster_input[[i]] != raster_input[[i + 1]]
+  }
+  total_transitions <- reduce(transition_maps, `+`)
 
-  # weighted change index
-  wci_map <- terra::app(raster_input, fun = function(x) {
+  # Function: Weighted Change Index
+  weighted_change_index <- function(values) {
     wci <- 0
-    for (j in seq_len(length(x) - 1)) {
-      c1 <- as.character(x[j]); c2 <- as.character(x[j + 1])
-      wt <- if (c1 %in% rownames(dissim) && c2 %in% colnames(dissim))
-        dissim[c1, c2] else 0
-      wci <- wci + wt
+    for (i in 1:(length(values) - 1)) {
+      cluster1 <- as.character(values[i])
+      cluster2 <- as.character(values[i + 1])
+      if (cluster1 %in% rownames(dissimilarity_matrix) && cluster2 %in% colnames(dissimilarity_matrix)) {
+        weight <- dissimilarity_matrix[cluster1, cluster2]
+      } else {
+        weight <- 0
+      }
+      wci <- wci + weight
     }
-    wci
-  })
+    return(wci)
+  }
+  wci_map <- app(raster_input, fun = weighted_change_index)
 
-  # return selected
+  # Return selected approach or all
   if (approach == "difference_count") return(diff_count)
-  if (approach == "shannon_entropy")  return(entropy_map)
-  if (approach == "stability")        return(stability_map)
+  if (approach == "shannon_entropy") return(entropy_map)
+  if (approach == "stability") return(stability_map)
   if (approach == "transition_frequency") return(total_transitions)
   if (approach == "weighted_change_index") return(wci_map)
 
-  result <- terra::c(
-    diff_count, entropy_map, stability_map,
-    total_transitions, wci_map
-  )
-  names(result) <- c(
-    "Difference_Count", "Shannon_Entropy",
-    "Stability", "Transition_Frequency",
-    "Weighted_Change_Index"
-  )
-  result
+  # Return all as a SpatRaster with multiple layers
+  result <- c(diff_count, entropy_map, stability_map, total_transitions, wci_map)
+  names(result) <- c("Difference_Count", "Shannon_Entropy", "Stability", "Transition_Frequency", "Weighted_Change_Index")
+
+  return(result)
 }

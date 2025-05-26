@@ -1,241 +1,201 @@
-#' Map bioregion clusters and interpolate spatial assignments
+#' Map bioregion clusters and generate interpolated spatial assignments
 #'
-#' Performs clustering on scaled variables to delineate bioregions, aligns cluster labels
-#' across methods, generates comparative cluster maps, and interpolates cluster assignments
-#' over a raster grid using nearest-neighbor (NN) and/or thin-plate spline (Tps) methods.
+#' Performs environmental clustering (k-means, PAM, hierarchical, GMM), aligns cluster labels
+#' to k-means reference, plots comparative cluster maps, and interpolates assignments over a raster
+#' grid using nearest-neighbor and/or thin-plate spline methods.
 #'
-#' @param data A `data.frame` containing at least coordinate columns (`x`, `y`) and the
-#'   variables specified in `scale_cols` to be used for clustering.
+#' @param data      A data.frame containing coordinate columns and values for clustering.
 #' @param scale_cols Character vector of column names in `data` to scale before clustering.
-#' @param clus_method Character; clustering method(s) to apply. One of:
-#'   \describe{
-#'     \item{"kmeans"}{k-means clustering}
-#'     \item{"pam"}{Partitioning Around Medoids}
-#'     \item{"hclust"}{Hierarchical clustering (complete linkage)}
-#'     \item{"gmm"}{Gaussian Mixture Model clustering}
-#'     \item{"all"}{All of the above methods}
-#'   }
-#'   Default is "all".
-#' @param plot Logical; if `TRUE`, produces side-by-side cluster maps for each method. Default is `TRUE`.
-#' @param interp Character; interpolation method for raster assignment. One of:
-#'   \describe{
-#'     \item{"NN"}{nearest-neighbor interpolation}
-#'     \item{"Tps"}{thin-plate spline interpolation}
-#'     \item{"both"}{both NN and Tps}
-#'   }
-#'   Default is "both".
+#' @param clus_method Character; one or more clustering methods: "kmeans", "pam", "hclust", "gmm", or "all". Default = "all".
+#' @param plot      Logical; if TRUE, displays side-by-side cluster maps. Default = TRUE.
+#' @param interp    Character; interpolation method(s): "NN" (nearest neighbor), "Tps" (thin-plate spline), or "both". Default = "both".
+#' @param x_col     Name of the longitude column in `data`. Default = "x".
+#' @param y_col     Name of the latitude  column in `data`. Default = "y".
 #'
 #' @return A list with elements:
 #'   \item{data}{Original data with appended cluster assignment columns (`kmeans_opt`, `pam_opt_aligned`, etc.)}
-#'   \item{interpolated}{A `SpatRaster` or stack of rasters of interpolated cluster assignments}
-#'   \item{clusters}{A `SpatRaster` of discretized cluster classes after interpolation}
+#'   \item{interpolated}{SpatRaster of interpolated cluster values}
+#'   \item{clusters}{SpatRaster of discrete clusters after interpolation}
 #'
-#' @details
-#' 1. Scales the columns in `scale_cols` using `scale()`.
-#' 2. If `clus_method` includes "kmeans", automatically determines optimal k via
-#'    `NbClust::NbClust()` (silhouette index, k = 2–10).
-#' 3. Applies each requested clustering method, aligns non-kmeans labels to kmeans reference.
-#' 4. If `plot = TRUE`, generates comparative cluster maps using `ggplot2` and `patchwork`.
-#' 5. If `interp` includes "NN", assigns each raster cell the cluster of its nearest point.
-#' 6. If `interp` includes "Tps", fits thin-plate spline surfaces (via `fields::Tps()`) for each
-#'    cluster layer and predicts over the raster grid.
-#'
-#' @importFrom NbClust NbClust
+#' @import NbClust
+#' @import clValid
 #' @importFrom cluster pam
 #' @importFrom factoextra hcut
-#' @importFrom mclust Mclust
-#' @importFrom stats kmeans dist aggregate
-#' @importFrom terra rast mask classify crds vect interpolate
-#' @importFrom sf st_as_sf st_coordinates
-#' @importFrom ggplot2 ggplot geom_tile scale_fill_brewer labs theme_minimal
-#' @importFrom patchwork wrap_plots
-#' @importFrom fields Tps
+#' @importFrom stats kmeans dist
+#' @import terra
+#' @import fields
+#' @import sf
+#' @import mclust
+#' @import patchwork
+#' @import ggplot2
 #' @export
 map_bioreg <- function(data,
                        scale_cols,
                        clus_method = "all",
                        plot        = TRUE,
-                       interp      = "both") {
-  # Ensure required columns
-  if (!all(c("x", "y") %in% names(data))) {
-    stop("`data` must contain columns `x` and `y`")
+                       interp      = "both",
+                       x_col       = "x",
+                       y_col       = "y",
+                       resolution = 0.5) {
+
+  #--- Libraries
+  library(NbClust); library(clValid); library(cluster)
+  library(factoextra); library(ggplot2); library(terra)
+  library(fields); library(sf);      library(mclust)
+  library(patchwork)
+
+  #--- sanity checks
+  if (!all(c(x_col, y_col, scale_cols) %in% names(data))) {
+    stop("`data` must contain columns: ",
+         paste(c(x_col, y_col, scale_cols), collapse = ", "))
   }
 
-  # 1. Scale data
-  data_scaled <- scale(data[, scale_cols, drop = FALSE])
+  #--- helper to align cluster IDs by centroid proximity
+  align_clusters <- function(df, ref_col, target_col) {
+    ref_cntrs    <- aggregate(df[, c(x_col, y_col)],
+                              by = list(cluster = df[[ref_col]]),
+                              FUN = mean)
+    target_cntrs <- aggregate(df[, c(x_col, y_col)],
+                              by = list(cluster = df[[target_col]]),
+                              FUN = mean)
 
-  # 2. Determine optimal k for kmeans
-  optimal_k <- 6L
-  if (clus_method %in% c("kmeans", "all")) {
-    nc <- NbClust::NbClust(
-      data    = data_scaled,
-      distance= "euclidean",
-      min.nc  = 2,
-      max.nc  = 10,
-      method  = "kmeans",
-      index   = "silhouette"
-    )
-    optimal_k <- nc$Best.nc[1]
-    message("Optimal number of clusters identified: ", optimal_k)
+    dm <- as.matrix(dist(rbind(ref_cntrs[,2:3], target_cntrs[,2:3])))
+    dm <- dm[1:nrow(ref_cntrs),
+             (nrow(ref_cntrs)+1):nrow(dm)]
+
+    mapping <- apply(dm, 2, which.min)
+    vapply(df[[target_col]], function(i) mapping[i], integer(1))
   }
 
-  # Prepare storage
+  #--- 1. scale
+  data_scaled <- scale(data[, scale_cols])
+
+  #--- 2. optimal k for k-means
+  optimal_k <- 6
+  if (clus_method %in% c("kmeans","all")) {
+    res <- NbClust(data_scaled, distance="euclidean",
+                   min.nc=2, max.nc=10,
+                   method="kmeans", index="silhouette")
+    optimal_k <- res$Best.nc[1]
+    message("Optimal k (silhouette): ", optimal_k)
+  }
+
+  #--- 3. clustering
   clusters <- list()
-
-  # 3a. kmeans
-  if (clus_method %in% c("kmeans", "all")) {
-    km_res <- stats::kmeans(data_scaled, centers = optimal_k, nstart = 10)
-    data$kmeans_opt <- km_res$cluster
-    clusters$kmeans <- km_res
+  if (clus_method %in% c("kmeans","all")) {
+    km <- kmeans(data_scaled, centers=optimal_k, nstart=10)
+    data$kmeans_opt <- km$cluster; clusters$kmeans <- km
   }
-
-  # 3b. PAM
-  if (clus_method %in% c("pam", "all")) {
-    pam_res <- cluster::pam(data_scaled, k = optimal_k)
-    data$pam_opt <- pam_res$clustering
-    clusters$pam <- pam_res
+  if (clus_method %in% c("pam","all")) {
+    pm <- pam(data_scaled, k=optimal_k)
+    data$pam_opt <- pm$clustering; clusters$pam <- pm
     data$pam_opt_aligned <- align_clusters(data, "kmeans_opt", "pam_opt")
   }
-
-  # 3c. Hierarchical clustering
-  if (clus_method %in% c("hclust", "all")) {
-    hc_cut <- factoextra::hcut(data_scaled, k = optimal_k, hc_method = "complete")
-    data$hc_opt <- hc_cut$cluster
-    clusters$hclust <- hc_cut
+  if (clus_method %in% c("hclust","all")) {
+    hc <- hcut(data_scaled, k=optimal_k, hc_method="complete")
+    data$hc_opt <- hc$cluster; clusters$hclust <- hc
     data$hc_opt_aligned <- align_clusters(data, "kmeans_opt", "hc_opt")
   }
-
-  # 3d. Gaussian Mixture Model
-  if (clus_method %in% c("gmm", "all")) {
-    gmm_res <- mclust::Mclust(data_scaled, G = optimal_k)
-    data$gmm_opt <- gmm_res$classification
-    clusters$gmm <- gmm_res
+  if (clus_method %in% c("gmm","all")) {
+    gm <- Mclust(data_scaled, G=optimal_k)
+    data$gmm_opt <- gm$classification; clusters$gmm <- gm
     data$gmm_opt_aligned <- align_clusters(data, "kmeans_opt", "gmm_opt")
   }
 
-  # 4. Plot clusters
+  #--- 4. plotting
   if (plot) {
-    plots <- list()
-    if (!is.null(data$kmeans_opt)) {
-      plots$kmeans <-
-        ggplot2::ggplot(data) +
-        ggplot2::geom_tile(
-          aes(x = x, y = y, fill = factor(kmeans_opt))
-        ) +
-        ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::labs(
-          title = "K-means clustering",
-          x     = "Longitude",
-          y     = "Latitude",
-          fill  = "Cluster"
-        ) +
-        ggplot2::theme_minimal()
+    plt <- list()
+    mkr <- function(col, title) {
+      ggplot(data) +
+        geom_tile(aes_string(x = x_col, y = y_col, fill = col)) +
+        scale_fill_brewer(palette="Set1") +
+        labs(title=title,
+             x="Longitude", y="Latitude",
+             fill="Cluster") +
+        theme_minimal()
     }
-    if (!is.null(data$pam_opt_aligned)) {
-      plots$pam <-
-        ggplot2::ggplot(data) +
-        ggplot2::geom_tile(
-          aes(x = x, y = y, fill = factor(pam_opt_aligned))
-        ) +
-        ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::labs(
-          title = "PAM clustering",
-          x     = "Longitude",
-          y     = "Latitude",
-          fill  = "Cluster"
-        ) +
-        ggplot2::theme_minimal()
-    }
-    if (!is.null(data$hc_opt_aligned)) {
-      plots$hclust <-
-        ggplot2::ggplot(data) +
-        ggplot2::geom_tile(
-          aes(x = x, y = y, fill = factor(hc_opt_aligned))
-        ) +
-        ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::labs(
-          title = "Hierarchical clustering",
-          x     = "Longitude",
-          y     = "Latitude",
-          fill  = "Cluster"
-        ) +
-        ggplot2::theme_minimal()
-    }
-    if (!is.null(data$gmm_opt_aligned)) {
-      plots$gmm <-
-        ggplot2::ggplot(data) +
-        ggplot2::geom_tile(
-          aes(x = x, y = y, fill = factor(gmm_opt_aligned))
-        ) +
-        ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::labs(
-          title = "GMM clustering",
-          x     = "Longitude",
-          y     = "Latitude",
-          fill  = "Cluster"
-        ) +
-        ggplot2::theme_minimal()
-    }
-    # combine in 2x2 grid
-    print(patchwork::wrap_plots(plots, ncol = 2))
+    if ("kmeans_opt" %in% names(data))
+      plt$kmeans <- mkr("factor(kmeans_opt)", "K-means")
+    if ("pam_opt_aligned" %in% names(data))
+      plt$pam    <- mkr("factor(pam_opt_aligned)", "PAM")
+    if ("hc_opt_aligned" %in% names(data))
+      plt$hclust <- mkr("factor(hc_opt_aligned)", "Hierarchical")
+    if ("gmm_opt_aligned" %in% names(data))
+      plt$gmm    <- mkr("factor(gmm_opt_aligned)", "GMM")
+    print((plt$kmeans + plt$pam)/(plt$hclust + plt$gmm))
   }
 
-  # 5. Interpolation
-  # nearest-neighbor
-  interp_rasters <- list()
+  #--- 5. interpolation
+  # Step 5: Interpolation
+  interpolated <- NULL
+  clusters_rcl <- NULL
+
   if (interp %in% c("NN", "both")) {
-    pts <- sf::st_as_sf(data, coords = c("x", "y"), crs = 4326)
-    r   <- terra::rast(terra::vect(pts), resolution = 0.05)
-    coords_mat <- sf::st_coordinates(pts)
-    nn_fun <- function(cluster_col) {
-      apply(terra::crds(r), 1, function(coord) {
-        d <- sqrt((coords_mat[,1] - coord[1])^2 + (coords_mat[,2] - coord[2])^2)
-        data[[cluster_col]][which.min(d)]
-      })
+    # build an sf points object & get its bounding box
+    pts_sf <- sf::st_as_sf(data, coords = c(x_col, y_col), crs = 4326)
+    bb     <- sf::st_bbox(pts_sf)
+
+    # create a Terra extent and empty raster
+    ex     <- terra::ext(bb$xmin, bb$xmax, bb$ymin, bb$ymax)
+    r_base <- terra::rast(ex, resolution = resolution, crs = "EPSG:4326")
+
+    # pre-compute site coords
+    coords <- sf::st_coordinates(pts_sf)
+
+    # nearest-neighbor assignment for each clustering
+    for (m in c("kmeans_opt","pam_opt_aligned","hc_opt_aligned","gmm_opt_aligned")) {
+      nn <- apply(
+        as.matrix(terra::crds(r_base)),
+        1,
+        function(pt) {
+          i <- which.min((coords[,1] - pt[1])^2 + (coords[,2] - pt[2])^2)
+          data[[m]][i]
+        }
+      )
+      # add a layer named after m
+      r_base[[m]] <- nn
     }
-    nn_rasters <- sapply(c("kmeans_opt", "pam_opt_aligned",
-                           "hc_opt_aligned", "gmm_opt_aligned"), function(col) {
-                             if (!is.null(data[[col]])) {
-                               terra::classify(
-                                 terra::setValues(r, nn_fun(col)),
-                                 rcl = matrix(c(-Inf, Inf, NA), ncol = 3)
-                               )
-                             }
-                           }, simplify = FALSE)
-    interp_rasters$NN <- terra::rast(nn_rasters)
-  }
-  # thin-plate spline
-  if (interp %in% c("Tps", "both")) {
-    grid <- terra::rast(terra::vect(pts), resolution = 0.25)
-    masked <- terra::mask(grid, terra::vect(pts))
-    tps_fun <- function(cluster_col) {
-      fields::Tps(sf::st_coordinates(pts), data[[cluster_col]])
-    }
-    tps_models <- lapply(c("kmeans_opt", "pam_opt_aligned",
-                           "hc_opt_aligned", "gmm_opt_aligned"), function(col) {
-                             if (!is.null(data[[col]])) tps_fun(col)
-                           })
-    tps_preds <- mapply(function(model, col) {
-      terra::interpolate(masked, model)
-    }, model = tps_models,
-    SIMPLIFY = FALSE)
-    interp_rasters$Tps <- terra::rast(tps_preds)
+
+    interpolated <- r_base
   }
 
-  # Stack and classify
-  all_interp <- do.call(c, interp_rasters)
-  discrete <- terra::classify(all_interp, rcl = matrix(
-    c(0, 1.5, 1,
+  if (interp %in% c("Tps", "both")) {
+    # build a Terra vector and extent
+    pts_vec <- terra::vect(data, geom = c(x_col, y_col), crs = "EPSG:4326")
+    ex2     <- terra::ext(pts_vec)
+    grid    <- terra::rast(ex2, resolution = resolution, crs = terra::crs(pts_vec))
+
+    # thin‐plate spline models
+    tps_models <- list(
+      kmeans_tps = fields::Tps(data[,c(x_col,y_col)], data$kmeans_opt),
+      pam_tps    = fields::Tps(data[,c(x_col,y_col)], data$pam_opt_aligned),
+      hc_tps     = fields::Tps(data[,c(x_col,y_col)], data$hc_opt_aligned),
+      gmm_tps    = fields::Tps(data[,c(x_col,y_col)], data$gmm_opt_aligned)
+    )
+
+    # interpolate each one over the grid
+    preds <- lapply(tps_models, function(mod) terra::interpolate(grid, mod))
+    stack <- do.call(c, preds)
+    names(stack) <- names(preds)
+
+    # example reclassification (adjust breaks as needed)
+    # matrix: from, to, becomes
+    rcl_mat <- matrix(c(
+      0, 1.5, 1,
       1.5, 2.5, 2,
       2.5, 3.5, 3,
       3.5, 4.5, 4,
       4.5, 5.5, 5,
-      5.5, 6.5, 6), byrow = TRUE, ncol = 3
-  ))
+      5.5, 6.5, 6
+    ), ncol = 3, byrow = TRUE)
+
+    clusters_rcl <- lapply(stack, classify, rcl = rcl_mat)
+    clusters_rcl <- do.call(c, clusters_rcl)
+  }
 
   return(list(
     data         = data,
-    interpolated = all_interp,
-    clusters     = discrete
+    interpolated = interpolated,
+    clusters     = clusters_rcl
   ))
 }

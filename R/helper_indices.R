@@ -13,7 +13,6 @@
 #' @importFrom cluster daisy
 #' @importFrom reshape2 melt
 #' @importFrom entropy mi.plugin
-#' @keywords internal
 NULL
 
 # Verify required packages for helpers
@@ -120,27 +119,62 @@ distance <- function(df, site_col, vec_from, vec_to = NULL, coord_cols = c("x", 
 #' Calculate Pairwise Distance Matrix
 #'
 #' @param data A data frame containing site coordinates and IDs.
+#' @param x_col Name of the longitude column in `data` (default: "x").
+#' @param y_col Name of the latitude  column in `data` (default: "y").
 #' @param distance_fun The distance function to use (default: `distGeo`).
 #'
-#' @return A data frame containing pairwise distances between sites.
+#' @return A data frame containing pairwise distances between sites (in km).
 #' @export
 #' @keywords internal
 #'
-calculate_pairwise_distances_matrix <- function(data, distance_fun = distGeo) {
-  if (!all(c("grid_id", "x", "y") %in% colnames(data))) {
-    stop("Data frame must contain 'grid_id', 'x', and 'y' columns.")
+#' @examples
+#' # default usage when your coords are in columns "x" and "y"
+#' dist_df_default <- calculate_pairwise_distances_matrix(data = my_sites_df)
+#' head(dist_df_default)
+#'
+#' # specify custom column names for longitude and latitude
+#' dist_df <- calculate_pairwise_distances_matrix(
+#'   data  = my_sites_df,
+#'   x_col = "centroid_lon",
+#'   y_col = "centroid_lat"
+#' )
+#' head(dist_df)
+calculate_pairwise_distances_matrix <- function(
+    data,
+    x_col        = "x",
+    y_col        = "y",
+    distance_fun = distGeo
+) {
+  # check required columns
+  required <- c("grid_id", x_col, y_col)
+  if (!all(required %in% colnames(data))) {
+    stop(
+      "Data frame must contain columns: ",
+      paste(required, collapse = ", ")
+    )
   }
 
-  distance_matrix <- distm(data[, c("x", "y")], fun = distance_fun) / 1000  # Convert to km
+  # extract coords matrix
+  coords <- data[, c(x_col, y_col)]
+
+  # compute distance matrix (meters → km)
+  distance_matrix <- distm(coords, fun = distance_fun) / 1000
+
+  # reshape to long format
   distances <- as.data.frame(as.table(distance_matrix))
   colnames(distances) <- c("site_from_index", "site_to_index", "value")
 
+  # map back to grid_id
   distances$site_from <- data$grid_id[distances$site_from_index]
-  distances$site_to <- data$grid_id[distances$site_to_index]
+  distances$site_to   <- data$grid_id[distances$site_to_index]
 
+  # drop self‐distances and indices
   distances <- distances[distances$site_from != distances$site_to, ]
-  return(distances[, c("site_from", "site_to", "value")])
+  distances <- distances[, c("site_from", "site_to", "value")]
+
+  return(distances)
 }
+
 
 # SPECIES RICHNESS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

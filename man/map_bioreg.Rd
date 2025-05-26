@@ -2,56 +2,42 @@
 % Please edit documentation in R/map_bioreg.R
 \name{map_bioreg}
 \alias{map_bioreg}
-\title{Map bioregion clusters and interpolate spatial assignments}
+\title{Map bioregion clusters and generate interpolated spatial assignments}
 \usage{
-map_bioreg(data, scale_cols, clus_method = "all", plot = TRUE, interp = "both")
+map_bioreg(
+  data,
+  scale_cols,
+  clus_method = "all",
+  plot = TRUE,
+  interp = "both",
+  x_col = "x",
+  y_col = "y",
+  resolution = 0.5
+)
 }
 \arguments{
-\item{data}{A \code{data.frame} containing at least coordinate columns (\code{x}, \code{y}) and the
-variables specified in \code{scale_cols} to be used for clustering.}
+\item{data}{A data.frame containing coordinate columns and values for clustering.}
 
 \item{scale_cols}{Character vector of column names in \code{data} to scale before clustering.}
 
-\item{clus_method}{Character; clustering method(s) to apply. One of:
-\describe{
-\item{"kmeans"}{k-means clustering}
-\item{"pam"}{Partitioning Around Medoids}
-\item{"hclust"}{Hierarchical clustering (complete linkage)}
-\item{"gmm"}{Gaussian Mixture Model clustering}
-\item{"all"}{All of the above methods}
-}
-Default is "all".}
+\item{clus_method}{Character; one or more clustering methods: "kmeans", "pam", "hclust", "gmm", or "all". Default = "all".}
 
-\item{plot}{Logical; if \code{TRUE}, produces side-by-side cluster maps for each method. Default is \code{TRUE}.}
+\item{plot}{Logical; if TRUE, displays side-by-side cluster maps. Default = TRUE.}
 
-\item{interp}{Character; interpolation method for raster assignment. One of:
-\describe{
-\item{"NN"}{nearest-neighbor interpolation}
-\item{"Tps"}{thin-plate spline interpolation}
-\item{"both"}{both NN and Tps}
-}
-Default is "both".}
+\item{interp}{Character; interpolation method(s): "NN" (nearest neighbor), "Tps" (thin-plate spline), or "both". Default = "both".}
+
+\item{x_col}{Name of the longitude column in \code{data}. Default = "x".}
+
+\item{y_col}{Name of the latitude  column in \code{data}. Default = "y".}
 }
 \value{
 A list with elements:
 \item{data}{Original data with appended cluster assignment columns (\code{kmeans_opt}, \code{pam_opt_aligned}, etc.)}
-\item{interpolated}{A \code{SpatRaster} or stack of rasters of interpolated cluster assignments}
-\item{clusters}{A \code{SpatRaster} of discretized cluster classes after interpolation}
+\item{interpolated}{SpatRaster of interpolated cluster values}
+\item{clusters}{SpatRaster of discrete clusters after interpolation}
 }
 \description{
-Performs clustering on scaled variables to delineate bioregions, aligns cluster labels
-across methods, generates comparative cluster maps, and interpolates cluster assignments
-over a raster grid using nearest-neighbor (NN) and/or thin-plate spline (Tps) methods.
-}
-\details{
-\enumerate{
-\item Scales the columns in \code{scale_cols} using \code{scale()}.
-\item If \code{clus_method} includes "kmeans", automatically determines optimal k via
-\code{NbClust::NbClust()} (silhouette index, k = 2–10).
-\item Applies each requested clustering method, aligns non-kmeans labels to kmeans reference.
-\item If \code{plot = TRUE}, generates comparative cluster maps using \code{ggplot2} and \code{patchwork}.
-\item If \code{interp} includes "NN", assigns each raster cell the cluster of its nearest point.
-\item If \code{interp} includes "Tps", fits thin-plate spline surfaces (via \code{fields::Tps()}) for each
-cluster layer and predicts over the raster grid.
-}
+Performs environmental clustering (k-means, PAM, hierarchical, GMM), aligns cluster labels
+to k-means reference, plots comparative cluster maps, and interpolates assignments over a raster
+grid using nearest-neighbor and/or thin-plate spline methods.
 }

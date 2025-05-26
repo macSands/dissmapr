@@ -2,107 +2,105 @@
 % Please edit documentation in R/compute_orderwise.R
 \name{compute_orderwise}
 \alias{compute_orderwise}
-\title{Compute order‐wise ecological indices across multiple sites}
+\title{Compute Order-wise Metrics}
 \usage{
 compute_orderwise(
   df,
   func,
   site_col,
-  sp_cols,
+  sp_cols = NULL,
   order = 2,
   sample_no = NULL,
   sample_portion = 1,
   parallel = TRUE,
-  n_workers = parallel::detectCores() - 1,
-  coord_cols = NULL
+  n_workers = parallel::detectCores() - 1
 )
 }
 \arguments{
-\item{df}{A \code{data.frame} or \code{data.table} containing site identifiers,
-species abundances, and optionally spatial coordinates.}
+\item{df}{A data frame containing the ecological data.}
 
-\item{func}{A function that computes the index for a single‐site (when
-\code{order = 1}) or between‐site vectors (\code{order >= 2}). Must accept one
-vector (for \code{order = 1}) or two vectors (for \code{order >= 2}), with an
-optional \code{coord_cols} argument when using geographic distance.}
+\item{func}{A function to compute metrics. It must accept inputs in the form
+of species vectors or site information depending on the order.}
 
-\item{site_col}{A string naming the column in \code{df} that contains site IDs.}
+\item{site_col}{A character string specifying the column name in \code{df} representing site IDs.}
 
-\item{sp_cols}{A character vector of column names in \code{df} representing
-species counts or presence–absence data; ignored if \code{func} is
-\code{geodist_helper}.}
+\item{sp_cols}{A vector of column names in \code{df} representing species data (default: NULL).}
 
-\item{order}{Integer scalar (or vector) of the combination order(s) to
-compute (e.g. \code{1} for single sites, \code{2} for pairs, \code{3} for triplets).
-Default is \code{2}.}
+\item{order}{An integer or vector of integers specifying the order(s) of computation.
+\itemize{
+\item \code{1}: Single-site computations.
+\item \code{2}: Pairwise computations.
+\item \verb{>= 3}: Higher-order computations.
+}}
 
-\item{sample_no}{Optional integer: maximum number of combinations to
-sample for higher orders (\code{order >= 3}). If \code{NULL} (default), all
-combinations are used (subject to \code{sample_portion}).}
+\item{sample_no}{An integer specifying the maximum number of combinations to sample for
+higher-order computations (default: NULL for all combinations).}
 
-\item{sample_portion}{Numeric in (0, 1], proportion of all possible
-combinations to sample when \code{order >= 3}. Defaults to \code{1} (100\%).}
+\item{sample_portion}{A numeric value between 0 and 1 indicating the proportion of
+combinations to sample for higher-order computations (default: 1, meaning 100\%).}
 
-\item{parallel}{Logical; whether to use parallel processing via
-the \strong{future} framework. Default is \code{TRUE}.}
+\item{parallel}{A logical value indicating whether to enable parallel computation
+(default: TRUE).}
 
-\item{n_workers}{Integer; number of parallel workers
-(defaults to \code{parallel::detectCores() - 1}).}
-
-\item{coord_cols}{Optional character vector of column names for spatial
-coordinates (e.g. \code{c("x", "y")}). Required when \code{func} is
-\code{geodist_helper}.}
+\item{n_workers}{An integer specifying the number of parallel workers to use
+(default: one less than the number of available cores).}
 }
 \value{
-A \code{data.table} with columns:
+A \code{data.table} containing the results of computations. Columns include:
 \itemize{
-\item \code{site_from}: origin site ID
-\item \code{site_to}: target site ID(s) (or \code{NA} for single‐site)
-\item \code{value}: computed index value
-\item \code{order}: combination order used
+\item \code{site_from}: The source site.
+\item \code{site_to}: The target site(s) (NA for order = 1).
+\item \code{order}: The computation order.
+\item \code{value}: The computed metric value.
 }
 }
 \description{
-This function computes ecological index values (e.g. dissimilarity metrics,
-distances, turnover) for sets of sites at specified orders (single‐sites,
-pairs, higher‐order combinations). It supports both specialized
-vectorized implementations (for Gower dissimilarity) and generic or
-parallel looped approaches. \code{compute_orderwise} computes user-defined metrics (e.g., distances,
-correlations, dissimilarities) between sites or site combinations at specified
-"orders" (1 = single-site, 2 = pairwise, higher = multi-site).
-It supports parallel processing for efficiency, handles large datasets, and
-returns a unified table summarizing calculated values across all orders.
-Results can assess, for example:
-i) how often different species are found together, providing a foundation for analysing species associations;
-ii) variations in species composition and environmental properties across sites,
-highlighting patterns of compositional turnover; and
-iii) spatial patterns of community assemblage.
-Use \code{helper_indices} to choose a specific function for the func parameter to calculate different metrics.
-}
-\details{
-\itemize{
-\item \strong{Order 1} returns single‐site values (calls \code{func(vec)} once per site).
-\item \strong{Order 2} uses a fast path for \code{orderwise_diss_gower}, a pairwise loop
-for \code{geodist_helper}, or a generic loop for other functions.
-\item \strong{Higher orders} (\verb{≥ 3}) sample or exhaustively generate site‐sets,
-then compute values (optionally in parallel).
-}
+This function computes metrics for ecological data across specified order levels.
+It supports single-site, pairwise, and higher-order calculations, and allows for
+parallel processing for efficiency.
 }
 \examples{
-# Single‐site sum of abundances
-df <- data.frame(site = rep(letters[1:3], each = 5),
-                 sp1  = sample(0:5, 15, TRUE))
-compute_orderwise(df,
-                  func     = function(x) sum(x),
-                  site_col = "site",
-                  sp_cols  = "sp1",
-                  order    = 1)
+# Example usage with a custom metric function
+metric_func <- function(vec1, vec2 = NULL) {
+  if (is.null(vec2)) {
+    return(sum(vec1))  # Example: species richness
+  } else {
+    return(sum((vec1 - vec2)^2))  # Example: pairwise dissimilarity
+  }
+}
 
-# Pairwise Gower dissimilarity (vectorized path)
-compute_orderwise(df,
-                  func     = orderwise_diss_gower,
-                  site_col = "site",
-                  sp_cols  = "sp1",
-                  order    = 2)
+data <- data.frame(
+  site = rep(letters[1:3], each = 3),
+  sp1 = c(1, 0, 2, 1, 2, 0, 0, 1, 1),
+  sp2 = c(0, 1, 1, 2, 0, 0, 1, 0, 2)
+)
 
+# SPECIES RICHNESS
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+richness <- function(vec_from, vec_to = NULL) {
+ if (is.null(vec_to)) {
+   # Handle single-site calculations (order = 1)
+   return(sum(vec_from != 0, na.rm = TRUE))
+ } else if (length(vec_from) > 1 && length(vec_to) > 1) {
+   # Handle pairwise or higher-order comparisons
+   return(abs(sum(vec_from != 0, na.rm = TRUE) - sum(vec_to != 0, na.rm = TRUE)))
+ } else {
+   # Invalid input case
+   return(NA)
+ }
+}
+
+rich_o12 = compute_orderwise(
+ df = block_sp,
+ func = richness,
+ site_col = 'grid_id',
+ sp_cols = sp_cols,
+ # sample_no = 1000,
+ # sample_portion = 0.5,  # Default is 1 (100\%)
+ order = 1:2,  # Compute for pairwise and higher-order comparisons
+ parallel = TRUE,
+ n_workers = 4
+)
+head(rich_o12)
+compute_orderwise(df = data, func = metric_func, site_col = "site", sp_cols = c("sp1", "sp2"), order = 2)
 }
