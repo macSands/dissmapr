@@ -4,7 +4,11 @@
 \alias{geodist_helper}
 \title{Calculate geographic distance via Haversine formula (helper)}
 \usage{
-geodist_helper(vec_from, vec_to = NULL, coord_cols = c("x", "y"))
+geodist_helper(
+  vec_from,
+  vec_to = NULL,
+  coord_cols = c("centroid_lon", "centroid_lat")
+)
 }
 \arguments{
 \item{vec_from}{Numeric vector of length 2, or a named vector containing

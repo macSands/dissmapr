@@ -394,9 +394,10 @@ head(xy_utm_df)
 ```
 
 ------------------------------------------------------------------------
-### Example 1 - Species Richness ----
 
-# Here we calculate species richness across sites in the block_sp dataset, again using the compute_orderwise function. The richness function is applied to the grid_id column for site identification, with species data specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders.
+### Example 1 - Species Richness
+
+Here we calculate species richness across sites in the block_sp dataset, again using the compute_orderwise function. The richness function is applied to the grid_id column for site identification, with species data specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders.
 
 ```{r compute-rich}
 # Compute species richness (order 1) and the difference thereof for orders 2 to 4
@@ -422,7 +423,7 @@ boxplot(value ~ order,
         horizontal = TRUE,
         outline = FALSE,
         main = 'Distribution of Species Richness by Order')
-
+rich_o1234 = as.data.frame(rich_o1234)
 rich_o1234$centroid_lon = grid_spp$centroid_lon[match(rich_o1234$site_from, grid_spp$grid_id)]
 rich_o1234$centroid_lat = grid_spp$centroid_lat[match(rich_o1234$site_from, grid_spp$grid_id)]
 
@@ -434,9 +435,9 @@ head(mean_rich_o1234)
 ```
 ------------------------------------------------------------------------
 
-### Example 2 - Community Turnover ----
+### Example 2 - Community Turnover
 
-# Here we calculate species turnover (beta diversity) across sites in the block_sp dataset using the compute_orderwise function again. The turnover function is applied to the grid_id column for site identification, with species data specified by sp_cols. Order = 1 is not an option because turnover requires a comparison between sites. For orders 2 to 5, it computes turnover for pairwise and higher-order site combinations, representing the proportion of species not shared between sites. A subset of 1000 samples is used for higher-order comparisons. Parallel processing with 4 worker threads improves efficiency, and the output is a table summarizing species turnover across the specified orders.
+Here we calculate species turnover (beta diversity) across sites in the block_sp dataset using the compute_orderwise function again. The turnover function is applied to the grid_id column for site identification, with species data specified by sp_cols. Order = 1 is not an option because turnover requires a comparison between sites. For orders 2 to 5, it computes turnover for pairwise and higher-order site combinations, representing the proportion of species not shared between sites. A subset of 1000 samples is used for higher-order comparisons. Parallel processing with 4 worker threads improves efficiency, and the output is a table summarizing species turnover across the specified orders.
 
 ```{r compute-turn}
 # Compute community turnover for orders 2 to 5
@@ -705,7 +706,68 @@ head(predictors_df)
 ```
 
 -   Run nmds for the predicted zeta matrix\
--   Plot RGB of the 3 component scores ::: ------------------------------------------------------------------------
+-   Plot RGB of the 3 component scores :::
+
+```{r predict-check}
+# # Check results make sense
+# ggplot(predictors_df, aes(x = rich_o1, y = pred_zetaExp)) +
+#   geom_point(alpha = 0.3) +
+#   geom_smooth(method = "lm", se = FALSE) +
+#   labs(
+#     x = "Observed richness (ζ₁)",
+#     y = "Predicted turnover (ζ₂ on probability scale)"
+#   )
+# cor(predictors_df$rich_o1, predictors_df$pred_zetaExp)
+# 
+# # 3) make the plot
+# ggplot(predictors_df, aes(x = rich_o1)) +
+#   geom_point(aes(y = turn_o2),    colour = "black", alpha = .6) +
+#   geom_smooth(aes(y = turn_o2),   method = "lm", colour = "black", se = FALSE) +
+#   geom_point(aes(y = pred_zetaExp), colour = "red",   alpha = .6) +
+#   geom_smooth(aes(y = pred_zetaExp),method = "lm", colour = "red",   se = FALSE) +
+#   labs(
+#     x = expression(zeta[1]*" (richness)"),
+#     y = expression(zeta[2]*""),
+#     colour = "Type"
+#   ) +
+#   scale_colour_manual(
+#     values = c("Observed" = "black", "Predicted" = "red")
+#   ) +
+#   theme_minimal()
+# 
+# 
+#  
+# # define your palette
+# pal <- colorRampPalette(c("blue","green","yellow","orange","red","darkred"))
+# 
+# # ggplot2 spatial plot
+# ggplot(predictors_df, aes(
+#     x    = centroid_lon,
+#     y    = centroid_lat,
+#     fill = turn_o2
+#   )) +
+#   geom_tile() +
+#   scale_fill_gradientn(
+#     colours = pal(50)
+#   ) +
+#   geom_text(
+#       aes_string(label = "rich_o1"),
+#       color     = "yellow",
+#       size      = 1.5,
+#       # fontface  = "bold",
+#       check_overlap = TRUE
+#     ) +
+#   coord_quickmap() +
+#   theme_minimal() +
+#   labs(
+#     x = "Longitude",
+#     y = "Latitude",
+#     title = "Observed ζ₂ (pairwise shared species)"
+#   )
+
+```
+
+------------------------------------------------------------------------
 
 ### 15. Clustering analyses directly using zeta.now
 

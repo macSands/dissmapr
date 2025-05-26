@@ -6,7 +6,6 @@
   - [Introduction](#introduction)
   - [Workflow Overview](#workflow-overview)
 
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
@@ -574,21 +573,107 @@ head(xy_utm_df)
 #> 6        31.25    -22.25004 6831955 -6692770
 ```
 
-|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| \### Example 1 - Species Richness —-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| \# Here we calculate species richness across sites in the block_sp dataset, again using the compute_orderwise function. The richness function is applied to the grid_id column for site identification, with species data specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders. |
-| \`\`\` r \# Compute species richness (order 1) and the difference thereof for orders 2 to 4 rich_o1234 = compute_orderwise( df = grid_spp, func = richness, site_col = ‘grid_id’, sp_cols = sp_cols, sample_no = 1000, order = 1:4, parallel = TRUE, n_workers = 4) \#\> Time elapsed for order 1: 0 minutes and 4.57 seconds \#\> Time elapsed for order 2: 0 minutes and 11.10 seconds \#\> Time elapsed for order 3: 0 minutes and 38.29 seconds \#\> Time elapsed for order 4: 1 minutes and 10.54 seconds \#\> Total computation time: 1 minutes and 10.55 seconds                                                                                                                                                        |
-| head(rich_o1234) \#\> site_from site_to order value \#\> <char> <char> <int> <int> \#\> 1: 1026 <NA> 1 2 \#\> 2: 1027 <NA> 1 31 \#\> 3: 1028 <NA> 1 10 \#\> 4: 1029 <NA> 1 7 \#\> 5: 1030 <NA> 1 6 \#\> 6: 1031 <NA> 1 76 \`\`\`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `r # Plot species richness distribution by order head(rich_o1234) #>    site_from site_to order value #>       <char>  <char> <int> <int> #> 1:      1026    <NA>     1     2 #> 2:      1027    <NA>     1    31 #> 3:      1028    <NA>     1    10 #> 4:      1029    <NA>     1     7 #> 5:      1030    <NA>     1     6 #> 6:      1031    <NA>     1    76 boxplot(value ~ order, data = rich_o1234, col = c('#4575b4', '#99ce8f', '#fefab8', '#d73027'), horizontal = TRUE, outline = FALSE, main = 'Distribution of Species Richness by Order')`                                                                                                                                                                      |
-| <img src="man/figures/README-richness-plot-1.png" width="100%" />                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| \`\`\` r                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| rich_o1234$centroid_lon = grid_spp$centroid_lon\[match(rich_o1234$site_from, grid_spp$grid_id)\] rich_o1234$centroid_lat = grid_spp$centroid_lat\[match(rich_o1234$site_from, grid_spp$grid_id)\]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| \# Summarise turnover by site (spatial location) mean_rich_o1234 = rich_o1234 %\>% group_by(order, site_from, centroid_lon, centroid_lat) %\>% summarize(value = mean(value, na.rm = TRUE)) head(mean_rich_o1234) \#\> \# A tibble: 6 × 5 \#\> \# Groups: order, site_from, centroid_lon \[6\] \#\> order site_from centroid_lon centroid_lat value \#\> <int> <chr> <dbl> <dbl> <dbl> \#\> 1 1 1026 28.8 -22.3 2 \#\> 2 1 1027 29.2 -22.3 31 \#\> 3 1 1028 29.7 -22.3 10 \#\> 4 1 1029 30.3 -22.3 7 \#\> 5 1 1030 30.8 -22.3 6 \#\> 6 1 1031 31.3 -22.3 76 \`\`\`                                                                                                                                                             |
+------------------------------------------------------------------------
 
-### Example 2 - Community Turnover —-
+### Example 1 - Species Richness
 
-# Here we calculate species turnover (beta diversity) across sites in the block_sp dataset using the compute_orderwise function again. The turnover function is applied to the grid_id column for site identification, with species data specified by sp_cols. Order = 1 is not an option because turnover requires a comparison between sites. For orders 2 to 5, it computes turnover for pairwise and higher-order site combinations, representing the proportion of species not shared between sites. A subset of 1000 samples is used for higher-order comparisons. Parallel processing with 4 worker threads improves efficiency, and the output is a table summarizing species turnover across the specified orders.
+Here we calculate species richness across sites in the block_sp dataset,
+again using the compute_orderwise function. The richness function is
+applied to the grid_id column for site identification, with species data
+specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it
+computes basic species richness at individual sites, while higher orders
+(2 to 4) represent the differences in richness between pairwise and/or
+multi-site combinations. A subset of 1000 samples is used for
+higher-order computations to speed-up computation time. Parallel
+processing is enabled with 4 worker threads to improve performance. The
+output is a table summarizing species richness across specified orders.
+
+``` r
+# Compute species richness (order 1) and the difference thereof for orders 2 to 4
+rich_o1234 = compute_orderwise(
+  df = grid_spp,
+  func = richness,
+  site_col = 'grid_id',
+  sp_cols = sp_cols,
+  sample_no = 1000,
+  order = 1:4,
+  parallel = TRUE,
+  n_workers = 4)
+#> Time elapsed for order 1: 0 minutes and 4.91 seconds
+#> Time elapsed for order 2: 0 minutes and 11.61 seconds
+#> Time elapsed for order 3: 0 minutes and 38.85 seconds
+#> Time elapsed for order 4: 1 minutes and 11.33 seconds
+#> Total computation time: 1 minutes and 11.34 seconds
+
+head(rich_o1234)
+#>    site_from site_to order value
+#>       <char>  <char> <int> <int>
+#> 1:      1026    <NA>     1     2
+#> 2:      1027    <NA>     1    31
+#> 3:      1028    <NA>     1    10
+#> 4:      1029    <NA>     1     7
+#> 5:      1030    <NA>     1     6
+#> 6:      1031    <NA>     1    76
+```
+
+``` r
+# Plot species richness distribution by order
+head(rich_o1234)
+#>    site_from site_to order value
+#>       <char>  <char> <int> <int>
+#> 1:      1026    <NA>     1     2
+#> 2:      1027    <NA>     1    31
+#> 3:      1028    <NA>     1    10
+#> 4:      1029    <NA>     1     7
+#> 5:      1030    <NA>     1     6
+#> 6:      1031    <NA>     1    76
+boxplot(value ~ order,
+        data = rich_o1234,
+        col = c('#4575b4', '#99ce8f', '#fefab8', '#d73027'),
+        horizontal = TRUE,
+        outline = FALSE,
+        main = 'Distribution of Species Richness by Order')
+```
+
+<img src="man/figures/README-richness-plot-1.png" width="100%" />
+
+``` r
+rich_o1234 = as.data.frame(rich_o1234)
+rich_o1234$centroid_lon = grid_spp$centroid_lon[match(rich_o1234$site_from, grid_spp$grid_id)]
+rich_o1234$centroid_lat = grid_spp$centroid_lat[match(rich_o1234$site_from, grid_spp$grid_id)]
+
+# Summarise turnover by site (spatial location)
+mean_rich_o1234 = rich_o1234 %>%
+  group_by(order, site_from, centroid_lon, centroid_lat) %>%
+  summarize(value = mean(value, na.rm = TRUE))
+head(mean_rich_o1234)
+#> # A tibble: 6 × 5
+#> # Groups:   order, site_from, centroid_lon [6]
+#>   order site_from centroid_lon centroid_lat value
+#>   <int> <chr>            <dbl>        <dbl> <dbl>
+#> 1     1 1026              28.8        -22.3     2
+#> 2     1 1027              29.2        -22.3    31
+#> 3     1 1028              29.7        -22.3    10
+#> 4     1 1029              30.3        -22.3     7
+#> 5     1 1030              30.8        -22.3     6
+#> 6     1 1031              31.3        -22.3    76
+```
+
+------------------------------------------------------------------------
+
+### Example 2 - Community Turnover
+
+Here we calculate species turnover (beta diversity) across sites in the
+block_sp dataset using the compute_orderwise function again. The
+turnover function is applied to the grid_id column for site
+identification, with species data specified by sp_cols. Order = 1 is not
+an option because turnover requires a comparison between sites. For
+orders 2 to 5, it computes turnover for pairwise and higher-order site
+combinations, representing the proportion of species not shared between
+sites. A subset of 1000 samples is used for higher-order comparisons.
+Parallel processing with 4 worker threads improves efficiency, and the
+output is a table summarizing species turnover across the specified
+orders.
 
 ``` r
 # Compute community turnover for orders 2 to 5
@@ -601,11 +686,11 @@ turn_o2345 = compute_orderwise(
   order = 2:5,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 9.84 seconds
-#> Time elapsed for order 3: 0 minutes and 43.83 seconds
-#> Time elapsed for order 4: 1 minutes and 23.78 seconds
-#> Time elapsed for order 5: 2 minutes and 9.59 seconds
-#> Total computation time: 2 minutes and 9.60 seconds
+#> Time elapsed for order 2: 0 minutes and 9.54 seconds
+#> Time elapsed for order 3: 0 minutes and 43.44 seconds
+#> Time elapsed for order 4: 2 minutes and 26.22 seconds
+#> Time elapsed for order 5: 4 minutes and 13.28 seconds
+#> Total computation time: 4 minutes and 13.29 seconds
 
 # Check results
 head(turn_o2345)
@@ -937,54 +1022,54 @@ Plot.ispline(isplines = zeta2.ispline, distance = TRUE)
 
 <img src="man/figures/README-zeta-msgdm-1.png" width="100%" />
 
-> This I-spline plot represents how different environmental variables
-> (including distance) contribute to explaining zeta diversity of order
-> 2 — that is, how many species are shared between pairs of sites, based
-> on environmental similarity and geographic distance.
+> This figure shows the fitted I-splines from a multi-site generalized
+> dissimilarity model (via `Zeta.msgdm`), which represent the partial,
+> monotonic relationship between each predictor and community turnover
+> (ζ-diversity) over its 0–1 “rescaled” range. A few key take-aways:
 
-> **Imagine you’re comparing pairs of locations and asking:** *“Do these
-> two places have similar species, and if so, why?”*
+> 1.  **Distance (blue asterisks)** has by far the largest I-spline
+>     amplitude—rising from ~0 at zero distance to ~0.05 at the maximum.
+>     That tells us spatial separation is the strongest driver of
+>     multi‐site turnover, and even small increases in distance yield a
+>     substantial drop in shared species.
 
-> **How to Read the Graph:** This graph shows which factors matter most
-> for explaining how similar the species are between those pairs of
-> places.  
-> - **X-axis (Rescaled range):** Each variable has been normalized from
-> 0 to 1, so we can compare their effects on the same scale.  
-> - **Y-axis (I-splines):** This shows how much each variable
-> contributes to the similarity in species between two locations.  
-> - A **steeper or higher curve** indicates a more important variable.
+> 2.  **Sampling intensity (`obs_sum`, open circles)** comes next, with
+>     a gentle but steady rise to ~0.045. This indicates that sites with
+>     more observations tend to share more species (or, conversely, that
+>     incomplete sampling can depress apparent turnover).
 
-> **Main Takeaways from the Plot:**
->
-> - **Geographic distance** (blue line) has the strongest effect:  
->   As distance increases (from 0 to 1), species similarity drops —
->   locations far apart share fewer species. This confirms classic
->   distance decay in ecology.  
-> - **obs_sum** (sampling effort or richness) shows a steep, high
->   I-spline curve: - Strong initial effect: Differences in richness
->   between sites strongly influence shared species, especially when
->   large. Plateau effect: Beyond a point, further increases in richness
->   don’t lead to more shared species, possibly due to detection limits
->   or saturation. Overall importance: The curve remains high,
->   indicating consistent influence.  
-> - **Temperature** and **rainfall seasonality** have moderate effects:
->   \> Variables like `temp_mean`, `rain_warmQ`, and `temp_wetQ`
->   contribute, but their curves are lower, indicating weaker influence.
-> - Other climatic variables (e.g., isothermality, coldest quarter rain)
->   show minimal contribution: These gradients affect biodiversity
->   weakly in this context.
+> 3.  **Precipitation variables**
 
-> **Summary:**  
-> Beyond geographic distance, the total number of species observed at a
-> site (`obs_sum`) is a strong predictor of shared species. However,
-> once richness is high enough, its added influence plateaus.
+> - **Rain in the warm quarter (`rain_warmQ`, squares)** and
+> - **Rain in the dry quarter (`rain_dry`, triangles-down)** both show
+>   moderate effects (I-spline heights ~0.02–0.03). This means
+>   differences in seasonal rainfall regimes contribute noticeably to
+>   changes in community composition.
+
+> 4.  **Temperature metrics**
+
+> - **Mean temperature (`temp_mean`, triangles-up),**
+> - **Wet‐quarter temperature (`temp_wetQ`, X’s),**
+> - **Dry‐quarter temperature (`temp_dryQ`, diamonds),** and the
+>   **isothermality index (`iso`, plus signs)** all have very low,
+>   almost flat I-splines (max heights ≲0.01). In other words, these
+>   thermal variables explain very little additional turnover once
+>   you’ve accounted for distance and rainfall.
+
+> **Ecological interpretation:** Spatial distance is the dominant
+> structuring factor in these data—sites further apart share markedly
+> fewer species. After accounting for that, differences in observation
+> effort and, to a lesser degree, seasonal rainfall still shape
+> multisite community similarity. Temperature and seasonality metrics,
+> by contrast, appear to have only a minor independent influence on
+> zeta‐diversity in this landscape.
 
 ``` r
 # Deviance explained summary results
 with(summary(zeta2$model), 1 - deviance/null.deviance) 
 #> [1] 0.264315
-# [1] 0.04414301
-# 0.04414301 means that approximately 4.41% of the variability in the response
+# [1] 0.2461561
+# 0.2461561 means that approximately 24.6% of the variability in the response
 # variable is explained by your model. This is relatively low, suggesting that the
 # model may not be capturing much of the underlying pattern in the data.
 
@@ -1127,7 +1212,67 @@ head(predictors_df)
 ```
 
 - Run nmds for the predicted zeta matrix  
-- Plot RGB of the 3 component scores ::: ————————————————————————
+- Plot RGB of the 3 component scores :::
+
+``` r
+# # Check results make sense
+# ggplot(predictors_df, aes(x = rich_o1, y = pred_zetaExp)) +
+#   geom_point(alpha = 0.3) +
+#   geom_smooth(method = "lm", se = FALSE) +
+#   labs(
+#     x = "Observed richness (ζ₁)",
+#     y = "Predicted turnover (ζ₂ on probability scale)"
+#   )
+# cor(predictors_df$rich_o1, predictors_df$pred_zetaExp)
+# 
+# # 3) make the plot
+# ggplot(predictors_df, aes(x = rich_o1)) +
+#   geom_point(aes(y = turn_o2),    colour = "black", alpha = .6) +
+#   geom_smooth(aes(y = turn_o2),   method = "lm", colour = "black", se = FALSE) +
+#   geom_point(aes(y = pred_zetaExp), colour = "red",   alpha = .6) +
+#   geom_smooth(aes(y = pred_zetaExp),method = "lm", colour = "red",   se = FALSE) +
+#   labs(
+#     x = expression(zeta[1]*" (richness)"),
+#     y = expression(zeta[2]*""),
+#     colour = "Type"
+#   ) +
+#   scale_colour_manual(
+#     values = c("Observed" = "black", "Predicted" = "red")
+#   ) +
+#   theme_minimal()
+# 
+# 
+#  
+# # define your palette
+# pal <- colorRampPalette(c("blue","green","yellow","orange","red","darkred"))
+# 
+# # ggplot2 spatial plot
+# ggplot(predictors_df, aes(
+#     x    = centroid_lon,
+#     y    = centroid_lat,
+#     fill = turn_o2
+#   )) +
+#   geom_tile() +
+#   scale_fill_gradientn(
+#     colours = pal(50)
+#   ) +
+#   geom_text(
+#       aes_string(label = "rich_o1"),
+#       color     = "yellow",
+#       size      = 1.5,
+#       # fontface  = "bold",
+#       check_overlap = TRUE
+#     ) +
+#   coord_quickmap() +
+#   theme_minimal() +
+#   labs(
+#     x = "Longitude",
+#     y = "Latitude",
+#     title = "Observed ζ₂ (pairwise shared species)"
+#   )
+```
+
+------------------------------------------------------------------------
 
 ### 15. Clustering analyses directly using zeta.now
 

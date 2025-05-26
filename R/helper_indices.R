@@ -44,7 +44,7 @@ invisible(lapply(required_packages, function(pkg) {
 #' @export
 # @keywords internal
 #'
-geodist_helper <- function(vec_from, vec_to = NULL, coord_cols = c("x", "y")) {
+geodist_helper <- function(vec_from, vec_to = NULL, coord_cols = c("centroid_lon", "centroid_lat")) {
   # For single-site (order 1) calculations, return 0.
   if (is.null(vec_to)) {
     return(0)
