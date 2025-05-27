@@ -14,8 +14,7 @@ Suggests:
   pkgdown,
   remotes,
   rmarkdown,
-  testthat (>= 3.0.0),
-  rcmdcheck
+  testthat (>= 3.0.0)
 Imports:
     pbapply,
     data.table,
@@ -44,7 +43,8 @@ Imports:
     patchwork,
     zetadiv,
     rlang,
-    clValid
+    clValid,
+    rcmdcheck
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
