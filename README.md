@@ -4,13 +4,11 @@
 - [Step-by-Step Workflow](#step-by-step-workflow)
   - [1. Install and load `dissmapr`](#1-install-and-load-dissmapr)
   - [2. Load other R libraries](#2-load-other-r-libraries)
-  - [3. User-defined area of interest and grid resolution](#3-user-defined-area-of-interest-and-grid-resolution)
+  - [3. Load user-defined area of interest and set grid resolution](#3-user-defined-area-of-interest-and-grid-resolution)
   - [4. Get species occurrence records using `get_occurrence_data`](#4-get-species-occurrence-records-using-get_occurrence_data)
   - [5. Format data using `format_df`](#5-format-data-using-format_df)
   - [6. Summarise records by grid centroid using `generate_grid`](#6-summarise-records-by-grid-centroid-using-generate_grid)
-    - [Example 1 – Species Richness](#example-1---species-richness)
-    - [Example 2 – Community Turnover](#example-2---community-turnover)
-  - [7. Generate site by species matrix - `site_spp`](#7-generate-site-by-species-matrix---site_spp)
+  - [7. Fetch site by species matrix created using `generate_grid`](#7-generate-site-by-species-matrix---site_spp)
   - [8. Generate site by environment matrix using `get_enviro_data`](#8-generate-site-by-environment-matrix-using-get_enviro_data)
   - [9. Change coordinates projection using `sf::st_transform`](#9-change-coordinates-projection-using-sfst_transform)
   - [10. Check for colinearity using `rm_correlated`](#10-check-for-colinearity-using-rm_correlated)
@@ -18,7 +16,7 @@
   - [12. Calculate Zeta decay for orders 2:8](#12-calculate-zeta-decay-for-orders-28)
   - [13. Run a Multi-Site Generalised Dissimilarity Model for order 2](#13-run-a-multi-site-generalised-dissimilarity-model-for-order-2)
   - [14. Predict current Zeta Diversity (zeta2) using `predict_dissim`](#14-predict-current-zeta-diversity-zeta2-using-predict_dissim)
-  - [15. Run clustering analysesusing `map_bioreg`](#15-run-clustering-analyses-using-map_bioreg)
+  - [15. Run clustering analyses using `map_bioreg`](#15-run-clustering-analyses-using-map_bioreg)
   - [16. Predict future Zeta Diversity and map bioregion change using `map_bioregDiff`](#16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregDiff)
   - [17. Deposit all results into Zenodo](#17-deposit-all-results-into-Zenodo)
 
@@ -182,73 +180,14 @@ bfly_data = get_occurrence_data(
 # Check results
 dim(bfly_data)
 #> [1] 81825    52
-head(bfly_data, n=5)
+head(bfly_data[,1:6])
 #>      gbifID                           datasetKey occurrenceID  kingdom     phylum   class
 #> 1 923051749 6ac3f774-d9fb-4796-b3e9-92bf6c81c084              Animalia Arthropoda Insecta
 #> 2 922985630 6ac3f774-d9fb-4796-b3e9-92bf6c81c084              Animalia Arthropoda Insecta
 #> 3 922619348 6ac3f774-d9fb-4796-b3e9-92bf6c81c084              Animalia Arthropoda Insecta
 #> 4 922426210 6ac3f774-d9fb-4796-b3e9-92bf6c81c084              Animalia Arthropoda Insecta
 #> 5 921650584 6ac3f774-d9fb-4796-b3e9-92bf6c81c084              Animalia Arthropoda Insecta
-#>         order        family     genus            species infraspecificEpithet  taxonRank
-#> 1 Lepidoptera      Pieridae    Pieris   Pieris brassicae                         SPECIES
-#> 2 Lepidoptera      Pieridae    Pieris   Pieris brassicae                         SPECIES
-#> 3 Lepidoptera  Papilionidae   Papilio  Papilio demodocus                         SPECIES
-#> 4 Lepidoptera      Pieridae Mylothris Mylothris agathina             agathina SUBSPECIES
-#> 5 Lepidoptera Lasiocampidae  Eutricha  Eutricha capensis                         SPECIES
-#>                       scientificName             verbatimScientificName
-#> 1  Pieris brassicae (Linnaeus, 1758)                   Pieris brassicae
-#> 2  Pieris brassicae (Linnaeus, 1758)                   Pieris brassicae
-#> 3      Papilio demodocus Esper, 1798 Papilio demodocus subsp. demodocus
-#> 4        Mylothris agathina agathina Mylothris agathina subsp. agathina
-#> 5 Eutricha capensis (Linnaeus, 1767)                  Eutricha capensis
-#>   verbatimScientificNameAuthorship countryCode                                          locality
-#> 1                               NA          ZA                                          Hermanus
-#> 2                               NA          ZA                                   Polkadraai Road
-#> 3                               NA          ZA                                       Signal Hill
-#> 4                               NA          ZA                                          Hermanus
-#> 5                               NA          ZA Cape of Good Hope / Cape Point Area, South Africa
-#>   stateProvince occurrenceStatus individualCount                     publishingOrgKey         y
-#> 1                        PRESENT              NA bb646dff-a905-4403-a49b-6d378c2cf0d9 -34.42086
-#> 2                        PRESENT              NA bb646dff-a905-4403-a49b-6d378c2cf0d9 -33.96044
-#> 3                        PRESENT              NA bb646dff-a905-4403-a49b-6d378c2cf0d9 -33.91651
-#> 4                        PRESENT              NA bb646dff-a905-4403-a49b-6d378c2cf0d9 -34.42086
-#> 5                        PRESENT              NA bb646dff-a905-4403-a49b-6d378c2cf0d9 -34.35024
-#>          x coordinateUncertaintyInMeters coordinatePrecision elevation elevationAccuracy depth
-#> 1 19.24410                           250                  NA        NA                NA    NA
-#> 2 18.75564                           250                  NA        NA                NA    NA
-#> 3 18.40321                           250                  NA        NA                NA    NA
-#> 4 19.24410                           250                  NA        NA                NA    NA
-#> 5 18.47488                           250                  NA        NA                NA    NA
-#>   depthAccuracy        eventDate day month year taxonKey speciesKey     basisOfRecord
-#> 1            NA 2012-10-13T00:00  13    10 2012  1920506    1920506 HUMAN_OBSERVATION
-#> 2            NA 2012-11-01T00:00   1    11 2012  1920506    1920506 HUMAN_OBSERVATION
-#> 3            NA 2012-10-31T00:00  31    10 2012  1938125    1938125 HUMAN_OBSERVATION
-#> 4            NA 2012-10-13T00:00  13    10 2012 11374894    5137998 HUMAN_OBSERVATION
-#> 5            NA 2012-10-30T00:00  30    10 2012  6113873    6113873 HUMAN_OBSERVATION
-#>   institutionCode collectionCode catalogNumber recordNumber identifiedBy dateIdentified   license
-#> 1     naturgucker    naturgucker    -190723441                                          CC_BY_4_0
-#> 2     naturgucker    naturgucker    2051102952                                          CC_BY_4_0
-#> 3     naturgucker    naturgucker    1565945073                                          CC_BY_4_0
-#> 4     naturgucker    naturgucker   -1879976251                                          CC_BY_4_0
-#> 5     naturgucker    naturgucker   -1022055456                                          CC_BY_4_0
-#>   rightsHolder recordedBy typeStatus establishmentMeans          lastInterpreted  mediaType
-#> 1               591374253         NA                 NA 2024-03-15T23:20:20.346Z           
-#> 2               591374253         NA                 NA 2024-03-15T23:22:38.206Z           
-#> 3               591374253         NA                 NA 2024-03-15T23:26:59.721Z           
-#> 4               591374253         NA                 NA 2024-03-15T23:23:55.839Z StillImage
-#> 5               591374253         NA                 NA 2024-03-15T23:22:38.836Z StillImage
-#>                                                                                                                              issue
-#> 1                        COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES;MULTIMEDIA_URI_INVALID
-#> 2                        COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES;MULTIMEDIA_URI_INVALID
-#> 3 COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES;TAXON_MATCH_HIGHERRANK;MULTIMEDIA_URI_INVALID
-#> 4                                               COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES
-#> 5                                               COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES
-#>   site_id pa
-#> 1       1  1
-#> 2       2  1
-#> 3       3  1
-#> 4       1  1
-#> 5       4  1
+#> 6 921485695 6ac3f774-d9fb-4796-b3e9-92bf6c81c084              Animalia Arthropoda Insecta
 ```
 
 ------------------------------------------------------------------------
@@ -282,32 +221,27 @@ site_spp = bfly_result$site_sp
 # Check results
 dim(site_obs)
 #> [1] 79953     5
-head(site_obs, n=5)
+head(site_obs)
 #>   site_id        x         y                            species value
 #> 1       1 19.24410 -34.42086                   Pieris brassicae     1
 #> 2       2 18.75564 -33.96044                   Pieris brassicae     1
 #> 3       3 18.40321 -33.91651 Papilio demodocus subsp. demodocus     1
 #> 4       1 19.24410 -34.42086 Mylothris agathina subsp. agathina     1
 #> 5       4 18.47488 -34.35024                  Eutricha capensis     1
+#> 6       5 25.65097 -33.58570            Drepanogynis bifasciata     1
 
 dim(site_spp)
 #> [1] 56090  2871
-head(site_spp, n=5)
-#> # A tibble: 5 × 2,871
-#>   site_id     x     y Mylothris agathina subsp.…¹ `Pieris brassicae` `Tarucus thespis` `Acraea horta`
-#>     <int> <dbl> <dbl>                       <dbl>              <dbl>             <dbl>          <dbl>
-#> 1       1  19.2 -34.4                           1                  1                 1              0
-#> 2       2  18.8 -34.0                           0                  1                 0              0
-#> 3       3  18.4 -33.9                           0                  0                 0              2
-#> 4       4  18.5 -34.4                           0                  0                 0              0
-#> 5       5  25.7 -33.6                           0                  0                 0              0
-#> # ℹ abbreviated name: ¹​`Mylothris agathina subsp. agathina`
-#> # ℹ 2,864 more variables: `Danaus chrysippus` <dbl>, `Papilio demodocus subsp. demodocus` <dbl>,
-#> #   `Eutricha capensis` <dbl>, `Mesocelis monticola` <dbl>, `Vanessa cardui` <dbl>,
-#> #   `Cuneisigna obstans` <dbl>, `Dixeia charina subsp. charina` <dbl>,
-#> #   `Drepanogynis bifasciata` <dbl>, `Drepanogynis cambogiaria` <dbl>, `Chiasmia observata` <dbl>,
-#> #   `Catacroptera cloanthe` <dbl>, `Precis octavia` <dbl>, `Acraea rabbaiae` <dbl>,
-#> #   `Amauris ochlea` <dbl>, `Amauris ochlea ochlea` <dbl>, `Appias sabina phoebe` <dbl>, …
+head(site_spp[,1:6])
+#> # A tibble: 6 × 6
+#>   site_id     x     y `Mylothris agathina subsp. agathina` `Pieris brassicae` `Tarucus thespis`
+#>     <int> <dbl> <dbl>                                <dbl>              <dbl>             <dbl>
+#> 1       1  19.2 -34.4                                    1                  1                 1
+#> 2       2  18.8 -34.0                                    0                  1                 0
+#> 3       3  18.4 -33.9                                    0                  0                 0
+#> 4       4  18.5 -34.4                                    0                  0                 0
+#> 5       5  25.7 -33.6                                    0                  0                 0
+#> 6       6  22.2 -33.6                                    0                  0                 0
 ```
 
 #### Get parameters to use later
@@ -361,12 +295,12 @@ grid_spp = grid_list$block_sp
 # Check results
 dim(aoi_grid)
 #> [1] 1110    8
-head(aoi_grid, n=5)
-#> Simple feature collection with 5 features and 6 fields
+head(aoi_grid)
+#> Simple feature collection with 6 features and 6 fields
 #> Active geometry column: geometry
 #> Geometry type: POLYGON
 #> Dimension:     XY
-#> Bounding box:  xmin: 15.5 ymin: -36 xmax: 18 ymax: -35.5
+#> Bounding box:  xmin: 15.5 ymin: -36 xmax: 18.5 ymax: -35.5
 #> Geodetic CRS:  WGS 84
 #>   centroid_lon centroid_lat grid_id  mapsheet obs_sum spp_rich                       geometry
 #> 1        15.75       -35.75       1 E015S36BB      NA       NA POLYGON ((15.5 -36, 16 -36,...
@@ -374,696 +308,25 @@ head(aoi_grid, n=5)
 #> 3        16.75       -35.75       3 E016S36BB      NA       NA POLYGON ((16.5 -36, 17 -36,...
 #> 4        17.25       -35.75       4 E017S36BB      NA       NA POLYGON ((17 -36, 17.5 -36,...
 #> 5        17.75       -35.75       5 E017S36BB      NA       NA POLYGON ((17.5 -36, 18 -36,...
+#> 6        18.25       -35.75       6 E018S36BB      NA       NA POLYGON ((18 -36, 18.5 -36,...
 #>               centroid
 #> 1 POINT (15.75 -35.75)
 #> 2 POINT (16.25 -35.75)
 #> 3 POINT (16.75 -35.75)
 #> 4 POINT (17.25 -35.75)
 #> 5 POINT (17.75 -35.75)
+#> 6 POINT (18.25 -35.75)
 
 dim(grid_spp)
 #> [1]  415 2874
-head(grid_spp, n=5)
-#>      grid_id centroid_lon centroid_lat mapsheet obs_sum spp_rich Mylothris agathina subsp. agathina
-#>      Pieris brassicae Tarucus thespis Acraea horta Danaus chrysippus
-#>      Papilio demodocus subsp. demodocus Eutricha capensis Mesocelis monticola Vanessa cardui
-#>      Cuneisigna obstans Dixeia charina subsp. charina Drepanogynis bifasciata
-#>      Drepanogynis cambogiaria Chiasmia observata Catacroptera cloanthe Precis octavia
-#>      Acraea rabbaiae Amauris ochlea Amauris ochlea ochlea Appias sabina phoebe
-#>      Belenois gidica abyssinica Bicyclus safitza safitza Colotis euippe Ernsta dromus
-#>      Eurytela hiarbas angustata Graphium antheus Graphium leonidas leonidas Hypolimnas anthedon
-#>      Hypolycaena philippus Junonia oenone oenone Leptotes pirithous Papilio nireus
-#>      Papilio nireus lyaeus Stephenia natalica Telchinia encedon encedon Eronia cleodora
-#>      Teracolus eris eris Hippotion eson Colotis annae annae Junonia hierta cebrene Junonia hierta
-#>      Hamanumida daedalus Papilio demodocus Aloeides pierus Acanthovalva focularia Achyra nudalis
-#>      Acontia accola Adicocrita koranata Adisura aerugo Agrius convolvuli Agrotis crassilinea
-#>      Agrotis denticulosa Antigastra catalaunalis Antiophlebia bracteata Argyrophora stramineata
-#>      Argyrophora trofonia Axiodes asteiochlora Axiodes ectoglauca Axiodes figurata
-#>      Axiodes interscripta Axiodes intricata Axiodes leucoloma Axiodes rufigrisea
-#>      Belenois aurota aurota Blenina squamifera Bocchoris inspersalis Bombycomorpha bifascia
-#>      Bombycopsis tephrobaphes Brephidium metophis Cardepia definiens Catopsilia florella
-#>      Cerocala vermiculosa Ceromitia wahlbergi Chiasmia brongusaria Chiasmia inaequilinea
-#>      Chlorerythra rubriplaga Chrysoritis lysander Chrysoritis plutus Colotis euippe omphale
-#>      Colotis evenina Comibaena leucospilata Cornutiplusia circumflexa Cymaroa grisea
-#>      Derriodes cnephaeogramma Derriodes miltophyris Diaphania indica Diaphone eumela
-#>      Dicranuropsis vilis Diota rostrata Drepanogynis insolens Drepanogynis mixtaria
-#>      Drepanogynis pero Drepanogynis sinuata Earias biplaga Earias insulana Ernsta sataspes
-#>      Eublemma admota Eublemma caffrorum Euchromius ocellea Eucrostes rufociliaria Eurranthis acuta
-#>      Gorgopis pholidota Grammodes stolida Helicoverpa armigera Heliothis scutuligera
-#>      Hemixesma anthocrenias Hydriris ornatalis Hyles livornica Isturgia deerraria
-#>      Klugeana philoxalis Lacipa picta Latoia latistriga Leptomyrina lara Loryma basalis
-#>      Lorymodes digonialis Menophra serrataria Mentaxya ignicollis Metisella malgacha malgacha
-#>      Microloxia ruficornis Nomophila africana Omphalucha maturnaria Ophiusa dianaris
-#>      Ophiusa selenaris Ophiusa tirhaca Oraesia triobliqua Oraidium barberae Pagyda salvalis
-#>      Paralacydes vocula Parapoynx fluctuosalis Phyllalia patens Phyllalia thunbergii
-#>      Plutella xylostella Pontia helice helice Prasinocyma panchlora Pseudomaenas alcidata
-#>      Pseudomaenas honiballi Pseudomaenas intricata Pyralis farinalis Rhabdosia vaninia
-#>      Rhodometra participata Rhodometra sacraria Scotopteryx deversa Sicyodes cambogiaria
-#>      Sicyodes olivescens Sommeria ostentata Sphingomorpha chlorea Spialia spio Spodoptera exigua
-#>      Spodoptera littoralis Spoladea recurvalis Streblote uniforme Tarsocera Tearosoma aspersum
-#>      Tegiapa virescens Temnora pylas Terastia africana Theretra capensis Thyretes hippotes
-#>      Thysanoplusia orichalcea Traminda ocellata Tytroca metaxantha Udea ferrugalis
-#>      Utetheisa pulchella Vegetia grimmia Victoria albipicta Zizeeria knysna Zizeeria knysna knysna
-#>      Ercheia subsignata Tildia anemosa Leucotrachea melanodonta Agrotis ipsilon Agrotis segetum
-#>      Araea indecora Ariathisa abyssinia Asota speciosa Aventiola truncataria Bracharoa dregei
-#>      Brevipecten cornuta Brunia vicaria Calesia xanthognatha Callicercops triceros
-#>      Chiasmia semitecta Chloroclystis muscosa Cirrhochrista grabczewskyi Cleora flavivenata
-#>      Comostolopsis capensis Comostolopsis germana Corgatha producta Crambus sparsellus
-#>      Crocidosema plebejana Ctenoplusia limbirena Desmeocraera nugatrix Diasemia disjectalis
-#>      Diasemia monostigma Duponchelia lanceolalis Dysgonia torrida Eublemma apicimacula
-#>      Eudasychira proleprota Eupithecia inconclusaria Gaana africana
-#>      Gonanticlea meridionata meridionata Hamartia clarissa Holocerina smilax Hypena commixtalis
-#>      Hypena senialis Hypenodes nigricolora Hypercodia wheeleri Hypomecis gonophora
-#>      Hypsopygia nostralis Iambia melanochlora Laelia fusca Lygephila salax Meganola nigristriga
-#>      Mentaxya muscosa Metachrostis anticalis Metisella metis metis Mythimna languida Nephele comma
-#>      Neuranethes spodopterodes Nodaria nodosalis Nola tineoides Nomophila noctuella
-#>      Notarcha quaternalis Obolcola decisa Odontosida pusillus Omphalucha crenulata
-#>      Orthonama obstipata Ovios capensis Ozarba accincta Palpita vitrealis Panagropsis equitaria
-#>      Pandesma robusta Piercia prasinaria Pontia helice Rhodogastria amasis Sarmatia interitalis
-#>      Scopula hectata Simplicia extinctalis Sommeria culta Sommeria spilosoma Spodoptera cilium
-#>      Temnora pseudopylas Thysanoplusia angulum Thysanoplusia sestertia Trachypteryx magella
-#>      Trymalitis scalifera Xanthorhoe exorista Xanthorhoe poseata Xylopteryx arcuata
-#>      Xylopteryx prasinaria Xylopteryx protearia Zebeeba meceneronis Zellereccopsis caffreana
-#>      Zitha laminalis Zitha zonalis Macrocossus toluminus Amyna axis Cometaster pyrula
-#>      Cryphia fulvifusa Honeyia clearchus Mixocera frustratoria Palasea albimacula
-#>      Pardomima callixantha Phalera lydenburgi Rufoclanis numosae Stenochora lancinalis
-#>      Stenoglene obtusa Xanthodes albago Coelonia fulvinotata Hypopyra capensis Acontia discoidea
-#>      Acontia imitatrix Acontia trimaculata Afroclanis calcarea Amerila lupia Amyops ingens
-#>      Anomis auragoides Archaeopilocornus lucidus Calesia zambesita Crocidolomia pavonana
-#>      Desmeocraera basalis Epitrabala argenteoguttata Ethioterpia lichenea Ethioterpia marmorata
-#>      Eudocima materna Eutelia polychorda Fentonina exacta Gynanisa maja Heliothis galatheae
-#>      Hemerophanes libyra libyra Mazuca amoena Metajana marshalli Omphax plantaria
-#>      Oneiliana multifera Ophiusa mejanesi Pericyma atrifusa Phoenicocampa rubrifasciata
-#>      Pioneabathra olesialis Polydesma umbricola Radara subcupralis Rufoclanis jansei
-#>      Sena prompta plusioides Theretra monteironis Xenimpia erosa Philotherma rennei
-#>      Epichoristodes acerbella Isturgia spissata Striphnopteryx edulis Euproctis haemodetes
-#>      Achaea praestans Acleros mackenii Acontia guttifera Acontia trychaenoides Acontia wallengreni
-#>      Aethalopteryx squameus Agoma trimenii Aiteta veluta Amerila bauri Analyta calligrammalis
-#>      Anoba atripuncta Anoba plumipes Aurivillius fuscus Autocharis jacobsalis Baniana culminifera
-#>      Belenois gidica Beralade perobliqua Bicyclus anynana anynana Bostra xanthorhodalis
-#>      Brevipecten legraini Bunaea alcinoe Callopistria latreillei Celidomphax rubrimaculata
-#>      Cetola pulchra Charaxes candiope Chrysopoloma restricta Chrysopoloma varia Coenina poecilaria
-#>      Coenyropsis natalii Colbusa euclidica Colotis vesta Colotis vesta argillaceus
-#>      Corgatha porphyrana Craspia marshalli Cyligramma latona Dasychira extatura Deltoptera iphia
-#>      Dysallacta negatalis Enargeiosia elegans Euexia percnopus Eutelia callichroma Fentonina punctum
-#>      Goodia kuntzei Grammodes congenita Hemerophanes libyra Hemiolaus caeculus
-#>      Heterorachis roseifimbria Hippotion roseipennis Homoeomeria flavicapilla Honeyania plumbosa
-#>      Hypopyra africana Latoia intermissa Magusa versicolora Magusa viettei Marathyssa albidisca
-#>      Maurilia arcuata Melanitis leda Micraphe lateritia Neopolyptychus compar Orbamia octomaculata
-#>      Ozarba hemiochra Parafodina pentagonalis Pardomima distortana Phostria bistigmalis
-#>      Plecoptera sarcistis Plecopterodes moderata Protarache melaphora Psara atritermina
-#>      Pseudonacaduba sichela Rhesala moestalis Sameodes cancellalis Sarangesa ruona
-#>      Schalidomitra ambages Sphalerosticha oblunata Terastia margaritis Thyretes caffra
-#>      Timora disticta Trachypteryx rhodoxantha Uresiphita gilvata Usta terpsichore Zintha hintza
-#>      Telchinia cabira Acrasia crinita Acronicta transvalica Argyrophora arcualis Chabulina astomalis
-#>      Chiasmia turbulentata Dasychira octophora Dichroma equestralis Haplolabida inaequata
-#>      Isocrita protophanes Prionapteryx splendida Pseudophragmatobia perpunctata Achaea catella
-#>      Rhadinomphax trimeni Terias brigitta brigitta Anthemoctena textilis Cacyreus fracta fracta
-#>      Phasis thero thero Spialia mafa Iolaus mimosae rhodosense Leptosia alcesta Deudorix antalus
-#>      Papilio demodocus demodocus Poloma angulata Pteredoa monosticta Antigastra morysalis
-#>      Charaxes brutus natalensis Chlorissa albistrigulata Danaus chrysippus orientis
-#>      Polymona rufifemur Streblote cristata Acrapex aenigma Afrasura rivulosa Allochrostes biornata
-#>      Anadiasa affinis Cecidothyris pexa Conchylia pactolaria Diasemiopsis ramburialis
-#>      Dragmatucha proaula Halseyia bisecta Haplopacha cinerea Hypocala rostrata
-#>      Lhommeia biskraria illiturata Mixocera albistrigata Neogavara imitans Odites natalensis
-#>      Ozarba nigroviridis Piletocera flavalis Trichopisthia monteiroi Xanthomera leucoglene
-#>      Axiodes insciata Terias desjardinsii Zizula hylax hylax Eulycia accentuata Euproctis crocata
-#>      Macroglossum trochilus Piercia bryophilaria Protosteira spectabilis Siccia caffra
-#>      Achroia grisella Cyana marshalli Iambia jansei Laelia clarki Lamoria imbella
-#>      Pseudaphelia apollinaris Tycomarptes inferior Terias desjardinsii regularis Durbania limbata
-#>      Capys alpheus Abantis paradisea Acantholipes trimeni Achaea echo Achaea finita Achaea lienardi
-#>      Achaea trapezoides Acronicta silvicola Agathodes musivalis Agrotera citrina Amata simplex
-#>      Amauris albimaculata albimaculata Amerila bubo Amerila magnifica Amerila phaedra
-#>      Amerila vitrea vitrea Anaphe reticulata Anedhella interrupta Anoba sinuata Anomis flava
-#>      Anomis leona Anthene amarah Anthene amarah amarah Anthene livida livida Aroa discalis
-#>      Arsina vausema Ascotis reciprocaria Azanus jesous Azygophleps inclusa Basiothia medea
-#>      Belenois creona severina Belenois thysa thysa Borbo borbonica borbonica Borbo detecta
-#>      Borbo fatuellus fatuellus Borbo lugens Brachmia septella Bradina admixtalis
-#>      Byblia anvatara acheloia Cacyreus marshalli Cadarena pudoraria Callopistria maillardi
-#>      Callopistria yerburii Cephonodes hylas virescens Cerynea thermesialis Ceryx pterophorina
-#>      Charaxes castor flavifasciatus Charaxes ethalion ethalion Charaxes varanes varanes
-#>      Chiasmia deceptrix Chiasmia rectistriaria Chiasmia subcurvaria Chloroclystis muscosa tumefacta
-#>      Chrysodeixis chalcites Cirina forda Cleora munda Cleora tulbaghata Coeliades pisistratus
-#>      Colocleora divisaria Colotis antevippe gavisa Comostolopsis stillata Conolophia aemula
-#>      Corgatha latifera Cragia distigmata Cyclophora unocula Cyligramma fluctuosa Disticta atava
-#>      Duponchelia fovealis Dysgonia angularis Eccopsis incultana Egnasia vicaria Egybolis vaillantina
-#>      Epiphora mythimnia Erebus walkeri Ericeia congressa Eublemma cochylioides Eublemma costimacula
-#>      Eublemma illimitata Euchloron megaera Euchromia amoena Eucraera salammbo Eudocima afrikana
-#>      Euplexia augens Euproctis aethiopica Euproctis hardenbergia Euproctis punctifera
-#>      Eurrhyparodes tricoloralis Eurytela dryope angulata Eutelia amatrix Eutelia bowkeri
-#>      Filodes costivitralis Glyphodes bitriangulalis Glyphodes stolalis Gonimbrasia zambesina
-#>      Gracilodes caffra Gracilodes nysa Halseyia rectifascia Haritalodes derogata
-#>      Herpetogramma mutualis Heterorachis devocata devocata Hippotion celerio Hodebertia testalis
-#>      Hymenia perspectalis Hypena laceratalis Hypena lividalis Hypena varialis
-#>      Hypolimnas anthedon wahlbergi Hypolimnas misippus Hypolycaena philippus philippus
-#>      Iolaus silarus silarus Jana eurymas Laelia albimaculata Laelia extorta Laelia lunensis
-#>      Lampides boeticus Latoia vivida Leipoxais peraffinis Leptosia alcesta inalcesta Libythea laius
-#>      Lophostethus dumolinii Maliattha subblandula Marasmia poeyalis Marasmia trapezalis
-#>      Melanitis leda leda Metallochlora grisea Mocis mayeri Mocis proverai Moltena fiara
-#>      Morasa modesta Mylothris agathina agathina Naroma varipes Nausinoe geometralis
-#>      Nephele accentifera Nephele argentifera Neptis saclava marpessa Notarcha muscerdalis
-#>      Nyctemera apicalis Oraesia provocans Orphanostigma haemorrhoidalis Palpita metallata
-#>      Papilio dardanus cenea Parapluda invitabilis Parnara monasi Pelopidas Pelopidas thrax
-#>      Phalanta phalantha aethiopica Philotherma rosa Phodoryctis caerulea Phyllocnistis citrella
-#>      Phytometra subflavalis africana Plecoptera annexa Plecoptera punctilineata Plusiodonta commoda
-#>      Polyura zoolina Prasinocyma vermicularia Prophantis smaragdina Protogoniomorpha nebulosa
-#>      Protogoniomorpha parhassus Pselaphelia flavivitta Pseudacraea lucretia tarquinea
-#>      Pseudonacaduba sichela sichela Rhenea mediata Rhodopteriana rhodoptera Rhypopteryx rhodea
-#>      Rubraea petraea Scopula lactaria Serrodes korana Sevenia boisduvali boisduvali
-#>      Sevenia natalensis Sommeria aganais Spodoptera triturata Stephenia oncaea
-#>      Stoermeriana singulare Streblote jansei Syllepte purpurascens Synclera traducalis
-#>      Syngamia latimarginalis Tagiades flesus Tagoropsis flavinata Taviodes subjecta
-#>      Telchinia esebria Temnora murina Terias hecabe solifera Thalassodes quadraria Tildia acara
-#>      Traminda obversata Traminda vividaria Tumicla sagenaria Ulotrichopus variegata
-#>      Viettessa margaritalis Yponomeuta strigillatus Zamarada plana denticincta Zizina otis
-#>      Zizina otis antanossa Zizula hylax Zophopetes dysmephila Acrasia punctillata
-#>      Bostra dipectinialis Brachylia terebroides Conicofrontia sesamoides Coryphodema tristis
-#>      Ectochela canina Ectochela nigrilineata Eublemma bipartita Eublemma scitula augusta
-#>      Eutelostolmus pictifimbria Glaucocharis natalensis Hypotephrina confertaria Phyllalia incerta
-#>      Scotopteryx nictitaria Iambiodes nyctostola Tachosa brunnescens Zekelita tinctalis
-#>      Bombycomorpha pallida Anthene definita Azanus mirza Azanus moriqua Belenois aurota
-#>      Belenois creona Byblia ilithyia Coenyra hebe Cupidopsis jobates jobates Dixeia pigea
-#>      Ypthima asterope asterope Agrotis spinifera Alucita spicifera Axiodes dochmoleuca
-#>      Bracharoa tricolor Brithysana speyeri Conchylia nitidula Hellula undalis Leucinodes laisalis
-#>      Metarctia jansei Mylothris agathina Pingasa abyssiniaria Tetracme truncataria Epitoxis amazoula
-#>      Amauris albimaculata Belenois thysa Bicyclus safitza Byblia anvatara Dixeia charina
-#>      Dixeia spilleri Eicochrysops hippocrates Euchromia folletii Eurytela dryope Neptis goochii
-#>      Papilio dardanus Telchinia encedon Terias hecabe Acantholipes circumdata
-#>      Acantholipes namacensis Acanthovalva inconspicuaria Acherontia atropos Achyra coelatalis
-#>      Acontia ectorrida Acontia insocia Acontiola heliastis Acontiola varia Aconzarba decissima
-#>      Acraea neobule Acronicta verbenata Aedia nigrescens nigrescens Afrophyla vethi
-#>      Angustalius malacellus Arbelodes albitorquata Ascotis selenaria Aspidifrontia atavistis
-#>      Aspilatopsis orthobates Athetis flavipuncta Athetis leuconephra Audea zimmeri Aurotalis similis
-#>      Axylia annularis Axylia ustula Baniana arvorum Basiothia schenki Biafra concinnella
-#>      Birketsmithiola sanguicosta Bombycopsis punctimarginata Bracharoa quadripunctata Brithys crini
-#>      Busseola fusca Cabera strigata Cactoblastis cactorum Cadra cautella Caffristis ferrogrisea
-#>      Calamoschoena stictalis Caloptilia celtina Caradrina atriluna Caradrina glaucistis
-#>      Chabulina onychinalis Chiasmia multistrigata multistrigata Chiasmia simplicilinea
-#>      Chilo partellus Chlorissa attenuata Chloroclystis grisea Coccothera spissana
-#>      Coeliades forestan forestan Colotis evenina evenina Condica capensis Conolophia conscitaria
-#>      Conservula cinisigna Cortyta canescens Cosmetra tumulata Cosmia natalensis
-#>      Crambus ellipticellus Crambus tenuistriga Cryphia leucomelaena Cucullia hutchinsoni
-#>      Cucullia pallidistria Culladia achroellum Cyana pretoriae pretoriae Cyana rejecta
-#>      Cydia pomonella Daphnis nerii Deltophora typica Deltote bryophilina Deltote varicolora
-#>      Diaphone mossambicensis Dolicharthria paediusalis Droceta cedrota Earias cupreoviridis
-#>      Ectomyelois ceratoniae Elophila obliteralis Endrosis sarcitrella Epichoristodes dorsiplagana
-#>      Epicrocis laticostella Episindris albimaculalis Ethiopica cupricolor Ethmia anikini
-#>      Ethmia coscineutis Ethmia sabiella Etiella zinckenella Eublemma angustizona Eublemma baccatrix
-#>      Eublemma ceresensis Eublemma costimacula plagiopera Eublemma daphoena Eublemma delicata
-#>      Eublemma ecthaemata Eublemma gayneri Eublemma hemichiasma Eublemma juergenschmidli
-#>      Eublemma mesophaea Eublemma nigrivitta Eublemma ornatula Eublemma pennula Eublemma scitula
-#>      Euchromius discopis Euchromius nigrobasalis Euclasta warreni Eudalaca ammon Eumeta hardenbergi
-#>      Euproctis bicolor Eutelia adulatrix Eutelia discitriga Evergestis forficalis
-#>      Exophyla multistriata Faveria dionysia Galleria mellonella Glyphodella flavibrunnea
-#>      Glyphodes bicolor Gorgopis libania Hadena bulgeri Heliocheilus stigmatia Heortia plumbatalis
-#>      Heteropalpia vetusta Heterorachis devocata Honeyania ragusana Horisme obscurata Hypanua xylina
-#>      Hypargyria metalliferella Hypena simplicalis Hypena tetrasticta Ilemodes astriga
-#>      Lamoria adaptella Leptomyrina henningi henningi Leucaloa eugraphica Leucinodes pseudorbonalis
-#>      Logunovium scortillum Lomographa aridata Lophoptera litigiosa Lophotarsia ochroprocta
-#>      Loxostege frustalis Loxostege venustalis Maliattha caffristis Melouia krooni Menophra jansei
-#>      Mentaxya albifrons Metachrostis decora Metachrostis ochrographa Metachrostis snelleni
-#>      Metarctia brunneipennis Microligia pseudodolosa Mimasura tripunctoides Mimoclystia explanata
-#>      Mimoclystia pudicata Mythimna tacuna Naarda nigripalpis Neaxestis acutangula
-#>      Neaxestis piperitella Neocucullia albisignata Obolcola petronaria Opogona omoscopa
-#>      Ozarba apicalis Ozarba consanguis Ozarba corniculans Ozarba hemipolia Ozarba madanda
-#>      Palaeaspilates inoffensa Panotima angularis Pardasena roeselioides Pardasena virgulana
-#>      Pardoxia graellsii Paschiodes mesoleucalis Phytometra fragilis Phytometra opsiphora
-#>      Phytometra sacraria Platyptilia farfarellus Plecoptera resistens Plecopterodes melliflua
-#>      Pleiomorpha homotypa Poliobotys ablactalis Polyhymno chionarcha Polypogon gigantalis
-#>      Polypogon venata Popoudina linea Prasinocyma immaculata Precis archesia archesia
-#>      Prionapteryx brevivittalis Prionofrontia strigata Proschaliphora albida Pseudoclanis postica
-#>      Pseudonoorda rubricostalis Pseudozarba aethiops Pseudozarba bipartita Pseudozarba schencki
-#>      Psilocerea cneca Ptychopseustis sharporum Pusiola interstiteola Pyrausta phoenicealis
-#>      Rhodogastria similis Saenura flava Salvatgea xanthosoma Scopula accentuata
-#>      Scopula erinaria isolata Scopula inscriptata Scopula nigrinotata Scopula sinnaria
-#>      Scopula spoliata Somatina ctenophora Sommeria meridionalis Sozusa scutellata
-#>      Sphingonaepiopsis nana Stathmopoda lychnacma Stenodacma wahlbergi Stoermeriana aculeata
-#>      Tachosa fumata Tathorhynchus exsiccata Tebenna micalis Tegiapa larentiodes
-#>      Teracotona metaxantha Terpnostola ardescens Thaumatotibia leucotreta Thysanoplusia exquisita
-#>      Timora albisticta Tracheplexia lucia Trida barberae barberae Trigonodes exportata
-#>      Udea infuscalis Ulotrichopus fatilega Ulotrichopus primulina Ulotrichopus tinctipennis
-#>      Victoria triplaga Vittaplusia vittata Westermannia convergens Xyrosaris secreta
-#>      Yponomeuta fumigatus Zamarada pulverosa Zygophyxia roseocincta Antheua tricolor Argema mimosae
-#>      Rhanidophora ridens Heniocha apollonia Achaea illustrata Acleros mackenii mackenii
-#>      Acontia tetragonisa Aiteta thermistis Allochrostes saliata Amata pseudosimplex Amata rendalli
-#>      Amauris echeria echeria Amphicallia bellatrix Androlymnia torsivena Arniocera erythropyga
-#>      Atrasana concolor Atrasana postica Attatha barlowi Audea blochwitzi Bamra marmorifera
-#>      Borbo fatuellus Brachypecta perobliqua Ceromitia trigoniferella Chalciope delta
-#>      Charaxes achaemenes Charaxes achaemenes achaemenes Charaxes cithaeron Chiasmia multistrigata
-#>      Chiasmia umbrata Chrysopoloma isabellina Cleora betularia Coenobasis amoena
-#>      Colpocheilopteryx operatrix Compsoctena aedifica Compsoctena brachyctenis Corgatha micropolia
-#>      Cosmia polymorpha Cropera testacea Ctenusa pallida Ctenusa varians Desmeocraera octoginta
-#>      Deudorix diocles Dysgonia proxima Ecpatia dulcistriga Ectropa ancilis Endotricha erythralis
-#>      Epilepia melanobrunnea Eutelia leucodelta Ghesquierellana hirtusalis Gigantoceras rectilinea
-#>      Glyphodes sycina Grammiphlebia striata Grammodora nigrolineata Graphium angolanus
-#>      Heliothis flavirufa Hemiceratoides sittaca Hemijana variegata Heraclia africana
-#>      Hyblaea occidentalium Hyblaea puera Hypocala deflorata Idaea malescripta Idaea purpurascens
-#>      Iolaus silarus Isocentris filalis Janomima dannfelti Janomima mariana Junonia elgiva
-#>      Junonia natalica Junonia natalica natalica Junonia oenone Knappetra fasciata Kroonia natalica
-#>      Lacipa sexpunctata Lantzodes obovalis Leucotrachea leucomelanica Lichenopteryx despecta
-#>      Lophocrama phoenicochlora Lophorrhachia rubricorpus Lopiena rubritincta Macropoliana natalensis
-#>      Melanocera menippe Mittonia hampsoni Mylothris rueppellii Myrina dermaptera Neaxestis rhoda
-#>      Neomocena convergens Nephele peneus Nephele vau Neptis laeta Neptis saclava
-#>      Neromia rubripunctilla Notocerura spiritalis Obtusipalpis pardalis Odontestis striata
-#>      Oedipygilema aposema Oligographa juniperi Ozarba plagifera Ozola pulverulenta Palpita elealis
-#>      Parachalciope mahura Paracroria griseocincta Parotis prasinophila Pasiphila lita
-#>      Pentila tropicalis Pericyma mendax Phalanta eurytis Phalanta phalantha Phytometra duplicalis
-#>      Pingasa ruginaria Plateoplia acrobelia Platysphinx piabilis Plecoptera laniata
-#>      Prasinocyma oculata Prasinocyma pictifimbria Precis octavia sesamus Precis tugela
-#>      Prionofrontia erygidia Pseudacraea boisduvalii Pseudacraea boisduvalii trimenii
-#>      Pseudacraea lucretia Pseudacraea lucretia expansa Pseudobunaea natalensis Pseudoclanis molitor
-#>      Pseudolyra distincta Pseudonaclia puella Pyrausta tetraplagalis Rhanidophora cinctigutta
-#>      Salagena tessellata Sarangesa motozi Sarimarais bicolor Schausia coryndoni
-#>      Scopula fimbrilineata Sevenia boisduvali Siccia punctipennis Siccia sordida Soligena juna
-#>      Somatina centrophora Stemmatophalera curvilinea Stenoglene rosea Syllepte nasonalis
-#>      Syllepte vagans Syngatha latiflavaria Telchinia burni Telchinia serena Teragra althodes
-#>      Terias floricola Thacona stictica Thiacidas berenice Thiacidas senex Tuxentius melaena
-#>      Westermannia oediplaga Xanthopan morganii Zamarada differens Zamarada transvisaria
-#>      Zerenopsis lepida Chiasmia streniata Amata cerbera Cacyreus lingeus Cucullia consimilis
-#>      Derriodes oinophora Pasiphila derasata Prionapteryx molybdella Acontia natalis
-#>      Agaphthora toxotes Drepanogynis determinata Lasiochlora diducta Oaracta auricincta
-#>      Pareclipsis oxyptera Psilocerea pulverosa Sameodesma xanthocraspia Ulotrichopus mesoleuca
-#>      Knappetra fasciata stellata Amata kuhlweinii Eurrhyparodes bracteolalis Acrapex festiva
-#>      Allochrostes impunctata Apleroneura tripartita Bunaeopsis arabella Chiasmia tecnium
-#>      Cinabra hyperbius Eublemma bolinia Gymnogramma pyrozancla Hemijana subrosea
-#>      Mimoclystia pudicata quaggaria Mimoclystia undulosata Nassinia pretoria Parapoynx stagnalis
-#>      Rigema ornata Rohaniella pygmaea Trichophysetis flavimargo Trichopisthia igneotincta
-#>      Nudaurelia cytherea Acontia caffraria Choristoneura heliaspis Crocosia mesosticta
-#>      Cryptophlebia peltastica Cyana pretoriae Deltote megalena Epiplema reducta Idaea sublimbaria
-#>      Metarctia lateritia Parainesis restricta Paraona interjecta Rhodophthitus commaculata
-#>      Spialia ferax Stathmopoda crassella Teracotona rhodophaea Crudaria leroma
-#>      Ochropleura leucogaster Telchinia rahira rahira Alytarchia amanda Leptotes pulchra pulchra
-#>      Leucochlaena aenigma Gonimbrasia tyrrhea Anedhella rectiradiata Calliodes pretiosissima
-#>      Henometa clarki Oglasa renilinea Phthonandria pinguis Terias brigitta
-#>      Papilio ophidicephalus ayresi Papilio ophidicephalus Afrogegenes letterstedti Heraclia superba
-#>      Phiala pretoriana Junonia orithya madagascariensis Cassionympha cassius
-#>      Colocleora divisaria divisaria Belenois zochalia zochalia Eupithecia immodica Mythimna tincta
-#>      Apisa canescens Azygophleps asylas Braura truncatum Cuneisigna rivulata Gonometa postica
-#>      Heniocha dyops Hoplistopus penricei Metarbela naumanni Tolna sypnoides Catochria catocaloides
-#>      Selenistis annulella Afrobirthama flaccidia Colpocheilopteryx callichroma
-#>      Conchylia lapsicolumna Gonimbrasia belina Gonometa rufobrunnea Acontia transfigurata
-#>      Ctenoplusia molybdina Cucullia inaequalis Disclisioprocta natalata Ericeia inangulata
-#>      Ligdia batesii Nausinoe quadrinalis Precis archesia Scopula caesaria Scopula minorata
-#>      Scopula sublobata Sicyodes costipicta Spodoptera exempta Euproctis rufopunctata
-#>      Achaea indeterminata Macroglossum trochilus trochilus Siccia tsitsikamma Kedestes lenis lenis
-#>      Afromurzinia lutescens Anomis sabulifera Lacipa gemmata Zamarada metallicata
-#>      Pardopsis punctatissima Argyrophora variabilis Anthene livida Coeliades forestan
-#>      Euproctis subalba Gegenes pumilio gambica Grammodes bifasciata Heteropalpia cortytoides
-#>      Mylothris rueppellii haemus Paralacydes arborifera Pinacopteryx eriphia eriphia
-#>      Plodia interpunctella Thysanoplusia daubei Uranothauma nubifer nubifer Ctenoplusia furcifera
-#>      Metisella metis paris Menophra obtusata Ethmia circumdatella Attatha attathoides
-#>      Colotis evagore Colotis evagore antigone Pinacopteryx eriphia Lysceia flava Tarsocera cassina
-#>      Stemmatophalera sjostedti Scopula dissonans Telchinia rahira Phyllaliodes flavida
-#>      Amerila vitrea Audea bipunctata Botyodes asialis Miniodes discolor Radara vacillans
-#>      Rhodesia alboviridata Eyralpenus testaceus Derriodes hilaris Eudalaca semicanus
-#>      Ceratophaga vastellus Culladia serranella Lacipa nobilis Spodoptera apertura
-#>      Marblepsis melanocraspis Plutographa encharacta Tracheplexia albimacula Dira clytus clytus
-#>      Dasychira rocana Erastria madecassaria natalensis Lhommeia subapicata Cephonodes hylas
-#>      Arniocera auriguttata Batocnema africana Celidomphax quadrimacula Colocleora proximaria
-#>      Glyphodes bicoloralis Ludia delegorguei Secusio strigata Ustjuzhania lineata Ozarba gonatia
-#>      Achaea dasybasis Eutelia subrubens Hypsopygia sanguinalis Phytometra subflavalis
-#>      Chrysoritis chrysaor natalensis Serrodes trispila Negeta ruficeps Azanus ubaldus
-#>      Cacoethes polidamon Charaxes pelias Chrysoritis chrysaor Chrysoritis chrysaor chrysaor
-#>      Chrysoritis chrysaor midas Derriodes arcuifera Dira clytus Iolaus mimosae
-#>      Myrina silenus ficedula Neurosymploca kushaica Phasis braueri Stygionympha irrorata
-#>      Stygionympha vigilans Tarsocera cassus cassus Tarsocera fulvina Tylopaedia sardonyx
-#>      Tylopaedia sardonyx sardonyx Ypthima asterope hereroica Papilio echerioides echerioides
-#>      Attatha superba Deltote johnjoannoui Heraclia perdix Problepsis figurata Rhodoneura flavicilia
-#>      Risoba sticticraspis Westermannia roseitincta Pseudonaclia bifasciata Pycnarmon cribrata
-#>      Ulopeza conigeralis Laelia punctulata Mocis conveniens Zamarada adiposata Acontia mionides
-#>      Chiasmia grimmia Hypotacha parva Pseudozarba opella Anthene definita definita
-#>      Prionapteryx albimaculalis Rhinobombyx cuneata Azanus natalensis Heniocha marnois
-#>      Nymphalidae indet. Charaxes saturnus Hippotion spec. Parascotia lamprolophoides
-#>      Catephia amplificans Amata johanna Compsotata elegantissima Eicochrysops messapus messapus
-#>      Afraltha chionostola Asinusca atricornis Odontocheilopteryx myxa Praedora marshalli
-#>      Cabera elatina Appias epaphia contracta Chloroclystis gymnoscelides Euchrysops barkeri
-#>      Euchrysops malathana Platylesches moritili Problepsis vestalis Sena prompta Zamarada erugata
-#>      Entomogramma pardus Scotinochroa inconsequens Acrobasis viridella Cigaritis namaquus
-#>      Miantochora venerata Cacyreus fracta Nephele funebris Temnora fumosa Arsacia rectalis
-#>      Veniliodes pantheraria Bostra carnicolor Aethaloessa floridalis Ceromitia turpisella
-#>      Exilisia bipuncta Meganola argyrolepis Leptomyrina hirundo Pseudomaenas bivirgata Aizoa namaqua
-#>      Ceromitia punctulata Kuja squamigera Omizodes ocellata Pararethona hierax Sena prompta prompta
-#>      Tegiapa melanoleuca Zobida similipuncta Estigmene internigralis Scotopteryx horismodes
-#>      Alenia sandaster Anthene larydas Basiothia charis Charaxes brutus Cigaritis natalensis
-#>      Leptomyrina gorgias gorgias Mesoptila festiva Ozarba abscissa Pseudobunaea tyrrhena
-#>      Stephenia oncaea oncaea Terias floricola floricola Tuxentius melaena melaena Achaea mormoides
-#>      Audea tegulata Chionopora tarachodes Chiromachla leuconoe Epiplema anomala
-#>      Eudasychira georgiana Eurosia lineata Heliophisma klugii Leucostrophus alterhirundo
-#>      Maruca vitrata Odontosida magnifica Omphacodes punctilineata Temnora funebris Urota sinope
-#>      Afrospilarctia dissimilis Eicochrysops messapus Aloeides thyra thyra Bombycomorpha dukei
-#>      Trichophysetis whitei Crinipus marisa Melampias huebneri huebneri Petovia marginata
-#>      Pseudorethona albicans Temnora marginata Teracotona submacula Teragra macroptera
-#>      Automolis meteus Anomoeotes nigrivenosus Eublemmistis chlorozonea Peratodonta heterogyna
-#>      Eublemma glaucizona Freyeria trochylus Dira clytus eurina Aloeides oreas Eutricha obscura
-#>      Orachrysops Rhypopteryx kettlewelli Hampsonata phoenicia natalithala Pseudonympha magoides
-#>      Rhanidophora phedonia Rhanidophora aurantiaca Acidaliastis prophanes Conchyliodes distelitis
-#>      Scopula sincera Stephenia aglaonice Bonaberiana crassisquama Chrysopoloma rudis
-#>      Pseudomaenas leucograpta Tyria jacobaeae Colotis ione Coeliades keithloa Leptomyrina gorgias
-#>      Tinea pellionella Tarucus sybaris Chiasmia furcata Idaea fumilinea Lomographa indularia
-#>      Psalis africana Traminda neptunaria Lachnocnema laches Grammodes exclusiva Aloeides henningi
-#>      Actizera lucida Eudalaca rufescens Grammodes euclidioides Heterorachis despoliata
-#>      Oedicentra albipennis Poloma castanea Zekelita antistropha Stygionympha curlei
-#>      Glyphodes amphipeda Sicyodes costipicta olearis Acontia antica Eudalaca crudeni
-#>      Problepsis aegretta aegretta Problepsis digammata Rhenea michii Paralethe dendrophilus
-#>      Colotis auxo Lepidochrysops oreas oreas Praezygaena agria Colotis pallene Amata longipes
-#>      Charaxes cithaeron cithaeron Eurytela hiarbas Mocis mutuaria Lachnoptera ayresii Precis ceryne
-#>      Axiocerses tjoane Charaxes wakefieldi Graphium policenes Iolaus silas Amata kilimandjaronis
-#>      Nepheronia buquetii buquetii Nepheronia argia variegata Dixeia charina charina Colotis annae
-#>      Eicochrysops messapus mahallakoaena Eagris nottoana nottoana Catacroptera cloanthe cloanthe
-#>      Lantanophaga pusillidactylus Anoba atriplaga Ethmia austronamibiensis Amauris niavius
-#>      Catalebeda cuneilinea Epigynopteryx termininota Lophotavia chalybescens Hypopyra carneotincta
-#>      Neoclanis basalis Pithyllis metachryseis Acantharctia latifasciata Argyrographa moderata
-#>      Eagris nottoana knysna Plusiodonta natalensis Achaea klugii Artitropa erinnys
-#>      Bematistes aganice aganice Euproctis terminalis Paralethe dendrophilus indosa
-#>      Arcyophora longivalvis Dichromia erastrialis Salagena narses Aloeides aranda Eublemma rivula
-#>      Baorini Chiasmia amarata Fodina embolophora Oediblemma trogoptera Temnora inornata
-#>      Eutricha bifascia Drepanogynis fuscimargo Ceromitia mioclina Conchylia ditissimaria
-#>      Macrotarsipodes tricinctus Diasemia lunalis Charaxes jahlusa Graphium angolanus angolanus
-#>      Graphium colonna Graphium leonidas Chlorissa dorsicristata Polyptychus grayii
-#>      Stemorrhages sericea Lozotaenia capensana Metahepialus xenoctenis Thestor camdeboo
-#>      Epipleminae indet. Charaxes jahlusa jahlusa Grammodes spec. Hypsopygia spec.
-#>      Isturgia catalaunaria Lachnocnema spec. Leptomyrina spec. Mixocera spec. Stenoglene spec.
-#>      Leptotes pirithous-complex Eoophyla capensis Charaxes zoolina zoolina Xanthodes brunnescens
-#>      Charaxes jasius saturnus Parapoynx diminutalis Dysgonia properans Junonia orithya
-#>      Aloeides almeida Cassionympha detecta Capys alpheus alpheus Lepidochrysops robertsoni
-#>      Ancylolomia chrysographellus Cecidothyris pexa pexa Hemerophanes libyra flammeola
-#>      Platylesches neba Sena donaldsoni marshalli Tantaliana tantalus Colotis auxo auxo Aloeides
-#>      Anaphe panda Baliochila aslanga Bareia incidens Erastria madecassaria
-#>      Herpetogramma phaeopteralis Hypobleta viettei Lirabotys prolausalis Polythlipta annulifera
-#>      Zebronia phenice Gymnelema vinctus Hypena conscitalis Lamprosema lucillalis
-#>      Myrina dermaptera dermaptera Omocenoides isophanes Pseudochromatosia nigrapex
-#>      Cymothoe coranus coranus Eudalaca orthocosma Haritalodes polycymalis Pramadea ovialis
-#>      Psilocladia obliquata Eublemma aurantiaca Rhesala natalensis Piercia smaragdinata
-#>      Afrodryas leda Bematistes aganice Coelonia fulvinotata fulvinotata Telchinia igola
-#>      Traminda falcata Amsacta grammiphlebia Anadiasa punctifascia Galtara nepheloptera
-#>      Leptolepida varians Neromia rhodomadia Paragathia albimarginata Paraxestis rufescens
-#>      Urapteroides recurvata Abantis tettensis Stygionympha scotina scotina Acontia porphyrea
-#>      Thiacidas roseotincta Parosmodes morantii Theretra cajus Euchrysops osiris
-#>      Cnaphalocrocis trebiusalis Metisella metis Myrina silenus Pygospila tyres Aeropetes tulbaghia
-#>      Polypogon melanommoides Colotis calais Cacyreus Aloeides trimeni trimeni Leucania loreyi
-#>      Bombycopsis capicola Ozarba domina Lepidochrysops plebeia plebeia Coenyropsis natalii natalii
-#>      Nudaurelia wahlbergii Ogoa simplex Axiocerses tjoane tjoane Chrysoritis palmus palmus
-#>      Trimenia macmasteri macmasteri Trimenia macmasteri Brakefieldia perspicua Willema willemi
-#>      Aloeides taikosama Ernsta nanus Nervia wallengrenii wallengrenii Charaxes varanes Gomalia elma
-#>      Nyodes lutescens Colotis regina Aloeides arida Aloeides penningtoni Amauris echeria
-#>      Caligatus angasii Creagra liturata Eretis Eutelia catephioides Hippotion osiris
-#>      Aloeides thyra orientis Plegapteryx anomalus Temnora zantus Hondryches phalaeniformis
-#>      Aloeides damarensis damarensis Amata phaeobasis Tsitana dicksoni Pseudonympha trimenii trimenii
-#>      Sarimarais peringueyi Aloeides pallida jonathani Aloeides vansoni Euproctis sanguigutta
-#>      Ligdia pectinicornis Neaxestis griseata Taeda aetitis Psycharium pellucens
-#>      Nausinoella aphrospila Zintha hintza hintza Teracolus eris Meliaba pelopsalis
-#>      Coptoproctis languida Bryophilopsis lunifera Eublemma alexi Heliothela ophideresana
-#>      Homochira rendalli Isocentris charopalis Zamarada plana Axiodes circumroda Prosomphax callista
-#>      Leptotes Acontia wahlbergi Nassinia aurantiaca Pseudonympha magus Ulotrichopus catocala
-#>      Ceryx fulvescens Loxopora dentilineata Acontia aurelia Brakefieldia perspicua perspicua
-#>      Cropera phlebitis Desmeocraera latex Dotta callicles Ernsta colotes transvaaliae
-#>      Graphium porthaon porthaon Hemiolaus caeculus caeculus Nepheronia thalassina sinalata
-#>      Penicillaria ethiopica Physcaeneura panda Pseudoclanis staudei Sarangesa phidyle
-#>      Sarangesa seineri Chiasmia inconspicua Eublemma seminivea Isoplenia trisinuata
-#>      Euplexia catephiodes Acropteris illiturata Bicyclus ena Corgatha albigrisea
-#>      Heterostegane rectistriga Lacipa pulverea Phazaca theclata Phiala incana Racinoa ficicola
-#>      Rigema woerdeni Scopula ruficolor Trachonitis capensis Papilio echerioides Eudalaca homoterma
-#>      Axiodes pallidimargo Ectochela ossicolor Catephia discophora Cacyreus virilis
-#>      Uranothauma nubifer Thestor murrayi Ceryx anthraciformis Gomalia elma elma Temnora pylades
-#>      Bombycomorpha bifascia bifascia Autocharis albiplaga Barrama impunctata Cucullia terensis
-#>      Heterostegane auranticollis Kotochalia junodi Lophostola atridisca Acontia citripennis
-#>      Eublemma flavida Chasmina vestae Derriodes latipennis Abantis canopus Achaea albitermia
-#>      Amata schellhorni Chiasmia brongusaria brongusaria Chiasmia feraliata Eretmocera syleuta
-#>      Eucraera gemmata Hippotion rosae Laelia hampsoni Leocyma appollinis Lygropia tetraspilalis
-#>      Ozarba bipartita Parotis baldersalis Pentila tropicalis fuscipunctata Stenopis tumiditermina
-#>      Zamarada deceptrix Zamarada varii Zeuctoboarmia cataimena Hippotion balsaminae Anomis luperca
-#>      Hebdomophruda nigroviridis Omphalucha albosignata Colotis antevippe Hypotia bolinalis
-#>      Arbelodes franziskae Rhabdosia patagiata Coeliades libeon Phalanta eurytis eurytis
-#>      Pseudacraea eurytus Acraeini Tarucus sybaris sybaris Eutomis minceus Platylesches ayresii
-#>      Isturgia exerraria Cymothoe alcimeda trimeni Harpendyreus noquasa Amerila affinis
-#>      Cyclopera bucephalidia Phoenicocampa terinata Ruanda furva Phragmatobia parvula
-#>      Caffricola vicina Tsitana uitenhaga Phasis thero Problepsis aegretta Ernsta delagoae
-#>      Lacera alope Charaxes phaeus Lebedodes rufithorax Lepidochrysops patricia Semyrilla lineata
-#>      Aroa difficilis Artitropa erinnys erinnys Callioratis abraxas Cerurella natalensis
-#>      Drepanogynis monas Drepanogynis valida Glyphodes aniferalis Herpetogramma licarsisalis
-#>      Janthinisca joannoui Lobobunaea angasana Negera natalensis Neromia impostura
-#>      Omphalestra mesoglauca Paralethe dendrophilus dendrophilus Plusiodonta nictites
-#>      Scopula straminea Sicyodes algoaria Spiramiopsis comma Streblote polydora Syllepte orbiferalis
-#>      Temnora plagiata Teragra guttifera Vanessa hippomene hippomene Victoria fuscithorax
-#>      Xenimpia maculosata Apallaga mokeezi mokeezi Horisme minuata Hydrillodes uliginosalis
-#>      Spialia mafa mafa Argyraspodes argyraspis Hampsonita esmeralda Bicyclus anynana
-#>      Stephenia caldarena Alonina pyrocraspis Colias electo electo Drepanogynis calotaenia
-#>      Procanthia distantii Phylloxiphia metria Eudalaca vindex Ctenoplusia phocea Ligdia interrupta
-#>      Pseudolarentia megalaria Chalcidoptera thermographa Amata khoisana Torynesis mintha mintha
-#>      Caloptilia octopunctata Amyna natalica Petrodava leucicolor Epicosymbia nitidata
-#>      Melinoessa croesaria Melampias huebneri Tsitana tulbagha Chrysoritis beaufortius charlesi
-#>      Thestor montanus Tarsocera dicksoni Aphilopota decepta Maxera digoniata Euchrysops dolorosa
-#>      Leto venus Deudorix dinochares Veniliodes setinata Stephenia axina Stygionympha vansoni
-#>      Borbo fallax Idaea fumilinea confracta Polienus capillata Pseudocragia quadrinotata
-#>      Aletis concolor Chrysoritis palmus Stugeta bowkeri Cassionympha camdeboo Charaxes
-#>      Charaxes xiphares xiphares Cupidopsis cissus Eretis djaelaelae Adicocrita araria
-#>      Autocharis fessalis Deltote olivula Drepanogynis admiranda Entephria epipercna
-#>      Hypagoptera rufeola Ilemodes heterogyna Leucotrachea melanobasis Ochrocalama xanthia
-#>      Pararethona argentescens Psalis securis Pseudobunaea epithyrena Pseudoradiarctia scita
-#>      Psilocerea immitata Rhypopteryx rhodalipha Sicyodes variciliata Tegiapa goateri Temnora elegans
-#>      Pseudonympha swanepoeli Syngamia fervidalis Kedestes macomo Lepidochrysops australis
-#>      Culladia inconspicuellus Cigaritis ella Serradinga bowkeri bowkeri Euchrysops subpallida
-#>      Axiodes anthracinata Derriodes villaria Axiodes dentatimargo Sicyodes ocellata
-#>      Crudaria capensis Axiodes trachyacta Pareclipsis incerta Gorgopis angustiptera
-#>      Hebdomophruda errans Pentila tropicalis tropicalis Aloeides thyra Durbaniopsis saga
-#>      Precis tugela tugela Hypotia dinteri Metasia eremialis Sicyodes biviaria Caffricola cloeckneria
-#>      Eudalaca exul Drepanogynis agrypna Philobota erastis Pyrausta procillusalis Aloeides swanepoeli
-#>      Audea melanoplaga Sicyodes viridipennis Nyodes acatharta Pseudocatharylla xymena
-#>      Heniocha bioculata Brephos festiva Caffrocrambus dichotomellus Paternympha narycia
-#>      Stephenia stenobea Stygionympha wichgrafi Tsitana tsita Hypolycaena buxtoni Ozarba hypotaenia
-#>      Antheua simplex Maliattha bethunebakeri Tegostoma bipartalis Lachnocnema durbani
-#>      Precis ceryne ceryne Charaxes jahlusa rex Zutulba namaqua zelleri Euterpiodes pienaari
-#>      Metisella malgacha Axiocerses croesus Pseudomaenas krooni Eois grataria Stugeta bowkeri tearei
-#>      Callyna decora Amauris niavius dominicanus Cacyreus dicksoni Acontia paratrigona
-#>      Triphassa stalachtis Nolidia unipuncta Eupithecia laticallis Aloeides damarensis mashona
-#>      Arcyophora patricula Axiocerses coalescens Dysgonia triplocyma Oglasa nana Phalera imitata
-#>      Plecoptera stuhlmanni Stemmatophora chloralis Tytroca leucoptera Unipectiphora delosignata
-#>      Nassinia caffraria Cupidopsis jobates Apallaga mokeezi separata Colotis erone
-#>      Parosmodes morantii morantii Procrateria basifascia Heniocha flavida Lamprolopha phaeomicta
-#>      Axiocerses amanga Colotis calais calais Euphaedra neophron Nepheronia buquetii
-#>      Agyllia asterodia Sommeria strabonis Lacipa gracilis Eutelia ocellaria Pseudandriasa mutata
-#>      Pareclipsis punctata Yponomeuta africanus Cymothoe alcimeda Metachrostis postrufa
-#>      Lepidochrysops variabilis Acontia umbrigera Praedora plagiata Tuta absoluta
-#>      Afroplitis dasychirina Rubraea nohara Cymothoe alcimeda alcimeda Brephos decora
-#>      Meganola bipartita Durbaniella clarki phaea Stephenia caldarena caldarena Bostra albilineata
-#>      Metarctia rufescens Crionica cervicornis Iambia inferalis Aloeides pallida grandis
-#>      Amyna punctum Cyclopera similis Isozinara pallidifascia Microbaena pulchra minor
-#>      Selepa leucogonia Cerurographa bistonica Rubraea cerasa cerasa Thestor holmesi
-#>      Automolis bicolora Chrysoritis palmus margueritae Thestor vansoni Eyralpenus subluteus
-#>      Cirrodes phoenicea Neita extensa Chrysoritis pan pan Ludia orinoptena monroei
-#>      Chrysoritis aethon Afrogluphisia dasychiroides Chrysoritis felthami felthami
-#>      Chrysoritis thysbe thysbe Colias electo Euphiusa harmonica Vietteania intestata
-#>      Aloeides molomo molomo Crothaema sericea Cupidopsis cissus cissus
-#>      Stygionympha wichgrafi wichgrafi Astictopterus inornatus Appias epaphia Hesperiinae
-#>      Metoeca foedalis Achaea rufobrunnea Acripia subolivacea Acrocercops chrysophylli
-#>      Aethiopsestis austrina Callyna figurans Collix foraminata Ctenoplusia dorfmeisteri
-#>      Ctenoplusia melanocephala Desmeocraera interpellatrix Eudocima lequeuxi Eutelia gaedei
-#>      Goniocalpe heteromorpha Laelia curvivirgata Leucotrachea melanoleuca Macalla ignozonalis
-#>      Megalonycta paragrapha Melanthia ustiplaga Stenopis maculata Syfanoidea schencki
-#>      Temnora namaqua Thyas rubricata Borbo ferruginea dondo Anthene princeps Amauris
-#>      Eretis umbra umbra Botyodes diniasalis Rosinella rosinaria Xenochroma candidata
-#>      Chrysoritis zeuxo Neurosymploca naumanniola Aloeides egerides Zamarada ascaphes
-#>      Charaxes xiphares kenwayi Eretis umbra Pseudonympha hippia Dysgonia algira
-#>      Graphium policenes policenes Rubraea cerasa Acraea boopis Graphium morania
-#>      Aphnaeus hutchinsonii Tuxentius calice Chrysoritis zonarius zonarius Ophiusa cancellata
-#>      Leptomyrina henningi Tarsocera cassus Anthene lemnos Abantis levubu Lachnocnema
-#>      Chrysoritis pan henningi Iolaus mimosae mimosae Stugeta bowkeri bowkeri Telchinia anacreon
-#>      Aloeides trimeni Alaena amazoula Ypthima asterope Sarangesa seineri durbana Aloeides rossouwi
-#>      Lepidochrysops ketsi leucomacula Creatonotos punctivitta Chrysoritis thysbe
-#>      Bathycolpodes chloronesis Cabomina hilariformis Chiasmia natalensis Halseyia biumbrata
-#>      Heraclia pardalina Scopula internata Zerenopsis geometrina Acontia conifrons Aletis libyssa
-#>      Paralethe dendrophilus albina Cigaritis phanes Nervia mohozutza Ypthima impura paupera
-#>      Chrysoritis felthami Thestor rossouwi Prasinocyma hadrata Thestor basuta basuta
-#>      Syngatha argyropasta Papilio constantinus Aloeides dryas Aloeides pallida
-#>      Lepidochrysops plebeia Latoia viridimixta Lepidochrysops oreas junae Teracolus agoye agoye
-#>      Epicosymbia perstrigulata Lepidochrysops ignota Acontia margaritata Aloeides stevensoni
-#>      Eretmocera laetissima Orna nebulosa Belenois zochalia Aloeides titei Azanus jesous jesous
-#>      Euphaedra neophron neophron Serradinga clarki clarki Durbania amakosa flavida
-#>      Cymothoe alcimeda transvaalica Aloeides simplex Negeta luminosa Knappetra arenacea
-#>      Aegocera fervida Acontiola hypoxantha Cigaritis mozambica Tildia trimeni Choreutis aegyptiaca
-#>      Anthene lemnos lemnos Paroruza subductata Neurosymploca caffra Macarostola noellineae
-#>      Typhonia picea Orachrysops montanus Tissanga pretoriae Eudalaca leucocyma Polyommatinae
-#>      Grammodes monodonta Aloeides gowani Aloeides nollothi Eupithecia sagittata Dingana angusta
-#>      Beralade jordani Telchinia alalonga Hypotephrina serrimargo Idaea basicostalis
-#>      Sporetolepis platti Clostera limacodina Pingasa spec. Charaxes spec. Pieridae indet.
-#>      Eudalaca spec. Serradinga bowkeri Nola spec. Feliniopsis indigna Leptotes spec.
-#>      Pterophoridae indet. Garella spec. Dixeia spec. Digama meridionalis Rhodoneura spec.
-#>      Chrysoritis brooksi brooksi Rubraea violarum Chrysoritis irene Alaena amazoula amazoula
-#>      Imbrasia gueinzii Trimenia argyroplaga argyroplaga Pitthea trifasciata
-#>      Durbania amakosa albescens Cassionympha perissinottoi Borbo micans Aloeides pallida littoralis
-#>      Durbania amakosa Spodoptera frugiperda Pseudophragmatobia parvula Eulycia extorris
-#>      Bertula inconspicua Vanessa hippomene Trimenia argyroplaga Eublemma exigua
-#>      Pontia helice subsp. helice Serradinga clarki amissivallis Scopula donovani Taeda gemmans
-#>      Neogalea sunia Loryma sentiusalis Lepidochrysops trimeni Ambia chalcichroalis
-#>      Neurosymploca affinis Platyja vacillans Gonimbrasia gueinzii Crothaema decorata
-#>      Chrysoritis chrysantas Eudocima divitiosa Dixeia doxo parva Graphium porthaon
-#>      Chrysoritis zeuxo zeuxo Hypotephrina exmotaria Tumicla tsonga Corgatha wojtusiaki
-#>      Hypocala plumicornis Chrysoritis thysbe schloszae Loxostege plumbatalis
-#>      Tsitana tulbagha kaplani Phalanta Chrysoritis uranus uranus Eudalaca cretata Polyommatini
-#>      Melampias huebneri steniptera Chrysoritis mithras Thestor basuta Omphax bacoti
-#>      Orphanostigma abruptalis Marathyssa cuneata Neostichtis nigricostata Abantis venosa
-#>      Agyllia agylla agylla Pseudonympha trimenii ruthae Aloeides damarensis Orophia straminella
-#>      Zamarada dentigera Aloeides depicta Selepa transvalica Azygophleps leopardina
-#>      Stugeta subinfuscata Eupithecia rubiginifera Platylesches robustus robustus Anthene lindae
-#>      Charaxes guderiana Dira jansei Plecoptera melalepis Pseudacraea eurytus imitator
-#>      Chrysoritis zonarius Stugeta subinfuscata reynoldsi Aedia virescens Pelopidas mathias
-#>      Charaxes etesipe tavetensis Myrina silenus penningtoni Pelopidas mathias mathias
-#>      Hypochrosis meridionalis Apallaga mokeezi Cautatha drepanodes Bocchoris nuclealis
-#>      Didymonyx infumata Banisia myrsusalis Eudalaca infumata Terastia indet.
-#>      Colotis euippe subsp. omphale Danaus chrysippus subsp. orientis
-#>      Protogoniomorpha anacardii subsp. nebulosa Dysodia antennata Euphyia distinctata
-#>      Galtara pulverata Eugoa africana Odites sucinea Eulycia grisea grisea Phylloxiphia punctum
-#>      Choreutis dryodora Ctenoplusia accentifera Orophia ammopleura Leptotes pirithous pirithous
-#>      Heliothis peltigera Cynaeda distictalis Belenois creona subsp. severina
-#>      Precis octavia subsp. sesamus Vanessa dimorphica Lepidochrysops frederikeae
-#>      Scopula sinnaria bisinuata Metisella malgacha orina Chrysoritis pelion Eulycia grisea
-#>      Stathmopoda maculata Alenia namaqua Aloeides margaretae Aurotalis nigrisquamalis
-#>      Orachrysops nasutus nasutus Latoiola pusilla Harpendyreus tsomo Neurosymploca concinna
-#>      Coenina dentataria Polelassothys plumitarsus Scopula caesaria caesaria Actizera stellata
-#>      Hebdomophruda sculpta Antharmostes papilio Tarucus bowkeri bowkeri Loryma varians
-#>      Chrysoritis pyroeis pyroeis Eretmocera impactella Theretra orpheus Teracolus agoye bowkeri
-#>      Criocharacta amphiactis Teracolus agoye Teracolus subfasciatus Chiasmia spec. Anoba hamifera
-#>      Campimoptilum kuntzei Zamarada spec. Phalanta spec. Maxera marchalii Somatina vestalis
-#>      Euproctis spec. Pyrausta gemmiferalis Harpendyreus notoba Mylothris trimenia
-#>      Aloeides trimeni southeyae Eurema Hamartia medora Risoba diplogramma
-#>      Stygionympha scotina coetzeri Belenois creona creona Neptis jordani Lachnocnema bibulus
-#>      Ozarba orthozona Estigmene trivitta Maxera Aphilopota patulata patulata Papilio euphranor
-#>      Serradinga clarki dracomontana Aloeides juana Atacira mima Nepheronia argia varia
-#>      Chlorosterrha monochroma Cleora nigrisparsalis Lepidochrysops Sarangesa seineri seineri
-#>      Deudorix dariaves Lepidochrysops ketsi ketsi Kobelana krooni Eagris nottoana
-#>      Lepidochrysops oreas Kedestes lenis Lepidochrysops methymna Hypolycaena buxtoni buxtoni
-#>      Streblote capensis Dira oxylus Torynesis hawequas Stygionympha scotina
-#>      Stygionympha wichgrafi grisea Cassionympha Pseudonympha paludis Dixeia Capys disjunctus
-#>      Paralethe dendrophilus junodi Colotis Zizeeriina Nonagria intestata Parthenodes angularis
-#>      Vietteania indet. Lepidoptera indet. Noctuidae indet. Belenois gidica subsp. abyssinica
-#>      Metarctia indet. Callixena versicolora Torynesis Sevenia morantii Ernsta confusa
-#>      Lepidochrysops methymna methymna Orachrysops mijburghi Kobelana kobela
-#>      Lepidochrysops puncticilia Tildia barberi Iolaus sidus Nepheronia thalassina
-#>      Platylesches galesa Iolaus trimeni Chrysoritis williami Ernsta colotes Dysgonia abnegans
-#>      Pseudonympha Yponomeuta puncticornis Tytroca phaeocyma Myrina silenus silenus
-#>      Chrysoritis turneri Praezygaena ochroptera Chrysoritis lyncurium lycegenes Gonimbrasia bubo
-#>      Chrysoritis Stygionympha wichgrafi williami Durbania amakosa ayresi Stygionympha geraldi
-#>      Lepidochrysops braueri Epigynopteryx ommatoclesis Luashia zonata Anthene talboti Aporiina
-#>      Serradinga clarki Metisella meninx Borbo borbonica Rubraea nohara nohara Iolaus alienus
-#>      Lepidochrysops asteris Hypolycaena lochmophila Plecoptera poderis Durbania amakosa penningtoni
-#>      Utetheisa spec. Ypthima Alaena amazoula ochroma Charaxes vansoni Charaxes druceanus druceanus
-#>      Palaeonyssia trisecta Ypthima impura impura Cymothoe alcimeda marieps Ateliotum crymodes
-#>      Hypolimnas deceptor deceptor Sevenia Coeliades Nepheronia argia Metendothenia balanacma
-#>      Trichoplusia ni Colotis lais Gnophodes diversa Precis antilope Chiasmia nobilitata
-#>      Charaxes ethalion Axiocerses amanga amanga Chiasmia amarata amarata Braura picturata
-#>      Chrysoritis beulah Ypthima impura Phasis clavum Deudorix Prasinocyma niveisticta Serradinga
-#>      Carcharodina Chrysoritis zeuxo cottrelli Acraea machequena Rhabdophera hansali
-#>      Charaxes druceanus Papilio ophidicephalus transvaalensis Zenonia zeno Aloeides nubilus
-#>      Lepidochrysops procera Athetis satellitia Chrysoritis trimeni Byblia Macaldenia palumbiodes
-#>      Hesperiini Coliadinae Aloeides quickelbergei Phereoeca uterella Metisella aegipan aegipan
-#>      Piercia ciliata Tarucus bowkeri transvaalensis Caffrocrambus chalcimerus
-#>      Papilio ophidicephalus phalusco Nervia chaca Ctenoplusia lavendula Stephenia lygus
-#>      Thestor braunsi Coeliades anchises Aloeides maluti Dingana alticola Capys alpheus extentus
-#>      Nervia nerva Athetis albirena Dixeia doxo Hipoepa fractalis Pseudonympha varii
-#>      Eucrostes rhodophthalma Rhesala goleta Eublemma foedosa Scotopteryx cryptospilata
-#>      Grammodes geometrica Hypomecis complacita Triphassa argentea Eochroa trimenii Axiodes niveata
-#>      Perizoma petrogenes Cleora acaciaria Thestor yildizae Torynesis magna Hypena jussalis
-#>      Hypena laetalis Aethiopodes erebaria Phasis clavum erythema Aristaea thalassias
-#>      Omphalucha indeflexa Zorostola melanoxantha Proschaliphora butti Axiodes albilinea
-#>      Eupithecia infelix Chrysoritis rileyi Aloeides barklyi Colotis doubledayi Felderiola candescens
-#>      Stygionympha robertsoni Aloeides bamptoni Lepidochrysops penningtoni Phasis clavum clavum
-#>      Spialia Chrysoritis braueri Axiodes irvingi Blepharucha zaide Pieris brassicae brassicae
-#>      Tathorhynchus plumbea Cymothoe coranus Rhodafra opheltes Eublemma flaviceps Eudalaca ibex
-#>      Scopula argentidisca Cabera pseudognophos Ancylolomia prepiella Cyana capensis
-#>      Eublemma costimacula microleuca Thyretes montana Drepanogynis incondita Torynesis mintha
-#>      Spialia diomus Euproctis arenacea Veniliodes inflammata Abantis bicolor Anthene dulcis
-#>      Dira swanepoeli swanepoeli Thaumetopoea apologetica Abantis pillaana Platylesches picanini
-#>      Aethiopodes medioumbrata Chondrostegoides murina Trida barberae bunta Pseudomaenas margarita
-#>      Chlorocoma didita Typhonia petrodes Conservula minor Lepidochrysops glauca Chrysoritis perseus
-#>      Acontia psaliphora Gegenes pumilio Aloeides caffrariae Ludia goniata Scopula rossi
-#>      Lamoria planalis Leucoplema dohertyi Lepidochrysops ortygia Helga cinerea Heliothis flavigera
-#>      Durbaniella clarki Problepsis virginalis Scopula addictaria rufinubes Omphalestra mesomelana
-#>      Allochlorodes elpis Chrysoritis pyroeis hersaleki Thestor protumnus protumnus
-#>      Lophostethus Dumolinii Afrasura spec. Gelechiidae indet. Naarda spec. Chiasmia procidata
-#>      Scopula sanguinisecta Metapioplasta gratiosa/transfigurata Aurivillius spec.
-#>      Drepanogynis interscripta Isturgia spec. Lamoria spec. Lacipa spec. Heterocera indet.
-#>      Chloroselas mazoensis Micragrotis puncticostata Tuxentius hesperis Angustalius casandra
-#>      Charaxes jahlusa argynnides Pallastica pallens Autocharis sinualis Orachrysops violescens
-#>      Dysodia crassa Metisella aegipan Orachrysops warreni Charaxes xiphares Zekelita coniodes
-#>      Anthene liodes Micragrotis interstriata Dichomeris barathrodes Tegostoma florilegaria
-#>      Charaxes castor Leptotes babaulti Salagena reticulata Belenois creona prorsus Dingana clara
-#>      Dolosis illacerata Eudocima phalonia Mimoclystia tepescens Scopula punctilineata
-#>      Achaea xanthoptera Borbo ferruginea Pseudozarba cupreofascia Platyptilia sabius Laelia batoides
-#>      Platypepla persubtilis Deuterocopus socotranus Chrysoritis pan Trichophaga tapetzella
-#>      Lophonotidia melanoleuca Charaxes karkloof trimeni Clepsis peritana Eulophonotus myrmeleon
-#>      Neaspasia orthacta Paternympha loxophthalma Pterophorus pentadactyla Ozarba semipurpurea
-#>      Thysanoplusia roseofasciata Antanartia schaeneia schaeneia Laelia Thalassodes opaca
-#>      Patania balteata Amblyptilia direptalis Eublemma staudingeri Iolaus pallene Chrysodeixis acuta
-#>      Bombycopsis bipars Estigmene multivittata Ectropis spoliataria Syngamia falsidicalis
-#>      Aspilatopsis punctata Plusiodonta wahlbergi Phiala costipuncta Dysgonia erecta
-#>      Eulycia subpunctata Aglossa incultalis Siccia melanospila Hypomecis ectropodes
-#>      Carcinopodia argentata Acontia dispar Corgatha chionocraspis Anoba disjuncta
-#>      Syngatha phoenicoxantha Grammarctia bilinea Ethmia rhomboidella Pseudonympha trimenii
-#>      Idaea fumilinea fumilinea Micronola notonana Eretmocera fuscipennis Aroa anthora
-#>      Mythimna viettei Spodoptera leucophlebia Thysanoplusia indicator Pingasa ruginaria communicans
-#>      Doridostoma symplecta Amata khoisana khoisana Marmaroplegma paragarda Procrateria noloides
-#>      Synanthedon ochracea Eulophonotus hyalinipennis Coenyra rufiplaga Leumicamia leucosoma
-#>      Mythimna hamata Parortholitha nictitaria Spodoptera spec. Coenyra aurantiaca Chrysoritis whitei
-#>      Typhonia circophora Kedestes lepenula Thestor dicksoni malagas Psycharium kammanassiense
-#>      Chasmina tibialis Basiothia Lophoruza affulgens Neptis kiriakoffi Ozarba jansei Rhanidophora
-#>      Racinoa Diaphone Aphnaeinae Chrysoritis zonarius coetzeri Aloeides pallida pallida
-#>      Hypolamprus gangaba Phasis thero cedarbergae Lepidochrysops mcgregori Lepidochrysops praeterita
-#>      Orygocera thysanarcha Eyralpenus diplosticta Jana transvaalica Aloeides clarki
-#>      Kedestes lenis alba Drepanogynis legraini Pseudobazisa perculta Scyrotis athleta
-#>      Sphingonaepiopsis ansorgei Iolaus diametra Zutulba namaqua Catephia natalensis Scopula opperta
-#>      Rhanidophora spec. Homogyna ignivittata Cyana nemasisha Tsitana tulbagha tulbagha
-#>      Chrysocraspeda leighata Monoplema fumigera Alucita phanerarcha Anticarsia rubricans
-#>      Papilio constantinus constantinus Chrysoritis brooksi tearei Oraesia emarginata
-#>      Nycterosea obstipata Hippotion aporodes Caffrocrambus angulilinea Hypolimnas anthedon anthedon
-#>      Ancylolomia capensis Hypena holophaea Thelycera viridans Antanartia schaeneia
-#>      Eudasychira metathermes Pingasa distensaria Xenimpia lactesignata Cymothoe alcimeda clarki
-#>      Cnodontes penningtoni Polypogon typomelas Chiasma furcata Chabulina spec. Zelleria oleastrella
-#>      Umkulunkula kalahariensis Scopula spec. Tortricidae indet. Lophoruza semiscripta
-#>      Gonimbrasia cytherea Calliodes appollina Aloeides spec. Colotis danae Scopula pulchellata
-#>      Sena donaldsoni Bicyclus safitza aethiops Chrysoritis zwartbergae zwartbergae
-#>      Thysanoplusia chalcedona Aglossa phaealis Ephelis maesi Laelia municipalis
-#>      Thysanoplusia spoliata Acridotarsa melipecta Bombyx mori Ornipholidotos peucetia penningtoni
-#>      Homogyna xanthophora Lepidochrysops letsea Choreutis gratiosa Camaegeria sophax
-#>      Chrysoritis aridus Endotricha consobrinalis Comostolopsis apicata Maxera zygia Pterophorinae
-#>      Cabomina leucopleura Amauris ochlea subsp. ochlea Colotis indet. Eronia leda Anthene butleri
-#>      Anaudia thyranthrena Hampsonata xaixaia Rhabdophera cortytoides Opogona dimidiatella
-#>      Aedia squamosa Agriomelissa ursipes Mythimna corax Alonina luteopunctata Cabomina flavivertex
-#>      Adicocrita discerpta Bombycopsis metallica Feliniopsis africana Plusiopalpa dichora Achaea
-#>      Hypena saltalis Afrogegenes ocra Papilio ophidicephalus entabeni Chrysoritis nigricans
-#>      Naarda flavisignata Pingasa rhadamaria alterata Eurystaura griseitincta griseitincta
-#>      Cleora rothkirchi rothkirchi Syllepte glebalis Gymnoscelis oribiensis Plusiodonta achalcea
-#>      Agrius convolvuli convolvuli Lepidochrysops littoralis Cyligramma magus Proconis abrostoloides
-#>      Azygophleps cooksoni Orachrysops nasutus Alonina rufa Epicerura steniptera Chrysoritis endymion
-#>      Ernsta depauperata australis Classeya argyrodonta Oiketicoides maledicta Isturgia pulinda
-#>      Timora galatheae Agrotis spec. Scopariinae indet. Kalenga ansorgei Alucita spec.
-#>      Crambidae indet. Araeopteron spec. Laeliopsis punctuligera Drepanogynis tripartita
-#>      Hypena obacerralis Strigocossus capensis Drepanogynis epione Covelliana spec.
-#>      Afroclanis calcareus Gegenes spec. Gonimbrasia wahlbergii Libythea labdaca laius
-#>      Tildia acara acara Ceryx longipes Andronymus neander Melittia pyropis Vegetia ducalis
-#>      Lophonotidia nocturna Nervia nerva nerva Bracharoa mixta Deudorix dinomenes
-#>      Metachrostis rubripuncta Mauna filia Pierinae Panhyperochia ingens Clepsis spectrana
-#>      Conchylia frosinaria Leptotes jeanneli Chrysoritis uranus schoemani
-#>      Pseudonympha trimenii namaquana Aethiopodes stictoneura Phasis clavum subsp. erythema
-#>      Gonoreta opacifinis Lepidochrysops balli Thestor protumnus Zekelita poecilopa
-#>      Monopetalotaxis doleriformis Eicochrysops messapus subsp. messapus Feliniopsis indet.
-#>      Odontocheilopteryx obscura Gegenes indet. Junonia orithya subsp. madagascariensis
-#>      Colotis agoye subsp. bowkeri Palpita Paraproctis chionopeza Acraea aganice subsp. aganice
-#>      Acraea encedon Amauris albimaculata subsp. albimaculata Belenois thysa subsp. thysa
-#>      Dixeia indet. Eurema brigitta subsp. brigitta Eurema floricola subsp. floricola
-#>      Leptosia alcesta subsp. inalcesta Phalanta phalantha subsp. aethiopica Acontia melaphora
-#>      Pericyma polygramma Remigiodes remigina Chrysoritis pyroeis Bombycomorpha Appias
-#>      Archichlora rectilineata Chrysoritis uranus Pseudonympha machacha Neita durbani
-#>      Thestor penningtoni Aloeides susanae Pseudonympha poetula Tarsocera namaquensis
-#>      Durbania amakosa natalensis Iolaus diametra natalica Homogyna sanguipennis Chrysotypus dawsoni
-#>      Charaxes xiphares draconis Vanessa dimorphica dimorphica Jordaniana lactea Junonia stygia
-#>      Junonia terea subsp. elgiva Laelia fracta Derriodes rufaria Hebdomophruda endroedyi
-#>      Pseudomaenas prominens Taeda connexa Tarucus sybaris linearis Zamarada metrioscaphes
-#>      Coenyropsis natalii poetulodes Zintha hintza krooni Chrysoritis swanepoeli swanepoeli
-#>      Nassinia caffraria caffraria Stugeta bowkeri henningi Polyptychus grayii grayii
-#>      Charaxes druceanus moerens Achaea oblita Gorgopis cochlias Ectochela dicksoni
-#>      Afrogegenes hottentota Larentioides cacothemon Ceromitia natalensis Agriades orbitulus
-#>      Thyas parallelipipeda Scopula obliquiscripta Junonia terea
-#>  [ reached 'max' / getOption("max.print") -- omitted 5 rows ]
+head(grid_spp[,1:6])
+#>   grid_id centroid_lon centroid_lat  mapsheet obs_sum spp_rich
+#> 1    1026        28.75    -22.25004 E028S23BB       3        2
+#> 2    1027        29.25    -22.25004 E029S23BB      41       31
+#> 3    1028        29.75    -22.25004 E029S23BB      10       10
+#> 4    1029        30.25    -22.25004 E030S23BB       7        7
+#> 5    1030        30.75    -22.25004 E030S23BB       6        6
+#> 6    1031        31.25    -22.25004 E031S23BB     107       76
 ```
 
 #### Generate a data frame ‘xy’ of site centroids
@@ -1081,23 +344,25 @@ spp_obs = site_obs
 # Check results
 dim(grid_xy)
 #> [1] 415   5
-head(grid_xy, n=5)
+head(grid_xy)
 #>   grid_id centroid_lon centroid_lat obs_sum spp_rich
 #> 1    1026        28.75    -22.25004       3        2
 #> 2    1027        29.25    -22.25004      41       31
 #> 3    1028        29.75    -22.25004      10       10
 #> 4    1029        30.25    -22.25004       7        7
 #> 5    1030        30.75    -22.25004       6        6
+#> 6    1031        31.25    -22.25004     107       76
 
 dim(spp_obs)
 #> [1] 79953     5
-head(spp_obs, n=5)
+head(spp_obs)
 #>   site_id        x         y                            species value
 #> 1       1 19.24410 -34.42086                   Pieris brassicae     1
 #> 2       2 18.75564 -33.96044                   Pieris brassicae     1
 #> 3       3 18.40321 -33.91651 Papilio demodocus subsp. demodocus     1
 #> 4       1 19.24410 -34.42086 Mylothris agathina subsp. agathina     1
 #> 5       4 18.47488 -34.35024                  Eutricha capensis     1
+#> 6       5 25.65097 -33.58570            Drepanogynis bifasciata     1
 ```
 
 #### Generate a map of RSA with occupied grid cells as centroid points
@@ -1147,20 +412,22 @@ rich_o1234 = compute_orderwise(
   order = 1:4,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 1: 0 minutes and 10.77 seconds
-#> Time elapsed for order 2: 0 minutes and 19.26 seconds
-#> Time elapsed for order 3: 1 minutes and 15.22 seconds
-#> Time elapsed for order 4: 2 minutes and 46.79 seconds
-#> Total computation time: 2 minutes and 46.80 seconds
+#> Time elapsed for order 1: 0 minutes and 9.79 seconds
+#> Time elapsed for order 2: 0 minutes and 20.39 seconds
+#> Time elapsed for order 3: 1 minutes and 6.63 seconds
+#> Time elapsed for order 4: 2 minutes and 21.53 seconds
+#> Total computation time: 2 minutes and 21.54 seconds
 
 # Check results
-head(rich_o1234, n=4)
+head(rich_o1234)
 #>    site_from site_to order value
 #>       <char>  <char> <int> <int>
 #> 1:      1026    <NA>     1     2
 #> 2:      1027    <NA>     1    31
 #> 3:      1028    <NA>     1    10
 #> 4:      1029    <NA>     1     7
+#> 5:      1030    <NA>     1     6
+#> 6:      1031    <NA>     1    76
 ```
 
 ``` r
@@ -1187,15 +454,17 @@ mean_rich_o1234 = rich_o1234 %>%
   summarize(value = mean(value, na.rm = TRUE))
 
 # Check results
-head(mean_rich_o1234, n=4)
-#> # A tibble: 4 × 5
-#> # Groups:   order, site_from, centroid_lon [4]
+head(mean_rich_o1234)
+#> # A tibble: 6 × 5
+#> # Groups:   order, site_from, centroid_lon [6]
 #>   order site_from centroid_lon centroid_lat value
 #>   <int> <chr>            <dbl>        <dbl> <dbl>
 #> 1     1 1026              28.8        -22.3     2
 #> 2     1 1027              29.2        -22.3    31
 #> 3     1 1028              29.7        -22.3    10
 #> 4     1 1029              30.3        -22.3     7
+#> 5     1 1030              30.8        -22.3     6
+#> 6     1 1031              31.3        -22.3    76
 ```
 
 ------------------------------------------------------------------------
@@ -1225,20 +494,22 @@ turn_o2345 = compute_orderwise(
   order = 2:5,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 17.51 seconds
-#> Time elapsed for order 3: 1 minutes and 30.79 seconds
-#> Time elapsed for order 4: 3 minutes and 9.62 seconds
-#> Time elapsed for order 5: 5 minutes and 3.95 seconds
-#> Total computation time: 5 minutes and 3.96 seconds
+#> Time elapsed for order 2: 0 minutes and 21.49 seconds
+#> Time elapsed for order 3: 1 minutes and 44.58 seconds
+#> Time elapsed for order 4: 3 minutes and 38.12 seconds
+#> Time elapsed for order 5: 6 minutes and 3.91 seconds
+#> Total computation time: 6 minutes and 3.93 seconds
 
 # Check results
-head(turn_o2345, n=4)
+head(turn_o2345)
 #>    site_from site_to order     value
 #>       <char>  <char> <int>     <num>
 #> 1:      1027    1026     2 0.9354839
 #> 2:      1028    1026     2 0.9090909
 #> 3:      1029    1026     2 1.0000000
 #> 4:      1030    1026     2 1.0000000
+#> 5:      1031    1026     2 0.9870130
+#> 6:       117    1026     2 1.0000000
 ```
 
 To visualize the spatial patterns of turnover across sites, geographic

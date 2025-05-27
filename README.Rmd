@@ -177,7 +177,7 @@ site_spp = bfly_result$site_sp
 
 # Check results
 dim(site_obs)
-head(site_obs[,1:6])
+head(site_obs)
 
 dim(site_spp)
 head(site_spp[,1:6])
@@ -246,7 +246,7 @@ dim(grid_xy)
 head(grid_xy)
 
 dim(spp_obs)
-head(spp_obs[,1:6])
+head(spp_obs)
 ```
 
 #### Generate a map of RSA with occupied grid cells as centroid points
