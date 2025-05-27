@@ -7,3 +7,6 @@
 ^_pkgdown\.yml$
 ^pkgdown$
 ^_oldREADME\.md$
+^\.github$
+^\_helper_pkgSetup\.R$
+
