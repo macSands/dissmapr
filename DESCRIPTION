@@ -37,7 +37,8 @@ Imports:
     factoextra,
     fields,
     mclust,
-    patchwork
+    patchwork,
+    clValid
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

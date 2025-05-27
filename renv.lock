@@ -1044,6 +1044,38 @@
       "Maintainer": "Max Kuhn <mxkuhn@gmail.com>",
       "Repository": "CRAN"
     },
+    "clValid": {
+      "Package": "clValid",
+      "Version": "0.7",
+      "Source": "Repository",
+      "Date": "2021-02-13",
+      "Title": "Validation of Clustering Results",
+      "Author": "Guy Brock <guy.brock@louisville.edu>, Vasyl Pihur <vpihur@gmail.com>,  Susmita Datta <susmita.datta@louisville.edu>, and Somnath Datta <somnath.datta@louisville.edu>",
+      "Maintainer": "Vasyl Pihur <vpihur@gmail.com>",
+      "Depends": [
+        "R (>= 3.0)",
+        "cluster"
+      ],
+      "Imports": [
+        "methods",
+        "class"
+      ],
+      "Suggests": [
+        "Biobase",
+        "annotate",
+        "GO.db",
+        "moe430a.db",
+        "RankAggreg",
+        "kohonen",
+        "mclust"
+      ],
+      "Description": "Statistical and biological validation of clustering results. This package implements Dunn Index, Silhouette, Connectivity, Stability, BHI and BSI. Further information can be found in Brock, G et al. (2008) <doi: 10.18637/jss.v025.i04>.",
+      "License": "LGPL-3",
+      "Collate": "clValid-Classes.R clValid-Methods.R clValid-internal.R clValid-functions.R",
+      "NeedsCompilation": "no",
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
+    },
     "class": {
       "Package": "class",
       "Version": "7.3-22",
