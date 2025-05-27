@@ -1,10 +1,26 @@
 
-- [`dissmapr`](#dissmapr)
-  - [A Novel Framework for Automated Compositional Dissimilarity and
-    Biodiversity Turnover
-    Analysis](#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis)
-  - [Introduction](#introduction)
-  - [Workflow Overview](#workflow-overview)
+- [`dissmapr`: Compositional Dissimilarity and Biodiversity Turnover Analysis](#dissmapr)  
+- [Introduction](#introduction)  
+- [Step-by-Step Workflow](#step-by-step-workflow)  
+  - [1. Install and load `dissmapr`](#1-install-and-load-dissmapr)  
+  - [2. Load other R libraries](#2-load-other-r-libraries)  
+  - [3. User-defined area of interest and grid resolution](#3-user-defined-area-of-interest-and-grid-resolution)  
+  - [4. Get species occurrence records using `get_occurrence_data`](#4-get-species-occurrence-records-using-getoccurrencedata)  
+  - [5. Format data using `format_df`](#5-format-data-using-formatdf)  
+  - [6. Summarise records by grid centroid using `generate_grid`](#6-summarise-records-by-grid-centroid-using-generate-grid)  
+    - [Example 1 – Species Richness](#example-1---species-richness)  
+    - [Example 2 – Community Turnover](#example-2---community-turnover)
+  - [7. Generate site by species matrix - `site_spp`](#7-generate-site-by-species-matrix---sitespp)  
+  - [8. Generate site by environment matrix using `get_enviro_data`](#8-generate-site-by-environment-matrix-using-getenvirodata)    
+  - [9. Change coordinates projection using `sf::st_transform`](#9-change-coordinates-projection-using-sfst_transform)  
+  - [10. Check for colinearity using `rm_correlated`](#10-check-for-colinearity-using-rm_correlated)  
+  - [11. Calculate Zeta decline for orders 2:15](#11-calculate-zeta-decline-for-orders-215)  
+  - [12. Calculate Zeta decay for orders 2:8](#12-calculate-zeta-decay-for-orders-28)  
+  - [13. Run a Multi-Site Generalised Dissimilarity Model for order 2](#13-run-a-multi-site-generalised-dissimilarity-model-for-order-2)  
+  - [14. Predict current Zeta Diversity (zeta2)](#14-predict-current-zeta-diversity-zeta2-with-obssum-and-current-environmental-variables)  
+  - [15. Run clustering analyses to map bioregion clusters of current zeta2](#15-run-clustering-analyses-to-map-bioregion-clusters-of-current-zeta2)  
+  - [16. Predict future Zeta Diversity and map bioregion change](#16-predict-future-zeta-diversity-and-map-bioregion-change)  
+  - [17. Deposit all results into Zenodo](#17-deposit-all-results-into-Zenodo)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
@@ -40,7 +56,7 @@ conservation planning at landscape to regional scales.
 
 ------------------------------------------------------------------------
 
-## Workflow Overview
+## Step-by-Step Workflow
 
 `dissmapr` implements a structured, reproducible workflow for analysing
 biodiversity patterns and delineating bioregions. Each function aligns
@@ -121,26 +137,30 @@ rsa = sf::st_read('inst/extdata/rsa.shp')
 #> Dimension:     XY
 #> Bounding box:  xmin: 16.45802 ymin: -34.83514 xmax: 32.89125 ymax: -22.12661
 #> Geodetic CRS:  WGS 84
+
+# Define your resolution and create mask to use later
+res = 0.5 # 0.5 degrees is roughly 55km
+
+# Convert to a terra vector
+rsa_vect = vect(rsa)
+
+# Create an empty raster over RSA at your desired resolution
+grid = rast(rsa_vect, resolution = res, crs = crs(rsa_vect))
+values(grid) = 1   # fill with dummy values
 ```
 
 ------------------------------------------------------------------------
 
-### 4. Site by species matrix and sampling effort
+### 4. Get species occurrence records using `get_occurrence_data`
 
 This section focuses on automating the retrieval and pre-processing of
-core data, including species occurrence and environmental variables.
-These data form the basis for further ecological analysis and model
-building.
+biodiversity occurrence data from various sources, including:
 
-#### Access occurrences of user-specified taxon or species list using `get_occurrence_data`
-
-Use `get_occurrence_data` to automate the retrieval and pre-processing
-of species occurrence data from multiple sources, including:
-
-1)  local databases,
-2)  the Global Biodiversity Information Facility (GBIF), and
-3)  species occurrence cubes from B3 (specification) \[\*work in
-    progress\].
+1)  local `databases`.csv\` files,
+2)  URLs or `.zip` files from the Global Biodiversity Information
+    Facility (GBIF), and
+3)  species occurrence cubes from B3 (specification) \[*work in
+    progress*\].
 
 The function assembles data on species distributions across specified
 taxonomic groups and regions, producing presence-absence or abundance
@@ -199,7 +219,7 @@ sp_cols = names(site_spp)[-c(1:3)]
 
 ------------------------------------------------------------------------
 
-### 6. Summarise records by grid using `generate_grid`
+### 6. Summarise records by grid centroid using `generate_grid`
 
 Use `generate_grid` to divide the study area, derived from the
 geographic extent of the occurrence data above, into grids of
@@ -273,7 +293,194 @@ ggplot() +
 
 ------------------------------------------------------------------------
 
-### 7. Generate site by species matrix called `site_spp`
+### Example 1 - Species Richness
+
+Here we calculate species richness across sites in the block_sp dataset,
+again using the compute_orderwise function. The richness function is
+applied to the grid_id column for site identification, with species data
+specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it
+computes basic species richness at individual sites, while higher orders
+(2 to 4) represent the differences in richness between pairwise and/or
+multi-site combinations. A subset of 1000 samples is used for
+higher-order computations to speed-up computation time. Parallel
+processing is enabled with 4 worker threads to improve performance. The
+output is a table summarizing species richness across specified orders.
+
+``` r
+# Compute species richness (order 1) and the difference thereof for orders 2 to 4
+rich_o1234 = compute_orderwise(
+  df = grid_spp,
+  func = richness,
+  site_col = 'grid_id',
+  sp_cols = sp_cols,
+  sample_no = 1000,
+  order = 1:4,
+  parallel = TRUE,
+  n_workers = 4)
+#> Time elapsed for order 1: 0 minutes and 4.81 seconds
+#> Time elapsed for order 2: 0 minutes and 11.48 seconds
+#> Time elapsed for order 3: 0 minutes and 39.78 seconds
+#> Time elapsed for order 4: 1 minutes and 12.26 seconds
+#> Total computation time: 1 minutes and 12.27 seconds
+
+head(rich_o1234)
+#>    site_from site_to order value
+#>       <char>  <char> <int> <int>
+#> 1:      1026    <NA>     1     2
+#> 2:      1027    <NA>     1    31
+#> 3:      1028    <NA>     1    10
+#> 4:      1029    <NA>     1     7
+#> 5:      1030    <NA>     1     6
+#> 6:      1031    <NA>     1    76
+```
+
+``` r
+# Plot species richness distribution by order
+head(rich_o1234)
+#>    site_from site_to order value
+#>       <char>  <char> <int> <int>
+#> 1:      1026    <NA>     1     2
+#> 2:      1027    <NA>     1    31
+#> 3:      1028    <NA>     1    10
+#> 4:      1029    <NA>     1     7
+#> 5:      1030    <NA>     1     6
+#> 6:      1031    <NA>     1    76
+boxplot(value ~ order,
+        data = rich_o1234,
+        col = c('#4575b4', '#99ce8f', '#fefab8', '#d73027'),
+        horizontal = TRUE,
+        outline = FALSE,
+        main = 'Distribution of Species Richness by Order')
+```
+
+<img src="man/figures/README-richness-plot-1.png" width="100%" />
+
+``` r
+rich_o1234 = as.data.frame(rich_o1234)
+rich_o1234$centroid_lon = grid_spp$centroid_lon[match(rich_o1234$site_from, grid_spp$grid_id)]
+rich_o1234$centroid_lat = grid_spp$centroid_lat[match(rich_o1234$site_from, grid_spp$grid_id)]
+
+# Summarise turnover by site (spatial location)
+mean_rich_o1234 = rich_o1234 %>%
+  group_by(order, site_from, centroid_lon, centroid_lat) %>%
+  summarize(value = mean(value, na.rm = TRUE))
+head(mean_rich_o1234)
+#> # A tibble: 6 × 5
+#> # Groups:   order, site_from, centroid_lon [6]
+#>   order site_from centroid_lon centroid_lat value
+#>   <int> <chr>            <dbl>        <dbl> <dbl>
+#> 1     1 1026              28.8        -22.3     2
+#> 2     1 1027              29.2        -22.3    31
+#> 3     1 1028              29.7        -22.3    10
+#> 4     1 1029              30.3        -22.3     7
+#> 5     1 1030              30.8        -22.3     6
+#> 6     1 1031              31.3        -22.3    76
+```
+
+------------------------------------------------------------------------
+
+### Example 2 - Community Turnover
+
+Here we calculate species turnover (beta diversity) across sites in the
+block_sp dataset using the compute_orderwise function again. The
+turnover function is applied to the grid_id column for site
+identification, with species data specified by sp_cols. Order = 1 is not
+an option because turnover requires a comparison between sites. For
+orders 2 to 5, it computes turnover for pairwise and higher-order site
+combinations, representing the proportion of species not shared between
+sites. A subset of 1000 samples is used for higher-order comparisons.
+Parallel processing with 4 worker threads improves efficiency, and the
+output is a table summarizing species turnover across the specified
+orders.
+
+``` r
+# Compute community turnover for orders 2 to 5
+turn_o2345 = compute_orderwise(
+  df = grid_spp,
+  func = turnover,
+  site_col = 'grid_id',
+  sp_cols = sp_cols, # OR `names(grid_spp)[-c(1:4)]`
+  sample_no = 1000, # Reduce to speed-up computation
+  order = 2:5,
+  parallel = TRUE,
+  n_workers = 4)
+#> Time elapsed for order 2: 0 minutes and 9.94 seconds
+#> Time elapsed for order 3: 0 minutes and 49.22 seconds
+#> Time elapsed for order 4: 1 minutes and 29.71 seconds
+#> Time elapsed for order 5: 3 minutes and 31.49 seconds
+#> Total computation time: 3 minutes and 31.53 seconds
+
+# Check results
+head(turn_o2345)
+#>    site_from site_to order     value
+#>       <char>  <char> <int>     <num>
+#> 1:      1027    1026     2 0.9354839
+#> 2:      1028    1026     2 0.9090909
+#> 3:      1029    1026     2 1.0000000
+#> 4:      1030    1026     2 1.0000000
+#> 5:      1031    1026     2 0.9870130
+#> 6:       117    1026     2 1.0000000
+```
+
+To visualize the spatial patterns of turnover across sites, geographic
+coordinates are added back to the results. This allows spatial
+exploration of turnover patterns across different orders, highlighting
+regions of high or low turnover and enabling comparisons across orders.
+These visualizations provide valuable insights into spatial biodiversity
+dynamics. Below we assign the geographic coordinates (x and y) from the
+block_sp dataset to the turn_o2345 results. Using match, it aligns the
+coordinates to the site_from column in turn_o2345 based on the
+corresponding grid_id values in block_sp. This prepares the dataset for
+spatial plotting.
+
+``` r
+# Add coordinates back to 'turn_o2345' for plotting
+# turn_o2345$x = grid_spp$x[match(turn_o2345$site_from, grid_spp$grid_id)]
+# turn_o2345$y = grid_spp$y[match(turn_o2345$site_from, block_sp$grid_id)]
+
+turn_o2345$centroid_lon = grid_spp$centroid_lon[match(turn_o2345$site_from, grid_spp$grid_id)]
+turn_o2345$centroid_lat = grid_spp$centroid_lat[match(turn_o2345$site_from, grid_spp$grid_id)]
+
+# Summarise turnover by site (spatial location)
+mean_turn_o2345 = turn_o2345 %>%
+  group_by(order, site_from, centroid_lon, centroid_lat) %>%
+  summarize(value = mean(value, na.rm = TRUE))
+
+# Plot Beta Diversity (pairwise turnover) from code above
+ggplot() +
+  geom_tile(data = mean_turn_o2345[mean_turn_o2345$order==2,],
+            aes(x = centroid_lon, y = centroid_lat, fill = value)) +
+  scale_fill_gradientn(colors = viridis(8)) + #Apply viridis color palette
+  geom_sf(data = rsa, fill = NA, color = "black", alpha = 0.5) +
+  theme_minimal() +
+  labs(x = "Longitude", y = "Latitude", fill = "Beta Diversity") +
+  theme(panel.grid = element_blank(),panel.border = element_blank()
+  )
+```
+
+<img src="man/figures/README-turnover-plot-1.png" width="100%" />
+
+``` r
+
+# Plot results to help visualise spatial patterns of turnover across different orders. This can highlight regions of high or low turnover and facilitate comparison across orders, providing insights into spatial biodiversity dynamics.
+ggplot() +
+  geom_tile(data = mean_turn_o2345, aes(x = centroid_lon, y = centroid_lat, fill = value)) +
+  scale_fill_viridis_c(option = "turbo", name = "Turnover") +
+  geom_sf(data = rsa, fill = NA, color = "black", alpha = 0.5) +
+  theme_minimal() +
+  labs(
+    title = "Mean Turnover by Order",
+    x = "Longitude",
+    y = "Latitude"
+  ) +
+  facet_wrap(~ order, ncol = 2)
+```
+
+<img src="man/figures/README-turnover-plot-2.png" width="100%" />
+
+------------------------------------------------------------------------
+
+### 7. Generate site by species matrix - `site_spp`
 
 Create a matrix of species counts per site for use in biodiversity and
 dissimilarity analyses.
@@ -385,9 +592,7 @@ grids; they are not needed beyond this step.*
 
 ------------------------------------------------------------------------
 
-### 8. Site by environment matrix
-
-#### Retrieve Environmental Data with `get_enviro_data`
+### 8. Generate site by environment matrix using `get_enviro_data`
 
 Use `get_enviro_data` to extract environmental variables for spatial
 points from either species observations or grid centroids. Data can be
@@ -529,7 +734,7 @@ ggplot() +
 
 <img src="man/figures/README-env-df-1.png" width="100%" />
 
-#### Generate *Species-by-Environment* data frame ‘sbe’
+#### Generate *Site-by-Environment* data frame ‘sbe’
 
 Create a unified data frame of site coordinates, sampling effort,
 richness, and environmental variables for modelling called `sbe`.
@@ -539,7 +744,7 @@ sbe = env_df %>%
   select(grid_id, centroid_lon, centroid_lat, obs_sum, spp_rich, everything())
 ```
 
-### 9. If necessary project coordinates into meters projection (e.g. UTM) using `sf::st_transform`
+### 9. Change coordinates projection using `sf::st_transform`
 
 Reproject spatial coordinates from geographic (WGS84) to a projected
 system (e.g. Albers Equal Area) for analyses requiring distance in
@@ -575,194 +780,7 @@ head(xy_utm_df)
 
 ------------------------------------------------------------------------
 
-### Example 1 - Species Richness
-
-Here we calculate species richness across sites in the block_sp dataset,
-again using the compute_orderwise function. The richness function is
-applied to the grid_id column for site identification, with species data
-specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it
-computes basic species richness at individual sites, while higher orders
-(2 to 4) represent the differences in richness between pairwise and/or
-multi-site combinations. A subset of 1000 samples is used for
-higher-order computations to speed-up computation time. Parallel
-processing is enabled with 4 worker threads to improve performance. The
-output is a table summarizing species richness across specified orders.
-
-``` r
-# Compute species richness (order 1) and the difference thereof for orders 2 to 4
-rich_o1234 = compute_orderwise(
-  df = grid_spp,
-  func = richness,
-  site_col = 'grid_id',
-  sp_cols = sp_cols,
-  sample_no = 1000,
-  order = 1:4,
-  parallel = TRUE,
-  n_workers = 4)
-#> Time elapsed for order 1: 0 minutes and 4.91 seconds
-#> Time elapsed for order 2: 0 minutes and 11.61 seconds
-#> Time elapsed for order 3: 0 minutes and 38.85 seconds
-#> Time elapsed for order 4: 1 minutes and 11.33 seconds
-#> Total computation time: 1 minutes and 11.34 seconds
-
-head(rich_o1234)
-#>    site_from site_to order value
-#>       <char>  <char> <int> <int>
-#> 1:      1026    <NA>     1     2
-#> 2:      1027    <NA>     1    31
-#> 3:      1028    <NA>     1    10
-#> 4:      1029    <NA>     1     7
-#> 5:      1030    <NA>     1     6
-#> 6:      1031    <NA>     1    76
-```
-
-``` r
-# Plot species richness distribution by order
-head(rich_o1234)
-#>    site_from site_to order value
-#>       <char>  <char> <int> <int>
-#> 1:      1026    <NA>     1     2
-#> 2:      1027    <NA>     1    31
-#> 3:      1028    <NA>     1    10
-#> 4:      1029    <NA>     1     7
-#> 5:      1030    <NA>     1     6
-#> 6:      1031    <NA>     1    76
-boxplot(value ~ order,
-        data = rich_o1234,
-        col = c('#4575b4', '#99ce8f', '#fefab8', '#d73027'),
-        horizontal = TRUE,
-        outline = FALSE,
-        main = 'Distribution of Species Richness by Order')
-```
-
-<img src="man/figures/README-richness-plot-1.png" width="100%" />
-
-``` r
-rich_o1234 = as.data.frame(rich_o1234)
-rich_o1234$centroid_lon = grid_spp$centroid_lon[match(rich_o1234$site_from, grid_spp$grid_id)]
-rich_o1234$centroid_lat = grid_spp$centroid_lat[match(rich_o1234$site_from, grid_spp$grid_id)]
-
-# Summarise turnover by site (spatial location)
-mean_rich_o1234 = rich_o1234 %>%
-  group_by(order, site_from, centroid_lon, centroid_lat) %>%
-  summarize(value = mean(value, na.rm = TRUE))
-head(mean_rich_o1234)
-#> # A tibble: 6 × 5
-#> # Groups:   order, site_from, centroid_lon [6]
-#>   order site_from centroid_lon centroid_lat value
-#>   <int> <chr>            <dbl>        <dbl> <dbl>
-#> 1     1 1026              28.8        -22.3     2
-#> 2     1 1027              29.2        -22.3    31
-#> 3     1 1028              29.7        -22.3    10
-#> 4     1 1029              30.3        -22.3     7
-#> 5     1 1030              30.8        -22.3     6
-#> 6     1 1031              31.3        -22.3    76
-```
-
-------------------------------------------------------------------------
-
-### Example 2 - Community Turnover
-
-Here we calculate species turnover (beta diversity) across sites in the
-block_sp dataset using the compute_orderwise function again. The
-turnover function is applied to the grid_id column for site
-identification, with species data specified by sp_cols. Order = 1 is not
-an option because turnover requires a comparison between sites. For
-orders 2 to 5, it computes turnover for pairwise and higher-order site
-combinations, representing the proportion of species not shared between
-sites. A subset of 1000 samples is used for higher-order comparisons.
-Parallel processing with 4 worker threads improves efficiency, and the
-output is a table summarizing species turnover across the specified
-orders.
-
-``` r
-# Compute community turnover for orders 2 to 5
-turn_o2345 = compute_orderwise(
-  df = grid_spp,
-  func = turnover,
-  site_col = 'grid_id',
-  sp_cols = sp_cols, # OR `names(grid_spp)[-c(1:4)]`
-  sample_no = 1000, # Reduce to speed-up computation
-  order = 2:5,
-  parallel = TRUE,
-  n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 9.54 seconds
-#> Time elapsed for order 3: 0 minutes and 43.44 seconds
-#> Time elapsed for order 4: 2 minutes and 26.22 seconds
-#> Time elapsed for order 5: 4 minutes and 13.28 seconds
-#> Total computation time: 4 minutes and 13.29 seconds
-
-# Check results
-head(turn_o2345)
-#>    site_from site_to order     value
-#>       <char>  <char> <int>     <num>
-#> 1:      1027    1026     2 0.9354839
-#> 2:      1028    1026     2 0.9090909
-#> 3:      1029    1026     2 1.0000000
-#> 4:      1030    1026     2 1.0000000
-#> 5:      1031    1026     2 0.9870130
-#> 6:       117    1026     2 1.0000000
-```
-
-To visualize the spatial patterns of turnover across sites, geographic
-coordinates are added back to the results. This allows spatial
-exploration of turnover patterns across different orders, highlighting
-regions of high or low turnover and enabling comparisons across orders.
-These visualizations provide valuable insights into spatial biodiversity
-dynamics. Below we assign the geographic coordinates (x and y) from the
-block_sp dataset to the turn_o2345 results. Using match, it aligns the
-coordinates to the site_from column in turn_o2345 based on the
-corresponding grid_id values in block_sp. This prepares the dataset for
-spatial plotting.
-
-``` r
-# Add coordinates back to 'turn_o2345' for plotting
-# turn_o2345$x = grid_spp$x[match(turn_o2345$site_from, grid_spp$grid_id)]
-# turn_o2345$y = grid_spp$y[match(turn_o2345$site_from, block_sp$grid_id)]
-
-turn_o2345$centroid_lon = grid_spp$centroid_lon[match(turn_o2345$site_from, grid_spp$grid_id)]
-turn_o2345$centroid_lat = grid_spp$centroid_lat[match(turn_o2345$site_from, grid_spp$grid_id)]
-
-# Summarise turnover by site (spatial location)
-mean_turn_o2345 = turn_o2345 %>%
-  group_by(order, site_from, centroid_lon, centroid_lat) %>%
-  summarize(value = mean(value, na.rm = TRUE))
-
-# Plot Beta Diversity (pairwise turnover) from code above
-ggplot() +
-  geom_tile(data = mean_turn_o2345[mean_turn_o2345$order==2,],
-            aes(x = centroid_lon, y = centroid_lat, fill = value)) +
-  scale_fill_gradientn(colors = viridis(8)) + #Apply viridis color palette
-  geom_sf(data = rsa, fill = NA, color = "black", alpha = 0.5) +
-  theme_minimal() +
-  labs(x = "Longitude", y = "Latitude", fill = "Beta Diversity") +
-  theme(panel.grid = element_blank(),panel.border = element_blank()
-  )
-```
-
-<img src="man/figures/README-turnover-plot-1.png" width="100%" />
-
-``` r
-
-# Plot results to help visualise spatial patterns of turnover across different orders. This can highlight regions of high or low turnover and facilitate comparison across orders, providing insights into spatial biodiversity dynamics.
-ggplot() +
-  geom_tile(data = mean_turn_o2345, aes(x = centroid_lon, y = centroid_lat, fill = value)) +
-  scale_fill_viridis_c(option = "turbo", name = "Turnover") +
-  geom_sf(data = rsa, fill = NA, color = "black", alpha = 0.5) +
-  theme_minimal() +
-  labs(
-    title = "Mean Turnover by Order",
-    x = "Longitude",
-    y = "Latitude"
-  ) +
-  facet_wrap(~ order, ncol = 2)
-```
-
-<img src="man/figures/README-turnover-plot-2.png" width="100%" />
-
-------------------------------------------------------------------------
-
-### 10. Check for multi-colinearity and remove highly corrected variables using `rm_correlated`.
+### 10. Check for colinearity using `rm_correlated`
 
 Identify and remove highly correlated environmental variables to reduce
 multicollinearity in subsequent analyses. This step ensures model
@@ -801,7 +819,7 @@ env_vars_reduced = rm_correlated(data = env_df[,c(4,6:24)],
 
 ------------------------------------------------------------------------
 
-### 11. Zeta decline (sbs), orders 2:15
+### 11. Calculate Zeta decline for orders 2:15
 
 #### Expectation of zeta diversity decline using `zetadiv::Zeta.decline.ex`
 
@@ -899,7 +917,7 @@ zeta_mc_utm = Zeta.decline.mc(site_spp_pa[,-(1:6)],
 >   Monte Carlo envelope is invaluable when ζₖ gets noisier at higher
 >   orders.*
 
-### 12. Zeta decays (sbs, xy), orders 2:15
+### 12. Calculate Zeta decay for orders 2:8
 
 #### Zeta distance decay for a range of numbers of assemblages or sites using `zetadiv::Zeta.ddecays`
 
@@ -976,7 +994,7 @@ zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
 > more sites), their shared‐species counts no longer decline with
 > distance—they form a spatially uniform core.*
 
-### 13. Zeta.msgdm(sbs, sbe, xy), order 2, 3, 5, 10
+### 13. Run a Multi-Site Generalised Dissimilarity Model for order 2
 
 #### Multi-site generalised dissimilarity modelling for a set of environmental variables and distances using `zetadiv::Zeta.msgdm`
 
@@ -1038,23 +1056,20 @@ Plot.ispline(isplines = zeta2.ispline, distance = TRUE)
 >     more observations tend to share more species (or, conversely, that
 >     incomplete sampling can depress apparent turnover).
 
-> 3.  **Precipitation variables**
+> 3.  **Precipitation variables**: **Rain in the warm quarter
+>     (`rain_warmQ`, squares)** and **Rain in the dry quarter
+>     (`rain_dry`, triangles-down)** both show moderate effects
+>     (I-spline heights ~0.02–0.03). This means differences in seasonal
+>     rainfall regimes contribute noticeably to changes in community
+>     composition.
 
-> - **Rain in the warm quarter (`rain_warmQ`, squares)** and
-> - **Rain in the dry quarter (`rain_dry`, triangles-down)** both show
->   moderate effects (I-spline heights ~0.02–0.03). This means
->   differences in seasonal rainfall regimes contribute noticeably to
->   changes in community composition.
-
-> 4.  **Temperature metrics**
-
-> - **Mean temperature (`temp_mean`, triangles-up),**
-> - **Wet‐quarter temperature (`temp_wetQ`, X’s),**
-> - **Dry‐quarter temperature (`temp_dryQ`, diamonds),** and the
->   **isothermality index (`iso`, plus signs)** all have very low,
->   almost flat I-splines (max heights ≲0.01). In other words, these
->   thermal variables explain very little additional turnover once
->   you’ve accounted for distance and rainfall.
+> 4.  **Temperature metrics**: **Mean temperature** *(`temp_mean`,
+>     triangles-up)*, **Wet‐quarter temperature** *(`temp_wetQ`, X’s)*,
+>     **Dry‐quarter temperature** *(`temp_dryQ`, diamonds)*, and the
+>     **isothermality index** *(`iso`, plus signs)* all have very low,
+>     almost flat I-splines (max heights ≲0.01). In other words, these
+>     thermal variables explain very little additional turnover once
+>     you’ve accounted for distance and rainfall.
 
 > **Ecological interpretation:** Spatial distance is the dominant
 > structuring factor in these data—sites further apart share markedly
@@ -1122,7 +1137,7 @@ summary(zeta2$model)
 
 ------------------------------------------------------------------------
 
-### 14. Predict(zeta2) with ‘sam.eff’
+### 14. Predict current Zeta Diversity (zeta2) with `obs_sum` and current environmental variables
 
 - In the ‘sbe’ add ‘sam.max’, a constant for all sites = max(sam.eff)  
 - Predict for the updated sbe and xy  
@@ -1214,67 +1229,9 @@ head(predictors_df)
 - Run nmds for the predicted zeta matrix  
 - Plot RGB of the 3 component scores :::
 
-``` r
-# # Check results make sense
-# ggplot(predictors_df, aes(x = rich_o1, y = pred_zetaExp)) +
-#   geom_point(alpha = 0.3) +
-#   geom_smooth(method = "lm", se = FALSE) +
-#   labs(
-#     x = "Observed richness (ζ₁)",
-#     y = "Predicted turnover (ζ₂ on probability scale)"
-#   )
-# cor(predictors_df$rich_o1, predictors_df$pred_zetaExp)
-# 
-# # 3) make the plot
-# ggplot(predictors_df, aes(x = rich_o1)) +
-#   geom_point(aes(y = turn_o2),    colour = "black", alpha = .6) +
-#   geom_smooth(aes(y = turn_o2),   method = "lm", colour = "black", se = FALSE) +
-#   geom_point(aes(y = pred_zetaExp), colour = "red",   alpha = .6) +
-#   geom_smooth(aes(y = pred_zetaExp),method = "lm", colour = "red",   se = FALSE) +
-#   labs(
-#     x = expression(zeta[1]*" (richness)"),
-#     y = expression(zeta[2]*""),
-#     colour = "Type"
-#   ) +
-#   scale_colour_manual(
-#     values = c("Observed" = "black", "Predicted" = "red")
-#   ) +
-#   theme_minimal()
-# 
-# 
-#  
-# # define your palette
-# pal <- colorRampPalette(c("blue","green","yellow","orange","red","darkred"))
-# 
-# # ggplot2 spatial plot
-# ggplot(predictors_df, aes(
-#     x    = centroid_lon,
-#     y    = centroid_lat,
-#     fill = turn_o2
-#   )) +
-#   geom_tile() +
-#   scale_fill_gradientn(
-#     colours = pal(50)
-#   ) +
-#   geom_text(
-#       aes_string(label = "rich_o1"),
-#       color     = "yellow",
-#       size      = 1.5,
-#       # fontface  = "bold",
-#       check_overlap = TRUE
-#     ) +
-#   coord_quickmap() +
-#   theme_minimal() +
-#   labs(
-#     x = "Longitude",
-#     y = "Latitude",
-#     title = "Observed ζ₂ (pairwise shared species)"
-#   )
-```
-
 ------------------------------------------------------------------------
 
-### 15. Clustering analyses directly using zeta.now
+### 15. Run clustering analyses to map bioregion clusters of current zeta2
 
 - Generate maps of dissimilarity (the rgb plot)  
 - Generate map of bioregions (from clustering) :::
@@ -1338,7 +1295,7 @@ bioreg_result = map_bioreg(
 
 ------------------------------------------------------------------------
 
-### 16. Predict(zeta2)
+### 16. Predict future Zeta Diversity and map bioregion change
 
 - with appended (future scenarios) environmental variables and ‘sam.max’
   in sbe  
@@ -1387,14 +1344,14 @@ result_bioregDiff
 
 # Mask the raster grid using the boundary of South Africa
 # Convert to a terra vector
-rsa_vect <- vect(rsa)
+rsa_vect = vect(rsa)
 # Create an empty raster over RSA at your desired resolution
 # Here we use the extent of rsa_vect and a 0.05-degree cell size:
-grid <- rast(rsa_vect, resolution = 0.2489884, crs = crs(rsa_vect))
-values(grid) <- 1   # fill with dummy values
+grid = rast(rsa_vect, resolution = 0.2489884, crs = crs(rsa_vect))
+values(grid) = 1   # fill with dummy values
 
 # Mask that grid to the RSA boundary
-grid_masked <- mask(grid, rsa_vect)
+grid_masked = mask(grid, rsa_vect)
 mask_bioregDiff = mask(resample(result_bioregDiff, grid_masked, method = "near"), grid_masked)
 
 # Plot all change results
@@ -1414,7 +1371,11 @@ plot(mask_bioregDiff, col = viridis(100, direction = -1))
 
 ------------------------------------------------------------------------
 
-### 17. Deposit all data frames, tables, maps, and standard metadata to zenodo
+### 17. Deposit all results into Zenodo
+
+All data frames, tables, maps, and standard metadata can be deposited
+into Zenodo using [`zen4R`](https://github.com/eblondel/zen4R/wiki) or
+[Zenodo UI](https://zenodo.org/records/10715460).
 
 ``` r
 # save(occ, sbs, sbe, zeta2, zeta_now, zeta_future, file="dissmapr_results.Rdata")
