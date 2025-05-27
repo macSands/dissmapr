@@ -1,5 +1,3 @@
-^renv$
-^renv\.lock$
 ^dissmapr\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$

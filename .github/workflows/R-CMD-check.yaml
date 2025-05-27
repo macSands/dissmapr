@@ -1,13 +1,14 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+# .github/workflows/R-CMD-check.yaml
+
+name: R-CMD-check
+
 on:
   push:
-    branches: [main, master]
+    branches: [ main, master ]
   pull_request:
 
-name: R-CMD-check.yaml
-
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   R-CMD-check:
@@ -15,19 +16,25 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+
     steps:
+      # 1. Get your code
       - uses: actions/checkout@v4
 
+      # 2. Install R
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::rcmdcheck
-          needs: check
+      # 3. Restore all packages exactly as in renv.lock
+      - name: Restore renv lockfile
+        run: Rscript -e 'renv::restore()'
 
+      # 4. Run build & check using the restored environment
       - uses: r-lib/actions/check-r-package@v2
         with:
+          # leave out `use_renv: false` so it *does* use renv
+          use_renv: true
+          renv_lockfile: renv.lock        # path to your lockfile
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'

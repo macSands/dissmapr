@@ -1,5 +1,5 @@
 
-- [`dissmapr`: Compositional Dissimilarity and Biodiversity Turnover Analysis](#dissmapr)
+- [`dissmapr: Compositional Dissimilarity and Biodiversity Turnover Analysis`](#dissmapr)  
 - [Introduction](#introduction)
 - [Step-by-Step Workflow](#step-by-step-workflow)
   - [1. Install and load `dissmapr`](#1-install-and-load-dissmapr)
@@ -17,7 +17,7 @@
   - [11. Calculate Zeta decline for orders 2:15](#11-calculate-zeta-decline-for-orders-215)
   - [12. Calculate Zeta decay for orders 2:8](#12-calculate-zeta-decay-for-orders-28)
   - [13. Run a Multi-Site Generalised Dissimilarity Model for order 2](#13-run-a-multi-site-generalised-dissimilarity-model-for-order-2)
-  - [14. Predict current Zeta Diversity (zeta2)](#14-predict-current-zeta-diversity-zeta2-with-obssum-and-current-environmental-variables)
+  - [14. Predict current Zeta Diversity (zeta2)](#14-predict-current-zeta-diversity-zeta2)
   - [15. Run clustering analyses to map bioregion clusters of current zeta2](#15-run-clustering-analyses-to-map-bioregion-clusters-of-current-zeta2)
   - [16. Predict future Zeta Diversity and map bioregion change](#16-predict-future-zeta-diversity-and-map-bioregion-change)
   - [17. Deposit all results into Zenodo](#17-deposit-all-results-into-Zenodo)
@@ -129,9 +129,7 @@ visualizations.
 ``` r
 # Read RSA shape file
 rsa = sf::st_read('inst/extdata/rsa.shp')
-#> Reading layer `rsa' from data source 
-#>   `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' 
-#>   using driver `ESRI Shapefile'
+#> Reading layer `rsa' from data source `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' using driver `ESRI Shapefile'
 #> Simple feature collection with 1 feature and 1 field
 #> Geometry type: POLYGON
 #> Dimension:     XY
@@ -317,11 +315,11 @@ rich_o1234 = compute_orderwise(
   order = 1:4,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 1: 0 minutes and 4.81 seconds
-#> Time elapsed for order 2: 0 minutes and 11.48 seconds
-#> Time elapsed for order 3: 0 minutes and 39.78 seconds
-#> Time elapsed for order 4: 1 minutes and 12.26 seconds
-#> Total computation time: 1 minutes and 12.27 seconds
+#> Time elapsed for order 1: 0 minutes and 11.67 seconds
+#> Time elapsed for order 2: 0 minutes and 23.15 seconds
+#> Time elapsed for order 3: 1 minutes and 14.18 seconds
+#> Time elapsed for order 4: 2 minutes and 30.14 seconds
+#> Total computation time: 2 minutes and 30.15 seconds
 
 head(rich_o1234)
 #>    site_from site_to order value
@@ -404,11 +402,11 @@ turn_o2345 = compute_orderwise(
   order = 2:5,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 9.94 seconds
-#> Time elapsed for order 3: 0 minutes and 49.22 seconds
-#> Time elapsed for order 4: 1 minutes and 29.71 seconds
-#> Time elapsed for order 5: 3 minutes and 31.49 seconds
-#> Total computation time: 3 minutes and 31.53 seconds
+#> Time elapsed for order 2: 0 minutes and 17.86 seconds
+#> Time elapsed for order 3: 1 minutes and 24.11 seconds
+#> Time elapsed for order 4: 2 minutes and 44.09 seconds
+#> Time elapsed for order 5: 4 minutes and 37.70 seconds
+#> Total computation time: 4 minutes and 37.71 seconds
 
 # Check results
 head(turn_o2345)
@@ -489,20 +487,13 @@ dissimilarity analyses.
 xy = grid_spp[,2:3]
 site_spp = grid_spp[,c(1:3,5:ncol(grid_spp))]
 head(site_spp[,1:10])
-#>   grid_id centroid_lon centroid_lat obs_sum spp_rich
-#> 1    1026        28.75    -22.25004       3        2
-#> 2    1027        29.25    -22.25004      41       31
-#> 3    1028        29.75    -22.25004      10       10
-#> 4    1029        30.25    -22.25004       7        7
-#> 5    1030        30.75    -22.25004       6        6
-#> 6    1031        31.25    -22.25004     107       76
-#>   Mylothris agathina subsp. agathina Pieris brassicae Tarucus thespis
-#> 1                                  0                0               0
-#> 2                                  0                0               0
-#> 3                                  0                0               0
-#> 4                                  0                0               0
-#> 5                                  0                0               0
-#> 6                                  0                0               0
+#>   grid_id centroid_lon centroid_lat obs_sum spp_rich Mylothris agathina subsp. agathina Pieris brassicae Tarucus thespis
+#> 1    1026        28.75    -22.25004       3        2                                  0                0               0
+#> 2    1027        29.25    -22.25004      41       31                                  0                0               0
+#> 3    1028        29.75    -22.25004      10       10                                  0                0               0
+#> 4    1029        30.25    -22.25004       7        7                                  0                0               0
+#> 5    1030        30.75    -22.25004       6        6                                  0                0               0
+#> 6    1031        31.25    -22.25004     107       76                                  0                0               0
 #>   Acraea horta Danaus chrysippus
 #> 1            0                 0
 #> 2            0                 0
@@ -541,20 +532,13 @@ site_spp_pa = site_spp %>%
   mutate(across(all_of(sp_cols), ~ ifelse(!is.na(.) & . > 0, 1, 0)))
 
 head(site_spp_pa[,1:10])
-#>   grid_id centroid_lon centroid_lat obs_sum spp_rich
-#> 1    1026        28.75    -22.25004       3        2
-#> 2    1027        29.25    -22.25004      41       31
-#> 3    1028        29.75    -22.25004      10       10
-#> 4    1029        30.25    -22.25004       7        7
-#> 5    1030        30.75    -22.25004       6        6
-#> 6    1031        31.25    -22.25004     107       76
-#>   Mylothris agathina subsp. agathina Pieris brassicae Tarucus thespis
-#> 1                                  0                0               0
-#> 2                                  0                0               0
-#> 3                                  0                0               0
-#> 4                                  0                0               0
-#> 5                                  0                0               0
-#> 6                                  0                0               0
+#>   grid_id centroid_lon centroid_lat obs_sum spp_rich Mylothris agathina subsp. agathina Pieris brassicae Tarucus thespis
+#> 1    1026        28.75    -22.25004       3        2                                  0                0               0
+#> 2    1027        29.25    -22.25004      41       31                                  0                0               0
+#> 3    1028        29.75    -22.25004      10       10                                  0                0               0
+#> 4    1029        30.25    -22.25004       7        7                                  0                0               0
+#> 5    1030        30.75    -22.25004       6        6                                  0                0               0
+#> 6    1031        31.25    -22.25004     107       76                                  0                0               0
 #>   Acraea horta Danaus chrysippus
 #> 1            0                 0
 #> 2            0                 0
@@ -646,27 +630,27 @@ variation in selected climate variables.
 ``` r
 env_df = enviro_list$env_df[,c(1:5,8:26)]
 head(env_df)
-#>   grid_id centroid_lon centroid_lat obs_sum...4 spp_rich...5        1        2
-#> 1    1026        28.75    -22.25004           3            2 21.88425 14.47900
-#> 2    1027        29.25    -22.25004          41           31 21.76921 14.61358
-#> 3    1028        29.75    -22.25004          10           10 21.53492 14.00267
-#> 4    1029        30.25    -22.25004           7            7 23.01796 13.67825
-#> 5    1030        30.75    -22.25004           6            6 23.59879 13.83525
-#> 6    1031        31.25    -22.25004         107           76 24.57367 14.64933
-#>          3        4      5      6      7        8        9       10       11
-#> 1 55.67347 427.1824 32.446  6.439 26.007 26.13383 16.05333 26.13383 16.05333
-#> 2 53.90477 453.1160 32.977  5.867 27.110 26.47767 15.63300 26.47767 15.63300
-#> 3 56.31250 392.8977 31.662  6.796 24.866 25.51400 16.11067 25.51400 16.11067
-#> 4 57.83615 357.9102 32.791  9.141 23.650 26.64050 18.05417 26.64050 18.05417
-#> 5 59.58590 334.4157 33.509 10.290 23.219 26.95950 18.99083 26.95950 18.99083
-#> 6 61.67101 332.0319 34.788 11.034 23.754 27.88800 20.00150 27.88800 20.00150
-#>    12 13 14       15  16 17  18 19
-#> 1 334 68  1 88.32125 185  5 185  5
-#> 2 354 74  1 85.64050 191  6 191  6
-#> 3 429 90  2 86.95976 236  9 236  9
-#> 4 425 88  1 90.60240 245  8 245  8
-#> 5 456 98  2 93.44035 274  8 274  8
-#> 6 463 97  2 94.23997 281 10 281 10
+#>   grid_id centroid_lon centroid_lat obs_sum...4 spp_rich...5        1
+#> 1    1026        28.75    -22.25004           3            2 21.88425
+#> 2    1027        29.25    -22.25004          41           31 21.76921
+#> 3    1028        29.75    -22.25004          10           10 21.53492
+#> 4    1029        30.25    -22.25004           7            7 23.01796
+#> 5    1030        30.75    -22.25004           6            6 23.59879
+#> 6    1031        31.25    -22.25004         107           76 24.57367
+#>          2        3        4      5      6      7        8        9
+#> 1 14.47900 55.67347 427.1824 32.446  6.439 26.007 26.13383 16.05333
+#> 2 14.61358 53.90477 453.1160 32.977  5.867 27.110 26.47767 15.63300
+#> 3 14.00267 56.31250 392.8977 31.662  6.796 24.866 25.51400 16.11067
+#> 4 13.67825 57.83615 357.9102 32.791  9.141 23.650 26.64050 18.05417
+#> 5 13.83525 59.58590 334.4157 33.509 10.290 23.219 26.95950 18.99083
+#> 6 14.64933 61.67101 332.0319 34.788 11.034 23.754 27.88800 20.00150
+#>         10       11  12 13 14       15  16 17  18 19
+#> 1 26.13383 16.05333 334 68  1 88.32125 185  5 185  5
+#> 2 26.47767 15.63300 354 74  1 85.64050 191  6 191  6
+#> 3 25.51400 16.11067 429 90  2 86.95976 236  9 236  9
+#> 4 26.64050 18.05417 425 88  1 90.60240 245  8 245  8
+#> 5 26.95950 18.99083 456 98  2 93.44035 274  8 274  8
+#> 6 27.88800 20.00150 463 97  2 94.23997 281 10 281 10
 head(env_df[,15:24])
 #>         10       11  12 13 14       15  16 17  18 19
 #> 1 26.13383 16.05333 334 68  1 88.32125 185  5 185  5
@@ -691,27 +675,27 @@ head(env_df)
 #> 4    1029        30.25    -22.25004       7        7  23.01796 13.67825
 #> 5    1030        30.75    -22.25004       6        6  23.59879 13.83525
 #> 6    1031        31.25    -22.25004     107       76  24.57367 14.64933
-#>        iso temp_sea temp_max temp_min temp_rang temp_wetQ temp_dryQ temp_warmQ
-#> 1 55.67347 427.1824   32.446    6.439    26.007  26.13383  16.05333   26.13383
-#> 2 53.90477 453.1160   32.977    5.867    27.110  26.47767  15.63300   26.47767
-#> 3 56.31250 392.8977   31.662    6.796    24.866  25.51400  16.11067   25.51400
-#> 4 57.83615 357.9102   32.791    9.141    23.650  26.64050  18.05417   26.64050
-#> 5 59.58590 334.4157   33.509   10.290    23.219  26.95950  18.99083   26.95950
-#> 6 61.67101 332.0319   34.788   11.034    23.754  27.88800  20.00150   27.88800
-#>   temp_coldQ rain_mean rain_wet rain_dry rain_sea rain_wetQ rain_dryQ
-#> 1   16.05333       334       68        1 88.32125       185         5
-#> 2   15.63300       354       74        1 85.64050       191         6
-#> 3   16.11067       429       90        2 86.95976       236         9
-#> 4   18.05417       425       88        1 90.60240       245         8
-#> 5   18.99083       456       98        2 93.44035       274         8
-#> 6   20.00150       463       97        2 94.23997       281        10
-#>   rain_warmQ rain_coldQ
-#> 1        185          5
-#> 2        191          6
-#> 3        236          9
-#> 4        245          8
-#> 5        274          8
-#> 6        281         10
+#>        iso temp_sea temp_max temp_min temp_rang temp_wetQ temp_dryQ
+#> 1 55.67347 427.1824   32.446    6.439    26.007  26.13383  16.05333
+#> 2 53.90477 453.1160   32.977    5.867    27.110  26.47767  15.63300
+#> 3 56.31250 392.8977   31.662    6.796    24.866  25.51400  16.11067
+#> 4 57.83615 357.9102   32.791    9.141    23.650  26.64050  18.05417
+#> 5 59.58590 334.4157   33.509   10.290    23.219  26.95950  18.99083
+#> 6 61.67101 332.0319   34.788   11.034    23.754  27.88800  20.00150
+#>   temp_warmQ temp_coldQ rain_mean rain_wet rain_dry rain_sea rain_wetQ
+#> 1   26.13383   16.05333       334       68        1 88.32125       185
+#> 2   26.47767   15.63300       354       74        1 85.64050       191
+#> 3   25.51400   16.11067       429       90        2 86.95976       236
+#> 4   26.64050   18.05417       425       88        1 90.60240       245
+#> 5   26.95950   18.99083       456       98        2 93.44035       274
+#> 6   27.88800   20.00150       463       97        2 94.23997       281
+#>   rain_dryQ rain_warmQ rain_coldQ
+#> 1         5        185          5
+#> 2         6        191          6
+#> 3         9        236          9
+#> 4         8        245          8
+#> 5         8        274          8
+#> 6        10        281         10
 
 # Plot the results to check the conversion is accurate
 ggplot() +
@@ -1189,41 +1173,41 @@ predictors_df = predict_dissim(
 ``` r
 
 head(predictors_df)
-#>   obs_sum spp_rich temp_mean      mdr      iso temp_sea temp_max temp_min
-#> 1       3        2  21.88425 14.47900 55.67347 427.1824   32.446    6.439
-#> 2      41       31  21.76921 14.61358 53.90477 453.1160   32.977    5.867
-#> 3      10       10  21.53492 14.00267 56.31250 392.8977   31.662    6.796
-#> 4       7        7  23.01796 13.67825 57.83615 357.9102   32.791    9.141
-#> 5       6        6  23.59879 13.83525 59.58590 334.4157   33.509   10.290
-#> 6     107       76  24.57367 14.64933 61.67101 332.0319   34.788   11.034
-#>   temp_rang temp_wetQ temp_dryQ temp_warmQ temp_coldQ rain_mean rain_wet
-#> 1    26.007  26.13383  16.05333   26.13383   16.05333       334       68
-#> 2    27.110  26.47767  15.63300   26.47767   15.63300       354       74
-#> 3    24.866  25.51400  16.11067   25.51400   16.11067       429       90
-#> 4    23.650  26.64050  18.05417   26.64050   18.05417       425       88
-#> 5    23.219  26.95950  18.99083   26.95950   18.99083       456       98
-#> 6    23.754  27.88800  20.00150   27.88800   20.00150       463       97
-#>   rain_dry rain_sea rain_wetQ rain_dryQ rain_warmQ rain_coldQ distance rich_o1
-#> 1        1 88.32125       185         5        185          5 903.0437       2
-#> 2        1 85.64050       191         6        191          6 915.4655      31
-#> 3        2 86.95976       236         9        236          9 931.1100      10
-#> 4        1 90.60240       245         8        245          8 949.9390       7
-#> 5        2 93.44035       274         8        274          8 971.8672       6
-#> 6        2 94.23997       281        10        281         10 996.7561      76
-#>     turn_o2    pred_zeta pred_zetaExp log_pred_zetaExp centroid_lon
-#> 1 0.9968715  0.002292689    0.5005732       -0.6920015        28.75
-#> 2 0.9759713 -0.032351315    0.4919129       -0.7094537        29.25
-#> 3 0.9920062 -0.027529907    0.4931180       -0.7070069        29.75
-#> 4 0.9744736 -0.019598603    0.4951005       -0.7029945        30.25
-#> 5 0.9888661 -0.023244502    0.4941891       -0.7048370        30.75
-#> 6 0.9612030 -0.048896387    0.4877783       -0.7178942        31.25
-#>   centroid_lat
-#> 1    -22.25004
-#> 2    -22.25004
-#> 3    -22.25004
-#> 4    -22.25004
-#> 5    -22.25004
-#> 6    -22.25004
+#>   obs_sum spp_rich temp_mean      mdr      iso temp_sea temp_max
+#> 1       3        2  21.88425 14.47900 55.67347 427.1824   32.446
+#> 2      41       31  21.76921 14.61358 53.90477 453.1160   32.977
+#> 3      10       10  21.53492 14.00267 56.31250 392.8977   31.662
+#> 4       7        7  23.01796 13.67825 57.83615 357.9102   32.791
+#> 5       6        6  23.59879 13.83525 59.58590 334.4157   33.509
+#> 6     107       76  24.57367 14.64933 61.67101 332.0319   34.788
+#>   temp_min temp_rang temp_wetQ temp_dryQ temp_warmQ temp_coldQ
+#> 1    6.439    26.007  26.13383  16.05333   26.13383   16.05333
+#> 2    5.867    27.110  26.47767  15.63300   26.47767   15.63300
+#> 3    6.796    24.866  25.51400  16.11067   25.51400   16.11067
+#> 4    9.141    23.650  26.64050  18.05417   26.64050   18.05417
+#> 5   10.290    23.219  26.95950  18.99083   26.95950   18.99083
+#> 6   11.034    23.754  27.88800  20.00150   27.88800   20.00150
+#>   rain_mean rain_wet rain_dry rain_sea rain_wetQ rain_dryQ rain_warmQ
+#> 1       334       68        1 88.32125       185         5        185
+#> 2       354       74        1 85.64050       191         6        191
+#> 3       429       90        2 86.95976       236         9        236
+#> 4       425       88        1 90.60240       245         8        245
+#> 5       456       98        2 93.44035       274         8        274
+#> 6       463       97        2 94.23997       281        10        281
+#>   rain_coldQ distance rich_o1   turn_o2    pred_zeta pred_zetaExp
+#> 1          5 903.0437       2 0.9968715  0.002292689    0.5005732
+#> 2          6 915.4655      31 0.9759713 -0.032351315    0.4919129
+#> 3          9 931.1100      10 0.9920062 -0.027529907    0.4931180
+#> 4          8 949.9390       7 0.9744736 -0.019598603    0.4951005
+#> 5          8 971.8672       6 0.9888661 -0.023244502    0.4941891
+#> 6         10 996.7561      76 0.9612030 -0.048896387    0.4877783
+#>   log_pred_zetaExp centroid_lon centroid_lat
+#> 1       -0.6920015        28.75    -22.25004
+#> 2       -0.7094537        29.25    -22.25004
+#> 3       -0.7070069        29.75    -22.25004
+#> 4       -0.7029945        30.25    -22.25004
+#> 5       -0.7048370        30.75    -22.25004
+#> 6       -0.7178942        31.25    -22.25004
 ```
 
 - Run nmds for the predicted zeta matrix  
@@ -1245,41 +1229,41 @@ head(predictors_df)
 # ‘plot’: Logical flag; if TRUE, plots spatial maps of clustering results.
 # ‘interp’: Specifies interpolation method ("NN", "Tps", "both") for filling spatial gaps using nearest neighbour (NN) or thin-plate splines (TPS).
 head(predictors_df)
-#>   obs_sum spp_rich temp_mean      mdr      iso temp_sea temp_max temp_min
-#> 1       3        2  21.88425 14.47900 55.67347 427.1824   32.446    6.439
-#> 2      41       31  21.76921 14.61358 53.90477 453.1160   32.977    5.867
-#> 3      10       10  21.53492 14.00267 56.31250 392.8977   31.662    6.796
-#> 4       7        7  23.01796 13.67825 57.83615 357.9102   32.791    9.141
-#> 5       6        6  23.59879 13.83525 59.58590 334.4157   33.509   10.290
-#> 6     107       76  24.57367 14.64933 61.67101 332.0319   34.788   11.034
-#>   temp_rang temp_wetQ temp_dryQ temp_warmQ temp_coldQ rain_mean rain_wet
-#> 1    26.007  26.13383  16.05333   26.13383   16.05333       334       68
-#> 2    27.110  26.47767  15.63300   26.47767   15.63300       354       74
-#> 3    24.866  25.51400  16.11067   25.51400   16.11067       429       90
-#> 4    23.650  26.64050  18.05417   26.64050   18.05417       425       88
-#> 5    23.219  26.95950  18.99083   26.95950   18.99083       456       98
-#> 6    23.754  27.88800  20.00150   27.88800   20.00150       463       97
-#>   rain_dry rain_sea rain_wetQ rain_dryQ rain_warmQ rain_coldQ distance rich_o1
-#> 1        1 88.32125       185         5        185          5 903.0437       2
-#> 2        1 85.64050       191         6        191          6 915.4655      31
-#> 3        2 86.95976       236         9        236          9 931.1100      10
-#> 4        1 90.60240       245         8        245          8 949.9390       7
-#> 5        2 93.44035       274         8        274          8 971.8672       6
-#> 6        2 94.23997       281        10        281         10 996.7561      76
-#>     turn_o2    pred_zeta pred_zetaExp log_pred_zetaExp centroid_lon
-#> 1 0.9968715  0.002292689    0.5005732       -0.6920015        28.75
-#> 2 0.9759713 -0.032351315    0.4919129       -0.7094537        29.25
-#> 3 0.9920062 -0.027529907    0.4931180       -0.7070069        29.75
-#> 4 0.9744736 -0.019598603    0.4951005       -0.7029945        30.25
-#> 5 0.9888661 -0.023244502    0.4941891       -0.7048370        30.75
-#> 6 0.9612030 -0.048896387    0.4877783       -0.7178942        31.25
-#>   centroid_lat
-#> 1    -22.25004
-#> 2    -22.25004
-#> 3    -22.25004
-#> 4    -22.25004
-#> 5    -22.25004
-#> 6    -22.25004
+#>   obs_sum spp_rich temp_mean      mdr      iso temp_sea temp_max
+#> 1       3        2  21.88425 14.47900 55.67347 427.1824   32.446
+#> 2      41       31  21.76921 14.61358 53.90477 453.1160   32.977
+#> 3      10       10  21.53492 14.00267 56.31250 392.8977   31.662
+#> 4       7        7  23.01796 13.67825 57.83615 357.9102   32.791
+#> 5       6        6  23.59879 13.83525 59.58590 334.4157   33.509
+#> 6     107       76  24.57367 14.64933 61.67101 332.0319   34.788
+#>   temp_min temp_rang temp_wetQ temp_dryQ temp_warmQ temp_coldQ
+#> 1    6.439    26.007  26.13383  16.05333   26.13383   16.05333
+#> 2    5.867    27.110  26.47767  15.63300   26.47767   15.63300
+#> 3    6.796    24.866  25.51400  16.11067   25.51400   16.11067
+#> 4    9.141    23.650  26.64050  18.05417   26.64050   18.05417
+#> 5   10.290    23.219  26.95950  18.99083   26.95950   18.99083
+#> 6   11.034    23.754  27.88800  20.00150   27.88800   20.00150
+#>   rain_mean rain_wet rain_dry rain_sea rain_wetQ rain_dryQ rain_warmQ
+#> 1       334       68        1 88.32125       185         5        185
+#> 2       354       74        1 85.64050       191         6        191
+#> 3       429       90        2 86.95976       236         9        236
+#> 4       425       88        1 90.60240       245         8        245
+#> 5       456       98        2 93.44035       274         8        274
+#> 6       463       97        2 94.23997       281        10        281
+#>   rain_coldQ distance rich_o1   turn_o2    pred_zeta pred_zetaExp
+#> 1          5 903.0437       2 0.9968715  0.002292689    0.5005732
+#> 2          6 915.4655      31 0.9759713 -0.032351315    0.4919129
+#> 3          9 931.1100      10 0.9920062 -0.027529907    0.4931180
+#> 4          8 949.9390       7 0.9744736 -0.019598603    0.4951005
+#> 5          8 971.8672       6 0.9888661 -0.023244502    0.4941891
+#> 6         10 996.7561      76 0.9612030 -0.048896387    0.4877783
+#>   log_pred_zetaExp centroid_lon centroid_lat
+#> 1       -0.6920015        28.75    -22.25004
+#> 2       -0.7094537        29.25    -22.25004
+#> 3       -0.7070069        29.75    -22.25004
+#> 4       -0.7029945        30.25    -22.25004
+#> 5       -0.7048370        30.75    -22.25004
+#> 6       -0.7178942        31.25    -22.25004
 bioreg_result = map_bioreg(
   data = predictors_df,
   scale_cols = c("pred_zeta", "centroid_lon", "centroid_lat"),
@@ -1289,6 +1273,8 @@ bioreg_result = map_bioreg(
   x_col ='centroid_lon',
   y_col ='centroid_lat'
 )
+#> fitting ...
+#>   |                                                                     |                                                             |   0%  |                                                                     |====                                                         |   7%  |                                                                     |========                                                     |  13%  |                                                                     |============                                                 |  20%  |                                                                     |================                                             |  27%  |                                                                     |====================                                         |  33%  |                                                                     |========================                                     |  40%  |                                                                     |============================                                 |  47%  |                                                                     |=================================                            |  53%  |                                                                     |=====================================                        |  60%  |                                                                     |=========================================                    |  67%  |                                                                     |=============================================                |  73%  |                                                                     |=================================================            |  80%  |                                                                     |=====================================================        |  87%  |                                                                     |=========================================================    |  93%  |                                                                     |=============================================================| 100%
 ```
 
 <img src="man/figures/README-zeta-cluster-1.png" width="100%" />
