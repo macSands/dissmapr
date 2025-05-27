@@ -26,15 +26,10 @@ jobs:
         with:
           use-public-rspm: true
 
-      # 3. Restore all packages exactly as in renv.lock
-      - name: Restore renv lockfile
-        run: Rscript -e 'renv::restore()'
-
       # 4. Run build & check using the restored environment
       - uses: r-lib/actions/check-r-package@v2
         with:
           # leave out `use_renv: false` so it *does* use renv
-          use_renv: true
-          renv_lockfile: renv.lock        # path to your lockfile
+          use_renv: false
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'

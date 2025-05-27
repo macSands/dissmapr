@@ -32,9 +32,13 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
+------------------------------------------------------------------------
+
 # `dissmapr`
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+
+------------------------------------------------------------------------
 
 ## Introduction
 
@@ -116,6 +120,9 @@ rsa_vect = vect(rsa)
 # Create an empty raster over RSA at your desired resolution
 grid = rast(rsa_vect, resolution = res, crs = crs(rsa_vect))
 values(grid) = 1   # fill with dummy values
+
+# Mask everything outside the RSA boundary
+grid_masked = mask(grid, rsa_vect)
 ```
 
 ------------------------------------------------------------------------
@@ -136,7 +143,10 @@ bfly_data = get_occurrence_data(
   source_type = 'local_csv',
   sep         = '\t'
 )
+
+# Check results
 dim(bfly_data)
+head(bfly_data[,1:6])
 ```
 
 ------------------------------------------------------------------------
@@ -160,10 +170,17 @@ bfly_result = format_df(
   extra_cols  = NULL,
   format      = 'long'
 )
+
+# Optional: Create new objects from list items
 site_obs = bfly_result$site_obs
 site_spp = bfly_result$site_sp
+
+# Check results
 dim(site_obs)
+head(site_obs[,1:6])
+
 dim(site_spp)
+head(site_spp[,1:6])
 ```
 
 #### Get parameters to use later
@@ -172,7 +189,10 @@ dim(site_spp)
 # Get parameters from processed data
 # Number of species columns
 (n_sp = dim(site_spp)[2] - 3)
+
+# Species names
 sp_cols = names(site_spp)[-c(1:3)]
+names(sp_cols)[1:5]
 ```
 
 ------------------------------------------------------------------------
@@ -198,10 +218,16 @@ grid_list = generate_grid(
   crs_epsg   = 4326
 )
 
+# Optional: Create new objects from list items
 aoi_grid = grid_list$grid_sf
 grid_spp = grid_list$block_sp
+
+# Check results
 dim(aoi_grid)
+head(aoi_grid)
+
 dim(grid_spp)
+head(grid_spp[,1:6])
 ```
 
 #### Generate a data frame 'xy' of site centroids
@@ -211,9 +237,16 @@ Extract longitude--latitude coordinates and summary metrics for each occupied gr
 ```{r site-xy}
 # Grid centroids with 'gird_id', 'centroid_lon', 'centroid_lat', 'obs_sum' and `spp_rich`
 grid_xy = grid_spp[,c(1:3,5:6)]
-dim(grid_xy)
+
+# Create species observations data.frame
 spp_obs = site_obs
+
+# Check results
+dim(grid_xy)
+head(grid_xy)
+
 dim(spp_obs)
+head(spp_obs[,1:6])
 ```
 
 #### Generate a map of RSA with occupied grid cells as centroid points
@@ -252,19 +285,20 @@ rich_o1234 = compute_orderwise(
   parallel = TRUE,
   n_workers = 4)
 
+# Check results
 head(rich_o1234)
 ```
 
 ```{r richness-plot}
 # Plot species richness distribution by order
-head(rich_o1234)
 boxplot(value ~ order,
         data = rich_o1234,
         col = c('#4575b4', '#99ce8f', '#fefab8', '#d73027'),
         horizontal = TRUE,
         outline = FALSE,
         main = 'Distribution of Species Richness by Order')
-rich_o1234 = as.data.frame(rich_o1234)
+
+# Link centroid coordinates back to `rich_o1234` data.frame for plotting
 rich_o1234$centroid_lon = grid_spp$centroid_lon[match(rich_o1234$site_from, grid_spp$grid_id)]
 rich_o1234$centroid_lat = grid_spp$centroid_lat[match(rich_o1234$site_from, grid_spp$grid_id)]
 
@@ -272,6 +306,8 @@ rich_o1234$centroid_lat = grid_spp$centroid_lat[match(rich_o1234$site_from, grid
 mean_rich_o1234 = rich_o1234 %>%
   group_by(order, site_from, centroid_lon, centroid_lat) %>%
   summarize(value = mean(value, na.rm = TRUE))
+
+# Check results
 head(mean_rich_o1234)
 ```
 ------------------------------------------------------------------------
@@ -299,11 +335,8 @@ head(turn_o2345)
 To visualize the spatial patterns of turnover across sites, geographic coordinates are added back to the results. This allows spatial exploration of turnover patterns across different orders, highlighting regions of high or low turnover and enabling comparisons across orders. These visualizations provide valuable insights into spatial biodiversity dynamics.
 Below we assign the geographic coordinates (x and y) from the block_sp dataset to the turn_o2345 results. Using match, it aligns the coordinates to the site_from column in turn_o2345 based on the corresponding grid_id values in block_sp. This prepares the dataset for spatial plotting.
 
-```{r turnover-plot}
+```{r turnover-plot-order2}
 # Add coordinates back to 'turn_o2345' for plotting
-# turn_o2345$x = grid_spp$x[match(turn_o2345$site_from, grid_spp$grid_id)]
-# turn_o2345$y = grid_spp$y[match(turn_o2345$site_from, block_sp$grid_id)]
-
 turn_o2345$centroid_lon = grid_spp$centroid_lon[match(turn_o2345$site_from, grid_spp$grid_id)]
 turn_o2345$centroid_lat = grid_spp$centroid_lat[match(turn_o2345$site_from, grid_spp$grid_id)]
 
@@ -312,7 +345,7 @@ mean_turn_o2345 = turn_o2345 %>%
   group_by(order, site_from, centroid_lon, centroid_lat) %>%
   summarize(value = mean(value, na.rm = TRUE))
 
-# Plot Beta Diversity (pairwise turnover) from code above
+# Plot Beta Diversity (pairwise turnover i.e. only order 2) calculated using `compute_orderwise(..., func = turnover, ...)`
 ggplot() +
   geom_tile(data = mean_turn_o2345[mean_turn_o2345$order==2,],
             aes(x = centroid_lon, y = centroid_lat, fill = value)) +
@@ -322,8 +355,12 @@ ggplot() +
   labs(x = "Longitude", y = "Latitude", fill = "Beta Diversity") +
   theme(panel.grid = element_blank(),panel.border = element_blank()
   )
+```
 
-# Plot results to help visualise spatial patterns of turnover across different orders. This can highlight regions of high or low turnover and facilitate comparison across orders, providing insights into spatial biodiversity dynamics.
+Plot order-wise turnover (orders 2:5) calculated using `compute_orderwise(..., func = turnover, ...)` to visualise spatial patterns of turnover across different orders. Results highlight regions of high or low turnover and facilitate comparison across orders, providing insights into spatial biodiversity dynamics.
+
+```{r turnover-plot-orders2345}
+# Plot order-wise turnover (orders 2:5) calculated using `compute_orderwise(..., func = turnover, ...)`
 ggplot() +
   geom_tile(data = mean_turn_o2345, aes(x = centroid_lon, y = centroid_lat, fill = value)) +
   scale_fill_viridis_c(option = "turbo", name = "Turnover") +
@@ -346,51 +383,73 @@ Create a matrix of species counts per site for use in biodiversity and dissimila
 ```{r site-spp}
 xy = grid_spp[,2:3]
 site_spp = grid_spp[,c(1:3,5:ncol(grid_spp))]
-head(site_spp[,1:10])
+
+# Check results
+dim(xy)
+head(xy)
+
 dim(site_spp)
+head(site_spp[,1:6])
 ```
 
-#### Generate record of occurrence counts called `sam_eff`
+#### Fetch record of occurrence counts calculated using `generate_grid`
 
-Summarize the number of species observations per grid cell to assess sampling effort.
+`generate_grid` summarised the number of species observations per grid cell to assess sampling effort.
 
 ```{r sam-eff}
+# Sampling effort = observation counts
 sam_eff = grid_spp[, c("grid_id","centroid_lon","centroid_lat","obs_sum")]
 obs_cnt = grid_spp[,c(1:3,5)]
+
+# Check results
 dim(obs_cnt)
+head(obs_cnt)
 ```
 
-#### Generate a binary data frame 'sbs'
+#### Generate a binary (presence/absence) data frame 'sbs'
 
-Convert species abundance data to presence--absence format (`site_spp_pa`) for binary dissimilarity analyses.
+Convert species abundance data to presence/absence format (`site_spp_pa`) for binary dissimilarity analyses.
 
 ```{r sbs}
-sp_cols = names(site_spp)[-(1:5)]
-sbs     = site_spp %>%
+# Create site-by-species matrix
+sbs = site_spp %>%
   mutate(across(all_of(sp_cols), ~ ifelse(. > 0, 1, 0)))
+
+# Check results
+dim(sbs)
+head(sbs[,1:6])
 
 # Assuming 'sp_cols' is a vector of column names
 site_spp_pa = site_spp %>%
   mutate(across(all_of(sp_cols), ~ ifelse(!is.na(.) & . > 0, 1, 0)))
 
-head(site_spp_pa[,1:10])
+# Check results
 dim(site_spp_pa)
+head(site_spp_pa[,1:6])
 ```
 
-#### Generate richness of sbs row sums and map
+#### Fetch species richness values calculated using `generate_grid`
 
-Calculate species richness per site based on binary presence--absence data.
+`generate_grid` calculated species richness per site based on binary presence/absence records.
 
 ```{r spp-rich}
+# Species richness
 spp_rich = grid_spp[, c("grid_id","centroid_lon","centroid_lat","spp_rich")]
+
+# Check results
+dim(site_spp_pa)
+head(site_spp_pa[,1:6])
 ```
 
-#### Generate 'sam.eff' and 'spp_rich' raster map
+#### Generate 'obs_cnt' and 'spp_rich' raster maps
 
-Visualise sampling effort and species richness as raster layers over the study area.
+`generate_grid` also creates a `SpatRast` to help visualise sampling effort and species richness over the study area.
 
 ```{r eff-rich}
+# Species richness and sampling effort SpatRast
 ras_effRich = grid_list$grid[[2:3]]
+
+# Plot `ras_effRich` using colour palettes from `viridis`
 plot(sqrt(ras_effRich), col = turbo(100))
 ```
 
@@ -407,6 +466,7 @@ Outputs include cropped rasters, spatial points (as an `sf` object), and a combi
 Future support will extend to *CHELSA* (`climenv`), *Google Earth Engine* (`rgee`), and `mapme.biodiversity` for expanded environmental and biodiversity data access.
 
 ```{r get-enviro}
+# Use `get_enviro_data` to fetch environmental data for your grid centroids
 enviro_list = get_enviro_data(
   data      = sbs,
   buffer_km = 10,
@@ -417,13 +477,17 @@ enviro_list = get_enviro_data(
   sp_cols   = 6:ncol(sbs),
   ext_cols  = c('obs_sum','spp_rich')
 )
+
+# Optional: Create new objects from list items
 ras_enviro = enviro_list$env_rast
 
 # Optional: Rename the columns to something more descriptive
-names(ras_enviro) = c("temp_mean", "mdr", "iso", "temp_sea", "temp_max",
+names_env = c("temp_mean", "mdr", "iso", "temp_sea", "temp_max",
                     "temp_min", "temp_rang","temp_wetQ","temp_dryQ", "temp_warmQ",
                     "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
                     "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
+names(enviro_list$env_rast) = names_env
+names(ras_enviro) = names_env
 ```
 
 #### Add 'eff-rich' raster to the enviro stack raster
@@ -431,43 +495,47 @@ names(ras_enviro) = c("temp_mean", "mdr", "iso", "temp_sea", "temp_max",
 Combine environmental rasters with sampling effort and species richness layers for joint spatial analysis.
 
 ```{r ras}
+# Combine `SpatRast`
 ras_enviro_effRich = c(ras_effRich, resample(ras_enviro, ras_effRich))
+
+# Plot the first 4 layers of `ras_enviro_effRich`
 plot(ras_enviro_effRich[[1:4]])
 ```
 
-#### Extract environmental variables for site centroids 'xy'
+#### Create data.frame of environmental variables with site centroids 'xy'
 
-Link environmental data to grid centroids and visualize spatial variation in selected climate variables.
+Environmental data were linked to grid centroids using `get_enviro_data`, now visualise the spatial variation in selected climate variables to check results.
 
 ```{r env-df}
+# Create `env_df`
 env_df = enviro_list$env_df[,c(1:5,8:26)]
-head(env_df)
-head(env_df[,15:24])
 
-# Rename `env_df` column names
-names(env_df) = c('grid_id','centroid_lon','centroid_lat','obs_sum','spp_rich',"temp_mean", "mdr", "iso", "temp_sea", "temp_max",
-                                "temp_min", "temp_rang","temp_wetQ", "temp_dryQ", "temp_warmQ",
-                                "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
-                                "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
-
-# Check the first few rows
-head(env_df)
+# Make sure column names are correct
+names(env_df) = c("grid_id","centroid_lon","centroid_lat","obs_sum","spp_rich","temp_mean",
+                  "mdr", "iso", "temp_sea", "temp_max",
+                    "temp_min", "temp_rang","temp_wetQ","temp_dryQ", "temp_warmQ",
+                    "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
+                    "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
+# Check results
+dim(env_df)
+head(env_df[,1:6])
 
 # Plot the results to check the conversion is accurate
 ggplot() +
   # Add 0.25deg grid layer
   geom_sf(data = aoi_grid, fill = NA, color = "darkgrey", alpha = 0.5) +
   # Add bfly points layer
-  geom_point(data = env_df, aes(x = centroid_lon,
-                                  y = centroid_lat,
-                                  color = temp_mean)) +
-  scale_size_continuous(range = c(0.5, 5)) +  # Adjust the point size range (min, max)
+  geom_point(data = env_df, 
+             aes(x = centroid_lon,
+                 y = centroid_lat,
+                 size = sqrt(temp_mean),
+                 color = temp_mean)) +
   scale_color_viridis_c(option = "turbo") +  # Use turbo color scale
   # Add boundary layer
   geom_sf(data = rsa, fill = NA, color = "black", alpha = 1) +
   theme_minimal() +
   labs(
-    title = "0.25° Grid Cells with temp_mean",
+    title = "0.5° Grid Cells with temp_mean",
     x = "Longitude",
     y = "Latitude")   
 ```
@@ -477,6 +545,7 @@ ggplot() +
 Create a unified data frame of site coordinates, sampling effort, richness, and environmental variables for modelling called `sbe`.
 
 ```{r sbe}
+# Create `sbe` data.frame
 sbe = env_df %>%
   select(grid_id, centroid_lon, centroid_lat, obs_sum, spp_rich, everything())
 ```
@@ -487,7 +556,6 @@ Reproject spatial coordinates from geographic (WGS84) to a projected system (e.g
 
 ```{r reproject}
 # Convert to sf object with WGS84 geographic CRS
-head(xy)
 xy_sf = st_as_sf(xy, coords = c("centroid_lon", "centroid_lat"), crs = 4326)
 
 # Project to Albers Equal Area (meters)
@@ -496,6 +564,9 @@ xy_utm = st_transform(xy_sf, crs = 9822)
 # Extract transformed coordinates in meters
 # Combine transformed coordinates back into data frame
 xy_utm_df = cbind(xy, st_coordinates(xy_utm))
+
+# Check results and compare coordinate formats
+head(xy)
 head(xy_utm_df)
 ```
 
@@ -512,9 +583,10 @@ env_vars_reduced = rm_correlated(data = env_df[,c(4,6:24)],
                                  cols = NULL,
                                  threshold = 0.7,
                                  plot = TRUE)
-head(env_vars_reduced)
-dim(env_vars_reduced)
-env_vars_reduced$obs_max = max(env_vars_reduced$obs_sum)
+
+# Compare numbers of environmental variables
+ncol(env_df[,c(4,6:24)])
+ncol(env_vars_reduced)
 ```
 
 ------------------------------------------------------------------------
@@ -529,7 +601,6 @@ Computes the expectation of zeta diversity, the number of species shared by mult
 ```{r zeta-decline-ex}
 zeta_decline_ex = Zeta.decline.ex(site_spp_pa[,6:ncol(site_spp_pa)], 
                                   orders = 1:15)
-# zeta_decline_ex
 ```
 
 > -   **Panel 1 (Zeta diversity decline)**: Shows how rapidly species that are common across multiple sites decline as you look at groups of more and more sites simultaneously (increasing zeta order). The sharp drop means fewer species are shared among many sites compared to just a few.
@@ -551,13 +622,14 @@ zeta_mc_utm = Zeta.decline.mc(site_spp_pa[,-(1:6)],
                                sam = 100,
                                NON = TRUE,
                                normalize = "Jaccard")
-# zeta_mc_utm
 ```
 
 > -   **Panel 1 (Zeta diversity decline)**: Rapidly declining zeta diversity, similar to previous plots, indicates very few species remain shared across increasingly larger sets of sites, emphasizing strong species turnover and spatial specialization.
 > -   **Panel 2 (Ratio of zeta diversity decline)**: More irregular fluctuations suggest a spatial effect: nearby sites might occasionally share more species by chance due to proximity. The spikes mean certain groups of neighboring sites have higher-than-average species overlap.
 > -   **Panel 3 & 4 (Exponential and Power law regressions)**: Both remain linear, clearly indicating the zeta diversity declines consistently following a predictable spatial pattern. However, the exact pattern remains similar to previous cases, highlighting that despite spatial constraints, common species become rare quickly as more sites are considered.\
 >     *This result demonstrates clear spatial structuring of biodiversity---species are locally clustered, not randomly distributed across the landscape. Spatial proximity influences which species co-occur more frequently. In practice use `Zeta.decline.mc` for real‐world biodiversity data—both because it scales and because the Monte Carlo envelope is invaluable when ζₖ gets noisier at higher orders.*
+
+------------------------------------------------------------------------
 
 ### 12. Calculate Zeta decay for orders 2:8
 
@@ -567,14 +639,7 @@ Computes the distance decay of zeta diversity for a range of orders (number of a
 *Generate statistics and figures, no maps*
 
 ```{r zeta-decays}
-# zeta_decay = Zeta.ddecays(
-#   xy      = xy[,c("centroid_lon","centroid_lat")],
-#   data    = sbs[,-(1:5)],
-#   sam     = 1000,
-#   orders  = 2:15,
-#   plot    = TRUE
-# )
-
+# Calculate Zeta.ddecays
 zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
                           site_spp_pa[,-(1:6)],
                           sam = 1000,
@@ -582,7 +647,6 @@ zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
                           plot = TRUE,
                           confint.level = 0.95
 )
-# zeta_decays
 ```
 
 > This plot shows how zeta diversity (a metric that captures shared species composition among multiple sites) changes with spatial distance across different orders of zeta (i.e., the number of sites considered at once).
@@ -602,6 +666,8 @@ zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
 > In other words, rare or localized species contribute to strong distance decay, but widespread species dominate at higher spatial scales, leading to more uniformity.
 > *Species that occur in just two or three sites show a clear “farther apart → fewer shared species” pattern. But when you ask about the handful of really widespread species (those present in four, five, or more sites), their shared‐species counts no longer decline with distance—they form a spatially uniform core.*
 
+------------------------------------------------------------------------
+
 ### 13. Run a Multi-Site Generalised Dissimilarity Model for order 2
 
 #### Multi-site generalised dissimilarity modelling for a set of environmental variables and distances using `zetadiv::Zeta.msgdm`
@@ -611,16 +677,6 @@ The different regression models available are generalised linear models, general
 *Generate statistics and figures, no maps and save fitted order 2 model 'zeta2'*
 
 ```{r zeta-msgdm}
-# zeta2 = Zeta.msgdm(
-#   sbs[,-(1:5)],
-#   sbe[,6:ncol(sbe)],
-#   xy[,c("centroid_lon","centroid_lat")],
-#   sam        = 1000,
-#   order      = c(2,3,5,10),
-#   distance.type = "Euclidean",
-#   normalize  = "Jaccard",
-#   r
-
 # Compute a regression model of zeta diversity order 2
 zeta2 = Zeta.msgdm(site_spp_pa[,-(1:6)],
                    env_vars_reduced[,-8],
@@ -631,7 +687,6 @@ zeta2 = Zeta.msgdm(site_spp_pa[,-(1:6)],
                    distance.type = "Euclidean",# "ortho",
                    normalize = "Jaccard",
                    reg.type = "ispline")
-# zeta2
 
 # Compute splines coordinates from I-spline-based MSGDM
 zeta2.ispline = Return.ispline(zeta2,
@@ -645,11 +700,8 @@ Plot.ispline(isplines = zeta2.ispline, distance = TRUE)
 > This figure shows the fitted I-splines from a multi-site generalized dissimilarity model (via `Zeta.msgdm`), which represent the partial, monotonic relationship between each predictor and community turnover (ζ-diversity) over its 0–1 “rescaled” range.  A few key take-aways:
 
 > 1. **Distance (blue asterisks)** has by far the largest I-spline amplitude—rising from \~0 at zero distance to \~0.05 at the maximum.  That tells us spatial separation is the strongest driver of multi‐site turnover, and even small increases in distance yield a substantial drop in shared species.
-
 > 2. **Sampling intensity (`obs_sum`, open circles)** comes next, with a gentle but steady rise to \~0.045.  This indicates that sites with more observations tend to share more species (or, conversely, that incomplete sampling can depress apparent turnover).
-
 > 3. **Precipitation variables**: **Rain in the warm quarter (`rain_warmQ`, squares)** and **Rain in the dry quarter (`rain_dry`, triangles-down)** both show moderate effects (I-spline heights \~0.02–0.03).  This means differences in seasonal rainfall regimes contribute noticeably to changes in community composition.
-
 > 4. **Temperature metrics**: **Mean temperature** *(`temp_mean`, triangles-up)*, **Wet‐quarter temperature** *(`temp_wetQ`, X’s)*, **Dry‐quarter temperature** *(`temp_dryQ`, diamonds)*, and the **isothermality index** *(`iso`, plus signs)* all have very low, almost flat I-splines (max heights ≲0.01).  In other words, these thermal variables explain very little additional turnover once you’ve accounted for distance and rainfall.
 
 > **Ecological interpretation:** Spatial distance is the dominant structuring factor in these data—sites further apart share markedly fewer species.  After accounting for that, differences in observation effort and, to a lesser degree, seasonal rainfall still shape multisite community similarity.  Temperature and seasonality metrics, by contrast, appear to have only a minor independent influence on zeta‐diversity in this landscape.
@@ -669,20 +721,15 @@ summary(zeta2$model)
 
 ------------------------------------------------------------------------
 
-### 14. Predict current Zeta Diversity (zeta2) with `obs_sum` and current environmental variables
+### 14. Predict current Zeta Diversity (zeta2) using `predict_dissim`
 
--   In the 'sbe' add 'sam.max', a constant for all sites = max(sam.eff)\
--   Predict for the updated sbe and xy\
--   Produce a site by site matrix of predicted zeta 'zeta.now' :::
+-   *In the 'sbe' add 'sam.max', a constant for all sites = max(sam.eff)*
+-   *Predict for the updated sbe and xy*
+-   *Produce a site by site matrix of predicted zeta 'zeta.now'*
 
 ```{r predict-zeta2}
-# sbe_now = sbe %>% mutate(sam_max = max(obs_sum))
-# zeta_now = Predict.zeta(zeta2, sbe_now, xy[,3:4])
-
-# env_vars_reduced$obs_max = max(env_vars_reduced$obs_sum)
-head(mean_rich_o1234)
-head(mean_turn_o2345)
-
+# Predict current zeta diversity using `predict_dissim` with sampling effort, geographic distance and environmental variables
+# Only non-colinear environmental variables used in `zeta2` model
 predictors_df = predict_dissim(
   block_sp   = grid_spp[,-c(4:6)],
   sbe        = sbe[,-c(1:3)],# env_vars_reduced[,-8]
@@ -695,28 +742,24 @@ predictors_df = predict_dissim(
   rsa        = rsa
 )
 
-head(predictors_df)
+# Check results
+dim(predictors_df)
+head(predictors_df[,1:7])
 ```
 
--   Run nmds for the predicted zeta matrix\
--   Plot RGB of the 3 component scores :::
+-   *Run nmds for the predicted zeta matrix*
+-   *Plot RGB of the 3 component scores*
 
 ------------------------------------------------------------------------
 
-### 15. Run clustering analyses to map bioregion clusters of current zeta2
+### 15. Run clustering analyses using `map_bioreg`
 
--   Generate maps of dissimilarity (the rgb plot)\
--   Generate map of bioregions (from clustering) :::
+-   *Map bioregion clusters of current zeta2*
+-   *Generate maps of dissimilarity (the rgb plot)*
+-   *Generate map of bioregions (from clustering)*
 
 ```{r zeta-cluster}
-# e.g. perform clustering on zeta_now & plot bioregions
-# Run `map_bioreg` function
-# ‘data’: Input data containing coordinates (x, y) and environmental variables.
-# ‘scale_cols’: Columns to be scaled and used for clustering.
-# ‘clus_method’: Clustering method to apply ("kmeans", "pam", "hclust", "gmm", or "all" for all methods).
-# ‘plot’: Logical flag; if TRUE, plots spatial maps of clustering results.
-# ‘interp’: Specifies interpolation method ("NN", "Tps", "both") for filling spatial gaps using nearest neighbour (NN) or thin-plate splines (TPS).
-head(predictors_df)
+# Run `map_bioreg` function to generate and plot clusters
 bioreg_result = map_bioreg(
   data = predictors_df,
   scale_cols = c("pred_zeta", "centroid_lon", "centroid_lat"),
@@ -730,15 +773,16 @@ bioreg_result = map_bioreg(
 
 ------------------------------------------------------------------------
 
-### 16. Predict future Zeta Diversity and map bioregion change
+### 16. Predict future Zeta Diversity and map bioregion change using `map_bioregDiff`
 
--   with appended (future scenarios) environmental variables and 'sam.max' in sbe\
--   For m number of scenarios plus the present scenario (step 14) and n sites of xy\
--   Updated sbe.future will have k = (m+1) x n number of rows\
--   'xy' also updated with k rows\
--   Predict a k by k matrix of predicted zeta 'zeta.future' :::
+-   *with appended (future scenarios) environmental variables and 'sam.max' in sbe*
+-   *For m number of scenarios plus the present scenario (step 14) and n sites of xy*
+-   *Updated sbe.future will have k = (m+1) x n number of rows*
+-   *'xy' also updated with k rows*
+-   *Predict a k by k matrix of predicted zeta 'zeta.future'*
 
 ```{r predict-future}
+# NOT RUN YET
 # future_df = predict_dissim(
 #   block_sp   = grid_spp[,-c(4:6)],
 #   sbe        = sbe[,-c(1:3)],
@@ -750,43 +794,38 @@ bioreg_result = map_bioreg(
 #   y_col      = "centroid_lat",
 #   rsa        = rsa
 # )
-# 
-# head(future_df)
+
+# Check results
+# dim(future_df)
+# head(future_df[,1:7])
 
 # Run `map_bioregDiff`
-# Assuming 'bioreg_result$clusters' is a SpatRaster
-# ‘raster_input’: A SpatRaster object with multiple layers to compare.
-# approach: Specifies which metric to compute:
+# 'approach', specifies which metric to compute:
 # >> "difference_count": Counts cells with differing values across layers
 # >> "shannon_entropy": Calculates Shannon entropy, measuring diversity within layers
 # >> "stability": Identifies stable regions where values remain unchanged.
 # >> "transition_frequency": Quantifies the frequency of changes between layers
 # >> "weighted_change_index": Weighted score to changes based on a dissimilarity matrix
 # >> "all" (default): Returns all metrics as a combined SpatRaster
-result_bioregDiff = map_bioregDiff(bioreg_result$clusters, approach = "all")
+
+result_bioregDiff = map_bioregDiff(bioreg_result$clusters, 
+                                   approach = "all")
+
+# See results
 result_bioregDiff
 
-# Mask the raster grid using the boundary of South Africa
-# Convert to a terra vector
-rsa_vect = vect(rsa)
-# Create an empty raster over RSA at your desired resolution
-# Here we use the extent of rsa_vect and a 0.05-degree cell size:
-grid = rast(rsa_vect, resolution = 0.2489884, crs = crs(rsa_vect))
-values(grid) = 1   # fill with dummy values
-
-# Mask that grid to the RSA boundary
-grid_masked = mask(grid, rsa_vect)
+# Mask `result_bioregDiff` to the RSA boundary
 mask_bioregDiff = mask(resample(result_bioregDiff, grid_masked, method = "near"), grid_masked)
 
 # Plot all change results
 plot(mask_bioregDiff, col = viridis(100, direction = -1))
 ```
 
--   Nmds of zeta.future\
--   clustering of zeta.future\
--   Map sub matrices to indicate predicted future dissimilarity\
--   Map predicted future bioregions\
--   Map temporal turnover.\
+-   *Nmds of zeta.future*
+-   *Clustering of zeta.future*
+-   *Map sub matrices to indicate predicted future dissimilarity*
+-   *Map predicted future bioregions*
+-   *Map temporal turnover*
     *Note: step 14 is redundant if step 16 is needed*\
     *Note: step 16 has the same code but more results including those from step 6 but potentially computational demanding*
 
