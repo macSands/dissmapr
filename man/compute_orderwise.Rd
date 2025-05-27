@@ -61,7 +61,7 @@ parallel processing for efficiency.
 }
 \examples{
 # Example usage with a custom metric function
-metric_func <- function(vec1, vec2 = NULL) {
+metric_func = function(vec1, vec2 = NULL) {
   if (is.null(vec2)) {
     return(sum(vec1))  # Example: species richness
   } else {
@@ -69,7 +69,7 @@ metric_func <- function(vec1, vec2 = NULL) {
   }
 }
 
-data <- data.frame(
+data = data.frame(
   site = rep(letters[1:3], each = 3),
   sp1 = c(1, 0, 2, 1, 2, 0, 0, 1, 1),
   sp2 = c(0, 1, 1, 2, 0, 0, 1, 0, 2)
@@ -77,7 +77,7 @@ data <- data.frame(
 
 # SPECIES RICHNESS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-richness <- function(vec_from, vec_to = NULL) {
+richness = function(vec_from, vec_to = NULL) {
  if (is.null(vec_to)) {
    # Handle single-site calculations (order = 1)
    return(sum(vec_from != 0, na.rm = TRUE))
@@ -102,5 +102,5 @@ rich_o12 = compute_orderwise(
  n_workers = 4
 )
 head(rich_o12)
-compute_orderwise(df = data, func = metric_func, site_col = "site", sp_cols = c("sp1", "sp2"), order = 2)
+
 }

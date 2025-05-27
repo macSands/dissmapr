@@ -19,7 +19,8 @@
 #'
 #' @import NbClust
 #' @import clValid
-#' @importFrom cluster pam
+#' @import cluster
+#' @import purrr
 #' @importFrom factoextra hcut
 #' @importFrom stats kmeans dist
 #' @import terra

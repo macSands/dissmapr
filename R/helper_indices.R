@@ -9,7 +9,7 @@
 #' @keywords internal
 #' @importFrom data.table as.data.table rbindlist
 #' @importFrom geosphere distHaversine
-#' @importFrom vegan vegdist
+#' @import vegan
 #' @importFrom cluster daisy
 #' @importFrom reshape2 melt
 #' @importFrom entropy mi.plugin

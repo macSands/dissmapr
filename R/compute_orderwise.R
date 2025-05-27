@@ -28,11 +28,9 @@
 #'   - `order`: The computation order.
 #'   - `value`: The computed metric value.
 #'
-#' @export
-#'
 #' @examples
 #' # Example usage with a custom metric function
-#' metric_func <- function(vec1, vec2 = NULL) {
+#' metric_func = function(vec1, vec2 = NULL) {
 #'   if (is.null(vec2)) {
 #'     return(sum(vec1))  # Example: species richness
 #'   } else {
@@ -40,7 +38,7 @@
 #'   }
 #' }
 #'
-#' data <- data.frame(
+#' data = data.frame(
 #'   site = rep(letters[1:3], each = 3),
 #'   sp1 = c(1, 0, 2, 1, 2, 0, 0, 1, 1),
 #'   sp2 = c(0, 1, 1, 2, 0, 0, 1, 0, 2)
@@ -48,7 +46,7 @@
 #'
 #'# SPECIES RICHNESS
 #'# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#'richness <- function(vec_from, vec_to = NULL) {
+#'richness = function(vec_from, vec_to = NULL) {
 #'  if (is.null(vec_to)) {
 #'    # Handle single-site calculations (order = 1)
 #'    return(sum(vec_from != 0, na.rm = TRUE))
@@ -73,9 +71,9 @@
 #'  n_workers = 4
 #')
 #'head(rich_o12)
-
-#' compute_orderwise(df = data, func = metric_func, site_col = "site", sp_cols = c("sp1", "sp2"), order = 2)
-compute_orderwise <- function(df,# Optimized Compute_Orderwise Function
+#'
+#' @export
+compute_orderwise = function(df,# Optimized Compute_Orderwise Function
                               func,
                               site_col,
                               sp_cols = NULL,
@@ -86,7 +84,7 @@ compute_orderwise <- function(df,# Optimized Compute_Orderwise Function
                               n_workers = parallel::detectCores() - 1) {
 
   # Load required packages
-  required_packages <- c("pbapply", "data.table", "future.apply")
+  required_packages = c("pbapply", "data.table", "future.apply")
   lapply(required_packages, function(pkg) {
     if (!requireNamespace(pkg, quietly = TRUE)) stop("Package '", pkg, "' is required but not installed.")
   })
@@ -101,149 +99,149 @@ compute_orderwise <- function(df,# Optimized Compute_Orderwise Function
   })
 
   # Convert to data.table for efficiency
-  dt <- data.table::as.data.table(df)
+  dt = data.table::as.data.table(df)
 
   # Ensure `site_col` is character
-  dt[[site_col]] <- as.character(dt[[site_col]])
+  dt[[site_col]] = as.character(dt[[site_col]])
 
   # Get all unique site IDs
-  site_ids <- unique(dt[[site_col]])
+  site_ids = unique(dt[[site_col]])
 
   # Precompute site vectors if sp_cols are provided
   if (!is.null(sp_cols)) {
-    site_vectors <- lapply(site_ids, function(site) {
+    site_vectors = lapply(site_ids, function(site) {
       as.numeric(unlist(dt[dt[[site_col]] == site, ..sp_cols, with = FALSE]))
     })
-    names(site_vectors) <- site_ids
+    names(site_vectors) = site_ids
   } else {
-    site_vectors <- NULL
+    site_vectors = NULL
   }
 
   # Initialize a list to store results
-  results_list <- list()
+  results_list = list()
 
   # Start timing
-  start_time <- Sys.time()
+  start_time = Sys.time()
 
   # Define Compute Value Function
-  compute_value <- function(site_from, site_to, ord) {
+  compute_value = function(site_from, site_to, ord) {
     if (is.null(sp_cols)) {
       # If sp_cols is NULL, func should handle df, site_col, site_from, site_to directly
       return(func(df, site_col, site_from, site_to))
     }
 
-    vec_from <- site_vectors[[site_from]]
+    vec_from = site_vectors[[site_from]]
 
     if (ord == 1) {
       # Single-site calculation
       return(func(vec_from))
     } else if (ord == 2) {
       # Pairwise comparison
-      vec_to <- site_vectors[[site_to]]
+      vec_to = site_vectors[[site_to]]
       return(func(vec_from, vec_to))
     } else {
       # Higher-order comparison
-      sites <- unlist(strsplit(as.character(site_to), ","))
-      vec_list <- lapply(sites, function(s) site_vectors[[s]])
-      vec_to <- Reduce("+", vec_list)
+      sites = unlist(strsplit(as.character(site_to), ","))
+      vec_list = lapply(sites, function(s) site_vectors[[s]])
+      vec_to = Reduce("+", vec_list)
       return(func(vec_from, vec_to))
     }
   }
 
   # Iterate over each order value
   if (length(order) > 1) {
-    ord_sequence <- order
+    ord_sequence = order
   } else {
-    ord_sequence <- order
+    ord_sequence = order
   }
 
   for (ord in ord_sequence) {
     if (ord == 1) {
       # Single-site calculations
-      comb_indices <- data.table::data.table(site_from = site_ids, site_to = NA, order = ord)
+      comb_indices = data.table::data.table(site_from = site_ids, site_to = NA, order = ord)
 
       # Define a wrapper function for progress bar
-      compute_order1 <- function(i) {
-        site_from <- comb_indices$site_from[i]
-        value <- compute_value(site_from, NA, ord)
+      compute_order1 = function(i) {
+        site_from = comb_indices$site_from[i]
+        value = compute_value(site_from, NA, ord)
         return(value)
       }
 
       # Parallel Processing Setup
       if (parallel && n_workers > 0) {
         plan(future::multisession, workers = n_workers)
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order1)
+        values = pbapply::pblapply(1:nrow(comb_indices), compute_order1)
         plan(future::sequential)  # Reset to sequential
       } else {
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order1)
+        values = pbapply::pblapply(1:nrow(comb_indices), compute_order1)
       }
 
       # Assign values
       comb_indices[, value := unlist(values)]
 
       # Append to results
-      results_list[[as.character(ord)]] <- comb_indices
+      results_list[[as.character(ord)]] = comb_indices
 
     } else if (ord == 2) {
       # Pairwise comparisons
-      comb_data <- expand.grid(site_from = site_ids, site_to = site_ids, stringsAsFactors = FALSE)
+      comb_data = expand.grid(site_from = site_ids, site_to = site_ids, stringsAsFactors = FALSE)
       # Exclude self-pairs
-      comb_data <- comb_data[comb_data$site_from != comb_data$site_to, ]
-      comb_indices <- data.table::as.data.table(comb_data)
+      comb_data = comb_data[comb_data$site_from != comb_data$site_to, ]
+      comb_indices = data.table::as.data.table(comb_data)
       comb_indices[, order := ord]
 
       # Define a wrapper function for progress bar
-      compute_order2 <- function(i) {
-        site_from <- comb_indices$site_from[i]
-        site_to <- comb_indices$site_to[i]
-        value <- compute_value(site_from, site_to, ord)
+      compute_order2 = function(i) {
+        site_from = comb_indices$site_from[i]
+        site_to = comb_indices$site_to[i]
+        value = compute_value(site_from, site_to, ord)
         return(value)
       }
 
       # Parallel Processing Setup
       if (parallel && n_workers > 0) {
         plan(future::multisession, workers = n_workers)
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order2)
+        values = pbapply::pblapply(1:nrow(comb_indices), compute_order2)
         plan(future::sequential)  # Reset to sequential
       } else {
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_order2)
+        values = pbapply::pblapply(1:nrow(comb_indices), compute_order2)
       }
 
       # Assign values
       comb_indices[, value := unlist(values)]
 
       # Append to results
-      results_list[[as.character(ord)]] <- comb_indices
+      results_list[[as.character(ord)]] = comb_indices
 
     } else if (ord >= 3) {
       # Higher-order comparisons
-      comb_list <- list()
+      comb_list = list()
 
       for (site in site_ids) {
-        remaining_sites <- setdiff(site_ids, site)
-        total_possible_combinations <- choose(length(remaining_sites), ord - 1)
-        max_samples <- ifelse(is.null(sample_no), total_possible_combinations, sample_no)
-        max_samples <- min(max_samples, total_possible_combinations)
+        remaining_sites = setdiff(site_ids, site)
+        total_possible_combinations = choose(length(remaining_sites), ord - 1)
+        max_samples = ifelse(is.null(sample_no), total_possible_combinations, sample_no)
+        max_samples = min(max_samples, total_possible_combinations)
 
         if (total_possible_combinations <= max_samples) {
           # Generate all combinations
-          combinations <- combn(remaining_sites, ord - 1, simplify = FALSE)
+          combinations = combn(remaining_sites, ord - 1, simplify = FALSE)
         } else {
           # Sample combinations directly
           set.seed(123)  # For reproducibility (optional)
-          combinations <- replicate(max_samples, sort(sample(remaining_sites, ord - 1)), simplify = FALSE)
+          combinations = replicate(max_samples, sort(sample(remaining_sites, ord - 1)), simplify = FALSE)
           # Remove duplicates
-          combinations <- unique(combinations)
+          combinations = unique(combinations)
           # If duplicates were removed and we have fewer than max_samples, resample
           while (length(combinations) < max_samples) {
-            additional_combos <- replicate(max_samples - length(combinations), sort(sample(remaining_sites, ord - 1)), simplify = FALSE)
-            combinations <- unique(c(combinations, additional_combos))
+            additional_combos = replicate(max_samples - length(combinations), sort(sample(remaining_sites, ord - 1)), simplify = FALSE)
+            combinations = unique(c(combinations, additional_combos))
           }
         }
 
         if (length(combinations) > 0) {
-          comb_to <- sapply(combinations, function(x) paste(x, collapse = ","))
-          comb_list[[site]] <- data.table::data.table(
+          comb_to = sapply(combinations, function(x) paste(x, collapse = ","))
+          comb_list[[site]] = data.table::data.table(
             site_from = site,
             site_to = comb_to,
             order = ord
@@ -251,51 +249,51 @@ compute_orderwise <- function(df,# Optimized Compute_Orderwise Function
         }
       }
 
-      comb_indices <- data.table::rbindlist(comb_list, use.names = TRUE)
+      comb_indices = data.table::rbindlist(comb_list, use.names = TRUE)
 
       # Define a wrapper function for progress bar
-      compute_higher_order <- function(i) {
-        site_from <- comb_indices$site_from[i]
-        site_to <- comb_indices$site_to[i]
-        value <- compute_value(site_from, site_to, ord)
+      compute_higher_order = function(i) {
+        site_from = comb_indices$site_from[i]
+        site_to = comb_indices$site_to[i]
+        value = compute_value(site_from, site_to, ord)
         return(value)
       }
 
       # Parallel Processing Setup
       if (parallel && n_workers > 0) {
         plan(future::multisession, workers = n_workers)
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_higher_order)
+        values = pbapply::pblapply(1:nrow(comb_indices), compute_higher_order)
         plan(future::sequential)  # Reset to sequential
       } else {
-        values <- pbapply::pblapply(1:nrow(comb_indices), compute_higher_order)
+        values = pbapply::pblapply(1:nrow(comb_indices), compute_higher_order)
       }
 
       # Assign values
       comb_indices[, value := unlist(values)]
 
       # Append to results
-      results_list[[as.character(ord)]] <- comb_indices
+      results_list[[as.character(ord)]] = comb_indices
     } else {
       warning(paste("Order", ord, "is not supported. Skipping."))
       next
     }
 
     # Print elapsed time for this order
-    end_time_ord <- Sys.time()
-    elapsed_time_ord <- difftime(end_time_ord, start_time, units = "secs")
-    elapsed_minutes_ord <- floor(as.numeric(elapsed_time_ord) / 60)
-    elapsed_seconds_ord <- as.numeric(elapsed_time_ord) %% 60
+    end_time_ord = Sys.time()
+    elapsed_time_ord = difftime(end_time_ord, start_time, units = "secs")
+    elapsed_minutes_ord = floor(as.numeric(elapsed_time_ord) / 60)
+    elapsed_seconds_ord = as.numeric(elapsed_time_ord) %% 60
     cat(sprintf("Time elapsed for order %d: %d minutes and %.2f seconds\n", ord, elapsed_minutes_ord, elapsed_seconds_ord))
   }
 
   # Combine all results into a single data.table
-  final_results <- data.table::rbindlist(results_list, use.names = TRUE, fill = TRUE)
+  final_results = data.table::rbindlist(results_list, use.names = TRUE, fill = TRUE)
 
   # End timing
-  end_time <- Sys.time()
-  total_elapsed <- difftime(end_time, start_time, units = "secs")
-  total_minutes <- floor(as.numeric(total_elapsed) / 60)
-  total_seconds <- as.numeric(total_elapsed) %% 60
+  end_time = Sys.time()
+  total_elapsed = difftime(end_time, start_time, units = "secs")
+  total_minutes = floor(as.numeric(total_elapsed) / 60)
+  total_seconds = as.numeric(total_elapsed) %% 60
   cat(sprintf("Total computation time: %d minutes and %.2f seconds\n", total_minutes, total_seconds))
 
   return(final_results)

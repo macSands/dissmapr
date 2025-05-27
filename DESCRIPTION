@@ -8,37 +8,40 @@ Description: Tools to compute and map biodiversity turnover at the macroscale.
 License: MIT + file LICENSE
 URL: https://github.com/macSands/dissmapr, https://macsands.github.io/dissmapr/
 BugReports: https://github.com/macSands/dissmapr/issues
-Suggests: 
-    knitr,
-    rmarkdown,
-    testthat (>= 3.0.0),
-    pkgdown,
-    remotes,
-    devtools,
-Imports: 
-    data.table,
-    dplyr,
-    httr,
-    tidyr,
-    geodata,
-    sf,
-    terra,
-    zoo,
-    zetadiv,
-    ggplot2,
-    viridis,
-    geosphere,
-    reshape2,
-    entropy,
-    caret,
-    corrplot,
-    pbapply,
-    NbClust,
-    factoextra,
-    fields,
-    mclust,
-    patchwork,
-    clValid
+Suggests:
+  devtools,
+  knitr,
+  pkgdown,
+  remotes,
+  rmarkdown,
+  testthat (>= 3.0.0)
+Imports:
+  caret,
+  clValid,
+  cluster,
+  corrplot,
+  data.table,
+  dplyr,
+  entropy,
+  factoextra,
+  fields,
+  geodata,
+  geosphere,
+  ggplot2,
+  httr,
+  mclust,
+  NbClust,
+  patchwork,
+  pbapply,
+  purrr,
+  reshape2,
+  sf,
+  terra,
+  tidyr,
+  vegan,
+  viridis,
+  zetadiv,
+  zoo
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

@@ -40,7 +40,7 @@
 #' }
 #'
 #' @import terra
-#' @importFrom purrr reduce
+#' @import purrr
 #' @export
 map_bioregDiff <- function(raster_input, approach = "all") {
   library(terra)

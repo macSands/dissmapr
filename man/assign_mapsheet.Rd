@@ -13,29 +13,45 @@ assign_mapsheet(
 )
 }
 \arguments{
-\item{data}{A data frame containing at least the coordinate columns.}
+\item{data}{A data.frame containing at least the coordinate columns.}
 
-\item{x_col}{Character. Column name for x-coordinates (default: "x").}
+\item{x_col}{Character. Name of the longitude (x) column. Default \code{"x"}.}
 
-\item{y_col}{Character. Column name for y-coordinates (default: "y").}
+\item{y_col}{Character. Name of the latitude (y) column. Default \code{"y"}.}
 
-\item{cell_size}{Numeric. Size of the grid cell. For example, 1 for 1° cells, 15 for 15' cells.}
+\item{cell_size}{Numeric. Cell size: e.g. 1 for 1° cells, 15 for 15′ cells.}
 
-\item{unit}{Character. One of "deg", "min", "sec", or "m". For geographic data use "deg" (default).}
+\item{unit}{Character. Unit of \code{cell_size}; one of:
+\itemize{
+\item \code{"deg"} for decimal degrees (default)
+\item \code{"min"} for arc-minutes
+\item \code{"sec"} for arc-seconds
+\item \code{"m"}   for metres (projected coords).
+}}
 }
 \value{
-The original data frame with three additional columns:
-\item{mapsheet}{The mapsheet code in the format "\link{E|W}DDD\link{N|S}DDBB".}
-\item{center_lon}{The longitude of the center of the corresponding mapsheet.}
-\item{center_lat}{The latitude of the center of the corresponding mapsheet.}
+The input \code{data} with three new columns:
+\itemize{
+\item \code{mapsheet}: the 7-character sheet code
+\item \code{center_lon}: centre longitude of that sheet
+\item \code{center_lat}: centre latitude of that sheet
+}
 }
 \description{
-This function takes an existing data frame with coordinate columns and appends
-the nearest mapsheet code as well as the center coordinates of the corresponding mapsheet.
-The mapsheet code is generated from the grid cell in which the point falls.
+This function takes an existing data frame with coordinate columns and
+appends:
+\enumerate{
+\item the nearest mapsheet code (format "\link{E|W}DDD\link{N|S}DDBB"), and
+\item the center longitude/latitude of that mapsheet.
+}
+}
+\details{
+It divides the world into regular grid cells (in degrees, minutes, seconds,
+or metres), finds which cell each point falls into, and then formats the
+sheet code based on the cell centre.
 }
 \examples{
-bird_obs <- data.frame(
+bird_obs = data.frame(
   site_id = 1:6,
   x = c(22.71862, 20.40034, 18.51368, 18.38477, 23.56160, 18.87285),
   y = c(-33.98912, -34.45408, -34.08271, -34.25946, -33.97620, -34.06225),
@@ -49,6 +65,7 @@ bird_obs <- data.frame(
 )
 
 # For 1° mapsheet cells:
-bird_obs2 <- add_nearest_mapsheet(bird_obs, cell_size = 1, unit = "deg")
+bird_obs2 = add_nearest_mapsheet(bird_obs, cell_size = 1, unit = "deg")
 head(bird_obs2)
+
 }
