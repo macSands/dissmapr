@@ -14,6 +14,7 @@ Suggests:
     pkgdown,
     remotes,
     rmarkdown,
+    geodata,
     testthat (>= 3.0.0)
 Imports:
     caret,
@@ -26,7 +27,6 @@ Imports:
     factoextra,
     fields,
     future,
-    geodata,
     geosphere,
     ggplot2,
     httr,

@@ -54,11 +54,9 @@ get_enviro_data <- function(data,
                             ext_cols = NULL
 ) {
   required_packages <- c("terra", "sf", "dplyr", "geodata", "zoo")
-  lapply(required_packages, function(pkg) {
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      stop("Package '", pkg, "' is required but not installed.")
-    }
-  })
+  lapply(required_packages, function(pkg)
+    if (!requireNamespace(pkg, quietly = TRUE))
+      stop("Package '", pkg, "' is required but not installed."))
 
   if (!dir.exists(path)) {
     dir.create(path, recursive = TRUE)
