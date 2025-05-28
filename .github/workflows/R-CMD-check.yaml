@@ -43,8 +43,8 @@ jobs:
           which gs   && gs   --version
           which qpdf && qpdf --version
 
-      # 4 ── Pandoc (needed for vignettes) ----------------------------------
-      - uses: r-lib/actions/setup-pandoc@v2
+# 4 ── Pandoc (needed for vignettes) ----------------------------------
+- uses: r-lib/actions/setup-pandoc@v2
 
       # 5 ── Cache & restore renv ------------------------------------------
       - uses: r-lib/actions/setup-renv@v2
@@ -58,8 +58,8 @@ jobs:
             remotes
             testthat
 
-      # 7 ── Run R CMD check ------------------------------------------------
-      - uses: r-lib/actions/check-r-package@v2
+# 7 ── Run R CMD check ------------------------------------------------
+- uses: r-lib/actions/check-r-package@v2
         with:
-          build_args: '--no-manual --compact-vignettes=gs+qpdf'
+          build_args: 'c("--no-manual", "--compact-vignettes=gs+qpdf")'
           upload-snapshots: true
