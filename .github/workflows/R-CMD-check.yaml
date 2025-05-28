@@ -17,7 +17,7 @@ jobs:
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      R_KEEP_PKG_SOURCE: yes         # keep sources for reproducibility
+      R_KEEP_PKG_SOURCE: yes
 
     steps:
       # 1 ── Get the code ---------------------------------------------------
@@ -26,9 +26,9 @@ jobs:
       # 2 ── Install R -------------------------------------------------------
       - uses: r-lib/actions/setup-r@v2
         with:
-          use-public-rspm: true       # binary CRAN packages = faster
+          use-public-rspm: true
 
-      # 3 ── System + spatial + PDF tools -----------------------------------
+      # 3 ── Install system + spatial + PDF tools ---------------------------
       - name: Install system requirements
         run: |
           sudo apt-get update -y
@@ -39,15 +39,17 @@ jobs:
             libudunits2-dev \
             ghostscript \
             qpdf
+          # sanity-checks
+          which qpdf || { echo 'qpdf not found'; exit 1; }
+          which gs   || { echo 'gs not found';  exit 1; }
 
-          # ---- sanity-check -----------------------------------------------
-          which gs    || { echo 'gs not found'; exit 1; }
-          which qpdf  || { echo 'qpdf not found'; exit 1; }
+      # 4 ── Install Pandoc (needed for R-markdown vignettes) ---------------
+      - uses: r-lib/actions/setup-pandoc@v2   # puts 'pandoc' on $PATH
 
-      # 4 ── Restore and cache the renv library -----------------------------
-      - uses: r-lib/actions/setup-renv@v2      # installs renv + renv::restore()
+      # 5 ── Restore and cache the renv library -----------------------------
+      - uses: r-lib/actions/setup-renv@v2
 
-      # 5 ── Run R CMD check -------------------------------------------------
+      # 6 ── Run R CMD check -------------------------------------------------
       - uses: r-lib/actions/check-r-package@v2
         with:
           build_args: 'c("--no-manual", "--compact-vignettes=gs+qpdf")'
