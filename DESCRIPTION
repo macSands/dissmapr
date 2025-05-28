@@ -2,53 +2,53 @@ Type: Package
 Package: dissmapr
 Title: Workflow for Compositional Dissimilarity and Biodiversity Turnover Analysis
 Version: 0.1.0
-Authors@R:
-    person(given = "Sandra",
-           family = "MacFadyen",
-           email  = "macfadyen@sun.ac.za",
-           role   = c("aut", "cre"))
-Description: |
-    Functions to compute, visualise and map multi-site compositional
-    dissimilarity and biodiversity turnover at landscape to macroscale
-    extents.
+Authors@R: 
+  person("Sandra", "MacFadyen", email = "macfadyen@sun.ac.za", role = c("aut", "cre"))
+Description: Tools to compute and map biodiversity turnover at the macroscale.
 License: MIT + file LICENSE
-URL: https://github.com/macSands/dissmapr
+URL: https://github.com/macSands/dissmapr, https://macsands.github.io/dissmapr/
 BugReports: https://github.com/macSands/dissmapr/issues
-Encoding: UTF-8
-SystemRequirements: PROJ, GDAL, GEOS, udunits2, Ghostscript, qpdf, Pandoc
+Suggests:
+    devtools,
+    knitr,
+    pkgdown,
+    remotes,
+    rmarkdown,
+    testthat (>= 3.0.0)
 Imports:
+    caret,
+    cluster,
+    clValid,
+    corrplot,
     data.table,
     dplyr,
+    entropy,
+    factoextra,
+    fields,
+    future,
+    geodata,
     geosphere,
     ggplot2,
     httr,
+    mclust,
+    NbClust,
+    patchwork,
+    pbapply,
     purrr,
+    rcmdcheck,
+    rlang,
+    reshape2,
     sf,
     terra,
     tidyr,
     vegan,
     viridis,
-    zoo
-Suggests:
-    caret,
-    clValid,
-    corrplot,
-    devtools,
-    entropy,
-    factoextra,
-    fields,
-    future.apply,
-    mclust,
-    NbClust,
-    patchwork,
-    pbapply,
-    pkgdown,
-    remotes,
-    rcmdcheck,
-    testthat (>= 3.0.0),
+    zoo,
     zetadiv
-VignetteBuilder: knitr
+VignetteBuilder: 
+    knitr
 Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-LazyData: false

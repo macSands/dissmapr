@@ -50,7 +50,7 @@
 #' )
 #'
 #' # For 1° mapsheet cells:
-#' bird_obs2 = assign_mapsheet(bird_obs, cell_size = 1, unit = "deg")
+#' bird_obs2 = add_nearest_mapsheet(bird_obs, cell_size = 1, unit = "deg")
 #' head(bird_obs2)
 #'
 #' @export
