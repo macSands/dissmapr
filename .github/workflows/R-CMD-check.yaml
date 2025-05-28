@@ -1,6 +1,5 @@
 # .github/workflows/R-CMD-check.yaml
 # -------------------------------------------------------------------------
-
 name: R-CMD-check
 
 on:
@@ -26,9 +25,9 @@ jobs:
       # 2 ── Install R -------------------------------------------------------
       - uses: r-lib/actions/setup-r@v2
         with:
-          use-public-rspm: true
+          use-public-rspm: false          # ← turn the broken mirror off
 
-      # 3 ── Install system + spatial + PDF tools ---------------------------
+      # 3 ── System + spatial + PDF tools -----------------------------------
       - name: Install system requirements
         run: |
           sudo apt-get update -y
@@ -39,18 +38,22 @@ jobs:
             libudunits2-dev \
             ghostscript \
             qpdf
-          # sanity-checks
           which qpdf || { echo 'qpdf not found'; exit 1; }
           which gs   || { echo 'gs not found';  exit 1; }
 
-      # 4 ── Install Pandoc (needed for R-markdown vignettes) ---------------
-      - uses: r-lib/actions/setup-pandoc@v2   # puts 'pandoc' on $PATH
+      # 4 ── Pandoc (for vignettes) -----------------------------------------
+      - uses: r-lib/actions/setup-pandoc@v2
 
-      # 5 ── Restore and cache the renv library -----------------------------
+      # 5 ── Restore renv & install *all* deps ------------------------------
       - uses: r-lib/actions/setup-renv@v2
 
-      # 6 ── Run R CMD check -------------------------------------------------
+      # 6 ── Run R CMD check ------------------------------------------------
       - uses: r-lib/actions/check-r-package@v2
         with:
-          build_args: 'c("--no-manual", "--compact-vignettes=gs+qpdf")'
+          build_args: '--no-manual --compact-vignettes=gs+qpdf'
           upload-snapshots: true
+          extra-packages: |
+            testthat
+            devtools
+            pkgdown
+            remotes

@@ -35,6 +35,7 @@
 #'             st_join st_within
 #' @importFrom terra rast vect ext classify interpolate crds rasterize area
 #'             describe intersect union
+#' @import     geodata
 #' @importFrom geodata worldclim_global
 #' @importFrom purrr reduce
 #' @importFrom zoo na.approx time<-
