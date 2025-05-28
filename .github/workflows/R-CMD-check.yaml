@@ -1,4 +1,5 @@
 # .github/workflows/R-CMD-check.yaml
+# -------------------------------------------------------------------------
 
 name: R-CMD-check
 
@@ -16,22 +17,33 @@ jobs:
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      R_KEEP_PKG_SOURCE: yes       # keep sources for reproducibility
+      R_KEEP_PKG_SOURCE: yes
 
     steps:
       # 1 ── Get the code ---------------------------------------------------
       - uses: actions/checkout@v4
 
-      # 2 ── Install R and system libs -------------------------------------
+      # 2 ── Install R -------------------------------------------------------
       - uses: r-lib/actions/setup-r@v2
         with:
-          use-public-rspm: true      # binary packages → faster CI
+          use-public-rspm: true   # binary CRAN packages = faster
 
-      # 3 ── Restore the renv library (+ cache) ----------------------------
-      - uses: r-lib/actions/setup-renv@v2   # replaces the old `use_renv:` input
+      # 3 ── Spatial system libraries ---------------------------------------
+      #     terra / sf / stars / raster, etc. need PROJ, GDAL, GEOS, udunits2
+      - name: Install geospatial system requirements
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libproj-dev proj-data proj-bin \
+            libgdal-dev gdal-bin \
+            libgeos-dev \
+            libudunits2-dev
 
-      # 4 ── Run R CMD check -----------------------------------------------
+      # 4 ── Restore and cache the renv library -----------------------------
+      - uses: r-lib/actions/setup-renv@v2   # installs renv + renv::restore()
+
+      # 5 ── Run R CMD check -------------------------------------------------
       - uses: r-lib/actions/check-r-package@v2
         with:
           build_args: '--no-manual --compact-vignettes=gs+qpdf'
-          upload-snapshots: true      # upload {testthat} Snapshots
+          upload-snapshots: true
