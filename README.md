@@ -412,11 +412,11 @@ rich_o1234 = compute_orderwise(
   order = 1:4,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 1: 0 minutes and 9.79 seconds
-#> Time elapsed for order 2: 0 minutes and 20.39 seconds
-#> Time elapsed for order 3: 1 minutes and 6.63 seconds
-#> Time elapsed for order 4: 2 minutes and 21.53 seconds
-#> Total computation time: 2 minutes and 21.54 seconds
+#> Time elapsed for order 1: 0 minutes and 10.28 seconds
+#> Time elapsed for order 2: 0 minutes and 17.98 seconds
+#> Time elapsed for order 3: 0 minutes and 57.36 seconds
+#> Time elapsed for order 4: 2 minutes and 6.92 seconds
+#> Total computation time: 2 minutes and 6.93 seconds
 
 # Check results
 head(rich_o1234)
@@ -494,11 +494,11 @@ turn_o2345 = compute_orderwise(
   order = 2:5,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 21.49 seconds
-#> Time elapsed for order 3: 1 minutes and 44.58 seconds
-#> Time elapsed for order 4: 3 minutes and 38.12 seconds
-#> Time elapsed for order 5: 6 minutes and 3.91 seconds
-#> Total computation time: 6 minutes and 3.93 seconds
+#> Time elapsed for order 2: 0 minutes and 16.95 seconds
+#> Time elapsed for order 3: 1 minutes and 20.04 seconds
+#> Time elapsed for order 4: 2 minutes and 41.49 seconds
+#> Time elapsed for order 5: 4 minutes and 35.05 seconds
+#> Total computation time: 4 minutes and 35.07 seconds
 
 # Check results
 head(turn_o2345)
@@ -1245,7 +1245,7 @@ bioreg_result = map_bioreg(
   y_col ='centroid_lat'
 )
 #> fitting ...
-#>   |                                                                                                   |                                                                                           |   0%  |                                                                                                   |======                                                                                     |   7%  |                                                                                                   |============                                                                               |  13%  |                                                                                                   |==================                                                                         |  20%  |                                                                                                   |========================                                                                   |  27%  |                                                                                                   |==============================                                                             |  33%  |                                                                                                   |====================================                                                       |  40%  |                                                                                                   |==========================================                                                 |  47%  |                                                                                                   |=================================================                                          |  53%  |                                                                                                   |=======================================================                                    |  60%  |                                                                                                   |=============================================================                              |  67%  |                                                                                                   |===================================================================                        |  73%  |                                                                                                   |=========================================================================                  |  80%  |                                                                                                   |===============================================================================            |  87%  |                                                                                                   |=====================================================================================      |  93%  |                                                                                                   |===========================================================================================| 100%
+#>   |                                                                                                  |                                                                                          |   0%  |                                                                                                  |======                                                                                    |   7%  |                                                                                                  |============                                                                              |  13%  |                                                                                                  |==================                                                                        |  20%  |                                                                                                  |========================                                                                  |  27%  |                                                                                                  |==============================                                                            |  33%  |                                                                                                  |====================================                                                      |  40%  |                                                                                                  |==========================================                                                |  47%  |                                                                                                  |================================================                                          |  53%  |                                                                                                  |======================================================                                    |  60%  |                                                                                                  |============================================================                              |  67%  |                                                                                                  |==================================================================                        |  73%  |                                                                                                  |========================================================================                  |  80%  |                                                                                                  |==============================================================================            |  87%  |                                                                                                  |====================================================================================      |  93%  |                                                                                                  |==========================================================================================| 100%
 ```
 
 <img src="man/figures/README-zeta-cluster-1.png" width="100%" />
