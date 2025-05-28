@@ -3,7 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   getting-started: getting-started.html
-last_built: 2025-05-28T12:29Z
+last_built: 2025-05-28T12:55Z
 urls:
   reference: https://macsands.github.io/dissmapr/reference
   article: https://macsands.github.io/dissmapr/articles
