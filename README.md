@@ -412,11 +412,11 @@ rich_o1234 = compute_orderwise(
   order = 1:4,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 1: 0 minutes and 10.28 seconds
-#> Time elapsed for order 2: 0 minutes and 17.98 seconds
-#> Time elapsed for order 3: 0 minutes and 57.36 seconds
-#> Time elapsed for order 4: 2 minutes and 6.92 seconds
-#> Total computation time: 2 minutes and 6.93 seconds
+#> Time elapsed for order 1: 0 minutes and 4.51 seconds
+#> Time elapsed for order 2: 0 minutes and 13.64 seconds
+#> Time elapsed for order 3: 0 minutes and 51.50 seconds
+#> Time elapsed for order 4: 1 minutes and 59.10 seconds
+#> Total computation time: 1 minutes and 59.11 seconds
 
 # Check results
 head(rich_o1234)
@@ -494,11 +494,11 @@ turn_o2345 = compute_orderwise(
   order = 2:5,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 16.95 seconds
-#> Time elapsed for order 3: 1 minutes and 20.04 seconds
-#> Time elapsed for order 4: 2 minutes and 41.49 seconds
-#> Time elapsed for order 5: 4 minutes and 35.05 seconds
-#> Total computation time: 4 minutes and 35.07 seconds
+#> Time elapsed for order 2: 0 minutes and 17.00 seconds
+#> Time elapsed for order 3: 1 minutes and 25.83 seconds
+#> Time elapsed for order 4: 2 minutes and 45.40 seconds
+#> Time elapsed for order 5: 4 minutes and 29.85 seconds
+#> Total computation time: 4 minutes and 29.87 seconds
 
 # Check results
 head(turn_o2345)

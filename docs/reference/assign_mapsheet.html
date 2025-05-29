@@ -121,10 +121,22 @@ sheet code based on the cell centre.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For 1° mapsheet cells:</span></span></span>
-<span class="r-in"><span><span class="va">bird_obs2</span> <span class="op">=</span> <span class="fu">add_nearest_mapsheet</span><span class="op">(</span><span class="va">bird_obs</span>, cell_size <span class="op">=</span> <span class="fl">1</span>, unit <span class="op">=</span> <span class="st">"deg"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in add_nearest_mapsheet(bird_obs, cell_size = 1, unit = "deg"):</span> could not find function "add_nearest_mapsheet"</span>
+<span class="r-in"><span><span class="va">bird_obs2</span> <span class="op">=</span> <span class="fu">assign_mapsheet</span><span class="op">(</span><span class="va">bird_obs</span>, cell_size <span class="op">=</span> <span class="fl">1</span>, unit <span class="op">=</span> <span class="st">"deg"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bird_obs2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'bird_obs2' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   site_id        x         y                    species value year month day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1 22.71862 -33.98912            Fulica cristata     1 2023     5  12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       2 20.40034 -34.45408 Numida meleagris coronatus     1 2022    12   4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       3 18.51368 -34.08271              Anas undulata     1 2023    10   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       4 18.38477 -34.25946        Oenanthe familiaris     1 2016     8   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       5 23.56160 -33.97620         Cyanomitra veroxii     1 2016     9   4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       6 18.87285 -34.06225        Gallinula chloropus     1 2019     2  21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   center_lon center_lat  mapsheet</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       22.5      -33.5 E022S34BB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       20.5      -34.5 E020S35BB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       18.5      -34.5 E018S35BB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       18.5      -34.5 E018S35BB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       23.5      -33.5 E023S34BB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       18.5      -34.5 E018S35BB</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

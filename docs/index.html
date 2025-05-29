@@ -62,29 +62,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><ul>
 <li>
-<a href="#dissmapr"><code>dissmapr: Compositional Dissimilarity and Biodiversity Turnover Analysis</code></a><br>
-</li>
-<li><a href="#introduction">Introduction</a></li>
-<li>
-<a href="#step-by-step-workflow">Step-by-Step Workflow</a>
+<a href="#dissmapr"><code>dissmapr</code></a>
 <ul>
-<li><a href="#id_1-install-and-load-dissmapr">1. Install and load <code>dissmapr</code></a></li>
-<li><a href="#id_2-load-other-r-libraries">2. Load other R libraries</a></li>
-<li><a href="#id_3-user-defined-area-of-interest-and-grid-resolution">3. Load user-defined area of interest and set grid resolution</a></li>
-<li><a href="#id_4-get-species-occurrence-records-using-get_occurrence_data">4. Get species occurrence records using <code>get_occurrence_data</code></a></li>
-<li><a href="#id_5-format-data-using-format_df">5. Format data using <code>format_df</code></a></li>
-<li><a href="#id_6-summarise-records-by-grid-centroid-using-generate_grid">6. Summarise records by grid centroid using <code>generate_grid</code></a></li>
-<li><a href="#id_7-generate-site-by-species-matrix---site_spp">7. Fetch site by species matrix created using <code>generate_grid</code></a></li>
-<li><a href="#id_8-generate-site-by-environment-matrix-using-get_enviro_data">8. Generate site by environment matrix using <code>get_enviro_data</code></a></li>
-<li><a href="#id_9-change-coordinates-projection-using-sfst_transform">9. Change coordinates projection using <code>sf::st_transform</code></a></li>
-<li><a href="#id_10-check-for-colinearity-using-rm_correlated">10. Check for colinearity using <code>rm_correlated</code></a></li>
-<li><a href="#id_11-calculate-zeta-decline-for-orders-215">11. Calculate Zeta decline for orders 2:15</a></li>
-<li><a href="#id_12-calculate-zeta-decay-for-orders-28">12. Calculate Zeta decay for orders 2:8</a></li>
-<li><a href="#id_13-run-a-multi-site-generalised-dissimilarity-model-for-order-2">13. Run a Multi-Site Generalised Dissimilarity Model for order 2</a></li>
-<li><a href="#id_14-predict-current-zeta-diversity-zeta2-using-predict_dissim">14. Predict current Zeta Diversity (zeta2) using <code>predict_dissim</code></a></li>
-<li><a href="#id_15-run-clustering-analyses-using-map_bioreg">15. Run clustering analyses using <code>map_bioreg</code></a></li>
-<li><a href="#id_16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregDiff">16. Predict future Zeta Diversity and map bioregion change using <code>map_bioregDiff</code></a></li>
-<li><a href="#id_17-deposit-all-results-into-Zenodo">17. Deposit all results into Zenodo</a></li>
+<li><a href="#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis">A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#step-by-step-workflow">Step-by-Step Workflow</a></li>
 </ul>
 </li>
 </ul>
@@ -401,11 +383,11 @@
 <span>  order <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 10.28 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 17.98 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 57.36 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 2 minutes and 6.92 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 2 minutes and 6.93 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 4.51 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 13.64 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 51.50 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 59.10 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 1 minutes and 59.11 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rich_o1234</span><span class="op">)</span></span>
@@ -466,11 +448,11 @@
 <span>  order <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 16.95 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 20.04 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 2 minutes and 41.49 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 5: 4 minutes and 35.05 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 4 minutes and 35.07 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 17.00 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 25.83 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 2 minutes and 45.40 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 5: 4 minutes and 29.85 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 4 minutes and 29.87 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">turn_o2345</span><span class="op">)</span></span>
