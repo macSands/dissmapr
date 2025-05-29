@@ -158,6 +158,7 @@ name + value columns are present; or</p></li>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">df_local</span>, <span class="va">tmp</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">local_test</span> <span class="op">=</span> <span class="fu">get_occurrence_data</span><span class="op">(</span>data <span class="op">=</span> <span class="va">tmp</span>, source_type <span class="op">=</span> <span class="st">"local_csv"</span>, sep <span class="op">=</span> <span class="st">","</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_occurrence_data(data = tmp, source_type = "local_csv", sep = ","):</span> could not find function "get_occurrence_data"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 2. Existing wide-format data.frame -----------------------------------------------</span></span></span>
 <span class="r-in"><span><span class="va">df_wide</span> <span class="op">&lt;-</span> <span class="va">df_local</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
@@ -167,9 +168,9 @@ name + value columns are present; or</p></li>
 <span class="r-in"><span>    values_fn   <span class="op">=</span> <span class="va">sum</span>,       <span class="co"># sum duplicates</span></span></span>
 <span class="r-in"><span>    values_fill <span class="op">=</span> <span class="fl">0</span>          <span class="co"># fill missing with 0</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in pivot_wider(., names_from = sp_name, values_from = abun, values_fn = sum,     values_fill = 0):</span> could not find function "pivot_wider"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in df_local %&gt;% pivot_wider(names_from = sp_name, values_from = abun,     values_fn = sum, values_fill = 0):</span> could not find function "%&gt;%"</span>
 <span class="r-in"><span><span class="va">wide_test</span> <span class="op">=</span> <span class="fu">get_occurrence_data</span><span class="op">(</span>data <span class="op">=</span> <span class="va">df_wide</span>, source_type <span class="op">=</span> <span class="st">"data_frame"</span>, species_cols <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">11</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'df_wide' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_occurrence_data(data = df_wide, source_type = "data_frame",     species_cols = 4:11):</span> could not find function "get_occurrence_data"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 3. Custom names ----------------------------------------------------------</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">sim_dat</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"plot_id"</span>, <span class="st">"lon"</span>, <span class="st">"lat"</span>, <span class="st">"taxon"</span>, <span class="st">"presence"</span><span class="op">)</span></span></span>
@@ -183,7 +184,7 @@ name + value columns are present; or</p></li>
 <span class="r-in"><span>  sp_name_col    <span class="op">=</span> <span class="st">"taxon"</span>,</span></span>
 <span class="r-in"><span>  pa_col         <span class="op">=</span> <span class="st">"presence"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'sim_dat' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_occurrence_data(data = sim_dat, source_type = "data_frame",     site_id_col = "plot_id", x_col = "lon", y_col = "lat", sp_name_col = "taxon",     pa_col = "presence"):</span> could not find function "get_occurrence_data"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">occ_long2</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'occ_long2' not found</span>
 <span class="r-in"><span></span></span>
