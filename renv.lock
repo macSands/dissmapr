@@ -5161,7 +5161,7 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "1.1.1",
+      "Version": "1.1.4",
       "Source": "Repository",
       "Type": "Package",
       "Title": "Project Environments",
@@ -5210,7 +5210,7 @@
       "NeedsCompilation": "no",
       "Author": "Kevin Ushey [aut, cre] (<https://orcid.org/0000-0003-2880-7407>), Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>), Posit Software, PBC [cph, fnd]",
       "Maintainer": "Kevin Ushey <kevin@rstudio.com>",
-      "Repository": "RSPM"
+      "Repository": "CRAN"
     },
     "reshape2": {
       "Package": "reshape2",
