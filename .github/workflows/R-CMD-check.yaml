@@ -18,15 +18,15 @@ jobs:
       _R_CHECK_FORCE_SUGGESTS_: "true"
 
     steps:
-      # 1 ── Get the code ---------------------------------------------------
+# 1 ── Get the code ---------------------------------------------------
       - uses: actions/checkout@v4
 
-      # 2 ── Install R -------------------------------------------------------
+# 2 ── Install R -------------------------------------------------------
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: false          # avoids broken Ubuntu mirror
 
-      # 3 ── System + spatial + PDF tools -----------------------------------
+# 3 ── System + spatial + PDF tools -----------------------------------
       - name: Install system requirements
         run: |
           sudo apt-get update -y
@@ -40,7 +40,7 @@ jobs:
           which gs   && gs   --version
           which qpdf && qpdf --version
 
-      # 4 ── Pandoc (needed for vignettes) ----------------------------------
+# 4 ── Pandoc (needed for vignettes) ----------------------------------
       - uses: r-lib/actions/setup-pandoc@v2
 
       # 5 ── Cache & restore renv ------------------------------------------
@@ -54,9 +54,10 @@ jobs:
             pkgdown
             remotes
             testthat
+            geodata
 
-      # 7 ── Run R CMD check ------------------------------------------------
+# 7 ── Run R CMD check ------------------------------------------------
       - uses: r-lib/actions/check-r-package@v2
         with:
-          build-args: 'c("--no-manual", "--compact-vignettes=gs+qpdf")'
+          build_args: '--no-manual --compact-vignettes=gs+qpdf'
           upload-snapshots: true
