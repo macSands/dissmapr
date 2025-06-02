@@ -1,3 +1,115 @@
+#' Compute Order-wise Pairwise Metrics with Optional Parallel Sampling
+#'
+#' @description
+#' A flexible, high-performance engine for calculating dissimilarity,
+#' distance, or any custom metric between a *focal* site and every
+#' combination of \eqn{(order-1)} other sites.  The routine supports:
+#' \itemize{
+#'   \item special fast paths for \code{order = 1} (trivial) and
+#'         \code{order = 2} when \code{func = orderwise_diss_gower};
+#'   \item great-circle distances via \code{geodist_helper}
+#'         (requires \code{coord_cols});
+#'   \item arbitrary metrics acting on numeric “site vectors” defined by
+#'         \code{sp_cols};
+#'   \item parallel execution with **future.apply** and progress bars
+#'         from **pbapply**;
+#'   \item random or complete sampling of higher-order combinations.
+#' }
+#'
+#' @details
+#' For each site the relevant data vector is pre-extracted once and
+#' re-used, avoiding repeated sub-setting.  When \code{order = 2} and
+#' \code{func = orderwise_diss_gower} the full pairwise Gower distance
+#' matrix is built in one call to \code{cluster::daisy()}, melted, and
+#' returned, yielding a major speed-up over looping.
+#'
+#' @param df Data frame or data.table containing the site data.
+#' @param func Function of two numeric vectors returning a single numeric
+#'   value (e.g. \code{orderwise_diss_gower}, \code{geodist_helper}).
+#' @param site_col Character; column with the unique site identifiers.
+#' @param sp_cols Character or integer vector giving the columns used to
+#'   build each site’s numeric vector **when \code{func} is not
+#'   \code{geodist_helper}**.
+#' @param order Integer scalar or vector of orders (≥ 1).  For values
+#'   \eqn{> 2} the function iterates through each order.
+#' @param sample_no Integer. Maximum *number* of combinations to sample
+#'   **per focal site** for orders ≥ 3. If \code{NULL} (default) all
+#'   combinations are used (subject to \code{sample_portion}).
+#' @param sample_portion Numeric in (0, 1]. Proportion of combinations to
+#'   retain when \code{sample_no = NULL}.  Ignored when
+#'   \code{sample_no} is supplied.
+#' @param parallel Logical. Run computations in parallel with
+#'   **future.apply** (default \code{TRUE}).
+#' @param n_workers Integer. Number of background workers; default
+#'   \code{parallel::detectCores() - 1}.
+#' @param coord_cols Character vector of coordinate columns
+#'   (e.g. \code{c("x","y")}) required when
+#'   \code{func = geodist_helper}.
+#'
+#' @return A `data.table` with four columns
+#' \describe{
+#'   \item{site_from}{Focal site ID.}
+#'   \item{site_to}{Comma-separated list of comparison sites
+#'         (\code{NA} when \code{order = 1}).}
+#'   \item{value}{Computed metric.}
+#'   \item{order}{The order used for the calculation.}
+#' }
+#'
+#' @section Dependencies:
+#' Requires **pbapply**, **data.table**, **future.apply**, **reshape2**,
+#' and **dplyr** (checked at run-time).  For Gower distances the example
+#' assumes \code{orderwise_diss_gower()} is exported by *dissmapr*.
+#'
+#' @importFrom data.table as.data.table rbindlist :=
+#' @importFrom pbapply pblapply
+#' @importFrom future plan multisession sequential
+#' @importFrom stats setNames
+#'
+#' @keywords internal
+#' @examples
+#' ## ---------------------------------------------------------------
+#' ## Example 1 – Gower dissimilarity between species vectors (order 2)
+#' ## ---------------------------------------------------------------
+#' if (requireNamespace("cluster", quietly = TRUE)) {
+#'   set.seed(1)
+#'   n_sites  <- 8
+#'   n_spp    <- 20
+#'   test_df  <- data.frame(
+#'     site_id = paste0("s", seq_len(n_sites)),
+#'     x       = runif(n_sites, 23, 24),
+#'     y       = runif(n_sites, -34, -33),
+#'     matrix(rpois(n_sites * n_spp, 1),
+#'            nrow = n_sites,
+#'            dimnames = list(NULL, paste0("sp", seq_len(n_spp))))
+#'   )
+#'
+#'   res2 <- optimized_compute_orderwise(
+#'     df        = test_df,
+#'     func      = orderwise_diss_gower,   # dissmapr helper
+#'     site_col  = "site_id",
+#'     sp_cols   = paste0("sp", 1:n_spp),
+#'     order     = 2,
+#'     parallel  = FALSE
+#'   )
+#'   head(res2)
+#' }
+#'
+#' ## ---------------------------------------------------------------
+#' ## Example 2 – Great-circle distance (km) between site centroids
+#' ## ---------------------------------------------------------------
+#' if (requireNamespace("geosphere", quietly = TRUE)) {
+#'   # geodist_helper is expected to be exported by dissmapr
+#'   res_geo <- optimized_compute_orderwise(
+#'     df         = test_df,
+#'     func       = geodist_helper,
+#'     site_col   = "site_id",
+#'     order      = 2,
+#'     coord_cols = c("x", "y"),
+#'     parallel   = FALSE
+#'   )
+#'   head(res_geo)
+#' }
+#'
 optimized_compute_orderwise <- function(df,
                                         func,
                                         site_col,

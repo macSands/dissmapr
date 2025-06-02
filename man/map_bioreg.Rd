@@ -2,7 +2,7 @@
 % Please edit documentation in R/map_bioreg.R
 \name{map_bioreg}
 \alias{map_bioreg}
-\title{Map bioregion clusters and generate interpolated spatial assignments}
+\title{Map Bioregion Clusters and Spatially Interpolate Assignments}
 \usage{
 map_bioreg(
   data,
@@ -16,28 +16,86 @@ map_bioreg(
 )
 }
 \arguments{
-\item{data}{A data.frame containing coordinate columns and values for clustering.}
+\item{data}{A data frame containing longitude / latitude columns and the
+variables in \code{scale_cols}.}
 
-\item{scale_cols}{Character vector of column names in \code{data} to scale before clustering.}
+\item{scale_cols}{Character vector naming columns to \emph{z}-scale before
+clustering.}
 
-\item{clus_method}{Character; one or more clustering methods: "kmeans", "pam", "hclust", "gmm", or "all". Default = "all".}
+\item{clus_method}{Character; one or more of \code{"kmeans"}, \code{"pam"},
+\code{"hclust"}, \code{"gmm"}, or \code{"all"} (default) for all four.}
 
-\item{plot}{Logical; if TRUE, displays side-by-side cluster maps. Default = TRUE.}
+\item{plot}{Logical; if \code{TRUE} (default) a 2×2 patchwork of cluster
+maps is printed.}
 
-\item{interp}{Character; interpolation method(s): "NN" (nearest neighbor), "Tps" (thin-plate spline), or "both". Default = "both".}
+\item{interp}{Character; interpolation type: \code{"NN"}, \code{"Tps"}, or
+\code{"both"} (default).}
 
-\item{x_col}{Name of the longitude column in \code{data}. Default = "x".}
+\item{x_col, y_col}{Names of the longitude and latitude columns
+(defaults \code{"x"}, \code{"y"}).}
 
-\item{y_col}{Name of the latitude  column in \code{data}. Default = "y".}
+\item{resolution}{Numeric. Grid cell size (map units) used to build the
+interpolation raster (default \code{0.5}).}
 }
 \value{
-A list with elements:
-\item{data}{Original data with appended cluster assignment columns (\code{kmeans_opt}, \code{pam_opt_aligned}, etc.)}
-\item{interpolated}{SpatRaster of interpolated cluster values}
-\item{clusters}{SpatRaster of discrete clusters after interpolation}
+A list with three components
+\describe{
+\item{data}{Original \code{data} with added cluster columns
+(\code{kmeans_opt}, \code{pam_opt_aligned}, \code{hc_opt_aligned},
+\code{gmm_opt_aligned}).}
+\item{interpolated}{A \code{SpatRaster} stack of continuous NN or TPS
+predictions (one layer per algorithm).}
+\item{clusters}{A \code{SpatRaster} stack of re-classified discrete
+clusters (TPS only, \code{NULL} otherwise).}
+}
 }
 \description{
-Performs environmental clustering (k-means, PAM, hierarchical, GMM), aligns cluster labels
-to k-means reference, plots comparative cluster maps, and interpolates assignments over a raster
-grid using nearest-neighbor and/or thin-plate spline methods.
+Runs several unsupervised clustering algorithms on multivariate
+environmental data, \emph{aligns} their cluster labels to a common
+k-means reference, visualises the resulting partitions, and produces
+gridded bioregion surfaces by nearest-neighbour (NN) and/or
+thin-plate-spline (TPS) interpolation.
+}
+\details{
+\itemize{
+\item \strong{Clustering}   The optimal number of clusters \emph{k} for k-means is
+selected with \strong{NbClust} using the silhouette criterion
+(\code{min.nc = 2}, \code{max.nc = 10}).
+\item \strong{Label alignment}   Because different algorithms label clusters
+arbitrarily, labels are remapped to match k-means centroids via a
+nearest-centroid assignment.
+\item \strong{Interpolation}   For each algorithm the point-wise clusters are
+projected to a raster grid:
+– \strong{NN}: a computationally cheap 1-nearest neighbour assignment
+– \strong{TPS}: smooth thin-plate splines fitted with \strong{fields}.
+Predicted fractional surfaces are optionally re-classified to
+discrete cluster IDs.
+}
+}
+\examples{
+\dontrun{
+## Synthetic example (≈ 10 s)
+set.seed(1)
+n  <- 150
+df <- data.frame(
+  x  = runif(n, 23, 24),               # longitude
+  y  = runif(n, -34, -33),             # latitude
+  t1 = rnorm(n),                       # environmental predictors
+  t2 = rnorm(n)
+)
+
+res <- map_bioreg(
+  data        = df,
+  scale_cols  = c("t1", "t2"),
+  clus_method = "kmeans",  # keep it light
+  plot        = FALSE,
+  interp      = "NN",
+  resolution  = 0.2
+)
+
+names(res)
+head(res$data)
+res$interpolated            # view with terra::plot(res$interpolated)
+}
+
 }

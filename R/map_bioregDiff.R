@@ -1,46 +1,73 @@
-#' Map bioregional difference metrics across raster layers
+#' Map Bioregional Change Metrics Between Categorical Raster Layers
 #'
-#' Takes two or more categorical raster layers (or a list of them) and computes how
-#' each cell's region label changes over time.  You can return:
-#' - the **difference count** (number of times a cell's label changes),
-#' - **Shannon entropy** of its label sequence,
-#' - **stability** (proportion of time unchanged),
-#' - **transition frequency** (sum of per-step changes),
-#' - **weighted change index** (sum of pairwise-change weights),
-#' or all five as a multi‐layer `SpatRaster`.
+#' @description
+#' Calculates five complementary indices that quantify how the categorical
+#' (e.g. bioregion / cluster) label of each raster cell changes across a
+#' temporal or scenario stack of rasters:
 #'
-#' @aliases map_bioregDiff
-#' @param raster_input A `SpatRaster` or a **list** of single‐layer `SpatRaster` objects.
-#' @param approach Character; one of
-#'   \describe{
-#'     \item{`"difference_count"`}{Count of label changes per cell.}
-#'     \item{`"shannon_entropy"`}{Entropy of the cell's label distribution.}
-#'     \item{`"stability"`}{Proportion of layers where the label stays the same.}
-#'     \item{`"transition_frequency"`}{Sum of binary change maps across layers.}
-#'     \item{`"weighted_change_index"`}{Sum of dissimilarity‐weighted transitions.}
-#'     \item{`"all"`}{All five metrics combined into a multi‐layer `SpatRaster`.}
-#'   }
-#'   Default: `"all"`.
+#' * **Difference count** – total number of times a cell’s label differs from
+#'   the first layer.
+#' * **Shannon entropy** – information‐theoretic diversity of labels within the
+#'   cell’s time-series.
+#' * **Stability** – proportion of layers in which the label is identical to
+#'   the first layer *(1 = always unchanged, 0 = always different)*.
+#' * **Transition frequency** – sum of binary change maps between successive
+#'   layers (*how often a change occurs between any pair of neighbours*).
+#' * **Weighted change index** – cumulative dissimilarity-weighted change where
+#'   the weight is derived from the empirical frequency of transitions between
+#'   all pairs of labels.
+#'
+#' @details
+#' The dissimilarity weights for the **weighted change index** are built from
+#' the observed transition table of successive layers, normalised to lie
+#' between 0 and 1 (larger = rarer transition).  The function accepts either a
+#' multi-layer `SpatRaster` or a plain `list` of single-layer `SpatRaster`s,
+#' which is internally concatenated with **terra**.
+#'
+#' @param raster_input A multi-layer `SpatRaster` **or** a `list` of single-layer
+#'   `SpatRaster` objects representing the same spatial extent/resolution.
+#' @param approach Character string specifying the metric to return:
+#'   `"difference_count"`, `"shannon_entropy"`, `"stability"`,
+#'   `"transition_frequency"`, `"weighted_change_index"`, or `"all"` (default)
+#'   for a five-layer stack containing every metric.
+#'
 #' @return A `SpatRaster`:
-#' - A single layer if `approach` is one metric,
-#' - A 5‐layer raster (`Difference_Count`, `Shannon_Entropy`, `Stability`,
+#' * **single-layer** if `approach` is one of the named metrics;
+#' * **five-layer** (names: `Difference_Count`, `Shannon_Entropy`, `Stability`,
 #'   `Transition_Frequency`, `Weighted_Change_Index`) if `approach = "all"`.
 #'
-#' @examples
-#' \dontrun{
-#' # Combine four single‐layer rasters into one multi‐layer object:
-#' rlist <- list(km=km_rast, pam=pam_rast, hc=hc_rast, gmm=gmm_rast)
-#' multi <- rast(rlist)
-#'
-#' # Compute all metrics:
-#' diff_metrics <- map_bioregDiff(multi, approach="all")
-#'
-#' # Just the entropy map:
-#' ent_map <- map_bioregDiff(multi, approach="shannon_entropy")
-#' }
+#' @seealso \code{\link[terra]{app}}, \code{\link[terra]{rast}}
 #'
 #' @import terra
 #' @import purrr
+#' @importFrom stats dist
+#'
+#' @examples
+#' ## -------------------------------------------------------------
+#' ## Minimal reproducible example with three random categorical
+#' ## rasters (four classes, identical geometry)
+#' ## -------------------------------------------------------------
+#' if (requireNamespace("terra", quietly = TRUE)) {
+#'   set.seed(42)
+#'
+#'   r1 <- terra::rast(nrows = 40, ncols = 40,
+#'                     vals  = sample(1:4, 40 * 40, TRUE))
+#'   r2 <- terra::rast(r1, vals = sample(1:4, ncell(r1), TRUE))
+#'   r3 <- terra::rast(r1, vals = sample(1:4, ncell(r1), TRUE))
+#'
+#'   r_stack <- terra::rast(list(r1, r2, r3))
+#'   names(r_stack) <- paste0("t", 1:3)
+#'
+#'   ## 1. All five metrics
+#'   diff_all <- map_bioregDiff(r_stack, approach = "all")
+#'   print(diff_all)
+#'
+#'   ## 2. Just the Shannon-entropy layer
+#'   ent <- map_bioregDiff(r_stack, approach = "shannon_entropy")
+#'   terra::plot(ent, main = "Shannon entropy of label sequence")
+#' }
+#'
+#' @aliases map_bioregDiff
 #' @export
 map_bioregDiff <- function(raster_input, approach = "all") {
   library(terra)

@@ -2,55 +2,78 @@
 % Please edit documentation in R/map_bioregDiff.R
 \name{map_bioregDiff}
 \alias{map_bioregDiff}
-\title{Map bioregional difference metrics across raster layers}
+\title{Map Bioregional Change Metrics Between Categorical Raster Layers}
 \usage{
 map_bioregDiff(raster_input, approach = "all")
 }
 \arguments{
-\item{raster_input}{A \code{SpatRaster} or a \strong{list} of single‐layer \code{SpatRaster} objects.}
+\item{raster_input}{A multi-layer \code{SpatRaster} \strong{or} a \code{list} of single-layer
+\code{SpatRaster} objects representing the same spatial extent/resolution.}
 
-\item{approach}{Character; one of
-\describe{
-\item{\code{"difference_count"}}{Count of label changes per cell.}
-\item{\code{"shannon_entropy"}}{Entropy of the cell's label distribution.}
-\item{\code{"stability"}}{Proportion of layers where the label stays the same.}
-\item{\code{"transition_frequency"}}{Sum of binary change maps across layers.}
-\item{\code{"weighted_change_index"}}{Sum of dissimilarity‐weighted transitions.}
-\item{\code{"all"}}{All five metrics combined into a multi‐layer \code{SpatRaster}.}
-}
-Default: \code{"all"}.}
+\item{approach}{Character string specifying the metric to return:
+\code{"difference_count"}, \code{"shannon_entropy"}, \code{"stability"},
+\code{"transition_frequency"}, \code{"weighted_change_index"}, or \code{"all"} (default)
+for a five-layer stack containing every metric.}
 }
 \value{
 A \code{SpatRaster}:
 \itemize{
-\item A single layer if \code{approach} is one metric,
-\item A 5‐layer raster (\code{Difference_Count}, \code{Shannon_Entropy}, \code{Stability},
+\item \strong{single-layer} if \code{approach} is one of the named metrics;
+\item \strong{five-layer} (names: \code{Difference_Count}, \code{Shannon_Entropy}, \code{Stability},
 \code{Transition_Frequency}, \code{Weighted_Change_Index}) if \code{approach = "all"}.
 }
 }
 \description{
-Takes two or more categorical raster layers (or a list of them) and computes how
-each cell's region label changes over time.  You can return:
+Calculates five complementary indices that quantify how the categorical
+(e.g. bioregion / cluster) label of each raster cell changes across a
+temporal or scenario stack of rasters:
 \itemize{
-\item the \strong{difference count} (number of times a cell's label changes),
-\item \strong{Shannon entropy} of its label sequence,
-\item \strong{stability} (proportion of time unchanged),
-\item \strong{transition frequency} (sum of per-step changes),
-\item \strong{weighted change index} (sum of pairwise-change weights),
-or all five as a multi‐layer \code{SpatRaster}.
+\item \strong{Difference count} – total number of times a cell’s label differs from
+the first layer.
+\item \strong{Shannon entropy} – information‐theoretic diversity of labels within the
+cell’s time-series.
+\item \strong{Stability} – proportion of layers in which the label is identical to
+the first layer \emph{(1 = always unchanged, 0 = always different)}.
+\item \strong{Transition frequency} – sum of binary change maps between successive
+layers (\emph{how often a change occurs between any pair of neighbours}).
+\item \strong{Weighted change index} – cumulative dissimilarity-weighted change where
+the weight is derived from the empirical frequency of transitions between
+all pairs of labels.
 }
+}
+\details{
+The dissimilarity weights for the \strong{weighted change index} are built from
+the observed transition table of successive layers, normalised to lie
+between 0 and 1 (larger = rarer transition).  The function accepts either a
+multi-layer \code{SpatRaster} or a plain \code{list} of single-layer \code{SpatRaster}s,
+which is internally concatenated with \strong{terra}.
 }
 \examples{
-\dontrun{
-# Combine four single‐layer rasters into one multi‐layer object:
-rlist <- list(km=km_rast, pam=pam_rast, hc=hc_rast, gmm=gmm_rast)
-multi <- rast(rlist)
+## -------------------------------------------------------------
+## Minimal reproducible example with three random categorical
+## rasters (four classes, identical geometry)
+## -------------------------------------------------------------
+if (requireNamespace("terra", quietly = TRUE)) {
+  set.seed(42)
 
-# Compute all metrics:
-diff_metrics <- map_bioregDiff(multi, approach="all")
+  r1 <- terra::rast(nrows = 40, ncols = 40,
+                    vals  = sample(1:4, 40 * 40, TRUE))
+  r2 <- terra::rast(r1, vals = sample(1:4, ncell(r1), TRUE))
+  r3 <- terra::rast(r1, vals = sample(1:4, ncell(r1), TRUE))
 
-# Just the entropy map:
-ent_map <- map_bioregDiff(multi, approach="shannon_entropy")
+  r_stack <- terra::rast(list(r1, r2, r3))
+  names(r_stack) <- paste0("t", 1:3)
+
+  ## 1. All five metrics
+  diff_all <- map_bioregDiff(r_stack, approach = "all")
+  print(diff_all)
+
+  ## 2. Just the Shannon-entropy layer
+  ent <- map_bioregDiff(r_stack, approach = "shannon_entropy")
+  terra::plot(ent, main = "Shannon entropy of label sequence")
 }
 
+}
+\seealso{
+\code{\link[terra]{app}}, \code{\link[terra]{rast}}
 }

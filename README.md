@@ -1,25 +1,4 @@
 
-- [`dissmapr`: Compositional Dissimilarity and Biodiversity Turnover Analysis](#dissmapr)  
-- [Introduction](#introduction)
-- [Step-by-Step Workflow](#step-by-step-workflow)
-  - [1. Install and load `dissmapr`](#1-install-and-load-dissmapr)
-  - [2. Load other R libraries](#2-load-other-r-libraries)
-  - [3. Get species occurrence records using `get_occurrence_data()`](#4-get-species-occurrence-records-using-get_occurrence_data)
-  - [4. Format data using `format_df()`](#5-format-data-using-format_df)
-  - [5. Load user-defined area of interest and set grid resolution](#3-user-defined-area-of-interest-and-grid-resolution)
-  - [6. Summarise records by grid centroid using `generate_grid()`](#6-summarise-records-by-grid-centroid-using-generate_grid)
-  - [7. Fetch site by species matrix created using `generate_grid()`](#7-generate-site-by-species-matrix---site_spp)
-  - [8. Generate site by environment matrix using `get_enviro_data()`](#8-generate-site-by-environment-matrix-using-get_enviro_data)
-  - [9. Change coordinates projection using `sf::st_transform()`](#9-change-coordinates-projection-using-sfst_transform)
-  - [10. Check for colinearity using `rm_correlated()`](#10-check-for-colinearity-using-rm_correlated)
-  - [11. Calculate Zeta decline for orders 2:15](#11-calculate-zeta-decline-for-orders-215)
-  - [12. Calculate Zeta decay for orders 2:8](#12-calculate-zeta-decay-for-orders-28)
-  - [13. Run a Multi-Site Generalised Dissimilarity Model for order 2](#13-run-a-multi-site-generalised-dissimilarity-model-for-order-2)
-  - [14. Predict current Zeta Diversity (zeta2) using `predict_dissim()`](#14-predict-current-zeta-diversity-zeta2-using-predict_dissim)
-  - [15. Run clustering analyses using `map_bioreg()`](#15-run-clustering-analyses-using-map_bioreg)
-  - [16. Predict future Zeta Diversity and map bioregion change using `map_bioregDiff()`](#16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregDiff)
-  - [17. Deposit all results into Zenodo](#17-deposit-all-results-into-Zenodo)
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
@@ -350,6 +329,8 @@ By aggregating raw records into consistent spatial units,
 `generate_grid` provides the structured foundation needed for subsequent
 landscape-scale biodiversity analyses.
 
+------------------------------------------------------------------------
+
 #### Assign records to a grid at a set resolution
 
 Aggregate species records into grid cells of user-specified size
@@ -475,18 +456,19 @@ ggplot() +
 
 ------------------------------------------------------------------------
 
-### Example 1 - Species Richness
+### Example 1 - Species Richness using `richness`()\`
 
-Here we calculate species richness across sites in the block_sp dataset,
-again using the compute_orderwise function. The richness function is
-applied to the grid_id column for site identification, with species data
-specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it
-computes basic species richness at individual sites, while higher orders
-(2 to 4) represent the differences in richness between pairwise and/or
-multi-site combinations. A subset of 1000 samples is used for
-higher-order computations to speed-up computation time. Parallel
-processing is enabled with 4 worker threads to improve performance. The
-output is a table summarizing species richness across specified orders.
+Here we calculate species richness across sites in the `block_sp`
+dataset, using the `compute_orderwise()` function. The `richness()`
+metric function is applied to the `grid_id` column for site
+identification, with species data specified by `sp_cols`. Orders 1 to 4
+are computed i.e. for order=1, it computes basic species richness at
+individual sites, while higher orders (2 to 4) represent the differences
+in richness between pairwise and/or multi-site combinations. A subset of
+1000 samples is used for higher-order computations to speed-up
+computation time. Parallel processing is enabled with 4 worker threads
+to improve performance. The output is a table summarizing species
+richness across specified orders.
 
 ``` r
 # Compute species richness (order 1) and the difference thereof for orders 2 to 4
@@ -499,11 +481,11 @@ rich_o1234 = compute_orderwise(
   order = 1:4,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 1: 0 minutes and 9.52 seconds
-#> Time elapsed for order 2: 0 minutes and 16.17 seconds
-#> Time elapsed for order 3: 1 minutes and 11.34 seconds
-#> Time elapsed for order 4: 2 minutes and 40.38 seconds
-#> Total computation time: 2 minutes and 40.39 seconds
+#> Time elapsed for order 1: 0 minutes and 9.34 seconds
+#> Time elapsed for order 2: 0 minutes and 16.40 seconds
+#> Time elapsed for order 3: 0 minutes and 49.92 seconds
+#> Time elapsed for order 4: 1 minutes and 39.81 seconds
+#> Total computation time: 1 minutes and 39.82 seconds
 
 # Check results
 head(rich_o1234)
@@ -556,13 +538,13 @@ head(mean_rich_o1234)
 
 ------------------------------------------------------------------------
 
-### Example 2 - Community Turnover
+### Example 2 - Community Turnover using `turnover()`
 
 Here we calculate species turnover (beta diversity) across sites in the
-block_sp dataset using the compute_orderwise function again. The
-turnover function is applied to the grid_id column for site
-identification, with species data specified by sp_cols. Order = 1 is not
-an option because turnover requires a comparison between sites. For
+`block_sp` dataset using the `compute_orderwise()` function again. The
+`turnover()` metric function is applied to the `grid_id` column for site
+identification, with species data specified by `sp_cols`. Order = 1 is
+not an option because turnover requires a comparison between sites. For
 orders 2 to 5, it computes turnover for pairwise and higher-order site
 combinations, representing the proportion of species not shared between
 sites. A subset of 1000 samples is used for higher-order comparisons.
@@ -581,11 +563,11 @@ turn_o2345 = compute_orderwise(
   order = 2:5,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 18.21 seconds
-#> Time elapsed for order 3: 1 minutes and 33.15 seconds
-#> Time elapsed for order 4: 3 minutes and 3.19 seconds
-#> Time elapsed for order 5: 5 minutes and 0.01 seconds
-#> Total computation time: 5 minutes and 0.02 seconds
+#> Time elapsed for order 2: 0 minutes and 12.19 seconds
+#> Time elapsed for order 3: 1 minutes and 21.78 seconds
+#> Time elapsed for order 4: 2 minutes and 51.04 seconds
+#> Time elapsed for order 5: 4 minutes and 57.81 seconds
+#> Total computation time: 4 minutes and 57.83 seconds
 
 # Check results
 head(turn_o2345)
@@ -793,11 +775,14 @@ plot(
   colNA = NA,            # <-- NA cells completely transparent
   axes  = FALSE
 )
-
-# plot(vect(rsa), add = TRUE, border = "black")
 ```
 
 <img src="man/figures/README-eff-rich-1.png" width="100%" />
+
+``` r
+
+# plot(vect(rsa), add = TRUE, border = "black")
+```
 
 ***Note**: occurrence coordinates are only used for assigning then into
 grids; they are not needed beyond this step.*

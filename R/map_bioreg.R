@@ -1,34 +1,90 @@
-#' Map bioregion clusters and generate interpolated spatial assignments
+#' Map Bioregion Clusters and Spatially Interpolate Assignments
 #'
-#' Performs environmental clustering (k-means, PAM, hierarchical, GMM), aligns cluster labels
-#' to k-means reference, plots comparative cluster maps, and interpolates assignments over a raster
-#' grid using nearest-neighbor and/or thin-plate spline methods.
+#' @description
+#' Runs several unsupervised clustering algorithms on multivariate
+#' environmental data, *aligns* their cluster labels to a common
+#' k-means reference, visualises the resulting partitions, and produces
+#' gridded bioregion surfaces by nearest-neighbour (NN) and/or
+#' thin-plate-spline (TPS) interpolation.
 #'
-#' @param data      A data.frame containing coordinate columns and values for clustering.
-#' @param scale_cols Character vector of column names in `data` to scale before clustering.
-#' @param clus_method Character; one or more clustering methods: "kmeans", "pam", "hclust", "gmm", or "all". Default = "all".
-#' @param plot      Logical; if TRUE, displays side-by-side cluster maps. Default = TRUE.
-#' @param interp    Character; interpolation method(s): "NN" (nearest neighbor), "Tps" (thin-plate spline), or "both". Default = "both".
-#' @param x_col     Name of the longitude column in `data`. Default = "x".
-#' @param y_col     Name of the latitude  column in `data`. Default = "y".
+#' @details
+#' * **Clustering**   The optimal number of clusters *k* for k-means is
+#'   selected with **NbClust** using the silhouette criterion
+#'   (`min.nc = 2`, `max.nc = 10`).
+#' * **Label alignment**   Because different algorithms label clusters
+#'   arbitrarily, labels are remapped to match k-means centroids via a
+#'   nearest-centroid assignment.
+#' * **Interpolation**   For each algorithm the point-wise clusters are
+#'   projected to a raster grid:
+#'   – **NN**: a computationally cheap 1-nearest neighbour assignment
+#'   – **TPS**: smooth thin-plate splines fitted with **fields**.
+#'   Predicted fractional surfaces are optionally re-classified to
+#'   discrete cluster IDs.
 #'
-#' @return A list with elements:
-#'   \item{data}{Original data with appended cluster assignment columns (`kmeans_opt`, `pam_opt_aligned`, etc.)}
-#'   \item{interpolated}{SpatRaster of interpolated cluster values}
-#'   \item{clusters}{SpatRaster of discrete clusters after interpolation}
+#' @param data A data frame containing longitude / latitude columns and the
+#'   variables in `scale_cols`.
+#' @param scale_cols Character vector naming columns to *z*-scale before
+#'   clustering.
+#' @param clus_method Character; one or more of `"kmeans"`, `"pam"`,
+#'   `"hclust"`, `"gmm"`, or `"all"` (default) for all four.
+#' @param plot Logical; if `TRUE` (default) a 2×2 patchwork of cluster
+#'   maps is printed.
+#' @param interp Character; interpolation type: `"NN"`, `"Tps"`, or
+#'   `"both"` (default).
+#' @param x_col,y_col Names of the longitude and latitude columns
+#'   (defaults `"x"`, `"y"`).
+#' @param resolution Numeric. Grid cell size (map units) used to build the
+#'   interpolation raster (default `0.5`).
 #'
-#' @import NbClust
-#' @import clValid
-#' @import cluster
-#' @import purrr
+#' @return A list with three components
+#' \describe{
+#'   \item{data}{Original `data` with added cluster columns
+#'     (`kmeans_opt`, `pam_opt_aligned`, `hc_opt_aligned`,
+#'     `gmm_opt_aligned`).}
+#'   \item{interpolated}{A `SpatRaster` stack of continuous NN or TPS
+#'     predictions (one layer per algorithm).}
+#'   \item{clusters}{A `SpatRaster` stack of re-classified discrete
+#'     clusters (TPS only, `NULL` otherwise).}
+#' }
+#'
+#' @importFrom NbClust NbClust
+#' @importFrom cluster pam
 #' @importFrom factoextra hcut
 #' @importFrom stats kmeans dist
-#' @import terra
-#' @import fields
-#' @import sf
-#' @import mclust
+#' @importFrom mclust Mclust
+#' @importFrom sf st_as_sf st_bbox st_coordinates
+#' @importFrom terra rast ext crds interpolate classify vect crs
+#' @importFrom fields Tps
+#' @importFrom ggplot2 ggplot geom_tile aes_string scale_fill_brewer labs
+#'   theme_minimal
 #' @import patchwork
-#' @import ggplot2
+#'
+#' @examples
+#' \dontrun{
+#' ## Synthetic example (≈ 10 s)
+#' set.seed(1)
+#' n  <- 150
+#' df <- data.frame(
+#'   x  = runif(n, 23, 24),               # longitude
+#'   y  = runif(n, -34, -33),             # latitude
+#'   t1 = rnorm(n),                       # environmental predictors
+#'   t2 = rnorm(n)
+#' )
+#'
+#' res <- map_bioreg(
+#'   data        = df,
+#'   scale_cols  = c("t1", "t2"),
+#'   clus_method = "kmeans",  # keep it light
+#'   plot        = FALSE,
+#'   interp      = "NN",
+#'   resolution  = 0.2
+#' )
+#'
+#' names(res)
+#' head(res$data)
+#' res$interpolated            # view with terra::plot(res$interpolated)
+#' }
+#'
 #' @export
 map_bioreg <- function(data,
                        scale_cols,

@@ -2,36 +2,63 @@
 % Please edit documentation in R/rm_correlated.R
 \name{rm_correlated}
 \alias{rm_correlated}
-\title{Remove Highly Correlated Variables}
+\title{Remove Highly Correlated Predictors}
 \usage{
 rm_correlated(data, cols = NULL, threshold = 0.7, plot = TRUE)
 }
 \arguments{
-\item{data}{Data frame containing the variables to analyze.}
+\item{data}{A data frame with candidate predictor variables.}
 
-\item{cols}{Numeric or character vector. Columns to consider for correlation analysis. Defaults to all columns.}
+\item{cols}{Optional numeric or character vector specifying columns to
+consider; defaults to \strong{all} numeric columns.}
 
-\item{threshold}{Numeric. Correlation threshold above which variables are considered highly correlated (default: 0.7).}
+\item{threshold}{Numeric in \eqn{[0,1]} specifying the absolute correlation
+cut-off (default \code{0.7}).}
 
-\item{plot}{Logical. Whether to plot the correlation matrix (default: TRUE).}
+\item{plot}{Logical; if \code{TRUE} (default) a correlation heat-map with
+coefficients is drawn.}
 }
 \value{
-Data frame with highly correlated variables removed.
+A data frame containing the original rows but only the subset of
+predictor columns whose absolute pairwise correlations are \eqn{<}
+\code{threshold}.
 }
 \description{
-This function identifies and removes variables with high correlation from a dataset.
-It calculates the correlation matrix, visualizes it (optional), and removes variables
-exceeding a specified correlation threshold.
+Detects pairs (or groups) of strongly collinear predictors and eliminates
+the minimum subset necessary to keep every absolute pairwise correlation
+below a user‐defined threshold.  Correlations are computed with
+\code{stats::cor()}; the variables to discard are chosen via the
+\code{caret::findCorrelation()} algorithm.  An optional heat-map of the
+correlation matrix is produced with \strong{corrplot} for rapid inspection.
+}
+\details{
+\itemize{
+\item Non‐numeric columns are silently dropped prior to correlation
+calculation.
+\item When \code{cols} is supplied (numeric or character), only those columns are
+tested; otherwise all numeric columns in \code{data} are used.
+\item The names of removed and retained variables are printed to the console for
+transparency.
+}
 }
 \examples{
-# Example dataset
-data <- data.frame(
-  var1 = rnorm(100),
-  var2 = rnorm(100),
-  var3 = rnorm(100) + 0.9 * rnorm(100)
+set.seed(99)
+n  <- 200
+df <- data.frame(
+  a = rnorm(n),
+  b = rnorm(n),
+  c = rnorm(n) * 0.8 + rnorm(n) * 0.2,  # moderately corr. with 'a'
+  d = rnorm(n) * 0.9 + rnorm(n) * 0.1   # moderately corr. with 'b'
 )
 
-# Remove highly correlated variables
-reduced_data <- rm_correlated(data, threshold = 0.8, plot = TRUE)
+## Remove predictors with |r| ≥ 0.75
+df_reduced <- rm_correlated(df, threshold = 0.75, plot = FALSE)
+names(df_reduced)
 
+## Visualise the correlation structure & removals at a stricter threshold
+rm_correlated(df, threshold = 0.6, plot = TRUE)
+
+}
+\seealso{
+\code{\link[corrplot]{corrplot}}, \code{\link[caret]{findCorrelation}}
 }

@@ -208,6 +208,7 @@ Use `generate_grid` to overlay a user-defined lattice on the study region—whos
 
 By aggregating raw records into consistent spatial units, `generate_grid` provides the structured foundation needed for subsequent landscape-scale biodiversity analyses.
 
+------------------------------------------------------------------------
 
 #### Assign records to a grid at a set resolution
 
@@ -277,9 +278,9 @@ ggplot() +
 
 ------------------------------------------------------------------------
 
-### Example 1 - Species Richness
+### Example 1 - Species Richness using `richness`()`
 
-Here we calculate species richness across sites in the block_sp dataset, again using the compute_orderwise function. The richness function is applied to the grid_id column for site identification, with species data specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders.
+Here we calculate species richness across sites in the `block_sp` dataset, using the `compute_orderwise()` function. The `richness()` metric function is applied to the `grid_id` column for site identification, with species data specified by `sp_cols`. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders.
 
 ```{r compute-rich}
 # Compute species richness (order 1) and the difference thereof for orders 2 to 4
@@ -320,9 +321,9 @@ head(mean_rich_o1234)
 ```
 ------------------------------------------------------------------------
 
-### Example 2 - Community Turnover
+### Example 2 - Community Turnover using `turnover()`
 
-Here we calculate species turnover (beta diversity) across sites in the block_sp dataset using the compute_orderwise function again. The turnover function is applied to the grid_id column for site identification, with species data specified by sp_cols. Order = 1 is not an option because turnover requires a comparison between sites. For orders 2 to 5, it computes turnover for pairwise and higher-order site combinations, representing the proportion of species not shared between sites. A subset of 1000 samples is used for higher-order comparisons. Parallel processing with 4 worker threads improves efficiency, and the output is a table summarizing species turnover across the specified orders.
+Here we calculate species turnover (beta diversity) across sites in the `block_sp` dataset using the `compute_orderwise()` function again. The `turnover()` metric function is applied to the `grid_id` column for site identification, with species data specified by `sp_cols`. Order = 1 is not an option because turnover requires a comparison between sites. For orders 2 to 5, it computes turnover for pairwise and higher-order site combinations, representing the proportion of species not shared between sites. A subset of 1000 samples is used for higher-order comparisons. Parallel processing with 4 worker threads improves efficiency, and the output is a table summarizing species turnover across the specified orders.
 
 ```{r compute-turn}
 # Compute community turnover for orders 2 to 5

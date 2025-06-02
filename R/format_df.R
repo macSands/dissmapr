@@ -1,23 +1,83 @@
-#' Format Data Frame
+#' Format Biodiversity Records to Long / Wide
 #'
-#' This function formats biodiversity data into long or wide format for
-#' further analysis.
+#' @description
+#' Converts a table of biodiversity observations between **long** and
+#' **wide** layouts while standardising key column names.
+#' * **Long format** – one row per observation with columns
+#'   `site_id`, `x`, `y`, `species`, `value` (+ optional `extra_cols`).
+#' * **Wide format** – one row per site with species as individual columns.
 #'
-#' @param data A `data.frame` of biodiversity records.
-#' @param format Character; one of `"long"` or `"wide"`. If `NULL`, inferred
-#'   from presence of `species_col` & `value_col`.
-#' @param x_col Name of longitude column. If `NULL`, will search common names.
-#' @param y_col Name of latitude column. If `NULL`, will search common names.
-#' @param site_id_col Name of site identifier column. If `NULL`, will be
-#'   generated from `(x, y)`.
-#' @param species_col Name of species column (required for `"long"`).
-#' @param value_col Name of value column (e.g. presence/abundance; for `"long"`).
-#' @param sp_col_range Integer vector indexing species columns (for `"wide"`).
-#' @param extra_cols Character vector of other columns to keep (e.g. metadata).
+#' @details
+#' If column names are not supplied, the function attempts to detect common
+#' variants (e.g. `"lon"`, `"longitude"` for *x*).
+#' When converting long → wide, duplicate observations of the same species at a
+#' site are aggregated by summing `value`.
+#' When converting wide → long, species columns are inferred either from
+#' `sp_col_range` or by excluding coordinate / metadata columns.
 #'
-#' @return A `list` with elements:
-#'   - `site_obs`: data frame in **long** format (only for `format="long"`).
-#'   - `site_spp`: data frame in **wide** format (species as columns).
+#' @param data A data frame containing biodiversity records.
+#' @param format Character; target layout `"long"` or `"wide"`.
+#'   If `NULL` the format is inferred automatically.
+#' @param x_col,y_col Character. Names of the longitude (*x*) and latitude (*y*)
+#'   columns. If `NULL`, common alternatives are searched.
+#' @param site_id_col Character. Column giving a unique site identifier.
+#'   If `NULL`, a new `site_id` is generated from the coordinate pair.
+#' @param species_col Character. Column containing species names
+#'   (required for `format = "long"`).
+#' @param value_col Character. Column with numeric values such as
+#'   presence/absence (0/1) or abundance. If `NULL`, each record is assigned
+#'   a value of 1.
+#' @param sp_col_range Integer vector giving the index of species columns when
+#'   `format = "wide"`. If `NULL` all non-coordinate / non-metadata columns are
+#'   treated as species.
+#' @param extra_cols Character vector of additional columns to carry through to
+#'   the output (e.g. sampling metadata or environmental covariates).
+#'
+#' @return A named list with up to two elements
+#' * `site_obs` – a long-format data frame (returned only when
+#'   `format = "long"`).
+#' * `site_spp` – a wide site × species data frame.
+#'
+#' @section Dependencies:
+#' Relies on **dplyr**, **tidyr**, and **rlang** (loaded with
+#' `requireNamespace()`).
+#'
+#' @seealso \code{\link[dplyr]{group_by}}, \code{\link[tidyr]{pivot_wider}}
+#'
+#' @importFrom dplyr group_by across mutate rename select summarise filter any_of
+#'   cur_group_id ungroup
+#' @importFrom tidyr pivot_wider
+#' @importFrom rlang sym
+#'
+#' @examples
+#' ## --- Example 1: long  →  wide --------------------------------------------
+#' ex_long <- data.frame(
+#'   lon     = c(23.10, 23.10, 23.25, 23.25),
+#'   lat     = c(-34.00, -34.00, -34.05, -34.05),
+#'   species = c("sp1",  "sp2",  "sp1",  "sp3"),
+#'   count   = c(1, 2, 3, 1)
+#' )
+#'
+#' out_long <- format_df(
+#'   data        = ex_long,
+#'   format      = "long",
+#'   x_col       = "lon",
+#'   y_col       = "lat",
+#'   species_col = "species",
+#'   value_col   = "count"
+#' )
+#'
+#' head(out_long$site_spp)
+#'
+#' ## --- Example 2: wide →  long --------------------------------------------
+#' ex_wide <- out_long$site_spp
+#'
+#' out_wide <- format_df(
+#'   data   = ex_wide,
+#'   format = "wide"
+#' )
+#'
+#' head(out_wide$site_spp)
 #'
 #' @export
 format_df <- function(data,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/format_df.R
 \name{format_df}
 \alias{format_df}
-\title{Format Data Frame}
+\title{Format Biodiversity Records to Long / Wide}
 \usage{
 format_df(
   data,
@@ -17,34 +17,93 @@ format_df(
 )
 }
 \arguments{
-\item{data}{A \code{data.frame} of biodiversity records.}
+\item{data}{A data frame containing biodiversity records.}
 
-\item{format}{Character; one of \code{"long"} or \code{"wide"}. If \code{NULL}, inferred
-from presence of \code{species_col} & \code{value_col}.}
+\item{format}{Character; target layout \code{"long"} or \code{"wide"}.
+If \code{NULL} the format is inferred automatically.}
 
-\item{x_col}{Name of longitude column. If \code{NULL}, will search common names.}
+\item{x_col, y_col}{Character. Names of the longitude (\emph{x}) and latitude (\emph{y})
+columns. If \code{NULL}, common alternatives are searched.}
 
-\item{y_col}{Name of latitude column. If \code{NULL}, will search common names.}
+\item{site_id_col}{Character. Column giving a unique site identifier.
+If \code{NULL}, a new \code{site_id} is generated from the coordinate pair.}
 
-\item{site_id_col}{Name of site identifier column. If \code{NULL}, will be
-generated from \verb{(x, y)}.}
+\item{species_col}{Character. Column containing species names
+(required for \code{format = "long"}).}
 
-\item{species_col}{Name of species column (required for \code{"long"}).}
+\item{value_col}{Character. Column with numeric values such as
+presence/absence (0/1) or abundance. If \code{NULL}, each record is assigned
+a value of 1.}
 
-\item{value_col}{Name of value column (e.g. presence/abundance; for \code{"long"}).}
+\item{sp_col_range}{Integer vector giving the index of species columns when
+\code{format = "wide"}. If \code{NULL} all non-coordinate / non-metadata columns are
+treated as species.}
 
-\item{sp_col_range}{Integer vector indexing species columns (for \code{"wide"}).}
-
-\item{extra_cols}{Character vector of other columns to keep (e.g. metadata).}
+\item{extra_cols}{Character vector of additional columns to carry through to
+the output (e.g. sampling metadata or environmental covariates).}
 }
 \value{
-A \code{list} with elements:
+A named list with up to two elements
 \itemize{
-\item \code{site_obs}: data frame in \strong{long} format (only for \code{format="long"}).
-\item \code{site_sp}: data frame in \strong{wide} format (species as columns).
+\item \code{site_obs} – a long-format data frame (returned only when
+\code{format = "long"}).
+\item \code{site_spp} – a wide site × species data frame.
 }
 }
 \description{
-This function formats biodiversity data into long or wide format for
-further analysis.
+Converts a table of biodiversity observations between \strong{long} and
+\strong{wide} layouts while standardising key column names.
+\itemize{
+\item \strong{Long format} – one row per observation with columns
+\code{site_id}, \code{x}, \code{y}, \code{species}, \code{value} (+ optional \code{extra_cols}).
+\item \strong{Wide format} – one row per site with species as individual columns.
+}
+}
+\details{
+If column names are not supplied, the function attempts to detect common
+variants (e.g. \code{"lon"}, \code{"longitude"} for \emph{x}).
+When converting long → wide, duplicate observations of the same species at a
+site are aggregated by summing \code{value}.
+When converting wide → long, species columns are inferred either from
+\code{sp_col_range} or by excluding coordinate / metadata columns.
+}
+\section{Dependencies}{
+
+Relies on \strong{dplyr}, \strong{tidyr}, and \strong{rlang} (loaded with
+\code{requireNamespace()}).
+}
+
+\examples{
+## --- Example 1: long  →  wide --------------------------------------------
+ex_long <- data.frame(
+  lon     = c(23.10, 23.10, 23.25, 23.25),
+  lat     = c(-34.00, -34.00, -34.05, -34.05),
+  species = c("sp1",  "sp2",  "sp1",  "sp3"),
+  count   = c(1, 2, 3, 1)
+)
+
+out_long <- format_df(
+  data        = ex_long,
+  format      = "long",
+  x_col       = "lon",
+  y_col       = "lat",
+  species_col = "species",
+  value_col   = "count"
+)
+
+head(out_long$site_spp)
+
+## --- Example 2: wide →  long --------------------------------------------
+ex_wide <- out_long$site_spp
+
+out_wide <- format_df(
+  data   = ex_wide,
+  format = "wide"
+)
+
+head(out_wide$site_spp)
+
+}
+\seealso{
+\code{\link[dplyr]{group_by}}, \code{\link[tidyr]{pivot_wider}}
 }
