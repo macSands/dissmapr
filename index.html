@@ -44,7 +44,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/tutorial_1.html">getting-started</a></li>
+<li><a class="dropdown-item" href="articles/getting-started.html">UNKNOWN TITLE</a></li>
+    <li><a class="dropdown-item" href="articles/tutorial_1.html">getting-started</a></li>
   </ul>
 </li>
       </ul>
@@ -128,15 +129,17 @@
 <a class="anchor" aria-label="anchor" href="#id_3-get-species-occurrence-records-using-get_occurrence_data"></a>
 </h3>
 <p>To contextualise the following steps of the workflow, we use the butterfly data in South Africa, accessed from GBIF, as the case for demonstration. Ultimately, the choice for the AoI and taxa is user-specific. This section focuses on automating the retrieval and pre-processing of biodiversity occurrence data from various sources, including:</p>
-<ol style="list-style-type: decimal">
-<li>local <code>databases</code>.csv` files,</li>
-<li>URLs or <code>.zip</code> files from the Global Biodiversity Information Facility (GBIF), and</li>
-<li>species occurrence cubes from B3 (specification) [<em>work in progress</em>].</li>
-</ol>
+<ul>
+<li>
+<strong>local</strong> <code>databases</code>.csv` files,</li>
+<li>
+<strong>URLs</strong> or <code>.zip</code> files from the Global Biodiversity Information Facility (GBIF), and</li>
+<li>species <strong>occurrence cubes</strong> from B3 (specification) [<em>work in progress</em>].</li>
+</ul>
 <p>The function assembles data on species distributions across specified taxonomic groups and regions, producing presence-absence or abundance matrices that quantify species co-occurrence within locations.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bfly_data</span> <span class="op">=</span> <span class="fu"><a href="reference/get_occurrence_data.html">get_occurrence_data</a></span><span class="op">(</span></span>
-<span>  data        <span class="op">=</span> <span class="st">'inst/extdata/gbif_butterflies.csv'</span>,</span>
+<span>  data        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"gbif_butterflies.csv"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span>,</span>
 <span>  source_type <span class="op">=</span> <span class="st">'local_csv'</span>,</span>
 <span>  sep         <span class="op">=</span> <span class="st">'\t'</span></span>
 <span><span class="op">)</span></span>
@@ -213,7 +216,12 @@
 <a class="anchor" aria-label="anchor" href="#id_4-format-data-using-format_df"></a>
 </h3>
 <p>Use <code>format_df</code> to <em>standardise and reshape</em> raw biodiversity tables into the <em>long</em> or <em>wide</em> format required by later <code>dissmapr</code> steps. Importantly, this function does not alter the spatial resolution of the original observations - it simply tidies the data by automatically identifying key columns (e.g., coordinates, species, and values), assigning missing observation/site IDs, and reformatting the data for analysis. Outputs include a cleaned <code>site_obs</code> dataset and <code>site_spp</code> matrix for further processing:</p>
-<p>• <strong>site_obs</strong>: Simplified table with unique <code>site_id</code>, <code>x</code>, <code>y</code>, <code>species</code> and <code>value</code> records (long format). • <strong>site_spp</strong>: Site-by-species matrix for biodiversity assessments (wide format).</p>
+<ul>
+<li>
+<strong>site_obs</strong>: Simplified table with unique <code>site_id</code>, <code>x</code>, <code>y</code>, <code>species</code> and <code>value</code> records (long format).</li>
+<li>
+<strong>site_spp</strong>: Site-by-species matrix for biodiversity assessments (wide format).</li>
+</ul>
 <div class="section level4">
 <h4 id="format-data-into-long-site_obs-and-wide-site_spp-formats">Format data into long (site_obs) and wide (site_spp) formats<a class="anchor" aria-label="anchor" href="#format-data-into-long-site_obs-and-wide-site_spp-formats"></a>
 </h4>
@@ -283,7 +291,7 @@
 <p>Load the spatial boundary data for South Africa to serve as the geographic reference for all subsequent biodiversity analyses and visualizations.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read RSA shape file</span></span>
-<span><span class="va">rsa</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="st">'inst/extdata/rsa.shp'</span><span class="op">)</span></span>
+<span><span class="va">rsa</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"rsa.shp"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reading layer `rsa' from data source `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' using driver `ESRI Shapefile'</span></span>
 <span><span class="co">#&gt; Simple feature collection with 1 feature and 1 field</span></span>
 <span><span class="co">#&gt; Geometry type: POLYGON</span></span>
@@ -310,7 +318,14 @@
 <a class="anchor" aria-label="anchor" href="#id_6-summarise-records-by-grid-centroid-using-generate_grid"></a>
 </h3>
 <p>Use <code>generate_grid</code> to overlay a user-defined lattice on the study region—whose bounds are inferred from the occurrence data—without modifying the underlying observations themselves. The function constructs a raster‐based grid of the chosen cell size, assigns each point a unique <code>grid_id</code>, and compiles a summary of user-specified attributes for every cell. It returns three coordinated outputs:</p>
-<p>• <strong>grid</strong>: <code>SpatRaster</code> with grid index • <strong>grid_sf</strong>: <code>sf</code> and <code>data.frame</code> i.e. lattice polygon features for mapping or spatial joins • <strong>block_sp</strong>: <code>data.frame</code> that records per-cell totals, centroids, and other statistics.</p>
+<ul>
+<li>
+<strong>grid</strong>: <code>SpatRaster</code> with grid index</li>
+<li>
+<strong>grid_sf</strong>: <code>sf</code> and <code>data.frame</code> i.e. lattice polygon features for mapping or spatial joins</li>
+<li>
+<strong>block_sp</strong>: <code>data.frame</code> that records per-cell totals, centroids, and other statistics.</li>
+</ul>
 <p>By aggregating raw records into consistent spatial units, <code>generate_grid</code> provides the structured foundation needed for subsequent landscape-scale biodiversity analyses.</p>
 <hr>
 <div class="section level4">
@@ -446,11 +461,11 @@
 <span>  order <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 9.34 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 16.40 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 49.92 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 39.81 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 1 minutes and 39.82 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 10.03 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 17.00 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 52.68 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 52.70 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 1 minutes and 52.71 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rich_o1234</span><span class="op">)</span></span>
@@ -512,11 +527,11 @@
 <span>  order <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 12.19 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 21.78 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 2 minutes and 51.04 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 5: 4 minutes and 57.81 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 4 minutes and 57.83 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 18.08 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 39.62 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 3 minutes and 24.04 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 5: 6 minutes and 4.39 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 6 minutes and 4.40 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">turn_o2345</span><span class="op">)</span></span>
