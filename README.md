@@ -1,5 +1,5 @@
 
-- [`dissmapr: Compositional Dissimilarity and Biodiversity Turnover Analysis`](#dissmapr)  
+- [`dissmapr`: Compositional Dissimilarity and Biodiversity Turnover Analysis](#dissmapr)  
 - [Introduction](#introduction)
 - [Step-by-Step Workflow](#step-by-step-workflow)
   - [1. Install and load `dissmapr`](#1-install-and-load-dissmapr)
