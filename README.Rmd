@@ -109,15 +109,15 @@ library(viridis)    # Perceptual color scales
 To contextualise the following steps of the workflow, we use the butterfly data in South Africa, accessed from GBIF, as the case for demonstration. Ultimately, the choice for the AoI and taxa is user-specific. 
 This section focuses on automating the retrieval and pre-processing of biodiversity occurrence data from various sources, including:
 
-i)  local `databases`.csv` files,
-ii) URLs or `.zip` files from the Global Biodiversity Information Facility (GBIF), and
-iii) species occurrence cubes from B3 (specification) [*work in progress*].
+*  **local** `databases`.csv` files,
+*  **URLs** or `.zip` files from the Global Biodiversity Information Facility (GBIF), and
+*  species **occurrence cubes** from B3 (specification) [*work in progress*].
 
 The function assembles data on species distributions across specified taxonomic groups and regions, producing presence-absence or abundance matrices that quantify species co-occurrence within locations.
 
 ```{r get-occurrence}
 bfly_data = get_occurrence_data(
-  data        = 'inst/extdata/gbif_butterflies.csv',
+  data        = system.file("extdata", "gbif_butterflies.csv", package = "dissmapr"),
   source_type = 'local_csv',
   sep         = '\t'
 )
@@ -136,8 +136,8 @@ Use `format_df` to *standardise and reshape* raw biodiversity tables into the *l
 Importantly, this function does not alter the spatial resolution of the original observations - it simply tidies the data by automatically identifying key columns (e.g., coordinates, species, and values), assigning missing observation/site IDs, and reformatting the data for analysis.
 Outputs include a cleaned `site_obs` dataset and `site_spp` matrix for further processing:
 
-• **site_obs**: Simplified table with unique `site_id`, `x`, `y`, `species` and `value` records (long format).
-• **site_spp**: Site-by-species matrix for biodiversity assessments (wide format).
+*  **site_obs**: Simplified table with unique `site_id`, `x`, `y`, `species` and `value` records (long format).
+*  **site_spp**: Site-by-species matrix for biodiversity assessments (wide format).
 
 #### Format data into long (site_obs) and wide (site_spp) formats
 
@@ -180,7 +180,7 @@ Load the spatial boundary data for South Africa to serve as the geographic refer
 
 ```{r aoi}
 # Read RSA shape file
-rsa = sf::st_read('inst/extdata/rsa.shp')
+rsa = sf::st_read(system.file("extdata", "rsa.shp", package = "dissmapr"))
 
 # Define your resolution and create mask to use later
 res = 0.5 # 0.5 degrees is roughly 55km
@@ -202,9 +202,9 @@ grid_masked = mask(grid, rsa_vect)
 
 Use `generate_grid` to overlay a user-defined lattice on the study region—whose bounds are inferred from the occurrence data—without modifying the underlying observations themselves. The function constructs a raster‐based grid of the chosen cell size, assigns each point a unique `grid_id`, and compiles a summary of user-specified attributes for every cell. It returns three coordinated outputs: 
 
-• **grid**: `SpatRaster` with grid index 
-• **grid_sf**: `sf` and `data.frame` i.e. lattice polygon features for mapping or spatial joins 
-• **block_sp**: `data.frame` that records per-cell totals, centroids, and other statistics. 
+*  **grid**: `SpatRaster` with grid index 
+*  **grid_sf**: `sf` and `data.frame` i.e. lattice polygon features for mapping or spatial joins 
+*  **block_sp**: `data.frame` that records per-cell totals, centroids, and other statistics. 
 
 By aggregating raw records into consistent spatial units, `generate_grid` provides the structured foundation needed for subsequent landscape-scale biodiversity analyses.
 

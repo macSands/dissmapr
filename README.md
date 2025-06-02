@@ -115,11 +115,11 @@ user-specific. This section focuses on automating the retrieval and
 pre-processing of biodiversity occurrence data from various sources,
 including:
 
-1)  local `databases`.csv\` files,
-2)  URLs or `.zip` files from the Global Biodiversity Information
-    Facility (GBIF), and
-3)  species occurrence cubes from B3 (specification) \[*work in
-    progress*\].
+- **local** `databases`.csv\` files,
+- **URLs** or `.zip` files from the Global Biodiversity Information
+  Facility (GBIF), and
+- species **occurrence cubes** from B3 (specification) \[*work in
+  progress*\].
 
 The function assembles data on species distributions across specified
 taxonomic groups and regions, producing presence-absence or abundance
@@ -127,7 +127,7 @@ matrices that quantify species co-occurrence within locations.
 
 ``` r
 bfly_data = get_occurrence_data(
-  data        = 'inst/extdata/gbif_butterflies.csv',
+  data        = system.file("extdata", "gbif_butterflies.csv", package = "dissmapr"),
   source_type = 'local_csv',
   sep         = '\t'
 )
@@ -212,9 +212,10 @@ assigning missing observation/site IDs, and reformatting the data for
 analysis. Outputs include a cleaned `site_obs` dataset and `site_spp`
 matrix for further processing:
 
-• **site_obs**: Simplified table with unique `site_id`, `x`, `y`,
-`species` and `value` records (long format). • **site_spp**:
-Site-by-species matrix for biodiversity assessments (wide format).
+- **site_obs**: Simplified table with unique `site_id`, `x`, `y`,
+  `species` and `value` records (long format).
+- **site_spp**: Site-by-species matrix for biodiversity assessments
+  (wide format).
 
 #### Format data into long (site_obs) and wide (site_spp) formats
 
@@ -287,7 +288,7 @@ visualizations.
 
 ``` r
 # Read RSA shape file
-rsa = sf::st_read('inst/extdata/rsa.shp')
+rsa = sf::st_read(system.file("extdata", "rsa.shp", package = "dissmapr"))
 #> Reading layer `rsa' from data source `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' using driver `ESRI Shapefile'
 #> Simple feature collection with 1 feature and 1 field
 #> Geometry type: POLYGON
@@ -320,10 +321,11 @@ constructs a raster‐based grid of the chosen cell size, assigns each
 point a unique `grid_id`, and compiles a summary of user-specified
 attributes for every cell. It returns three coordinated outputs:
 
-• **grid**: `SpatRaster` with grid index • **grid_sf**: `sf` and
-`data.frame` i.e. lattice polygon features for mapping or spatial joins
-• **block_sp**: `data.frame` that records per-cell totals, centroids,
-and other statistics.
+- **grid**: `SpatRaster` with grid index
+- **grid_sf**: `sf` and `data.frame` i.e. lattice polygon features for
+  mapping or spatial joins
+- **block_sp**: `data.frame` that records per-cell totals, centroids,
+  and other statistics.
 
 By aggregating raw records into consistent spatial units,
 `generate_grid` provides the structured foundation needed for subsequent
@@ -481,11 +483,11 @@ rich_o1234 = compute_orderwise(
   order = 1:4,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 1: 0 minutes and 9.34 seconds
-#> Time elapsed for order 2: 0 minutes and 16.40 seconds
-#> Time elapsed for order 3: 0 minutes and 49.92 seconds
-#> Time elapsed for order 4: 1 minutes and 39.81 seconds
-#> Total computation time: 1 minutes and 39.82 seconds
+#> Time elapsed for order 1: 0 minutes and 10.03 seconds
+#> Time elapsed for order 2: 0 minutes and 17.00 seconds
+#> Time elapsed for order 3: 0 minutes and 52.68 seconds
+#> Time elapsed for order 4: 1 minutes and 52.70 seconds
+#> Total computation time: 1 minutes and 52.71 seconds
 
 # Check results
 head(rich_o1234)
@@ -563,11 +565,11 @@ turn_o2345 = compute_orderwise(
   order = 2:5,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 12.19 seconds
-#> Time elapsed for order 3: 1 minutes and 21.78 seconds
-#> Time elapsed for order 4: 2 minutes and 51.04 seconds
-#> Time elapsed for order 5: 4 minutes and 57.81 seconds
-#> Total computation time: 4 minutes and 57.83 seconds
+#> Time elapsed for order 2: 0 minutes and 18.08 seconds
+#> Time elapsed for order 3: 1 minutes and 39.62 seconds
+#> Time elapsed for order 4: 3 minutes and 24.04 seconds
+#> Time elapsed for order 5: 6 minutes and 4.39 seconds
+#> Total computation time: 6 minutes and 4.40 seconds
 
 # Check results
 head(turn_o2345)
