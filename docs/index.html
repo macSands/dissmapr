@@ -62,7 +62,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><ul>
 <li>
-<a href="#dissmapr"><strong><code>dissmapr</code></strong>: Compositional Dissimilarity and Biodiversity Turnover Analysis</a><br>
+<a href="#dissmapr"><code>dissmapr: Compositional Dissimilarity and Biodiversity Turnover Analysis</code></a><br>
 </li>
 <li><a href="#introduction">Introduction</a></li>
 <li>
@@ -70,20 +70,20 @@
 <ul>
 <li><a href="#id_1-install-and-load-dissmapr">1. Install and load <code>dissmapr</code></a></li>
 <li><a href="#id_2-load-other-r-libraries">2. Load other R libraries</a></li>
-<li><a href="#id_3-user-defined-area-of-interest-and-grid-resolution">3. Load user-defined area of interest and set grid resolution</a></li>
-<li><a href="#id_4-get-species-occurrence-records-using-get_occurrence_data">4. Get species occurrence records using <code>get_occurrence_data</code></a></li>
-<li><a href="#id_5-format-data-using-format_df">5. Format data using <code>format_df</code></a></li>
-<li><a href="#id_6-summarise-records-by-grid-centroid-using-generate_grid">6. Summarise records by grid centroid using <code>generate_grid</code></a></li>
-<li><a href="#id_7-generate-site-by-species-matrix---site_spp">7. Fetch site by species matrix created using <code>generate_grid</code></a></li>
-<li><a href="#id_8-generate-site-by-environment-matrix-using-get_enviro_data">8. Generate site by environment matrix using <code>get_enviro_data</code></a></li>
-<li><a href="#id_9-change-coordinates-projection-using-sfst_transform">9. Change coordinates projection using <code>sf::st_transform</code></a></li>
-<li><a href="#id_10-check-for-colinearity-using-rm_correlated">10. Check for colinearity using <code>rm_correlated</code></a></li>
+<li><a href="#id_4-get-species-occurrence-records-using-get_occurrence_data">3. Get species occurrence records using <code>get_occurrence_data()</code></a></li>
+<li><a href="#id_5-format-data-using-format_df">4. Format data using <code>format_df()</code></a></li>
+<li><a href="#id_3-user-defined-area-of-interest-and-grid-resolution">5. Load user-defined area of interest and set grid resolution</a></li>
+<li><a href="#id_6-summarise-records-by-grid-centroid-using-generate_grid">6. Summarise records by grid centroid using <code>generate_grid()</code></a></li>
+<li><a href="#id_7-generate-site-by-species-matrix---site_spp">7. Fetch site by species matrix created using <code>generate_grid()</code></a></li>
+<li><a href="#id_8-generate-site-by-environment-matrix-using-get_enviro_data">8. Generate site by environment matrix using <code>get_enviro_data()</code></a></li>
+<li><a href="#id_9-change-coordinates-projection-using-sfst_transform">9. Change coordinates projection using <code>sf::st_transform()</code></a></li>
+<li><a href="#id_10-check-for-colinearity-using-rm_correlated">10. Check for colinearity using <code>rm_correlated()</code></a></li>
 <li><a href="#id_11-calculate-zeta-decline-for-orders-215">11. Calculate Zeta decline for orders 2:15</a></li>
 <li><a href="#id_12-calculate-zeta-decay-for-orders-28">12. Calculate Zeta decay for orders 2:8</a></li>
 <li><a href="#id_13-run-a-multi-site-generalised-dissimilarity-model-for-order-2">13. Run a Multi-Site Generalised Dissimilarity Model for order 2</a></li>
-<li><a href="#id_14-predict-current-zeta-diversity-zeta2-using-predict_dissim">14. Predict current Zeta Diversity (zeta2) using <code>predict_dissim</code></a></li>
-<li><a href="#id_15-run-clustering-analyses-using-map_bioreg">15. Run clustering analyses using <code>map_bioreg</code></a></li>
-<li><a href="#id_16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregDiff">16. Predict future Zeta Diversity and map bioregion change using <code>map_bioregDiff</code></a></li>
+<li><a href="#id_14-predict-current-zeta-diversity-zeta2-using-predict_dissim">14. Predict current Zeta Diversity (zeta2) using <code>predict_dissim()</code></a></li>
+<li><a href="#id_15-run-clustering-analyses-using-map_bioreg">15. Run clustering analyses using <code>map_bioreg()</code></a></li>
+<li><a href="#id_16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregDiff">16. Predict future Zeta Diversity and map bioregion change using <code>map_bioregDiff()</code></a></li>
 <li><a href="#id_17-deposit-all-results-into-Zenodo">17. Deposit all results into Zenodo</a></li>
 </ul>
 </li>
@@ -105,19 +105,19 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>dissmapr</code> is an R package for analysing compositional dissimilarity and biodiversity turnover across spatial gradients. It provides scalable, modular workflows that integrate species occurrence, environmental data, and multi-site metrics to quantify and predict biodiversity patterns. A core feature is the use of zeta diversity, which extends beyond pairwise comparisons to capture shared species across multiple sites—offering deeper insight into community assembly, turnover, and connectivity. By incorporating modern approaches such as multi-site Generalised Dissimilarity Modelling (MS-GDM), <code>dissmapr</code> enables robust mapping, bioregional classification, and scenario-based forecasting. Designed for flexibility and reproducibility, it supports biodiversity monitoring and conservation planning at landscape to regional scales.</p>
+<p><code>dissmapr</code> is an R package for analysing compositional dissimilarity and biodiversity turnover across spatial gradients. It provides scalable, modular workflows that integrate species occurrence, environmental data, and multi-site compositional turnover metrics to quantify and predict biodiversity patterns. A core feature is the use of zeta diversity, which extends beyond pairwise comparisons to capture shared species across multiple sites - offering deeper insight into community assembly, turnover, and connectivity, for both rare and common species. By incorporating different regression methods within the framework of Multi-Site Generalised Dissimilarity Modelling (MS-GDM), <code>dissmapr</code> enables robust mapping, bioregional classification, and scenario-based forecasting. Designed for flexibility and reproducibility, it supports biodiversity monitoring and conservation planning at landscape to regional scales.</p>
 <hr>
 </div>
 <div class="section level2">
 <h2 id="step-by-step-workflow">Step-by-Step Workflow<a class="anchor" aria-label="anchor" href="#step-by-step-workflow"></a>
 </h2>
-<p><code>dissmapr</code> implements a structured, reproducible workflow for analysing biodiversity patterns and delineating bioregions. Each function aligns with a specific step, guiding users from data acquisition to predictive mapping. The workflow begins with sourcing species occurrence and georeferenced environmental data, followed by data formatting and calculation of compositional turnover using zeta diversity metrics (via the <code>zetadiv</code> package). Multi-Site Generalized Dissimilarity Modelling (MS-GDM) is then applied to model and predict dissimilarity across landscapes. These predictions feed into the Dissimilarity Cube, which classifies spatial clusters of species composition into distinct bioregions. The framework supports the integration of historical and future climate data to assess shifts in biodiversity and detect emerging, shifting, or dissolving bioregions under global change. This step-by-step structure, mirrored in the accompanying tutorial sections, promotes accessibility, transparency, and ecological insight at multiple spatial and temporal scales.</p>
+<p><code>dissmapr</code> implements a structured, reproducible workflow for analysing biodiversity patterns and delineating bioregions. Each function aligns with a specific step in the workflow, guiding users from data acquisition to predictive mapping. The workflow begins with sourcing species occurrence and georeferenced environmental data, followed by data formatting and calculation of compositional turnover using zeta diversity metrics (via the <code>zetadiv</code> package). Multi-Site Generalized Dissimilarity Modelling (MS-GDM) is then applied to model and predict dissimilarity across landscapes. As part of the Dissimilarity Cube in the <a href="https://b-cubed.eu/" class="external-link">Biodiversity Building Blocks for Policy</a> project, the outputs and predictions from MS-GDM are classified into spatial clusters of species composition, representing distinct bioregions. The workflow also supports the integration of historical and future climate data to assess shifts in biodiversity and detect emerging, shifting, or dissolving bioregions under global change. This step-by-step structure, mirrored in the accompanying tutorial sections, promotes accessibility, transparency, and ecological insight at multiple spatial and temporal scales.</p>
 <hr>
 <div class="section level3">
 <h3 id="id_1-install-and-load-dissmapr">1. Install and load <code>dissmapr</code>
 <a class="anchor" aria-label="anchor" href="#id_1-install-and-load-dissmapr"></a>
 </h3>
-<p>Install and load the <code>dissmapr</code> package from GitHub, ensuring all functions are available for use in the analysis workflow.</p>
+<p>Install and load the <code>dissmapr</code> package from GitHub, ensuring all functions are available for use in the workflow.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install remotes if needed</span></span>
 <span><span class="co"># install.packages("remotes")</span></span>
@@ -144,52 +144,24 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://zoo.R-Forge.R-project.org/" class="external-link">zoo</a></span><span class="op">)</span>        <span class="co"># Time series utilities  </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>         <span class="co"># Vector spatial data  </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span>      <span class="co"># Raster spatial operations  </span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">zetadiv</span><span class="op">)</span>    <span class="co"># Multi-site biodiversity turnover  </span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dieghernan.github.io/tidyterra/" class="external-link">tidyterra</a></span><span class="op">)</span>  <span class="co"># supplies geom_spatraster()</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">zetadiv</span><span class="op">)</span>    <span class="co"># Multi-site dissimilarity modelling</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>    <span class="co"># Grammar of graphics  </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span>    <span class="co"># Perceptual color scales  </span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level3">
-<h3 id="id_3-user-defined-area-of-interest-and-grid-resolution">3. User-defined area of interest and grid resolution<a class="anchor" aria-label="anchor" href="#id_3-user-defined-area-of-interest-and-grid-resolution"></a>
+<h3 id="id_3-get-species-occurrence-records-using-get_occurrence_data">3. Get species occurrence records using <code>get_occurrence_data()</code>
+<a class="anchor" aria-label="anchor" href="#id_3-get-species-occurrence-records-using-get_occurrence_data"></a>
 </h3>
-<p>Load the spatial boundary data for South Africa to serve as the geographic reference for all subsequent biodiversity analyses and visualizations.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Read RSA shape file</span></span>
-<span><span class="va">rsa</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="st">'inst/extdata/rsa.shp'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Reading layer `rsa' from data source </span></span>
-<span><span class="co">#&gt;   `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' using driver `ESRI Shapefile'</span></span>
-<span><span class="co">#&gt; Simple feature collection with 1 feature and 1 field</span></span>
-<span><span class="co">#&gt; Geometry type: POLYGON</span></span>
-<span><span class="co">#&gt; Dimension:     XY</span></span>
-<span><span class="co">#&gt; Bounding box:  xmin: 16.45802 ymin: -34.83514 xmax: 32.89125 ymax: -22.12661</span></span>
-<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
-<span></span>
-<span><span class="co"># Define your resolution and create mask to use later</span></span>
-<span><span class="va">res</span> <span class="op">=</span> <span class="fl">0.5</span> <span class="co"># 0.5 degrees is roughly 55km</span></span>
-<span></span>
-<span><span class="co"># Convert to a terra vector</span></span>
-<span><span class="va">rsa_vect</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Create an empty raster over RSA at your desired resolution</span></span>
-<span><span class="va">grid</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">rsa_vect</span>, resolution <span class="op">=</span> <span class="va">res</span>, crs <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">rsa_vect</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span> <span class="op">=</span> <span class="fl">1</span>   <span class="co"># fill with dummy values</span></span>
-<span></span>
-<span><span class="co"># Mask everything outside the RSA boundary</span></span>
-<span><span class="va">grid_masked</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span><span class="va">grid</span>, <span class="va">rsa_vect</span><span class="op">)</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_4-get-species-occurrence-records-using-get_occurrence_data">4. Get species occurrence records using <code>get_occurrence_data</code>
-<a class="anchor" aria-label="anchor" href="#id_4-get-species-occurrence-records-using-get_occurrence_data"></a>
-</h3>
-<p>This section focuses on automating the retrieval and pre-processing of biodiversity occurrence data from various sources, including:</p>
+<p>To contextualise the following steps of the workflow, we use the butterfly data in South Africa, accessed from GBIF, as the case for demonstration. Ultimately, the choice for the AoI and taxa is user-specific. This section focuses on automating the retrieval and pre-processing of biodiversity occurrence data from various sources, including:</p>
 <ol style="list-style-type: decimal">
 <li>local <code>databases</code>.csv` files,</li>
 <li>URLs or <code>.zip</code> files from the Global Biodiversity Information Facility (GBIF), and</li>
 <li>species occurrence cubes from B3 (specification) [<em>work in progress</em>].</li>
 </ol>
 <p>The function assembles data on species distributions across specified taxonomic groups and regions, producing presence-absence or abundance matrices that quantify species co-occurrence within locations.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bfly_data</span> <span class="op">=</span> <span class="fu"><a href="reference/get_occurrence_data.html">get_occurrence_data</a></span><span class="op">(</span></span>
 <span>  data        <span class="op">=</span> <span class="st">'inst/extdata/gbif_butterflies.csv'</span>,</span>
 <span>  source_type <span class="op">=</span> <span class="st">'local_csv'</span>,</span>
@@ -199,6 +171,60 @@
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">bfly_data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 81825    52</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">bfly_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 'data.frame':    81825 obs. of  52 variables:</span></span>
+<span><span class="co">#&gt;  $ gbifID                          : num  9.23e+08 9.23e+08 9.23e+08 9.22e+08 9.22e+08 ...</span></span>
+<span><span class="co">#&gt;  $ datasetKey                      : chr  "6ac3f774-d9fb-4796-b3e9-92bf6c81c084" "6ac3f774-d9fb-4796-b3e9-92bf6c81c084" "6ac3f774-d9fb-4796-b3e9-92bf6c81c084" "6ac3f774-d9fb-4796-b3e9-92bf6c81c084" ...</span></span>
+<span><span class="co">#&gt;  $ occurrenceID                    : chr  "" "" "" "" ...</span></span>
+<span><span class="co">#&gt;  $ kingdom                         : chr  "Animalia" "Animalia" "Animalia" "Animalia" ...</span></span>
+<span><span class="co">#&gt;  $ phylum                          : chr  "Arthropoda" "Arthropoda" "Arthropoda" "Arthropoda" ...</span></span>
+<span><span class="co">#&gt;  $ class                           : chr  "Insecta" "Insecta" "Insecta" "Insecta" ...</span></span>
+<span><span class="co">#&gt;  $ order                           : chr  "Lepidoptera" "Lepidoptera" "Lepidoptera" "Lepidoptera" ...</span></span>
+<span><span class="co">#&gt;  $ family                          : chr  "Pieridae" "Pieridae" "Papilionidae" "Pieridae" ...</span></span>
+<span><span class="co">#&gt;  $ genus                           : chr  "Pieris" "Pieris" "Papilio" "Mylothris" ...</span></span>
+<span><span class="co">#&gt;  $ sp_name                         : chr  "Pieris brassicae" "Pieris brassicae" "Papilio demodocus" "Mylothris agathina" ...</span></span>
+<span><span class="co">#&gt;  $ infraspecificEpithet            : chr  "" "" "" "agathina" ...</span></span>
+<span><span class="co">#&gt;  $ taxonRank                       : chr  "SPECIES" "SPECIES" "SPECIES" "SUBSPECIES" ...</span></span>
+<span><span class="co">#&gt;  $ scientificName                  : chr  "Pieris brassicae (Linnaeus, 1758)" "Pieris brassicae (Linnaeus, 1758)" "Papilio demodocus Esper, 1798" "Mylothris agathina agathina" ...</span></span>
+<span><span class="co">#&gt;  $ verbatimScientificName          : chr  "Pieris brassicae" "Pieris brassicae" "Papilio demodocus subsp. demodocus" "Mylothris agathina subsp. agathina" ...</span></span>
+<span><span class="co">#&gt;  $ verbatimScientificNameAuthorship: logi  NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ countryCode                     : chr  "ZA" "ZA" "ZA" "ZA" ...</span></span>
+<span><span class="co">#&gt;  $ locality                        : chr  "Hermanus" "Polkadraai Road" "Signal Hill" "Hermanus" ...</span></span>
+<span><span class="co">#&gt;  $ stateProvince                   : chr  "" "" "" "" ...</span></span>
+<span><span class="co">#&gt;  $ occurrenceStatus                : chr  "PRESENT" "PRESENT" "PRESENT" "PRESENT" ...</span></span>
+<span><span class="co">#&gt;  $ individualCount                 : int  NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ publishingOrgKey                : chr  "bb646dff-a905-4403-a49b-6d378c2cf0d9" "bb646dff-a905-4403-a49b-6d378c2cf0d9" "bb646dff-a905-4403-a49b-6d378c2cf0d9" "bb646dff-a905-4403-a49b-6d378c2cf0d9" ...</span></span>
+<span><span class="co">#&gt;  $ y                               : num  -34.4 -34 -33.9 -34.4 -34.4 ...</span></span>
+<span><span class="co">#&gt;  $ x                               : num  19.2 18.8 18.4 19.2 18.5 ...</span></span>
+<span><span class="co">#&gt;  $ coordinateUncertaintyInMeters   : num  250 250 250 250 250 250 250 250 250 250 ...</span></span>
+<span><span class="co">#&gt;  $ coordinatePrecision             : logi  NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ elevation                       : logi  NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ elevationAccuracy               : logi  NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ depth                           : logi  NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ depthAccuracy                   : logi  NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ eventDate                       : chr  "2012-10-13T00:00" "2012-11-01T00:00" "2012-10-31T00:00" "2012-10-13T00:00" ...</span></span>
+<span><span class="co">#&gt;  $ day                             : int  13 1 31 13 30 23 20 22 21 22 ...</span></span>
+<span><span class="co">#&gt;  $ month                           : int  10 11 10 10 10 10 10 10 10 10 ...</span></span>
+<span><span class="co">#&gt;  $ year                            : int  2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span></span>
+<span><span class="co">#&gt;  $ taxonKey                        : int  1920506 1920506 1938125 11374894 6113873 6118817 6118817 6118871 1919924 1770649 ...</span></span>
+<span><span class="co">#&gt;  $ speciesKey                      : int  1920506 1920506 1938125 5137998 6113873 1954382 1954382 1964076 1919924 1770649 ...</span></span>
+<span><span class="co">#&gt;  $ basisOfRecord                   : chr  "HUMAN_OBSERVATION" "HUMAN_OBSERVATION" "HUMAN_OBSERVATION" "HUMAN_OBSERVATION" ...</span></span>
+<span><span class="co">#&gt;  $ institutionCode                 : chr  "naturgucker" "naturgucker" "naturgucker" "naturgucker" ...</span></span>
+<span><span class="co">#&gt;  $ collectionCode                  : chr  "naturgucker" "naturgucker" "naturgucker" "naturgucker" ...</span></span>
+<span><span class="co">#&gt;  $ catalogNumber                   : chr  "-190723441" "2051102952" "1565945073" "-1879976251" ...</span></span>
+<span><span class="co">#&gt;  $ recordNumber                    : chr  "" "" "" "" ...</span></span>
+<span><span class="co">#&gt;  $ identifiedBy                    : chr  "" "" "" "" ...</span></span>
+<span><span class="co">#&gt;  $ dateIdentified                  : chr  "" "" "" "" ...</span></span>
+<span><span class="co">#&gt;  $ license                         : chr  "CC_BY_4_0" "CC_BY_4_0" "CC_BY_4_0" "CC_BY_4_0" ...</span></span>
+<span><span class="co">#&gt;  $ rightsHolder                    : chr  "" "" "" "" ...</span></span>
+<span><span class="co">#&gt;  $ recordedBy                      : chr  "591374253" "591374253" "591374253" "591374253" ...</span></span>
+<span><span class="co">#&gt;  $ typeStatus                      : logi  NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ establishmentMeans              : logi  NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ lastInterpreted                 : chr  "2024-03-15T23:20:20.346Z" "2024-03-15T23:22:38.206Z" "2024-03-15T23:26:59.721Z" "2024-03-15T23:23:55.839Z" ...</span></span>
+<span><span class="co">#&gt;  $ mediaType                       : chr  "" "" "" "StillImage" ...</span></span>
+<span><span class="co">#&gt;  $ issue                           : chr  "COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES;MULTIMEDIA_URI_INVALID" "COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES;MULTIMEDIA_URI_INVALID" "COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES;TAXON_MATCH_HIGHERRANK;MULTI"| __truncated__ "COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES" ...</span></span>
+<span><span class="co">#&gt;  $ site_id                         : int  1 2 3 1 4 5 5 5 5 5 ...</span></span>
+<span><span class="co">#&gt;  $ pa                              : num  1 1 1 1 1 1 1 1 1 1 ...</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bfly_data</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      gbifID                           datasetKey occurrenceID  kingdom     phylum   class</span></span>
 <span><span class="co">#&gt; 1 923051749 6ac3f774-d9fb-4796-b3e9-92bf6c81c084              Animalia Arthropoda Insecta</span></span>
@@ -210,27 +236,32 @@
 <hr>
 </div>
 <div class="section level3">
-<h3 id="id_5-format-data-using-format_df">5. Format data using <code>format_df</code>
-<a class="anchor" aria-label="anchor" href="#id_5-format-data-using-format_df"></a>
+<h3 id="id_4-format-data-using-format_df">4. Format data using <code>format_df()</code>
+<a class="anchor" aria-label="anchor" href="#id_4-format-data-using-format_df"></a>
 </h3>
-<p>Use <code>format_df</code> to standardise and reshape biodiversity data into long or wide formats. The function automatically identifies key columns (e.g., coordinates, species, and values), assigns missing site IDs, and reformats the data for analysis. Outputs include a cleaned dataset and species-site matrices for further processing:</p>
-<p>• site_xy: Holds spatial coordinates of sampled sites.<br>
-• site_sp: Site-by-species matrix for biodiversity assessments.</p>
+<p>Use <code>format_df</code> to <em>standardise and reshape</em> raw biodiversity tables into the <em>long</em> or <em>wide</em> format required by later <code>dissmapr</code> steps. Importantly, this function does not alter the spatial resolution of the original observations - it simply tidies the data by automatically identifying key columns (e.g., coordinates, species, and values), assigning missing observation/site IDs, and reformatting the data for analysis. Outputs include a cleaned <code>site_obs</code> dataset and <code>site_spp</code> matrix for further processing:</p>
+<p>• <strong>site_obs</strong>: Simplified table with unique <code>site_id</code>, <code>x</code>, <code>y</code>, <code>species</code> and <code>value</code> records (long format). • <strong>site_spp</strong>: Site-by-species matrix for biodiversity assessments (wide format).</p>
 <div class="section level4">
-<h4 id="format-data-into-long-and-wide-formats">Format data into long and wide formats<a class="anchor" aria-label="anchor" href="#format-data-into-long-and-wide-formats"></a>
+<h4 id="format-data-into-long-site_obs-and-wide-site_spp-formats">Format data into long (site_obs) and wide (site_spp) formats<a class="anchor" aria-label="anchor" href="#format-data-into-long-site_obs-and-wide-site_spp-formats"></a>
 </h4>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bfly_result</span> <span class="op">=</span> <span class="fu"><a href="reference/format_df.html">format_df</a></span><span class="op">(</span></span>
-<span>  data        <span class="op">=</span> <span class="va">bfly_data</span>,</span>
-<span>  species_col <span class="op">=</span> <span class="st">'verbatimScientificName'</span>,</span>
-<span>  value_col   <span class="op">=</span> <span class="st">'pa'</span>,</span>
-<span>  extra_cols  <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  format      <span class="op">=</span> <span class="st">'long'</span></span>
+<span>  data        <span class="op">=</span> <span class="va">bfly_data</span>, <span class="co"># A `data.frame` of biodiversity records</span></span>
+<span>  species_col <span class="op">=</span> <span class="st">'verbatimScientificName'</span>, <span class="co"># Name of species column (required for `"long"`)</span></span>
+<span>  value_col   <span class="op">=</span> <span class="st">'pa'</span>, <span class="co"># Name of value column (e.g. presence/abundance; for `"long"`)</span></span>
+<span>  extra_cols  <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Character vector of other columns to keep</span></span>
+<span>  format      <span class="op">=</span> <span class="st">'long'</span> <span class="co"># Either`"long"` or `"wide"`. If `NULL`, inferred from `species_col` &amp; `value_col`</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check `bfly_result` structure</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">bfly_result</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 2</span></span>
+<span><span class="co">#&gt;  $ site_obs:'data.frame':    79953 obs. of  5 variables:</span></span>
+<span><span class="co">#&gt;  $ site_spp: tibble [56,090 × 2,871] (S3: tbl_df/tbl/data.frame)</span></span>
 <span></span>
 <span><span class="co"># Optional: Create new objects from list items</span></span>
 <span><span class="va">site_obs</span> <span class="op">=</span> <span class="va">bfly_result</span><span class="op">$</span><span class="va">site_obs</span></span>
-<span><span class="va">site_spp</span> <span class="op">=</span> <span class="va">bfly_result</span><span class="op">$</span><span class="va">site_sp</span></span>
+<span><span class="va">site_spp</span> <span class="op">=</span> <span class="va">bfly_result</span><span class="op">$</span><span class="va">site_spp</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">site_obs</span><span class="op">)</span></span>
@@ -255,34 +286,64 @@
 <span><span class="co">#&gt; 3       3  18.4 -33.9                                    0                  0                 0</span></span>
 <span><span class="co">#&gt; 4       4  18.5 -34.4                                    0                  0                 0</span></span>
 <span><span class="co">#&gt; 5       5  25.7 -33.6                                    0                  0                 0</span></span>
-<span><span class="co">#&gt; 6       6  22.2 -33.6                                    0                  0                 0</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="get-parameters-to-use-later">Get parameters to use later<a class="anchor" aria-label="anchor" href="#get-parameters-to-use-later"></a>
-</h4>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get parameters from processed data</span></span>
-<span><span class="co"># Number of species columns</span></span>
+<span><span class="co">#&gt; 6       6  22.2 -33.6                                    0                  0                 0</span></span>
+<span></span>
+<span><span class="co">#### Get parameters from processed data to use later</span></span>
+<span><span class="co"># Number of species</span></span>
 <span><span class="op">(</span><span class="va">n_sp</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">site_spp</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2868</span></span>
 <span></span>
 <span><span class="co"># Species names</span></span>
 <span><span class="va">sp_cols</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">site_spp</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">sp_cols</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
-<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<span><span class="va">sp_cols</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span><span class="co">#&gt;  [1] "Mylothris agathina subsp. agathina" "Pieris brassicae"                  </span></span>
+<span><span class="co">#&gt;  [3] "Tarucus thespis"                    "Acraea horta"                      </span></span>
+<span><span class="co">#&gt;  [5] "Danaus chrysippus"                  "Papilio demodocus subsp. demodocus"</span></span>
+<span><span class="co">#&gt;  [7] "Eutricha capensis"                  "Mesocelis monticola"               </span></span>
+<span><span class="co">#&gt;  [9] "Vanessa cardui"                     "Cuneisigna obstans"</span></span></code></pre></div>
 <hr>
 </div>
 </div>
 <div class="section level3">
-<h3 id="id_6-summarise-records-by-grid-centroid-using-generate_grid">6. Summarise records by grid centroid using <code>generate_grid</code>
+<h3 id="id_5-user-defined-area-of-interest-and-grid-resolution">5. User-defined area of interest and grid resolution<a class="anchor" aria-label="anchor" href="#id_5-user-defined-area-of-interest-and-grid-resolution"></a>
+</h3>
+<p>Load the spatial boundary data for South Africa to serve as the geographic reference for all subsequent biodiversity analyses and visualizations.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Read RSA shape file</span></span>
+<span><span class="va">rsa</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="st">'inst/extdata/rsa.shp'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Reading layer `rsa' from data source `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' using driver `ESRI Shapefile'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 1 feature and 1 field</span></span>
+<span><span class="co">#&gt; Geometry type: POLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 16.45802 ymin: -34.83514 xmax: 32.89125 ymax: -22.12661</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span></span>
+<span><span class="co"># Define your resolution and create mask to use later</span></span>
+<span><span class="va">res</span> <span class="op">=</span> <span class="fl">0.5</span> <span class="co"># 0.5 degrees is roughly 55km</span></span>
+<span></span>
+<span><span class="co"># Convert to a terra vector</span></span>
+<span><span class="va">rsa_vect</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create an empty raster over RSA at your desired resolution</span></span>
+<span><span class="va">grid</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">rsa_vect</span>, resolution <span class="op">=</span> <span class="va">res</span>, crs <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">rsa_vect</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span> <span class="op">=</span> <span class="fl">1</span>   <span class="co"># fill with dummy values</span></span>
+<span></span>
+<span><span class="co"># Mask everything outside the RSA boundary</span></span>
+<span><span class="va">grid_masked</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span><span class="va">grid</span>, <span class="va">rsa_vect</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level3">
+<h3 id="id_6-summarise-records-by-grid-centroid-using-generate_grid">6. Summarise records by grid centroid using <code>generate_grid()</code>
 <a class="anchor" aria-label="anchor" href="#id_6-summarise-records-by-grid-centroid-using-generate_grid"></a>
 </h3>
-<p>Use <code>generate_grid</code> to divide the study area, derived from the geographic extent of the occurrence data above, into grids of user-defined resolution, creating a spatial grid over a specified geographic extent. It assigns unique grid IDs to points and summarizes selected data columns within each grid cell. The function outputs a raster grid, grid polygons for visualization, and a data frame summarizing the contents of each grid cell, including totals and centroids. It is particularly useful for aggregating spatial data, such as biodiversity observations, into predefined spatial units for further analysis.</p>
+<p>Use <code>generate_grid</code> to overlay a user-defined lattice on the study region—whose bounds are inferred from the occurrence data—without modifying the underlying observations themselves. The function constructs a raster‐based grid of the chosen cell size, assigns each point a unique <code>grid_id</code>, and compiles a summary of user-specified attributes for every cell. It returns three coordinated outputs:</p>
+<p>• <strong>grid</strong>: <code>SpatRaster</code> with grid index • <strong>grid_sf</strong>: <code>sf</code> and <code>data.frame</code> i.e. lattice polygon features for mapping or spatial joins • <strong>block_sp</strong>: <code>data.frame</code> that records per-cell totals, centroids, and other statistics.</p>
+<p>By aggregating raw records into consistent spatial units, <code>generate_grid</code> provides the structured foundation needed for subsequent landscape-scale biodiversity analyses.</p>
 <div class="section level4">
-<h4 id="assign-records-to-a-grid-at-a-set-resolution-eg-05">Assign records to a grid at a set resolution (e.g. 0.5°)<a class="anchor" aria-label="anchor" href="#assign-records-to-a-grid-at-a-set-resolution-eg-05"></a>
+<h4 id="assign-records-to-a-grid-at-a-set-resolution">Assign records to a grid at a set resolution<a class="anchor" aria-label="anchor" href="#assign-records-to-a-grid-at-a-set-resolution"></a>
 </h4>
-<p>Aggregate species records into equal-area grid cells to enable spatially standardized biodiversity analyses.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>Aggregate species records into grid cells of user-specified size (e.g. 0.5°) to enable spatially standardized biodiversity analyses.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">grid_list</span> <span class="op">=</span> <span class="fu"><a href="reference/generate_grid.html">generate_grid</a></span><span class="op">(</span></span>
 <span>  data       <span class="op">=</span> <span class="va">site_spp</span>,</span>
 <span>  x_col      <span class="op">=</span> <span class="st">"x"</span>,</span>
@@ -291,6 +352,16 @@
 <span>  sum_col_range <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">site_spp</span><span class="op">)</span>,</span>
 <span>  crs_epsg   <span class="op">=</span> <span class="fl">4326</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check `grid_list` structure</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">grid_list</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 3</span></span>
+<span><span class="co">#&gt;  $ grid    :S4 class 'SpatRaster' [package "terra"]</span></span>
+<span><span class="co">#&gt;  $ grid_sf :Classes 'sf' and 'data.frame':   1110 obs. of  8 variables:</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "sf_column")= chr "geometry"</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "agr")= Factor w/ 3 levels "constant","aggregate",..: NA NA NA NA NA NA NA</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:7] "centroid_lon" "centroid_lat" "grid_id" "mapsheet" ...</span></span>
+<span><span class="co">#&gt;  $ block_sp:'data.frame':    415 obs. of  2874 variables:</span></span>
 <span></span>
 <span><span class="co"># Optional: Create new objects from list items</span></span>
 <span><span class="va">aoi_grid</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_sf</span></span>
@@ -336,7 +407,7 @@
 <h4 id="generate-a-data-frame-xy-of-site-centroids">Generate a data frame ‘xy’ of site centroids<a class="anchor" aria-label="anchor" href="#generate-a-data-frame-xy-of-site-centroids"></a>
 </h4>
 <p>Extract longitude–latitude coordinates and summary metrics for each occupied grid cell.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Grid centroids with 'gird_id', 'centroid_lon', 'centroid_lat', 'obs_sum' and `spp_rich`</span></span>
 <span><span class="va">grid_xy</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -370,7 +441,7 @@
 <h4 id="generate-a-map-of-rsa-with-occupied-grid-cells-as-centroid-points">Generate a map of RSA with occupied grid cells as centroid points<a class="anchor" aria-label="anchor" href="#generate-a-map-of-rsa-with-occupied-grid-cells-as-centroid-points"></a>
 </h4>
 <p>Visualize observation density across South Africa using centroid-based mapping of gridded biodiversity data.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">aoi_grid</span>, fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">"darkgrey"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">grid_spp</span>,</span>
@@ -390,7 +461,7 @@
 <h3 id="example-1---species-richness">Example 1 - Species Richness<a class="anchor" aria-label="anchor" href="#example-1---species-richness"></a>
 </h3>
 <p>Here we calculate species richness across sites in the block_sp dataset, again using the compute_orderwise function. The richness function is applied to the grid_id column for site identification, with species data specified by sp_cols. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute species richness (order 1) and the difference thereof for orders 2 to 4</span></span>
 <span><span class="va">rich_o1234</span> <span class="op">=</span> <span class="fu"><a href="reference/compute_orderwise.html">compute_orderwise</a></span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">grid_spp</span>,</span>
@@ -401,11 +472,11 @@
 <span>  order <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 4.51 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 13.64 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 51.50 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 59.10 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 1 minutes and 59.11 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 9.52 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 16.17 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 11.34 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 2 minutes and 40.38 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 2 minutes and 40.39 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rich_o1234</span><span class="op">)</span></span>
@@ -417,7 +488,7 @@
 <span><span class="co">#&gt; 4:      1029    &lt;NA&gt;     1     7</span></span>
 <span><span class="co">#&gt; 5:      1030    &lt;NA&gt;     1     6</span></span>
 <span><span class="co">#&gt; 6:      1031    &lt;NA&gt;     1    76</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot species richness distribution by order</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="va">value</span> <span class="op">~</span> <span class="va">order</span>,</span>
 <span>        data <span class="op">=</span> <span class="va">rich_o1234</span>,</span>
@@ -426,7 +497,7 @@
 <span>        outline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>        main <span class="op">=</span> <span class="st">'Distribution of Species Richness by Order'</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-richness-plot-1.png" width="100%"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Link centroid coordinates back to `rich_o1234` data.frame for plotting</span></span>
 <span><span class="va">rich_o1234</span><span class="op">$</span><span class="va">centroid_lon</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">$</span><span class="va">centroid_lon</span><span class="op">[</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">rich_o1234</span><span class="op">$</span><span class="va">site_from</span>, <span class="va">grid_spp</span><span class="op">$</span><span class="va">grid_id</span><span class="op">)</span><span class="op">]</span></span>
@@ -455,7 +526,7 @@
 <h3 id="example-2---community-turnover">Example 2 - Community Turnover<a class="anchor" aria-label="anchor" href="#example-2---community-turnover"></a>
 </h3>
 <p>Here we calculate species turnover (beta diversity) across sites in the block_sp dataset using the compute_orderwise function again. The turnover function is applied to the grid_id column for site identification, with species data specified by sp_cols. Order = 1 is not an option because turnover requires a comparison between sites. For orders 2 to 5, it computes turnover for pairwise and higher-order site combinations, representing the proportion of species not shared between sites. A subset of 1000 samples is used for higher-order comparisons. Parallel processing with 4 worker threads improves efficiency, and the output is a table summarizing species turnover across the specified orders.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute community turnover for orders 2 to 5</span></span>
 <span><span class="va">turn_o2345</span> <span class="op">=</span> <span class="fu"><a href="reference/compute_orderwise.html">compute_orderwise</a></span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">grid_spp</span>,</span>
@@ -466,11 +537,11 @@
 <span>  order <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 17.00 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 25.83 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 2 minutes and 45.40 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 5: 4 minutes and 29.85 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 4 minutes and 29.87 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 18.21 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 33.15 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 3 minutes and 3.19 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 5: 5 minutes and 0.01 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 5 minutes and 0.02 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">turn_o2345</span><span class="op">)</span></span>
@@ -483,7 +554,7 @@
 <span><span class="co">#&gt; 5:      1031    1026     2 0.9870130</span></span>
 <span><span class="co">#&gt; 6:       117    1026     2 1.0000000</span></span></code></pre></div>
 <p>To visualize the spatial patterns of turnover across sites, geographic coordinates are added back to the results. This allows spatial exploration of turnover patterns across different orders, highlighting regions of high or low turnover and enabling comparisons across orders. These visualizations provide valuable insights into spatial biodiversity dynamics. Below we assign the geographic coordinates (x and y) from the block_sp dataset to the turn_o2345 results. Using match, it aligns the coordinates to the site_from column in turn_o2345 based on the corresponding grid_id values in block_sp. This prepares the dataset for spatial plotting.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add coordinates back to 'turn_o2345' for plotting</span></span>
 <span><span class="va">turn_o2345</span><span class="op">$</span><span class="va">centroid_lon</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">$</span><span class="va">centroid_lon</span><span class="op">[</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">turn_o2345</span><span class="op">$</span><span class="va">site_from</span>, <span class="va">grid_spp</span><span class="op">$</span><span class="va">grid_id</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">turn_o2345</span><span class="op">$</span><span class="va">centroid_lat</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">$</span><span class="va">centroid_lat</span><span class="op">[</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">turn_o2345</span><span class="op">$</span><span class="va">site_from</span>, <span class="va">grid_spp</span><span class="op">$</span><span class="va">grid_id</span><span class="op">)</span><span class="op">]</span></span>
@@ -505,7 +576,7 @@
 <span>  <span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-turnover-plot-order2-1.png" width="100%"></p>
 <p>Plot order-wise turnover (orders 2:5) calculated using <code>compute_orderwise(..., func = turnover, ...)</code> to visualise spatial patterns of turnover across different orders. Results highlight regions of high or low turnover and facilitate comparison across orders, providing insights into spatial biodiversity dynamics.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot order-wise turnover (orders 2:5) calculated using `compute_orderwise(..., func = turnover, ...)`</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_tile</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mean_turn_o2345</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">centroid_lon</span>, y <span class="op">=</span> <span class="va">centroid_lat</span>, fill <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -526,7 +597,7 @@
 <a class="anchor" aria-label="anchor" href="#id_7-generate-site-by-species-matrix---site_spp"></a>
 </h3>
 <p>Create a matrix of species counts per site for use in biodiversity and dissimilarity analyses.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xy</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
 <span><span class="va">site_spp</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">5</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">grid_spp</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -553,11 +624,11 @@
 <span><span class="co">#&gt; 5    1030        30.75    -22.25004       6        6                                  0</span></span>
 <span><span class="co">#&gt; 6    1031        31.25    -22.25004     107       76                                  0</span></span></code></pre></div>
 <div class="section level4">
-<h4 id="fetch-record-of-occurrence-counts-calculated-using-generate_grid">Fetch record of occurrence counts calculated using <code>generate_grid</code>
+<h4 id="fetch-record-of-occurrence-counts-calculated-using-generate_grid">Fetch record of occurrence counts calculated using <code>generate_grid()</code>
 <a class="anchor" aria-label="anchor" href="#fetch-record-of-occurrence-counts-calculated-using-generate_grid"></a>
 </h4>
 <p><code>generate_grid</code> summarised the number of species observations per grid cell to assess sampling effort.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sampling effort = observation counts</span></span>
 <span><span class="va">sam_eff</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grid_id"</span>,<span class="st">"centroid_lon"</span>,<span class="st">"centroid_lat"</span>,<span class="st">"obs_sum"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">obs_cnt</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">5</span><span class="op">)</span><span class="op">]</span></span>
@@ -578,7 +649,7 @@
 <h4 id="generate-a-binary-presenceabsence-data-frame-sbs">Generate a binary (presence/absence) data frame ‘sbs’<a class="anchor" aria-label="anchor" href="#generate-a-binary-presenceabsence-data-frame-sbs"></a>
 </h4>
 <p>Convert species abundance data to presence/absence format (<code>site_spp_pa</code>) for binary dissimilarity analyses.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create site-by-species matrix</span></span>
 <span><span class="va">sbs</span> <span class="op">=</span> <span class="va">site_spp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">sp_cols</span><span class="op">)</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">.</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -612,11 +683,11 @@
 <span><span class="co">#&gt; 6    1031        31.25    -22.25004     107       76                                  0</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="fetch-species-richness-values-calculated-using-generate_grid">Fetch species richness values calculated using <code>generate_grid</code>
+<h4 id="fetch-species-richness-values-calculated-using-generate_grid">Fetch species richness values calculated using <code>generate_grid()</code>
 <a class="anchor" aria-label="anchor" href="#fetch-species-richness-values-calculated-using-generate_grid"></a>
 </h4>
 <p><code>generate_grid</code> calculated species richness per site based on binary presence/absence records.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Species richness</span></span>
 <span><span class="va">spp_rich</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grid_id"</span>,<span class="st">"centroid_lon"</span>,<span class="st">"centroid_lat"</span>,<span class="st">"spp_rich"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -636,23 +707,31 @@
 <h4 id="generate-obs_cnt-and-spp_rich-raster-maps">Generate ‘obs_cnt’ and ‘spp_rich’ raster maps<a class="anchor" aria-label="anchor" href="#generate-obs_cnt-and-spp_rich-raster-maps"></a>
 </h4>
 <p><code>generate_grid</code> also creates a <code>SpatRast</code> to help visualise sampling effort and species richness over the study area.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Species richness and sampling effort SpatRast</span></span>
 <span><span class="va">ras_effRich</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid</span><span class="op">[[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Plot `ras_effRich` using colour palettes from `viridis`</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">ras_effRich</span><span class="op">)</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># plot(sqrt(ras_effRich), col = turbo(100))</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">ras_effRich</span><span class="op">)</span>,</span>
+<span>  col   <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
+<span>  colNA <span class="op">=</span> <span class="cn">NA</span>,            <span class="co"># &lt;-- NA cells completely transparent</span></span>
+<span>  axes  <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># plot(vect(rsa), add = TRUE, border = "black")</span></span></code></pre></div>
 <p><img src="reference/figures/README-eff-rich-1.png" width="100%"></p>
 <p><em><strong>Note</strong>: occurrence coordinates are only used for assigning then into grids; they are not needed beyond this step.</em></p>
 <hr>
 </div>
 </div>
 <div class="section level3">
-<h3 id="id_8-generate-site-by-environment-matrix-using-get_enviro_data">8. Generate site by environment matrix using <code>get_enviro_data</code>
+<h3 id="id_8-generate-site-by-environment-matrix-using-get_enviro_data">8. Generate site by environment matrix using <code>get_enviro_data()</code>
 <a class="anchor" aria-label="anchor" href="#id_8-generate-site-by-environment-matrix-using-get_enviro_data"></a>
 </h3>
 <p>Use <code>get_enviro_data</code> to extract environmental variables for spatial points from either species observations or grid centroids. Data can be sourced from online repositories (e.g. <em>WorldClim</em>, <em>SoilGrids</em> via <code>geodata</code>) or local rasters. The function defines an area of interest with a buffer, extracts selected variables, and interpolates missing values using nearby non-NA points. Outputs include cropped rasters, spatial points (as an <code>sf</code> object), and a combined site-by-environment data frame (<code>site_env</code>) for downstream ecological analyses. Future support will extend to <em>CHELSA</em> (<code>climenv</code>), <em>Google Earth Engine</em> (<code>rgee</code>), and <code>mapme.biodiversity</code> for expanded environmental and biodiversity data access.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use `get_enviro_data` to fetch environmental data for your grid centroids</span></span>
 <span><span class="va">enviro_list</span> <span class="op">=</span> <span class="fu"><a href="reference/get_enviro_data.html">get_enviro_data</a></span><span class="op">(</span></span>
 <span>  data      <span class="op">=</span> <span class="va">sbs</span>,</span>
@@ -679,19 +758,19 @@
 <h4 id="add-eff-rich-raster-to-the-enviro-stack-raster">Add ‘eff-rich’ raster to the enviro stack raster<a class="anchor" aria-label="anchor" href="#add-eff-rich-raster-to-the-enviro-stack-raster"></a>
 </h4>
 <p>Combine environmental rasters with sampling effort and species richness layers for joint spatial analysis.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Combine `SpatRast`</span></span>
-<span><span class="va">ras_enviro_effRich</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ras_effRich</span>, <span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">ras_enviro</span>, <span class="va">ras_effRich</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ras_enviro_effRich</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">ras_effRich</span><span class="op">)</span>, <span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">ras_enviro</span>, <span class="va">ras_effRich</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the first 4 layers of `ras_enviro_effRich`</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ras_enviro_effRich</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ras_enviro_effRich</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-ras-1.png" width="100%"></p>
 </div>
 <div class="section level4">
 <h4 id="create-dataframe-of-environmental-variables-with-site-centroids-xy">Create data.frame of environmental variables with site centroids ‘xy’<a class="anchor" aria-label="anchor" href="#create-dataframe-of-environmental-variables-with-site-centroids-xy"></a>
 </h4>
 <p>Environmental data were linked to grid centroids using <code>get_enviro_data</code>, now visualise the spatial variation in selected climate variables to check results.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create `env_df`</span></span>
 <span><span class="va">env_df</span> <span class="op">=</span> <span class="va">enviro_list</span><span class="op">$</span><span class="va">env_df</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">8</span><span class="op">:</span><span class="fl">26</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -737,18 +816,18 @@
 <h4 id="generate-site-by-environment-data-frame-sbe">Generate <em>Site-by-Environment</em> data frame ‘sbe’<a class="anchor" aria-label="anchor" href="#generate-site-by-environment-data-frame-sbe"></a>
 </h4>
 <p>Create a unified data frame of site coordinates, sampling effort, richness, and environmental variables for modelling called <code>sbe</code>.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create `sbe` data.frame</span></span>
 <span><span class="va">sbe</span> <span class="op">=</span> <span class="va">env_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">grid_id</span>, <span class="va">centroid_lon</span>, <span class="va">centroid_lat</span>, <span class="va">obs_sum</span>, <span class="va">spp_rich</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
-<h3 id="id_9-change-coordinates-projection-using-sfst_transform">9. Change coordinates projection using <code>sf::st_transform</code>
+<h3 id="id_9-change-coordinates-projection-using-sfst_transform">9. Change coordinates projection using <code>sf::st_transform()</code>
 <a class="anchor" aria-label="anchor" href="#id_9-change-coordinates-projection-using-sfst_transform"></a>
 </h3>
 <p>Reproject spatial coordinates from geographic (WGS84) to a projected system (e.g. Albers Equal Area) for analyses requiring distance in meters, such as spatial clustering or environmental modelling.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert to sf object with WGS84 geographic CRS</span></span>
 <span><span class="va">xy_sf</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">xy</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
 <span></span>
@@ -779,40 +858,40 @@
 <hr>
 </div>
 <div class="section level3">
-<h3 id="id_10-check-for-colinearity-using-rm_correlated">10. Check for colinearity using <code>rm_correlated</code>
+<h3 id="id_10-check-for-colinearity-using-rm_correlated">10. Check for colinearity using <code>rm_correlated()</code>
 <a class="anchor" aria-label="anchor" href="#id_10-check-for-colinearity-using-rm_correlated"></a>
 </h3>
 <p>Identify and remove highly correlated environmental variables to reduce multicollinearity in subsequent analyses. This step ensures model stability by retaining only informative, non-redundant predictors based on a user-defined correlation threshold.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove the highly correlated variables</span></span>
 <span><span class="va">env_vars_reduced</span> <span class="op">=</span> <span class="fu"><a href="reference/rm_correlated.html">rm_correlated</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">env_df</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">:</span><span class="fl">24</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>                                 cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                                 threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>                                 plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-remove_var-1.png" width="100%"></p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="co">#&gt; Variables removed due to high correlation:</span></span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="co">#&gt;  [1] "temp_rang"  "temp_sea"   "mdr"        "temp_max"   "rain_mean"  "rain_dryQ"  "temp_min"  </span></span>
-<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="co">#&gt;  [8] "temp_warmQ" "temp_coldQ" "rain_coldQ" "rain_wetQ"  "rain_wet"   "rain_sea"  </span></span>
-<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a><span class="co">#&gt; Variables retained:</span></span>
-<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a><span class="co">#&gt; [1] "obs_sum"    "temp_mean"  "iso"        "temp_wetQ"  "temp_dryQ"  "rain_dry"   "rain_warmQ"</span></span>
-<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a><span class="co"># Compare numbers of environmental variables</span></span>
-<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a><span class="fu">ncol</span>(env_df[,<span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">24</span>)])</span>
-<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a><span class="co">#&gt; [1] 20</span></span>
-<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a><span class="fu">ncol</span>(env_vars_reduced)</span>
-<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a><span class="co">#&gt; [1] 7</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co">#&gt; Variables removed due to high correlation:</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a><span class="co">#&gt;  [1] "temp_rang"  "temp_sea"   "mdr"        "temp_max"   "rain_mean"  "rain_dryQ"  "temp_min"  </span></span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a><span class="co">#&gt;  [8] "temp_warmQ" "temp_coldQ" "rain_coldQ" "rain_wetQ"  "rain_wet"   "rain_sea"  </span></span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a><span class="co">#&gt; Variables retained:</span></span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a><span class="co">#&gt; [1] "obs_sum"    "temp_mean"  "iso"        "temp_wetQ"  "temp_dryQ"  "rain_dry"   "rain_warmQ"</span></span>
+<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a><span class="co"># Compare numbers of environmental variables</span></span>
+<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a><span class="fu">ncol</span>(env_df[,<span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">24</span>)])</span>
+<span id="cb27-10"><a href="#cb27-10" tabindex="-1"></a><span class="co">#&gt; [1] 20</span></span>
+<span id="cb27-11"><a href="#cb27-11" tabindex="-1"></a><span class="fu">ncol</span>(env_vars_reduced)</span>
+<span id="cb27-12"><a href="#cb27-12" tabindex="-1"></a><span class="co">#&gt; [1] 7</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level3">
 <h3 id="id_11-calculate-zeta-decline-for-orders-215">11. Calculate Zeta decline for orders 2:15<a class="anchor" aria-label="anchor" href="#id_11-calculate-zeta-decline-for-orders-215"></a>
 </h3>
 <div class="section level4">
-<h4 id="expectation-of-zeta-diversity-decline-using-zetadivzetadeclineex">Expectation of zeta diversity decline using <code>zetadiv::Zeta.decline.ex</code>
+<h4 id="expectation-of-zeta-diversity-decline-using-zetadivzetadeclineex">Expectation of zeta diversity decline using <code>zetadiv::Zeta.decline.ex()</code>
 <a class="anchor" aria-label="anchor" href="#expectation-of-zeta-diversity-decline-using-zetadivzetadeclineex"></a>
 </h4>
 <p>Computes the expectation of zeta diversity, the number of species shared by multiple assemblages for a range of orders (number of assemblages or sites), using a formula based on the occupancy of the species, and fits the decline to an exponential and a power law relationship. <em>Generate statistics and figures, no maps</em></p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">zeta_decline_ex</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.decline.ex.html" class="external-link">Zeta.decline.ex</a></span><span class="op">(</span><span class="va">site_spp_pa</span><span class="op">[</span>,<span class="fl">6</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">site_spp_pa</span><span class="op">)</span><span class="op">]</span>, </span>
 <span>                                  orders <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-zeta-decline-ex-1.png" width="100%"></p>
@@ -833,11 +912,11 @@
 </blockquote>
 </div>
 <div class="section level4">
-<h4 id="zeta-diversity-decline-using-monte-carlo-sampling-zetadivzetadeclinemc">Zeta diversity decline using Monte Carlo sampling <code>zetadiv::Zeta.decline.mc</code>
+<h4 id="zeta-diversity-decline-using-monte-carlo-sampling-zetadivzetadeclinemc">Zeta diversity decline using Monte Carlo sampling <code>zetadiv::Zeta.decline.mc()</code>
 <a class="anchor" aria-label="anchor" href="#zeta-diversity-decline-using-monte-carlo-sampling-zetadivzetadeclinemc"></a>
 </h4>
 <p>Computes zeta diversity, the number of species shared by multiple assemblages, for a range of orders (number of assemblages or sites), using combinations of sampled sites, and fits the decline to an exponential and a power law relationship. <em>Generate statistics and figures, no maps</em></p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">zeta_mc_utm</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.decline.mc.html" class="external-link">Zeta.decline.mc</a></span><span class="op">(</span><span class="va">site_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>                               <span class="va">xy_utm_df</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,</span>
 <span>                               orders <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span>,</span>
@@ -863,11 +942,11 @@
 <h3 id="id_12-calculate-zeta-decay-for-orders-28">12. Calculate Zeta decay for orders 2:8<a class="anchor" aria-label="anchor" href="#id_12-calculate-zeta-decay-for-orders-28"></a>
 </h3>
 <div class="section level4">
-<h4 id="zeta-distance-decay-for-a-range-of-numbers-of-assemblages-or-sites-using-zetadivzetaddecays">Zeta distance decay for a range of numbers of assemblages or sites using <code>zetadiv::Zeta.ddecays</code>
+<h4 id="zeta-distance-decay-for-a-range-of-numbers-of-assemblages-or-sites-using-zetadivzetaddecays">Zeta distance decay for a range of numbers of assemblages or sites using <code>zetadiv::Zeta.ddecays()</code>
 <a class="anchor" aria-label="anchor" href="#zeta-distance-decay-for-a-range-of-numbers-of-assemblages-or-sites-using-zetadivzetaddecays"></a>
 </h4>
 <p>Computes the distance decay of zeta diversity for a range of orders (number of assemblages or sites), using generalised linear models. <em>Generate statistics and figures, no maps</em></p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate Zeta.ddecays</span></span>
 <span><span class="va">zeta_decays</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.ddecays.html" class="external-link">Zeta.ddecays</a></span><span class="op">(</span><span class="va">xy_utm_df</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,</span>
 <span>                          <span class="va">site_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span>,</span>
@@ -910,11 +989,11 @@ This may reflect widespread or core species that are consistently shared regardl
 <h3 id="id_13-run-a-multi-site-generalised-dissimilarity-model-for-order-2">13. Run a Multi-Site Generalised Dissimilarity Model for order 2<a class="anchor" aria-label="anchor" href="#id_13-run-a-multi-site-generalised-dissimilarity-model-for-order-2"></a>
 </h3>
 <div class="section level4">
-<h4 id="multi-site-generalised-dissimilarity-modelling-for-a-set-of-environmental-variables-and-distances-using-zetadivzetamsgdm">Multi-site generalised dissimilarity modelling for a set of environmental variables and distances using <code>zetadiv::Zeta.msgdm</code>
+<h4 id="multi-site-generalised-dissimilarity-modelling-for-a-set-of-environmental-variables-and-distances-using-zetadivzetamsgdm">Multi-site generalised dissimilarity modelling for a set of environmental variables and distances using <code>zetadiv::Zeta.msgdm()</code>
 <a class="anchor" aria-label="anchor" href="#multi-site-generalised-dissimilarity-modelling-for-a-set-of-environmental-variables-and-distances-using-zetadivzetamsgdm"></a>
 </h4>
 <p>Computes a regression model of zeta diversity for a given order (number of assemblages or sites) against a set of environmental variables and distances between sites. The different regression models available are generalised linear models, generalised linear models with negative constraints, generalised additive models, shape constrained additive models, and I-splines. <em>Generate statistics and figures, no maps and save fitted order 2 model ‘zeta2’</em></p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute a regression model of zeta diversity order 2</span></span>
 <span><span class="va">zeta2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.msgdm.html" class="external-link">Zeta.msgdm</a></span><span class="op">(</span><span class="va">site_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>                   <span class="va">env_vars_reduced</span><span class="op">[</span>,<span class="op">-</span><span class="fl">8</span><span class="op">]</span>,</span>
@@ -952,7 +1031,7 @@ This may reflect widespread or core species that are consistently shared regardl
 <blockquote>
 <p><strong>Ecological interpretation:</strong> Spatial distance is the dominant structuring factor in these data—sites further apart share markedly fewer species. After accounting for that, differences in observation effort and, to a lesser degree, seasonal rainfall still shape multisite community similarity. Temperature and seasonality metrics, by contrast, appear to have only a minor independent influence on zeta‐diversity in this landscape.</p>
 </blockquote>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Deviance explained summary results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">zeta2</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">deviance</span><span class="op">/</span><span class="va">null.deviance</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 0.264315</span></span>
@@ -1010,7 +1089,7 @@ This may reflect widespread or core species that are consistently shared regardl
 </div>
 </div>
 <div class="section level3">
-<h3 id="id_14-predict-current-zeta-diversity-zeta2-using-predict_dissim">14. Predict current Zeta Diversity (zeta2) using <code>predict_dissim</code>
+<h3 id="id_14-predict-current-zeta-diversity-zeta2-using-predict_dissim">14. Predict current Zeta Diversity (zeta2) using <code>predict_dissim()</code>
 <a class="anchor" aria-label="anchor" href="#id_14-predict-current-zeta-diversity-zeta2-using-predict_dissim"></a>
 </h3>
 <ul>
@@ -1018,7 +1097,7 @@ This may reflect widespread or core species that are consistently shared regardl
 <li><em>Predict for the updated sbe and xy</em></li>
 <li><em>Produce a site by site matrix of predicted zeta ‘zeta.now’</em></li>
 </ul>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Predict current zeta diversity using `predict_dissim` with sampling effort, geographic distance and environmental variables</span></span>
 <span><span class="co"># Only non-colinear environmental variables used in `zeta2` model</span></span>
 <span><span class="va">predictors_df</span> <span class="op">=</span> <span class="fu"><a href="reference/predict_dissim.html">predict_dissim</a></span><span class="op">(</span></span>
@@ -1033,7 +1112,7 @@ This may reflect widespread or core species that are consistently shared regardl
 <span>  rsa        <span class="op">=</span> <span class="va">rsa</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-predict-zeta2-1.png" width="100%"></p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">predictors_df</span><span class="op">)</span></span>
@@ -1053,7 +1132,7 @@ This may reflect widespread or core species that are consistently shared regardl
 <hr>
 </div>
 <div class="section level3">
-<h3 id="id_15-run-clustering-analyses-using-map_bioreg">15. Run clustering analyses using <code>map_bioreg</code>
+<h3 id="id_15-run-clustering-analyses-using-map_bioreg">15. Run clustering analyses using <code>map_bioreg()</code>
 <a class="anchor" aria-label="anchor" href="#id_15-run-clustering-analyses-using-map_bioreg"></a>
 </h3>
 <ul>
@@ -1061,7 +1140,7 @@ This may reflect widespread or core species that are consistently shared regardl
 <li><em>Generate maps of dissimilarity (the rgb plot)</em></li>
 <li><em>Generate map of bioregions (from clustering)</em></li>
 </ul>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run `map_bioreg` function to generate and plot clusters</span></span>
 <span><span class="va">bioreg_result</span> <span class="op">=</span> <span class="fu"><a href="reference/map_bioreg.html">map_bioreg</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">predictors_df</span>,</span>
@@ -1073,12 +1152,12 @@ This may reflect widespread or core species that are consistently shared regardl
 <span>  y_col <span class="op">=</span><span class="st">'centroid_lat'</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; fitting ...</span></span>
-<span><span class="co">#&gt;   |                                                                                                  |                                                                                          |   0%  |                                                                                                  |======                                                                                    |   7%  |                                                                                                  |============                                                                              |  13%  |                                                                                                  |==================                                                                        |  20%  |                                                                                                  |========================                                                                  |  27%  |                                                                                                  |==============================                                                            |  33%  |                                                                                                  |====================================                                                      |  40%  |                                                                                                  |==========================================                                                |  47%  |                                                                                                  |================================================                                          |  53%  |                                                                                                  |======================================================                                    |  60%  |                                                                                                  |============================================================                              |  67%  |                                                                                                  |==================================================================                        |  73%  |                                                                                                  |========================================================================                  |  80%  |                                                                                                  |==============================================================================            |  87%  |                                                                                                  |====================================================================================      |  93%  |                                                                                                  |==========================================================================================| 100%</span></span></code></pre></div>
+<span><span class="co">#&gt;   |                                                                                                        |                                                                                                |   0%  |                                                                                                        |======                                                                                          |   7%  |                                                                                                        |=============                                                                                   |  13%  |                                                                                                        |===================                                                                             |  20%  |                                                                                                        |==========================                                                                      |  27%  |                                                                                                        |================================                                                                |  33%  |                                                                                                        |======================================                                                          |  40%  |                                                                                                        |=============================================                                                   |  47%  |                                                                                                        |===================================================                                             |  53%  |                                                                                                        |==========================================================                                      |  60%  |                                                                                                        |================================================================                                |  67%  |                                                                                                        |======================================================================                          |  73%  |                                                                                                        |=============================================================================                   |  80%  |                                                                                                        |===================================================================================             |  87%  |                                                                                                        |==========================================================================================      |  93%  |                                                                                                        |================================================================================================| 100%</span></span></code></pre></div>
 <p><img src="reference/figures/README-zeta-cluster-1.png" width="100%"></p>
 <hr>
 </div>
 <div class="section level3">
-<h3 id="id_16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregdiff">16. Predict future Zeta Diversity and map bioregion change using <code>map_bioregDiff</code>
+<h3 id="id_16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregdiff">16. Predict future Zeta Diversity and map bioregion change using <code>map_bioregDiff()</code>
 <a class="anchor" aria-label="anchor" href="#id_16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregdiff"></a>
 </h3>
 <ul>
@@ -1088,7 +1167,7 @@ This may reflect widespread or core species that are consistently shared regardl
 <li><em>‘xy’ also updated with k rows</em></li>
 <li><em>Predict a k by k matrix of predicted zeta ‘zeta.future’</em></li>
 </ul>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># NOT RUN YET</span></span>
 <span><span class="co"># future_df = predict_dissim(</span></span>
 <span><span class="co">#   block_sp   = grid_spp[,-c(4:6)],</span></span>
@@ -1151,7 +1230,7 @@ This may reflect widespread or core species that are consistently shared regardl
 <h3 id="id_17-deposit-all-results-into-zenodo">17. Deposit all results into Zenodo<a class="anchor" aria-label="anchor" href="#id_17-deposit-all-results-into-zenodo"></a>
 </h3>
 <p>All data frames, tables, maps, and standard metadata can be deposited into Zenodo using <a href="https://github.com/eblondel/zen4R/wiki" class="external-link"><code>zen4R</code></a> or <a href="https://zenodo.org/records/10715460" class="external-link">Zenodo UI</a>.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># save(occ, sbs, sbe, zeta2, zeta_now, zeta_future, file="dissmapr_results.Rdata")</span></span>
 <span><span class="co"># use zen4R or Zenodo UI to upload archive</span></span></code></pre></div>
 <hr>

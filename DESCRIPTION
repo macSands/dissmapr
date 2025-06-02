@@ -41,6 +41,7 @@ Imports:
     sf,
     terra,
     tidyr,
+    tidyterra,
     vegan,
     viridis,
     zoo,

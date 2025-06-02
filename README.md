@@ -1,23 +1,23 @@
 
-- [**`dissmapr`**: Compositional Dissimilarity and Biodiversity Turnover Analysis](#dissmapr)  
+- [`dissmapr: Compositional Dissimilarity and Biodiversity Turnover Analysis`](#dissmapr)  
 - [Introduction](#introduction)
 - [Step-by-Step Workflow](#step-by-step-workflow)
   - [1. Install and load `dissmapr`](#1-install-and-load-dissmapr)
   - [2. Load other R libraries](#2-load-other-r-libraries)
-  - [3. Load user-defined area of interest and set grid resolution](#3-user-defined-area-of-interest-and-grid-resolution)
-  - [4. Get species occurrence records using `get_occurrence_data`](#4-get-species-occurrence-records-using-get_occurrence_data)
-  - [5. Format data using `format_df`](#5-format-data-using-format_df)
-  - [6. Summarise records by grid centroid using `generate_grid`](#6-summarise-records-by-grid-centroid-using-generate_grid)
-  - [7. Fetch site by species matrix created using `generate_grid`](#7-generate-site-by-species-matrix---site_spp)
-  - [8. Generate site by environment matrix using `get_enviro_data`](#8-generate-site-by-environment-matrix-using-get_enviro_data)
-  - [9. Change coordinates projection using `sf::st_transform`](#9-change-coordinates-projection-using-sfst_transform)
-  - [10. Check for colinearity using `rm_correlated`](#10-check-for-colinearity-using-rm_correlated)
+  - [3. Get species occurrence records using `get_occurrence_data()`](#4-get-species-occurrence-records-using-get_occurrence_data)
+  - [4. Format data using `format_df()`](#5-format-data-using-format_df)
+  - [5. Load user-defined area of interest and set grid resolution](#3-user-defined-area-of-interest-and-grid-resolution)
+  - [6. Summarise records by grid centroid using `generate_grid()`](#6-summarise-records-by-grid-centroid-using-generate_grid)
+  - [7. Fetch site by species matrix created using `generate_grid()`](#7-generate-site-by-species-matrix---site_spp)
+  - [8. Generate site by environment matrix using `get_enviro_data()`](#8-generate-site-by-environment-matrix-using-get_enviro_data)
+  - [9. Change coordinates projection using `sf::st_transform()`](#9-change-coordinates-projection-using-sfst_transform)
+  - [10. Check for colinearity using `rm_correlated()`](#10-check-for-colinearity-using-rm_correlated)
   - [11. Calculate Zeta decline for orders 2:15](#11-calculate-zeta-decline-for-orders-215)
   - [12. Calculate Zeta decay for orders 2:8](#12-calculate-zeta-decay-for-orders-28)
   - [13. Run a Multi-Site Generalised Dissimilarity Model for order 2](#13-run-a-multi-site-generalised-dissimilarity-model-for-order-2)
-  - [14. Predict current Zeta Diversity (zeta2) using `predict_dissim`](#14-predict-current-zeta-diversity-zeta2-using-predict_dissim)
-  - [15. Run clustering analyses using `map_bioreg`](#15-run-clustering-analyses-using-map_bioreg)
-  - [16. Predict future Zeta Diversity and map bioregion change using `map_bioregDiff`](#16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregDiff)
+  - [14. Predict current Zeta Diversity (zeta2) using `predict_dissim()`](#14-predict-current-zeta-diversity-zeta2-using-predict_dissim)
+  - [15. Run clustering analyses using `map_bioreg()`](#15-run-clustering-analyses-using-map_bioreg)
+  - [16. Predict future Zeta Diversity and map bioregion change using `map_bioregDiff()`](#16-predict-future-zeta-diversity-and-map-bioregion-change-using-map_bioregDiff)
   - [17. Deposit all results into Zenodo](#17-deposit-all-results-into-Zenodo)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -46,15 +46,17 @@ coverage](https://codecov.io/gh/macSands/dissmapr/graph/badge.svg)](https://app.
 `dissmapr` is an R package for analysing compositional dissimilarity and
 biodiversity turnover across spatial gradients. It provides scalable,
 modular workflows that integrate species occurrence, environmental data,
-and multi-site metrics to quantify and predict biodiversity patterns. A
-core feature is the use of zeta diversity, which extends beyond pairwise
-comparisons to capture shared species across multiple sites—offering
-deeper insight into community assembly, turnover, and connectivity. By
-incorporating modern approaches such as multi-site Generalised
-Dissimilarity Modelling (MS-GDM), `dissmapr` enables robust mapping,
-bioregional classification, and scenario-based forecasting. Designed for
-flexibility and reproducibility, it supports biodiversity monitoring and
-conservation planning at landscape to regional scales.
+and multi-site compositional turnover metrics to quantify and predict
+biodiversity patterns. A core feature is the use of zeta diversity,
+which extends beyond pairwise comparisons to capture shared species
+across multiple sites - offering deeper insight into community assembly,
+turnover, and connectivity, for both rare and common species. By
+incorporating different regression methods within the framework of
+Multi-Site Generalised Dissimilarity Modelling (MS-GDM), `dissmapr`
+enables robust mapping, bioregional classification, and scenario-based
+forecasting. Designed for flexibility and reproducibility, it supports
+biodiversity monitoring and conservation planning at landscape to
+regional scales.
 
 ------------------------------------------------------------------------
 
@@ -62,15 +64,17 @@ conservation planning at landscape to regional scales.
 
 `dissmapr` implements a structured, reproducible workflow for analysing
 biodiversity patterns and delineating bioregions. Each function aligns
-with a specific step, guiding users from data acquisition to predictive
-mapping. The workflow begins with sourcing species occurrence and
-georeferenced environmental data, followed by data formatting and
-calculation of compositional turnover using zeta diversity metrics (via
-the `zetadiv` package). Multi-Site Generalized Dissimilarity Modelling
-(MS-GDM) is then applied to model and predict dissimilarity across
-landscapes. These predictions feed into the Dissimilarity Cube, which
-classifies spatial clusters of species composition into distinct
-bioregions. The framework supports the integration of historical and
+with a specific step in the workflow, guiding users from data
+acquisition to predictive mapping. The workflow begins with sourcing
+species occurrence and georeferenced environmental data, followed by
+data formatting and calculation of compositional turnover using zeta
+diversity metrics (via the `zetadiv` package). Multi-Site Generalized
+Dissimilarity Modelling (MS-GDM) is then applied to model and predict
+dissimilarity across landscapes. As part of the Dissimilarity Cube in
+the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/)
+project, the outputs and predictions from MS-GDM are classified into
+spatial clusters of species composition, representing distinct
+bioregions. The workflow also supports the integration of historical and
 future climate data to assess shifts in biodiversity and detect
 emerging, shifting, or dissolving bioregions under global change. This
 step-by-step structure, mirrored in the accompanying tutorial sections,
@@ -82,7 +86,7 @@ spatial and temporal scales.
 ### 1. Install and load `dissmapr`
 
 Install and load the `dissmapr` package from GitHub, ensuring all
-functions are available for use in the analysis workflow.
+functions are available for use in the workflow.
 
 ``` r
 # install remotes if needed
@@ -115,50 +119,22 @@ library(tidyr)      # Tidy data reshaping
 library(zoo)        # Time series utilities  
 library(sf)         # Vector spatial data  
 library(terra)      # Raster spatial operations  
-library(zetadiv)    # Multi-site biodiversity turnover  
+library(tidyterra)  # supplies geom_spatraster()
+library(zetadiv)    # Multi-site dissimilarity modelling
 library(ggplot2)    # Grammar of graphics  
 library(viridis)    # Perceptual color scales  
 ```
 
 ------------------------------------------------------------------------
 
-### 3. User-defined area of interest and grid resolution
+### 3. Get species occurrence records using `get_occurrence_data()`
 
-Load the spatial boundary data for South Africa to serve as the
-geographic reference for all subsequent biodiversity analyses and
-visualizations.
-
-``` r
-# Read RSA shape file
-rsa = sf::st_read('inst/extdata/rsa.shp')
-#> Reading layer `rsa' from data source 
-#>   `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' using driver `ESRI Shapefile'
-#> Simple feature collection with 1 feature and 1 field
-#> Geometry type: POLYGON
-#> Dimension:     XY
-#> Bounding box:  xmin: 16.45802 ymin: -34.83514 xmax: 32.89125 ymax: -22.12661
-#> Geodetic CRS:  WGS 84
-
-# Define your resolution and create mask to use later
-res = 0.5 # 0.5 degrees is roughly 55km
-
-# Convert to a terra vector
-rsa_vect = vect(rsa)
-
-# Create an empty raster over RSA at your desired resolution
-grid = rast(rsa_vect, resolution = res, crs = crs(rsa_vect))
-values(grid) = 1   # fill with dummy values
-
-# Mask everything outside the RSA boundary
-grid_masked = mask(grid, rsa_vect)
-```
-
-------------------------------------------------------------------------
-
-### 4. Get species occurrence records using `get_occurrence_data`
-
-This section focuses on automating the retrieval and pre-processing of
-biodiversity occurrence data from various sources, including:
+To contextualise the following steps of the workflow, we use the
+butterfly data in South Africa, accessed from GBIF, as the case for
+demonstration. Ultimately, the choice for the AoI and taxa is
+user-specific. This section focuses on automating the retrieval and
+pre-processing of biodiversity occurrence data from various sources,
+including:
 
 1)  local `databases`.csv\` files,
 2)  URLs or `.zip` files from the Global Biodiversity Information
@@ -180,6 +156,60 @@ bfly_data = get_occurrence_data(
 # Check results
 dim(bfly_data)
 #> [1] 81825    52
+str(bfly_data)
+#> 'data.frame':    81825 obs. of  52 variables:
+#>  $ gbifID                          : num  9.23e+08 9.23e+08 9.23e+08 9.22e+08 9.22e+08 ...
+#>  $ datasetKey                      : chr  "6ac3f774-d9fb-4796-b3e9-92bf6c81c084" "6ac3f774-d9fb-4796-b3e9-92bf6c81c084" "6ac3f774-d9fb-4796-b3e9-92bf6c81c084" "6ac3f774-d9fb-4796-b3e9-92bf6c81c084" ...
+#>  $ occurrenceID                    : chr  "" "" "" "" ...
+#>  $ kingdom                         : chr  "Animalia" "Animalia" "Animalia" "Animalia" ...
+#>  $ phylum                          : chr  "Arthropoda" "Arthropoda" "Arthropoda" "Arthropoda" ...
+#>  $ class                           : chr  "Insecta" "Insecta" "Insecta" "Insecta" ...
+#>  $ order                           : chr  "Lepidoptera" "Lepidoptera" "Lepidoptera" "Lepidoptera" ...
+#>  $ family                          : chr  "Pieridae" "Pieridae" "Papilionidae" "Pieridae" ...
+#>  $ genus                           : chr  "Pieris" "Pieris" "Papilio" "Mylothris" ...
+#>  $ sp_name                         : chr  "Pieris brassicae" "Pieris brassicae" "Papilio demodocus" "Mylothris agathina" ...
+#>  $ infraspecificEpithet            : chr  "" "" "" "agathina" ...
+#>  $ taxonRank                       : chr  "SPECIES" "SPECIES" "SPECIES" "SUBSPECIES" ...
+#>  $ scientificName                  : chr  "Pieris brassicae (Linnaeus, 1758)" "Pieris brassicae (Linnaeus, 1758)" "Papilio demodocus Esper, 1798" "Mylothris agathina agathina" ...
+#>  $ verbatimScientificName          : chr  "Pieris brassicae" "Pieris brassicae" "Papilio demodocus subsp. demodocus" "Mylothris agathina subsp. agathina" ...
+#>  $ verbatimScientificNameAuthorship: logi  NA NA NA NA NA NA ...
+#>  $ countryCode                     : chr  "ZA" "ZA" "ZA" "ZA" ...
+#>  $ locality                        : chr  "Hermanus" "Polkadraai Road" "Signal Hill" "Hermanus" ...
+#>  $ stateProvince                   : chr  "" "" "" "" ...
+#>  $ occurrenceStatus                : chr  "PRESENT" "PRESENT" "PRESENT" "PRESENT" ...
+#>  $ individualCount                 : int  NA NA NA NA NA NA NA NA NA NA ...
+#>  $ publishingOrgKey                : chr  "bb646dff-a905-4403-a49b-6d378c2cf0d9" "bb646dff-a905-4403-a49b-6d378c2cf0d9" "bb646dff-a905-4403-a49b-6d378c2cf0d9" "bb646dff-a905-4403-a49b-6d378c2cf0d9" ...
+#>  $ y                               : num  -34.4 -34 -33.9 -34.4 -34.4 ...
+#>  $ x                               : num  19.2 18.8 18.4 19.2 18.5 ...
+#>  $ coordinateUncertaintyInMeters   : num  250 250 250 250 250 250 250 250 250 250 ...
+#>  $ coordinatePrecision             : logi  NA NA NA NA NA NA ...
+#>  $ elevation                       : logi  NA NA NA NA NA NA ...
+#>  $ elevationAccuracy               : logi  NA NA NA NA NA NA ...
+#>  $ depth                           : logi  NA NA NA NA NA NA ...
+#>  $ depthAccuracy                   : logi  NA NA NA NA NA NA ...
+#>  $ eventDate                       : chr  "2012-10-13T00:00" "2012-11-01T00:00" "2012-10-31T00:00" "2012-10-13T00:00" ...
+#>  $ day                             : int  13 1 31 13 30 23 20 22 21 22 ...
+#>  $ month                           : int  10 11 10 10 10 10 10 10 10 10 ...
+#>  $ year                            : int  2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...
+#>  $ taxonKey                        : int  1920506 1920506 1938125 11374894 6113873 6118817 6118817 6118871 1919924 1770649 ...
+#>  $ speciesKey                      : int  1920506 1920506 1938125 5137998 6113873 1954382 1954382 1964076 1919924 1770649 ...
+#>  $ basisOfRecord                   : chr  "HUMAN_OBSERVATION" "HUMAN_OBSERVATION" "HUMAN_OBSERVATION" "HUMAN_OBSERVATION" ...
+#>  $ institutionCode                 : chr  "naturgucker" "naturgucker" "naturgucker" "naturgucker" ...
+#>  $ collectionCode                  : chr  "naturgucker" "naturgucker" "naturgucker" "naturgucker" ...
+#>  $ catalogNumber                   : chr  "-190723441" "2051102952" "1565945073" "-1879976251" ...
+#>  $ recordNumber                    : chr  "" "" "" "" ...
+#>  $ identifiedBy                    : chr  "" "" "" "" ...
+#>  $ dateIdentified                  : chr  "" "" "" "" ...
+#>  $ license                         : chr  "CC_BY_4_0" "CC_BY_4_0" "CC_BY_4_0" "CC_BY_4_0" ...
+#>  $ rightsHolder                    : chr  "" "" "" "" ...
+#>  $ recordedBy                      : chr  "591374253" "591374253" "591374253" "591374253" ...
+#>  $ typeStatus                      : logi  NA NA NA NA NA NA ...
+#>  $ establishmentMeans              : logi  NA NA NA NA NA NA ...
+#>  $ lastInterpreted                 : chr  "2024-03-15T23:20:20.346Z" "2024-03-15T23:22:38.206Z" "2024-03-15T23:26:59.721Z" "2024-03-15T23:23:55.839Z" ...
+#>  $ mediaType                       : chr  "" "" "" "StillImage" ...
+#>  $ issue                           : chr  "COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES;MULTIMEDIA_URI_INVALID" "COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES;MULTIMEDIA_URI_INVALID" "COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES;TAXON_MATCH_HIGHERRANK;MULTI"| __truncated__ "COORDINATE_ROUNDED;GEODETIC_DATUM_ASSUMED_WGS84;CONTINENT_DERIVED_FROM_COORDINATES" ...
+#>  $ site_id                         : int  1 2 3 1 4 5 5 5 5 5 ...
+#>  $ pa                              : num  1 1 1 1 1 1 1 1 1 1 ...
 head(bfly_data[,1:6])
 #>      gbifID                           datasetKey occurrenceID  kingdom     phylum   class
 #> 1 923051749 6ac3f774-d9fb-4796-b3e9-92bf6c81c084              Animalia Arthropoda Insecta
@@ -192,31 +222,41 @@ head(bfly_data[,1:6])
 
 ------------------------------------------------------------------------
 
-### 5. Format data using `format_df`
+### 4. Format data using `format_df()`
 
-Use `format_df` to standardise and reshape biodiversity data into long
-or wide formats. The function automatically identifies key columns
-(e.g., coordinates, species, and values), assigns missing site IDs, and
-reformats the data for analysis. Outputs include a cleaned dataset and
-species-site matrices for further processing:
+Use `format_df` to *standardise and reshape* raw biodiversity tables
+into the *long* or *wide* format required by later `dissmapr` steps.
+Importantly, this function does not alter the spatial resolution of the
+original observations - it simply tidies the data by automatically
+identifying key columns (e.g., coordinates, species, and values),
+assigning missing observation/site IDs, and reformatting the data for
+analysis. Outputs include a cleaned `site_obs` dataset and `site_spp`
+matrix for further processing:
 
-• site_xy: Holds spatial coordinates of sampled sites.  
-• site_sp: Site-by-species matrix for biodiversity assessments.
+• **site_obs**: Simplified table with unique `site_id`, `x`, `y`,
+`species` and `value` records (long format). • **site_spp**:
+Site-by-species matrix for biodiversity assessments (wide format).
 
-#### Format data into long and wide formats
+#### Format data into long (site_obs) and wide (site_spp) formats
 
 ``` r
 bfly_result = format_df(
-  data        = bfly_data,
-  species_col = 'verbatimScientificName',
-  value_col   = 'pa',
-  extra_cols  = NULL,
-  format      = 'long'
+  data        = bfly_data, # A `data.frame` of biodiversity records
+  species_col = 'verbatimScientificName', # Name of species column (required for `"long"`)
+  value_col   = 'pa', # Name of value column (e.g. presence/abundance; for `"long"`)
+  extra_cols  = NULL, # Character vector of other columns to keep
+  format      = 'long' # Either`"long"` or `"wide"`. If `NULL`, inferred from `species_col` & `value_col`
 )
+
+# Check `bfly_result` structure
+str(bfly_result, max.level = 1)
+#> List of 2
+#>  $ site_obs:'data.frame':    79953 obs. of  5 variables:
+#>  $ site_spp: tibble [56,090 × 2,871] (S3: tbl_df/tbl/data.frame)
 
 # Optional: Create new objects from list items
 site_obs = bfly_result$site_obs
-site_spp = bfly_result$site_sp
+site_spp = bfly_result$site_spp
 
 # Check results
 dim(site_obs)
@@ -242,41 +282,78 @@ head(site_spp[,1:6])
 #> 4       4  18.5 -34.4                                    0                  0                 0
 #> 5       5  25.7 -33.6                                    0                  0                 0
 #> 6       6  22.2 -33.6                                    0                  0                 0
-```
 
-#### Get parameters to use later
-
-``` r
-# Get parameters from processed data
-# Number of species columns
+#### Get parameters from processed data to use later
+# Number of species
 (n_sp = dim(site_spp)[2] - 3)
 #> [1] 2868
 
 # Species names
 sp_cols = names(site_spp)[-c(1:3)]
-names(sp_cols)[1:5]
-#> NULL
+sp_cols[1:10]
+#>  [1] "Mylothris agathina subsp. agathina" "Pieris brassicae"                  
+#>  [3] "Tarucus thespis"                    "Acraea horta"                      
+#>  [5] "Danaus chrysippus"                  "Papilio demodocus subsp. demodocus"
+#>  [7] "Eutricha capensis"                  "Mesocelis monticola"               
+#>  [9] "Vanessa cardui"                     "Cuneisigna obstans"
 ```
 
 ------------------------------------------------------------------------
 
-### 6. Summarise records by grid centroid using `generate_grid`
+### 5. User-defined area of interest and grid resolution
 
-Use `generate_grid` to divide the study area, derived from the
-geographic extent of the occurrence data above, into grids of
-user-defined resolution, creating a spatial grid over a specified
-geographic extent. It assigns unique grid IDs to points and summarizes
-selected data columns within each grid cell. The function outputs a
-raster grid, grid polygons for visualization, and a data frame
-summarizing the contents of each grid cell, including totals and
-centroids. It is particularly useful for aggregating spatial data, such
-as biodiversity observations, into predefined spatial units for further
-analysis.
+Load the spatial boundary data for South Africa to serve as the
+geographic reference for all subsequent biodiversity analyses and
+visualizations.
 
-#### Assign records to a grid at a set resolution (e.g. 0.5°)
+``` r
+# Read RSA shape file
+rsa = sf::st_read('inst/extdata/rsa.shp')
+#> Reading layer `rsa' from data source `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' using driver `ESRI Shapefile'
+#> Simple feature collection with 1 feature and 1 field
+#> Geometry type: POLYGON
+#> Dimension:     XY
+#> Bounding box:  xmin: 16.45802 ymin: -34.83514 xmax: 32.89125 ymax: -22.12661
+#> Geodetic CRS:  WGS 84
 
-Aggregate species records into equal-area grid cells to enable spatially
-standardized biodiversity analyses.
+# Define your resolution and create mask to use later
+res = 0.5 # 0.5 degrees is roughly 55km
+
+# Convert to a terra vector
+rsa_vect = vect(rsa)
+
+# Create an empty raster over RSA at your desired resolution
+grid = rast(rsa_vect, resolution = res, crs = crs(rsa_vect))
+values(grid) = 1   # fill with dummy values
+
+# Mask everything outside the RSA boundary
+grid_masked = mask(grid, rsa_vect)
+```
+
+------------------------------------------------------------------------
+
+### 6. Summarise records by grid centroid using `generate_grid()`
+
+Use `generate_grid` to overlay a user-defined lattice on the study
+region—whose bounds are inferred from the occurrence data—without
+modifying the underlying observations themselves. The function
+constructs a raster‐based grid of the chosen cell size, assigns each
+point a unique `grid_id`, and compiles a summary of user-specified
+attributes for every cell. It returns three coordinated outputs:
+
+• **grid**: `SpatRaster` with grid index • **grid_sf**: `sf` and
+`data.frame` i.e. lattice polygon features for mapping or spatial joins
+• **block_sp**: `data.frame` that records per-cell totals, centroids,
+and other statistics.
+
+By aggregating raw records into consistent spatial units,
+`generate_grid` provides the structured foundation needed for subsequent
+landscape-scale biodiversity analyses.
+
+#### Assign records to a grid at a set resolution
+
+Aggregate species records into grid cells of user-specified size
+(e.g. 0.5°) to enable spatially standardized biodiversity analyses.
 
 ``` r
 grid_list = generate_grid(
@@ -287,6 +364,16 @@ grid_list = generate_grid(
   sum_col_range = 4:ncol(site_spp),
   crs_epsg   = 4326
 )
+
+# Check `grid_list` structure
+str(grid_list, max.level = 1)
+#> List of 3
+#>  $ grid    :S4 class 'SpatRaster' [package "terra"]
+#>  $ grid_sf :Classes 'sf' and 'data.frame':   1110 obs. of  8 variables:
+#>   ..- attr(*, "sf_column")= chr "geometry"
+#>   ..- attr(*, "agr")= Factor w/ 3 levels "constant","aggregate",..: NA NA NA NA NA NA NA
+#>   .. ..- attr(*, "names")= chr [1:7] "centroid_lon" "centroid_lat" "grid_id" "mapsheet" ...
+#>  $ block_sp:'data.frame':    415 obs. of  2874 variables:
 
 # Optional: Create new objects from list items
 aoi_grid = grid_list$grid_sf
@@ -412,11 +499,11 @@ rich_o1234 = compute_orderwise(
   order = 1:4,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 1: 0 minutes and 4.51 seconds
-#> Time elapsed for order 2: 0 minutes and 13.64 seconds
-#> Time elapsed for order 3: 0 minutes and 51.50 seconds
-#> Time elapsed for order 4: 1 minutes and 59.10 seconds
-#> Total computation time: 1 minutes and 59.11 seconds
+#> Time elapsed for order 1: 0 minutes and 9.52 seconds
+#> Time elapsed for order 2: 0 minutes and 16.17 seconds
+#> Time elapsed for order 3: 1 minutes and 11.34 seconds
+#> Time elapsed for order 4: 2 minutes and 40.38 seconds
+#> Total computation time: 2 minutes and 40.39 seconds
 
 # Check results
 head(rich_o1234)
@@ -494,11 +581,11 @@ turn_o2345 = compute_orderwise(
   order = 2:5,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 17.00 seconds
-#> Time elapsed for order 3: 1 minutes and 25.83 seconds
-#> Time elapsed for order 4: 2 minutes and 45.40 seconds
-#> Time elapsed for order 5: 4 minutes and 29.85 seconds
-#> Total computation time: 4 minutes and 29.87 seconds
+#> Time elapsed for order 2: 0 minutes and 18.21 seconds
+#> Time elapsed for order 3: 1 minutes and 33.15 seconds
+#> Time elapsed for order 4: 3 minutes and 3.19 seconds
+#> Time elapsed for order 5: 5 minutes and 0.01 seconds
+#> Total computation time: 5 minutes and 0.02 seconds
 
 # Check results
 head(turn_o2345)
@@ -605,7 +692,7 @@ head(site_spp[,1:6])
 #> 6    1031        31.25    -22.25004     107       76                                  0
 ```
 
-#### Fetch record of occurrence counts calculated using `generate_grid`
+#### Fetch record of occurrence counts calculated using `generate_grid()`
 
 `generate_grid` summarised the number of species observations per grid
 cell to assess sampling effort.
@@ -667,7 +754,7 @@ head(site_spp_pa[,1:6])
 #> 6    1031        31.25    -22.25004     107       76                                  0
 ```
 
-#### Fetch species richness values calculated using `generate_grid`
+#### Fetch species richness values calculated using `generate_grid()`
 
 `generate_grid` calculated species richness per site based on binary
 presence/absence records.
@@ -699,7 +786,15 @@ effort and species richness over the study area.
 ras_effRich = grid_list$grid[[2:3]]
 
 # Plot `ras_effRich` using colour palettes from `viridis`
-plot(sqrt(ras_effRich), col = turbo(100))
+# plot(sqrt(ras_effRich), col = turbo(100))
+plot(
+  sqrt(ras_effRich),
+  col   = turbo(100),
+  colNA = NA,            # <-- NA cells completely transparent
+  axes  = FALSE
+)
+
+# plot(vect(rsa), add = TRUE, border = "black")
 ```
 
 <img src="man/figures/README-eff-rich-1.png" width="100%" />
@@ -709,7 +804,7 @@ grids; they are not needed beyond this step.*
 
 ------------------------------------------------------------------------
 
-### 8. Generate site by environment matrix using `get_enviro_data`
+### 8. Generate site by environment matrix using `get_enviro_data()`
 
 Use `get_enviro_data` to extract environmental variables for spatial
 points from either species observations or grid centroids. Data can be
@@ -755,10 +850,10 @@ layers for joint spatial analysis.
 
 ``` r
 # Combine `SpatRast`
-ras_enviro_effRich = c(ras_effRich, resample(ras_enviro, ras_effRich))
+ras_enviro_effRich = c(sqrt(ras_effRich), resample(ras_enviro, ras_effRich))
 
 # Plot the first 4 layers of `ras_enviro_effRich`
-plot(ras_enviro_effRich[[1:4]])
+plot(ras_enviro_effRich[[1:4]], col = turbo(100))
 ```
 
 <img src="man/figures/README-ras-1.png" width="100%" />
@@ -824,7 +919,7 @@ sbe = env_df %>%
   select(grid_id, centroid_lon, centroid_lat, obs_sum, spp_rich, everything())
 ```
 
-### 9. Change coordinates projection using `sf::st_transform`
+### 9. Change coordinates projection using `sf::st_transform()`
 
 Reproject spatial coordinates from geographic (WGS84) to a projected
 system (e.g. Albers Equal Area) for analyses requiring distance in
@@ -862,7 +957,7 @@ head(xy_utm_df)
 
 ------------------------------------------------------------------------
 
-### 10. Check for colinearity using `rm_correlated`
+### 10. Check for colinearity using `rm_correlated()`
 
 Identify and remove highly correlated environmental variables to reduce
 multicollinearity in subsequent analyses. This step ensures model
@@ -896,7 +991,7 @@ env_vars_reduced = rm_correlated(data = env_df[,c(4,6:24)],
 
 ### 11. Calculate Zeta decline for orders 2:15
 
-#### Expectation of zeta diversity decline using `zetadiv::Zeta.decline.ex`
+#### Expectation of zeta diversity decline using `zetadiv::Zeta.decline.ex()`
 
 Computes the expectation of zeta diversity, the number of species shared
 by multiple assemblages for a range of orders (number of assemblages or
@@ -942,7 +1037,7 @@ zeta_decline_ex = Zeta.decline.ex(site_spp_pa[,6:ncol(site_spp_pa)],
 > deviates at high orders, suggesting exponential decay is the better
 > choice for these data.
 
-#### Zeta diversity decline using Monte Carlo sampling `zetadiv::Zeta.decline.mc`
+#### Zeta diversity decline using Monte Carlo sampling `zetadiv::Zeta.decline.mc()`
 
 Computes zeta diversity, the number of species shared by multiple
 assemblages, for a range of orders (number of assemblages or sites),
@@ -988,7 +1083,7 @@ zeta_mc_utm = Zeta.decline.mc(site_spp_pa[,-(1:6)],
 
 ### 12. Calculate Zeta decay for orders 2:8
 
-#### Zeta distance decay for a range of numbers of assemblages or sites using `zetadiv::Zeta.ddecays`
+#### Zeta distance decay for a range of numbers of assemblages or sites using `zetadiv::Zeta.ddecays()`
 
 Computes the distance decay of zeta diversity for a range of orders
 (number of assemblages or sites), using generalised linear models.
@@ -1056,7 +1151,7 @@ zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
 
 ### 13. Run a Multi-Site Generalised Dissimilarity Model for order 2
 
-#### Multi-site generalised dissimilarity modelling for a set of environmental variables and distances using `zetadiv::Zeta.msgdm`
+#### Multi-site generalised dissimilarity modelling for a set of environmental variables and distances using `zetadiv::Zeta.msgdm()`
 
 Computes a regression model of zeta diversity for a given order (number
 of assemblages or sites) against a set of environmental variables and
@@ -1183,7 +1278,7 @@ summary(zeta2$model)
 
 ------------------------------------------------------------------------
 
-### 14. Predict current Zeta Diversity (zeta2) using `predict_dissim`
+### 14. Predict current Zeta Diversity (zeta2) using `predict_dissim()`
 
 - *In the ‘sbe’ add ‘sam.max’, a constant for all sites = max(sam.eff)*
 - *Predict for the updated sbe and xy*
@@ -1227,7 +1322,7 @@ head(predictors_df[,1:7])
 
 ------------------------------------------------------------------------
 
-### 15. Run clustering analyses using `map_bioreg`
+### 15. Run clustering analyses using `map_bioreg()`
 
 - *Map bioregion clusters of current zeta2*
 - *Generate maps of dissimilarity (the rgb plot)*
@@ -1245,14 +1340,14 @@ bioreg_result = map_bioreg(
   y_col ='centroid_lat'
 )
 #> fitting ...
-#>   |                                                                                                  |                                                                                          |   0%  |                                                                                                  |======                                                                                    |   7%  |                                                                                                  |============                                                                              |  13%  |                                                                                                  |==================                                                                        |  20%  |                                                                                                  |========================                                                                  |  27%  |                                                                                                  |==============================                                                            |  33%  |                                                                                                  |====================================                                                      |  40%  |                                                                                                  |==========================================                                                |  47%  |                                                                                                  |================================================                                          |  53%  |                                                                                                  |======================================================                                    |  60%  |                                                                                                  |============================================================                              |  67%  |                                                                                                  |==================================================================                        |  73%  |                                                                                                  |========================================================================                  |  80%  |                                                                                                  |==============================================================================            |  87%  |                                                                                                  |====================================================================================      |  93%  |                                                                                                  |==========================================================================================| 100%
+#>   |                                                                                                        |                                                                                                |   0%  |                                                                                                        |======                                                                                          |   7%  |                                                                                                        |=============                                                                                   |  13%  |                                                                                                        |===================                                                                             |  20%  |                                                                                                        |==========================                                                                      |  27%  |                                                                                                        |================================                                                                |  33%  |                                                                                                        |======================================                                                          |  40%  |                                                                                                        |=============================================                                                   |  47%  |                                                                                                        |===================================================                                             |  53%  |                                                                                                        |==========================================================                                      |  60%  |                                                                                                        |================================================================                                |  67%  |                                                                                                        |======================================================================                          |  73%  |                                                                                                        |=============================================================================                   |  80%  |                                                                                                        |===================================================================================             |  87%  |                                                                                                        |==========================================================================================      |  93%  |                                                                                                        |================================================================================================| 100%
 ```
 
 <img src="man/figures/README-zeta-cluster-1.png" width="100%" />
 
 ------------------------------------------------------------------------
 
-### 16. Predict future Zeta Diversity and map bioregion change using `map_bioregDiff`
+### 16. Predict future Zeta Diversity and map bioregion change using `map_bioregDiff()`
 
 - *with appended (future scenarios) environmental variables and
   ‘sam.max’ in sbe*

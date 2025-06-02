@@ -17,7 +17,7 @@
 #'
 #' @return A `list` with elements:
 #'   - `site_obs`: data frame in **long** format (only for `format="long"`).
-#'   - `site_sp`: data frame in **wide** format (species as columns).
+#'   - `site_spp`: data frame in **wide** format (species as columns).
 #'
 #' @export
 format_df <- function(data,
@@ -99,7 +99,7 @@ format_df <- function(data,
       dplyr::select(site_id, x, y, species, value, dplyr::any_of(extra_cols))
 
     # Pivot to wide (one column per species)
-    site_sp <- site_obs %>%
+    site_spp <- site_obs %>%
       dplyr::group_by(site_id, x, y, dplyr::across(dplyr::any_of(extra_cols)), species) %>%
       dplyr::summarize(value = sum(value, na.rm=TRUE), .groups="drop") %>%
       tidyr::pivot_wider(
@@ -109,9 +109,9 @@ format_df <- function(data,
       )
 
     # Make unique row names
-    row.names(site_sp) <- make.unique(as.character(site_sp$site_id))
+    row.names(site_spp) <- make.unique(as.character(site_spp$site_id))
 
-    return(list(site_obs = site_obs, site_sp = site_sp))
+    return(list(site_obs = site_obs, site_spp = site_spp))
   }
 
   ## ---- WIDE format -----------------------------------
@@ -132,7 +132,7 @@ format_df <- function(data,
         y       = !!rlang::sym(y_col)
       )
 
-    site_sp <- data2 %>%
+    site_spp <- data2 %>%
       dplyr::group_by(site_id, x, y, dplyr::across(dplyr::any_of(extra_cols))) %>%
       dplyr::summarize(
         dplyr::across(all_of(sp_cols), ~ sum(.x, na.rm=TRUE)),
@@ -140,9 +140,9 @@ format_df <- function(data,
       ) %>%
       as.data.frame()
 
-    row.names(site_sp) <- make.unique(as.character(site_sp$site_id))
+    row.names(site_spp) <- make.unique(as.character(site_spp$site_id))
 
-    return(list(site_sp = site_sp))
+    return(list(site_spp = site_spp))
   }
 
   stop("`format` must be either 'long' or 'wide'")
