@@ -1,0 +1,180 @@
+---
+title: "4-zeta"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{4-zeta}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup-zeta, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "figures/4-",
+  out.width = "100%",
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+------------------------------------------------------------------------
+
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+
+------------------------------------------------------------------------
+
+## Zeta Diversity Analysis
+
+This section outlines the use of zeta diversity methods (`zetadiv` package) to evaluate biodiversity patterns across multiple sites and spatial scales:
+
+**Zeta Diversity Decline**
+
+We compute the expectation of zeta diversity (the number of shared species among multiple sites) across a range of orders (2 to 15). Using both expectation-based (`Zeta.decline.ex()`) and Monte Carlo sampling methods (`Zeta.decline.mc()`), this analysis reveals how species commonality diminishes as more sites are simultaneously considered. Exponential and power law regression analyses identify the nature of this decline, distinguishing between stochastic processes (random species distributions) and niche-based sorting (environmental factors shaping species distributions).
+
+**Zeta Diversity Decay**
+
+Using the `Zeta.ddecays()` function, we examine how zeta diversity changes with increasing spatial distance between sites. This step helps clarify spatial patterns, demonstrating how species similarity (zeta diversity) declines with geographic distance. The analysis across multiple orders (2 to 8) highlights distinct spatial structuring—species turnover is high at smaller scales but stabilizes at broader scales, suggesting the presence of core widespread species.
+
+**Multi-Site Generalised Dissimilarity Modelling (MSGDM)**
+
+We apply a Multi-Site Generalised Dissimilarity Model (MSGDM) using `Zeta.msgdm()` to examine the relationships between environmental variables, spatial distance, and species turnover (zeta diversity) specifically at order 2. Utilizing an I-spline regression model, this approach provides insights into how individual environmental factors and spatial distances influence community composition and turnover across multiple sites. Analysis of fitted I-splines highlights the relative contribution of spatial distance, sampling intensity, precipitation, and temperature variables to biodiversity turnover, informing ecological understanding of species distribution and turnover processes.
+
+------------------------------------------------------------------------
+
+### Calculate Zeta decline for orders 2:15
+
+#### Expectation of zeta diversity decline using `zetadiv::Zeta.decline.ex()`
+
+Computes the expectation of zeta diversity, the number of species shared by multiple assemblages for a range of orders (number of assemblages or sites), using a formula based on the occupancy of the species, and fits the decline to an exponential and a power law relationship.
+*Generate statistics and figures, no maps*
+
+```{r load-workspace, echo=FALSE}
+load('../inst/savedata/zeta_workspace.RData')
+```
+
+```{r zeta-decline-ex}
+zeta_decline_ex = Zeta.decline.ex(site_spp_pa[,6:ncol(site_spp_pa)], 
+                                  orders = 1:15)
+```
+
+> -   **Panel 1 (Zeta diversity decline)**: Shows how rapidly species that are common across multiple sites decline as you look at groups of more and more sites simultaneously (increasing zeta order). The sharp drop means fewer species are shared among many sites compared to just a few.
+> -   **Panel 2 (Ratio of zeta diversity decline)**: Illustrates the proportion of shared species that remain as the number of sites compared increases. A steeper curve indicates that common species quickly become rare across multiple sites.
+> -   **Panel 3 (Exponential regression)**: Tests if the decline in shared species fits an exponential decrease. A straight line here indicates that species commonness decreases rapidly and consistently as more sites are considered together. Exponential regression represents [**stochastic assembly**]{.underline} (**randomness determining species distributions**).
+> -   **Panel 4 (Power law regression)**: Tests if the decline follows a power law relationship. A straight line suggests that the loss of common species follows a predictable pattern, where initially many species are shared among fewer sites, but rapidly fewer are shared among larger groups. Power law regression represents [**niche-based sorting**]{.underline} (**environmental factors shaping species distributions**).
+
+> **Interpretation**: The near‐perfect straight line in the exponential panel (high R²) indicates that an exponential model provides the most parsimonious description of how species shared across sites decline as you add more sites—consistent with a stochastic, memory-less decline in common species. A power law will also fit in broad strokes, but deviates at high orders, suggesting exponential decay is the better choice for these data.
+
+#### Zeta diversity decline using Monte Carlo sampling `zetadiv::Zeta.decline.mc()`
+
+Computes zeta diversity, the number of species shared by multiple assemblages, for a range of orders (number of assemblages or sites), using combinations of sampled sites, and fits the decline to an exponential and a power law relationship.
+*Generate statistics and figures, no maps*
+
+```{r zeta-decline-mc}
+zeta_mc_utm = Zeta.decline.mc(site_spp_pa[,-(1:6)],
+                               xy_utm_df[,3:4],
+                               orders = 1:15,
+                               sam = 100,
+                               NON = TRUE,
+                               normalize = "Jaccard")
+```
+
+> -   **Panel 1 (Zeta diversity decline)**: Rapidly declining zeta diversity, similar to previous plots, indicates very few species remain shared across increasingly larger sets of sites, emphasizing strong species turnover and spatial specialization.
+> -   **Panel 2 (Ratio of zeta diversity decline)**: More irregular fluctuations suggest a spatial effect: nearby sites might occasionally share more species by chance due to proximity. The spikes mean certain groups of neighboring sites have higher-than-average species overlap.
+> -   **Panel 3 & 4 (Exponential and Power law regressions)**: Both remain linear, clearly indicating the zeta diversity declines consistently following a predictable spatial pattern. However, the exact pattern remains similar to previous cases, highlighting that despite spatial constraints, common species become rare quickly as more sites are considered.\
+>     *This result demonstrates clear spatial structuring of biodiversity---species are locally clustered, not randomly distributed across the landscape. Spatial proximity influences which species co-occur more frequently. In practice use `Zeta.decline.mc` for real‐world biodiversity data—both because it scales and because the Monte Carlo envelope is invaluable when ζₖ gets noisier at higher orders.*
+
+------------------------------------------------------------------------
+
+### Calculate Zeta decay for orders 2:8
+
+#### Zeta distance decay for a range of numbers of assemblages or sites using `zetadiv::Zeta.ddecays()`
+
+Computes the distance decay of zeta diversity for a range of orders (number of assemblages or sites), using generalised linear models.
+*Generate statistics and figures, no maps*
+
+```{r zeta-decays}
+# Calculate Zeta.ddecays
+zeta_decays = Zeta.ddecays(xy_utm_df[,3:4],
+                          site_spp_pa[,-(1:6)],
+                          sam = 1000,
+                          orders = 2:8,
+                          plot = TRUE,
+                          confint.level = 0.95
+)
+```
+
+> This plot shows how zeta diversity (a metric that captures shared species composition among multiple sites) changes with spatial distance across different orders of zeta (i.e., the number of sites considered at once).
+
+> -   On the **x-axis**, we have the **order of zeta** (from 2 to 7).\
+>     For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.
+> -   On the **y-axis**, we see the slope of the **relationship between zeta diversity and distance** (i.e., how quickly species similarity declines with distance).
+> -   A **negative slope** means that **sites farther apart have fewer species in common** --- so there's a clear distance decay of biodiversity.
+> -   A **slope near zero** means **distance doesn't strongly affect how many species are shared among sites**.
+
+> **Key observations:** - At low orders (2 and 3), the slope is strongly negative, indicating that species turnover is high over distance when looking at pairs or triplets of sites.
+> - From order 4 and up, the slope becomes close to zero, suggesting that at broader spatial scales (more sites), species similarity is less affected by distance.\
+> This may reflect widespread or core species that are consistently shared regardless of location.
+> - The confidence intervals (error bars) shrink with increasing order, indicating greater stability and reliability of the estimate as more sites are included.
+
+> **Summary:** This figure shows that biodiversity patterns across space are strongly shaped by distance at small scales, but this effect weakens as you include more sites.
+> In other words, rare or localized species contribute to strong distance decay, but widespread species dominate at higher spatial scales, leading to more uniformity.
+> *Species that occur in just two or three sites show a clear “farther apart → fewer shared species” pattern. But when you ask about the handful of really widespread species (those present in four, five, or more sites), their shared‐species counts no longer decline with distance—they form a spatially uniform core.*
+
+------------------------------------------------------------------------
+
+### Run a Multi-Site Generalised Dissimilarity Model for order 2
+
+#### Multi-site generalised dissimilarity modelling for a set of environmental variables and distances using `zetadiv::Zeta.msgdm()`
+
+Computes a regression model of zeta diversity for a given order (number of assemblages or sites) against a set of environmental variables and distances between sites.
+The different regression models available are generalised linear models, generalised linear models with negative constraints, generalised additive models, shape constrained additive models, and I-splines.
+*Generate statistics and figures, no maps and save fitted order 2 model 'zeta2'*
+
+```{r zeta-msgdm}
+# Compute a regression model of zeta diversity order 2
+zeta2 = Zeta.msgdm(site_spp_pa[,-(1:6)],
+                   env_vars_reduced[,-8],
+                   # xy_utm_df[,3:4],
+                   xy[,1:2],
+                   sam = 1000,
+                   order = 2,
+                   distance.type = "Euclidean",# "ortho",
+                   normalize = "Jaccard",
+                   reg.type = "ispline")
+
+# Compute splines coordinates from I-spline-based MSGDM
+zeta2.ispline = Return.ispline(zeta2,
+                               env_vars_reduced[,-8],
+                               # legend = FALSE,
+                               distance = TRUE)
+# zeta2.ispline
+Plot.ispline(isplines = zeta2.ispline, distance = TRUE)
+```
+
+> This figure shows the fitted I-splines from a multi-site generalized dissimilarity model (via `Zeta.msgdm`), which represent the partial, monotonic relationship between each predictor and community turnover (ζ-diversity) over its 0–1 “rescaled” range.  A few key take-aways:
+
+> 1. **Distance (blue asterisks)** has by far the largest I-spline amplitude—rising from \~0 at zero distance to \~0.05 at the maximum.  That tells us spatial separation is the strongest driver of multi‐site turnover, and even small increases in distance yield a substantial drop in shared species.
+> 2. **Sampling intensity (`obs_sum`, open circles)** comes next, with a gentle but steady rise to \~0.045.  This indicates that sites with more observations tend to share more species (or, conversely, that incomplete sampling can depress apparent turnover).
+> 3. **Precipitation variables**: **Rain in the warm quarter (`rain_warmQ`, squares)** and **Rain in the dry quarter (`rain_dry`, triangles-down)** both show moderate effects (I-spline heights \~0.02–0.03).  This means differences in seasonal rainfall regimes contribute noticeably to changes in community composition.
+> 4. **Temperature metrics**: **Mean temperature** *(`temp_mean`, triangles-up)*, **Wet‐quarter temperature** *(`temp_wetQ`, X’s)*, **Dry‐quarter temperature** *(`temp_dryQ`, diamonds)*, and the **isothermality index** *(`iso`, plus signs)* all have very low, almost flat I-splines (max heights ≲0.01).  In other words, these thermal variables explain very little additional turnover once you’ve accounted for distance and rainfall.
+
+> **Ecological interpretation:** Spatial distance is the dominant structuring factor in these data—sites further apart share markedly fewer species.  After accounting for that, differences in observation effort and, to a lesser degree, seasonal rainfall still shape multisite community similarity.  Temperature and seasonality metrics, by contrast, appear to have only a minor independent influence on zeta‐diversity in this landscape.
+
+
+```{r model-results}
+# Deviance explained summary results
+with(summary(zeta2$model), 1 - deviance/null.deviance) 
+# [1] 0.2461561
+# 0.2461561 means that approximately 24.6% of the variability in the response
+# variable is explained by your model. This is relatively low, suggesting that the
+# model may not be capturing much of the underlying pattern in the data.
+
+# Model summary results
+summary(zeta2$model)
+```
+
+------------------------------------------------------------------------

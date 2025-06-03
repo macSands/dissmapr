@@ -1,0 +1,200 @@
+---
+title: "3-enviro"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{3-enviro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup-enviro, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "figures/3-",
+  out.width = "100%",
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+------------------------------------------------------------------------
+
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+
+------------------------------------------------------------------------
+
+## Environmental Data Preparation
+
+This vignette outlines a comprehensive workflow for preparing and analyzing environmental data in ecological studies. The primary objective is to extract relevant environmental variables associated with species observations or predefined grid centroids, facilitating robust ecological analyses and modeling.
+
+Initially, environmental variables are sourced using the `get_enviro_data()` function from either online databases (e.g., `WorldClim`, `SoilGrids` via the `geodata` package) or local raster datasets. The function defines an area of interest with an adjustable buffer to ensure complete data coverage, extracts environmental information at specific points, and interpolates any missing values. Outputs include cropped environmental rasters, spatial points as `sf` objects, and a detailed site-by-environment data frame suitable for downstream analyses.
+
+The workflow further demonstrates the integration of environmental rasters with sampling effort and species richness layers, enabling joint spatial analyses. Visual checks through plotting ensure accurate integration and representation of spatial variation in environmental variables.
+
+Subsequent steps involve projecting geographic coordinates into a suitable projected coordinate system (e.g., Albers Equal Area) to facilitate spatially accurate analyses involving distance measurements.
+
+Lastly, the workflow includes a critical step of checking for and addressing collinearity using the `rm_correlated()` function. This step ensures the removal of redundant environmental variables, optimising the stability and interpretability of ecological models by retaining only informative predictors based on a specified correlation threshold.
+
+------------------------------------------------------------------------
+
+### Generate site by environment matrix using `get_enviro_data()`
+
+Use `get_enviro_data` to extract environmental variables for spatial points from either species observations or grid centroids.
+Data can be sourced from online repositories (e.g. *WorldClim*, *SoilGrids* via `geodata`) or local rasters.
+The function defines an area of interest with a buffer, extracts selected variables, and interpolates missing values using nearby non-NA points.
+Outputs include cropped rasters, spatial points (as an `sf` object), and a combined site-by-environment data frame (`site_env`) for downstream ecological analyses.
+Future support will extend to *CHELSA* (`climenv`), *Google Earth Engine* (`rgee`), and `mapme.biodiversity` for expanded environmental and biodiversity data access.
+
+```{r load-workspace, echo=FALSE}
+load('../inst/savedata/enviro_workspace.RData')
+```
+
+```{r get-enviro}
+# Use `get_enviro_data` to fetch environmental data for your grid centroids
+data_path = 'extdata' # Step to your directory
+enviro_list = get_enviro_data(
+  data      = sbs,
+  buffer_km = 10,
+  source    = 'geodata',
+  var       = "bio",
+  res       = 5,
+  path      = data_path,
+  sp_cols   = 6:ncol(sbs),
+  ext_cols  = c('obs_sum','spp_rich')
+)
+
+# Optional: Create new objects from list items
+ras_enviro = enviro_list$env_rast
+
+# Optional: Rename the columns to something more descriptive
+names_env = c("temp_mean", "mdr", "iso", "temp_sea", "temp_max",
+                    "temp_min", "temp_rang","temp_wetQ","temp_dryQ", "temp_warmQ",
+                    "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
+                    "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
+names(enviro_list$env_rast) = names_env
+names(ras_enviro) = names_env
+```
+
+#### Add 'eff-rich' raster to the enviro stack raster
+
+Combine environmental rasters with sampling effort and species richness layers for joint spatial analysis.
+
+```{r ras}
+# Combine `SpatRast`
+ras_enviro_effRich = c(sqrt(ras_effRich), resample(ras_enviro, ras_effRich))
+
+# Plot the first 4 layers of `ras_enviro_effRich`
+plot(ras_enviro_effRich[[1:4]], col = turbo(100))
+```
+
+#### Create data.frame of environmental variables with site centroids 'xy'
+
+Environmental data were linked to grid centroids using `get_enviro_data`, now visualise the spatial variation in selected climate variables to check results.
+
+```{r env-df}
+# Create `env_df`
+env_df = enviro_list$env_df[,c(1:5,8:26)]
+
+# Make sure column names are correct
+names(env_df) = c("grid_id","centroid_lon","centroid_lat","obs_sum","spp_rich","temp_mean",
+                  "mdr", "iso", "temp_sea", "temp_max",
+                    "temp_min", "temp_rang","temp_wetQ","temp_dryQ", "temp_warmQ",
+                    "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
+                    "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
+# Check results
+dim(env_df)
+head(env_df[,1:6])
+
+# Plot the results to check the conversion is correct
+ggplot() +
+  # Add 0.5° grid layer
+  geom_sf(
+    data = aoi_grid,
+    fill = NA,
+    color = "darkgrey",
+    alpha = 0.5
+  ) +
+  # Add butterfly points layer, with shape = 15 (solid square) and size range
+  geom_point(
+    data = env_df,
+    aes(
+      x = centroid_lon,
+      y = centroid_lat,
+      size = sqrt(temp_mean),
+      color = temp_mean
+    ),
+    shape = 15
+  ) +
+  # Control the size‐scale range (adjust the c(min, max) values as needed)
+  scale_size_continuous(range = c(2, 6)) +
+  # Use a turbo‐viridis color scale for temp_mean
+  scale_color_viridis_c(option = "turbo") +
+  # Add boundary layer
+  geom_sf(
+    data = rsa,
+    fill = NA,
+    color = "black",
+    alpha = 1
+  ) +
+  theme_minimal() +
+  labs(
+    title = "0.5° Grid Cells with temp_mean",
+    x = "Longitude",
+    y = "Latitude"
+  )
+```
+
+#### Generate *Site-by-Environment* data frame 'sbe'
+
+Create a unified data frame of site coordinates, sampling effort, richness, and environmental variables for modelling called `sbe`.
+
+```{r sbe}
+# Create `sbe` data.frame
+sbe = env_df %>%
+  select(grid_id, centroid_lon, centroid_lat, obs_sum, spp_rich, everything())
+```
+
+### Change coordinates projection using `sf::st_transform()`
+
+Reproject spatial coordinates from geographic (WGS84) to a projected system (e.g. Albers Equal Area) for analyses requiring distance in meters, such as spatial clustering or environmental modelling.
+
+```{r reproject}
+# Convert to sf object with WGS84 geographic CRS
+xy_sf = st_as_sf(xy, coords = c("centroid_lon", "centroid_lat"), crs = 4326)
+
+# Project to Albers Equal Area (meters)
+xy_utm = st_transform(xy_sf, crs = 9822)
+
+# Extract transformed coordinates in meters
+# Combine transformed coordinates back into data frame
+xy_utm_df = cbind(xy, st_coordinates(xy_utm))
+
+# Check results and compare coordinate formats
+head(xy)
+head(xy_utm_df)
+```
+
+------------------------------------------------------------------------
+
+### Check for colinearity using `rm_correlated()`
+
+Identify and remove highly correlated environmental variables to reduce multicollinearity in subsequent analyses.
+This step ensures model stability by retaining only informative, non-redundant predictors based on a user-defined correlation threshold.
+
+```{r remove_var}
+# Remove the highly correlated variables
+env_vars_reduced = rm_correlated(data = env_df[,c(4,6:24)],
+                                 cols = NULL,
+                                 threshold = 0.7,
+                                 plot = TRUE)
+
+# Compare numbers of environmental variables
+ncol(env_df[,c(4,6:24)])
+ncol(env_vars_reduced)
+```
+
+------------------------------------------------------------------------

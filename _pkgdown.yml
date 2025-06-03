@@ -32,7 +32,7 @@ reference:
     desc: |
       The package consists of 10 core functions that address key steps in biodiversity data analysis, from sourcing raw occurrence and environmental data to mapping bioregions and predicting compositional turnover. It also leverages existing tools, such as the `zetadiv` package (specifically the `zetadiv::Zeta.msgdm` function) for MS-GDM, alongside widely used R libraries like `terra`, `sf`, and `ggplot2`.
 
-  # 2. First five functions, in order
+# 2. First five functions, in order
   - title: "Core Functions"
     contents:
       - get_occurrence_data

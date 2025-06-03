@@ -239,7 +239,7 @@ dim(grid_spp)
 head(grid_spp[,1:6])
 ```
 
-#### Generate a data frame 'xy' of site centroids
+#### Generate a data frame `xy` of site centroids
 
 Extract longitude--latitude coordinates and summary metrics for each occupied grid cell.
 
@@ -278,7 +278,7 @@ ggplot() +
 
 ------------------------------------------------------------------------
 
-### Example 1 - Species Richness using `richness`()`
+### Example 1 - Species Richness using `richness()`
 
 Here we calculate species richness across sites in the `block_sp` dataset, using the `compute_orderwise()` function. The `richness()` metric function is applied to the `grid_id` column for site identification, with species data specified by `sp_cols`. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders.
 
@@ -385,7 +385,7 @@ ggplot() +
 
 ------------------------------------------------------------------------
 
-### 7. Generate site by species matrix - `site_spp`
+### 7. Generate site by species matrix as `site_spp`
 
 Create a matrix of species counts per site for use in biodiversity and dissimilarity analyses.
 
@@ -415,7 +415,7 @@ dim(obs_cnt)
 head(obs_cnt)
 ```
 
-#### Generate a binary (presence/absence) data frame 'sbs'
+#### Generate a binary (presence/absence) data frame `sbs`
 
 Convert species abundance data to presence/absence format (`site_spp_pa`) for binary dissimilarity analyses.
 
@@ -450,9 +450,9 @@ dim(site_spp_pa)
 head(site_spp_pa[,1:6])
 ```
 
-#### Generate 'obs_cnt' and 'spp_rich' raster maps
+#### Generate `obs_cnt` and `spp_rich` raster maps
 
-`generate_grid` also creates a `SpatRast` to help visualise sampling effort and species richness over the study area.
+`generate_grid()` also creates a `SpatRast` to help visualise sampling effort and species richness over the study area.
 
 ```{r eff-rich}
 # Species richness and sampling effort SpatRast
@@ -484,13 +484,14 @@ Future support will extend to *CHELSA* (`climenv`), *Google Earth Engine* (`rgee
 
 ```{r get-enviro}
 # Use `get_enviro_data` to fetch environmental data for your grid centroids
+data_path = 'inst/extdata' # Step to your directory
 enviro_list = get_enviro_data(
   data      = sbs,
   buffer_km = 10,
   source    = 'geodata',
   var       = "bio",
   res       = 5,
-  path      = 'download_data',
+  path      = data_path,
   sp_cols   = 6:ncol(sbs),
   ext_cols  = c('obs_sum','spp_rich')
 )
@@ -507,7 +508,7 @@ names(enviro_list$env_rast) = names_env
 names(ras_enviro) = names_env
 ```
 
-#### Add 'eff-rich' raster to the enviro stack raster
+#### Add `eff-rich` raster to the enviro stack raster
 
 Combine environmental rasters with sampling effort and species richness layers for joint spatial analysis.
 
@@ -519,9 +520,9 @@ ras_enviro_effRich = c(sqrt(ras_effRich), resample(ras_enviro, ras_effRich))
 plot(ras_enviro_effRich[[1:4]], col = turbo(100))
 ```
 
-#### Create data.frame of environmental variables with site centroids 'xy'
+#### Create data.frame of environmental variables with site centroids `xy`
 
-Environmental data were linked to grid centroids using `get_enviro_data`, now visualise the spatial variation in selected climate variables to check results.
+Environmental data were linked to grid centroids using `get_enviro_data()`, now visualise the spatial variation in selected climate variables to check results.
 
 ```{r env-df}
 # Create `env_df`
@@ -537,27 +538,46 @@ names(env_df) = c("grid_id","centroid_lon","centroid_lat","obs_sum","spp_rich","
 dim(env_df)
 head(env_df[,1:6])
 
-# Plot the results to check the conversion is accurate
+# Plot the results to check the conversion is correct
 ggplot() +
-  # Add 0.25deg grid layer
-  geom_sf(data = aoi_grid, fill = NA, color = "darkgrey", alpha = 0.5) +
-  # Add bfly points layer
-  geom_point(data = env_df, 
-             aes(x = centroid_lon,
-                 y = centroid_lat,
-                 size = sqrt(temp_mean),
-                 color = temp_mean)) +
-  scale_color_viridis_c(option = "turbo") +  # Use turbo color scale
+  # Add 0.5° grid layer
+  geom_sf(
+    data = aoi_grid,
+    fill = NA,
+    color = "darkgrey",
+    alpha = 0.5
+  ) +
+  # Add butterfly points layer, with shape = 15 (solid square) and size range
+  geom_point(
+    data = env_df,
+    aes(
+      x = centroid_lon,
+      y = centroid_lat,
+      size = sqrt(temp_mean),
+      color = temp_mean
+    ),
+    shape = 15
+  ) +
+  # Control the size‐scale range (adjust the c(min, max) values as needed)
+  scale_size_continuous(range = c(2, 6)) +
+  # Use a turbo‐viridis color scale for temp_mean
+  scale_color_viridis_c(option = "turbo") +
   # Add boundary layer
-  geom_sf(data = rsa, fill = NA, color = "black", alpha = 1) +
+  geom_sf(
+    data = rsa,
+    fill = NA,
+    color = "black",
+    alpha = 1
+  ) +
   theme_minimal() +
   labs(
     title = "0.5° Grid Cells with temp_mean",
     x = "Longitude",
-    y = "Latitude")   
+    y = "Latitude"
+  )  
 ```
 
-#### Generate *Site-by-Environment* data frame 'sbe'
+#### Generate *Site-by-Environment* data frame `sbe`
 
 Create a unified data frame of site coordinates, sampling effort, richness, and environmental variables for modelling called `sbe`.
 
@@ -845,6 +865,63 @@ plot(mask_bioregDiff, col = viridis(100, direction = -1))
 -   *Map temporal turnover*
     *Note: step 14 is redundant if step 16 is needed*\
     *Note: step 16 has the same code but more results including those from step 6 but potentially computational demanding*
+
+------------------------------------------------------------------------
+
+#### Save all data needed for vignettes
+
+```{r make‐savedata‐dir, echo=FALSE}
+# Ensure “inst/savedata/” exists before trying to save into it
+dir.create("inst/savedata", recursive = TRUE, showWarnings = FALSE)
+```
+
+```{r save‐all, echo=FALSE}
+# Save what vignette-grid needs
+save(
+  site_spp,
+  rsa,
+  sp_cols,
+  file = "inst/savedata/grid_workspace.RData"
+)
+
+# Save what vignette-enviro needs
+save(
+  sbs,
+  ras_effRich,
+  xy,
+  file = "inst/savedata/enviro_workspace.RData"
+)
+
+# Save what vignette-zeta needs
+save(
+  site_spp_pa,
+  xy_utm_df,
+  env_vars_reduced,
+  xy,
+  file = "inst/savedata/zeta_workspace.RData"
+)
+
+# Save what vignette-bioregion needs
+save(
+  grid_spp,
+  sbe,
+  zeta2,
+  mean_rich_o1234,
+  mean_turn_o2345,
+  xy,
+  rsa,
+  grid_masked,
+  file = "inst/savedata/bioregion_workspace.RData"
+)
+
+# Save what vignette-examples needs
+save(
+  grid_spp,
+  sp_cols,
+  rsa,
+  file = "inst/savedata/examples_workspace.RData"
+)
+```
 
 ------------------------------------------------------------------------
 

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>getting-started • dissmapr</title>
+<title>1-setup • dissmapr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="getting-started">
+<meta property="og:title" content="1-setup">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -42,7 +42,11 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/1-setup.html">1-setup</a></li>
-    <li><a class="dropdown-item" href="../articles/getting-started.html">getting-started</a></li>
+    <li><a class="dropdown-item" href="../articles/2-grid.html">2-grid</a></li>
+    <li><a class="dropdown-item" href="../articles/3-enviro.html">3-enviro</a></li>
+    <li><a class="dropdown-item" href="../articles/4-zeta.html">4-zeta</a></li>
+    <li><a class="dropdown-item" href="../articles/5-bioregion.html">5-bioregion</a></li>
+    <li><a class="dropdown-item" href="../articles/7-examples.html">7-examples</a></li>
   </ul>
 </li>
       </ul>
@@ -64,11 +68,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>getting-started</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>1-setup</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/macSands/dissmapr/blob/HEAD/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
-      <div class="d-none name"><code>getting-started.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/macSands/dissmapr/blob/HEAD/vignettes/1-setup.Rmd" class="external-link"><code>vignettes/1-setup.Rmd</code></a></small>
+      <div class="d-none name"><code>1-setup.Rmd</code></div>
     </div>
 
     
@@ -85,45 +89,40 @@ Biodiversity Turnover Analysis<a class="anchor" aria-label="anchor" href="#a-nov
 <hr>
 </div>
 <div class="section level3">
-<h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h3>
-<p><code>dissmapr</code> is an R package for analysing compositional
-dissimilarity and biodiversity turnover across spatial gradients. It
-provides scalable, modular workflows that integrate species occurrence,
-environmental data, and multi-site compositional turnover metrics to
-quantify and predict biodiversity patterns. A core feature is the use of
-zeta diversity, which extends beyond pairwise comparisons to capture
-shared species across multiple sites - offering deeper insight into
-community assembly, turnover, and connectivity, for both rare and common
-species. By incorporating different regression methods within the
-framework of Multi-Site Generalised Dissimilarity Modelling (MS-GDM),
-<code>dissmapr</code> enables robust mapping, bioregional
-classification, and scenario-based forecasting. Designed for flexibility
-and reproducibility, it supports biodiversity monitoring and
-conservation planning at landscape to regional scales.</p>
-<hr>
-</div>
-<div class="section level3">
 <h3 id="step-by-step-workflow">Step-by-Step Workflow<a class="anchor" aria-label="anchor" href="#step-by-step-workflow"></a>
 </h3>
-<p><code>dissmapr</code> implements a structured, reproducible workflow
-for analysing biodiversity patterns and delineating bioregions. Each
-function aligns with a specific step in the workflow, guiding users from
-data acquisition to predictive mapping. The workflow begins with
-sourcing species occurrence and georeferenced environmental data,
-followed by data formatting and calculation of compositional turnover
-using zeta diversity metrics (via the <code>zetadiv</code> package).
-Multi-Site Generalized Dissimilarity Modelling (MS-GDM) is then applied
-to model and predict dissimilarity across landscapes. As part of the
-Dissimilarity Cube in the <a href="https://b-cubed.eu/" class="external-link">Biodiversity
-Building Blocks for Policy</a> project, the outputs and predictions from
-MS-GDM are classified into spatial clusters of species composition,
-representing distinct bioregions. The workflow also supports the
-integration of historical and future climate data to assess shifts in
-biodiversity and detect emerging, shifting, or dissolving bioregions
-under global change. This step-by-step structure, mirrored in the
-accompanying tutorial sections, promotes accessibility, transparency,
-and ecological insight at multiple spatial and temporal scales.</p>
+<p>This section provides a concise, reproducible “from-scratch” pathway
+for setting up <strong><code>dissmapr</code></strong>. By the end of
+these steps you will have:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Installed and loaded</strong> the latest development version
+of <code>dissmapr</code> from GitHub.<br>
+</li>
+<li>
+<strong>Loaded all supporting packages</strong> needed for spatial
+manipulation, biodiversity modelling, and visualisation.<br>
+</li>
+<li>
+<strong>Downloaded exemplar occurrence data</strong> (South African
+butterflies) with <code><a href="../reference/get_occurrence_data.html">get_occurrence_data()</a></code>, demonstrating how
+to pull records from local files, remote URLs, or GBIF archives.<br>
+</li>
+<li>
+<strong>Tidied the records</strong> into long and wide analytical
+formats via <code><a href="../reference/format_df.html">format_df()</a></code>—crucially <em>without changing the
+native spatial resolution</em> of the observations.<br>
+</li>
+<li>
+<strong>Defined a study extent and analysis grid</strong>, creating
+a masked raster template that will act as the spatial backbone for
+downstream compositional dissimilarity and turnover analyses.</li>
+</ol>
+<p>Execute each chunk in the order presented (the chunk labels mirror
+the headings) or adapt them to your own taxonomic group, area of
+interest, or grid resolution. All subsequent vignettes assume you have
+completed this workflow and have the resulting <code>site_obs</code>,
+<code>site_spp</code>, and grid objects in your workspace.</p>
 <hr>
 <div class="section level4">
 <h4 id="install-and-load-dissmapr">Install and load <code>dissmapr</code><a class="anchor" aria-label="anchor" href="#install-and-load-dissmapr"></a>
@@ -174,13 +173,15 @@ demonstration. Ultimately, the choice for the AoI and taxa is
 user-specific. This section focuses on automating the retrieval and
 pre-processing of biodiversity occurrence data from various sources,
 including:</p>
-<ol style="list-style-type: lower-roman">
-<li>local <code>databases</code>.csv` files,</li>
-<li>URLs or <code>.zip</code> files from the Global Biodiversity
-Information Facility (GBIF), and</li>
-<li>species occurrence cubes from B3 (specification) [<em>work in
-progress</em>].</li>
-</ol>
+<ul>
+<li>
+<strong>local</strong> <code>databases</code>.csv` files,</li>
+<li>
+<strong>URLs</strong> or <code>.zip</code> files from the Global
+Biodiversity Information Facility (GBIF), and</li>
+<li>species <strong>occurrence cubes</strong> from B3 (specification)
+[<em>work in progress</em>].</li>
+</ul>
 <p>The function assembles data on species distributions across specified
 taxonomic groups and regions, producing presence-absence or abundance
 matrices that quantify species co-occurrence within locations.</p>
@@ -277,11 +278,15 @@ key columns (e.g., coordinates, species, and values), assigning missing
 observation/site IDs, and reformatting the data for analysis. Outputs
 include a cleaned <code>site_obs</code> dataset and
 <code>site_spp</code> matrix for further processing:</p>
-<p>• <strong>site_obs</strong>: Simplified table with unique
+<ul>
+<li>
+<strong>site_obs</strong>: Simplified table with unique
 <code>site_id</code>, <code>x</code>, <code>y</code>,
-<code>species</code> and <code>value</code> records (long format). •
+<code>species</code> and <code>value</code> records (long format).</li>
+<li>
 <strong>site_spp</strong>: Site-by-species matrix for biodiversity
-assessments (wide format).</p>
+assessments (wide format).</li>
+</ul>
 <div class="section level5">
 <h5 id="format-data-into-long-site_obs-and-wide-site_spp-formats">Format data into long (site_obs) and wide (site_spp) formats<a class="anchor" aria-label="anchor" href="#format-data-into-long-site_obs-and-wide-site_spp-formats"></a>
 </h5>
@@ -377,148 +382,6 @@ visualizations.</p>
 <span><span class="co"># Mask everything outside the RSA boundary</span></span>
 <span><span class="va">grid_masked</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span><span class="va">grid</span>, <span class="va">rsa_vect</span><span class="op">)</span></span></code></pre></div>
 <hr>
-</div>
-<div class="section level4">
-<h4 id="summarise-records-by-grid-centroid-using-generate_grid">Summarise records by grid centroid using
-<code>generate_grid()</code><a class="anchor" aria-label="anchor" href="#summarise-records-by-grid-centroid-using-generate_grid"></a>
-</h4>
-<p>Use <code>generate_grid</code> to overlay a user-defined lattice on
-the study region—whose bounds are inferred from the occurrence
-data—without modifying the underlying observations themselves. The
-function constructs a raster‐based grid of the chosen cell size, assigns
-each point a unique <code>grid_id</code>, and compiles a summary of
-user-specified attributes for every cell. It returns three coordinated
-outputs:</p>
-<p>• <strong>grid</strong>: <code>SpatRaster</code> with grid index •
-<strong>grid_sf</strong>: <code>sf</code> and <code>data.frame</code>
-i.e. lattice polygon features for mapping or spatial joins •
-<strong>block_sp</strong>: <code>data.frame</code> that records per-cell
-totals, centroids, and other statistics.</p>
-<p>By aggregating raw records into consistent spatial units,
-<code>generate_grid</code> provides the structured foundation needed for
-subsequent landscape-scale biodiversity analyses.</p>
-<hr>
-<div class="section level5">
-<h5 id="assign-records-to-a-grid-at-a-set-resolution">Assign records to a grid at a set resolution<a class="anchor" aria-label="anchor" href="#assign-records-to-a-grid-at-a-set-resolution"></a>
-</h5>
-<p>Aggregate species records into grid cells of user-specified size
-(e.g. 0.5°) to enable spatially standardized biodiversity analyses.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">grid_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/generate_grid.html">generate_grid</a></span><span class="op">(</span></span>
-<span>  data       <span class="op">=</span> <span class="va">site_spp</span>,</span>
-<span>  x_col      <span class="op">=</span> <span class="st">"x"</span>,</span>
-<span>  y_col      <span class="op">=</span> <span class="st">"y"</span>,</span>
-<span>  grid_size  <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  sum_col_range <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">site_spp</span><span class="op">)</span>,</span>
-<span>  crs_epsg   <span class="op">=</span> <span class="fl">4326</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Check `grid_list` structure</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">grid_list</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 3</span></span>
-<span><span class="co">#&gt;  $ grid    :S4 class 'SpatRaster' [package "terra"]</span></span>
-<span><span class="co">#&gt;  $ grid_sf :Classes 'sf' and 'data.frame':   1110 obs. of  8 variables:</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "sf_column")= chr "geometry"</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "agr")= Factor w/ 3 levels "constant","aggregate",..: NA NA NA NA NA NA NA</span></span>
-<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:7] "centroid_lon" "centroid_lat" "grid_id" "mapsheet" ...</span></span>
-<span><span class="co">#&gt;  $ block_sp:'data.frame':    415 obs. of  2874 variables:</span></span>
-<span></span>
-<span><span class="co"># Optional: Create new objects from list items</span></span>
-<span><span class="va">aoi_grid</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_sf</span></span>
-<span><span class="va">grid_spp</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">block_sp</span></span>
-<span></span>
-<span><span class="co"># Check results</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">aoi_grid</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1110    8</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">aoi_grid</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Simple feature collection with 6 features and 6 fields</span></span>
-<span><span class="co">#&gt; Active geometry column: geometry</span></span>
-<span><span class="co">#&gt; Geometry type: POLYGON</span></span>
-<span><span class="co">#&gt; Dimension:     XY</span></span>
-<span><span class="co">#&gt; Bounding box:  xmin: 15.5 ymin: -36 xmax: 18.5 ymax: -35.5</span></span>
-<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
-<span><span class="co">#&gt;   centroid_lon centroid_lat grid_id  mapsheet obs_sum spp_rich</span></span>
-<span><span class="co">#&gt; 1        15.75       -35.75       1 E015S36BB      NA       NA</span></span>
-<span><span class="co">#&gt; 2        16.25       -35.75       2 E016S36BB      NA       NA</span></span>
-<span><span class="co">#&gt; 3        16.75       -35.75       3 E016S36BB      NA       NA</span></span>
-<span><span class="co">#&gt; 4        17.25       -35.75       4 E017S36BB      NA       NA</span></span>
-<span><span class="co">#&gt; 5        17.75       -35.75       5 E017S36BB      NA       NA</span></span>
-<span><span class="co">#&gt; 6        18.25       -35.75       6 E018S36BB      NA       NA</span></span>
-<span><span class="co">#&gt;                         geometry             centroid</span></span>
-<span><span class="co">#&gt; 1 POLYGON ((15.5 -36, 16 -36,... POINT (15.75 -35.75)</span></span>
-<span><span class="co">#&gt; 2 POLYGON ((16 -36, 16.5 -36,... POINT (16.25 -35.75)</span></span>
-<span><span class="co">#&gt; 3 POLYGON ((16.5 -36, 17 -36,... POINT (16.75 -35.75)</span></span>
-<span><span class="co">#&gt; 4 POLYGON ((17 -36, 17.5 -36,... POINT (17.25 -35.75)</span></span>
-<span><span class="co">#&gt; 5 POLYGON ((17.5 -36, 18 -36,... POINT (17.75 -35.75)</span></span>
-<span><span class="co">#&gt; 6 POLYGON ((18 -36, 18.5 -36,... POINT (18.25 -35.75)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">grid_spp</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1]  415 2874</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">grid_spp</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   grid_id centroid_lon centroid_lat  mapsheet obs_sum spp_rich</span></span>
-<span><span class="co">#&gt; 1    1026        28.75    -22.25004 E028S23BB       3        2</span></span>
-<span><span class="co">#&gt; 2    1027        29.25    -22.25004 E029S23BB      41       31</span></span>
-<span><span class="co">#&gt; 3    1028        29.75    -22.25004 E029S23BB      10       10</span></span>
-<span><span class="co">#&gt; 4    1029        30.25    -22.25004 E030S23BB       7        7</span></span>
-<span><span class="co">#&gt; 5    1030        30.75    -22.25004 E030S23BB       6        6</span></span>
-<span><span class="co">#&gt; 6    1031        31.25    -22.25004 E031S23BB     107       76</span></span></code></pre></div>
-</div>
-<div class="section level5">
-<h5 id="generate-a-data-frame-xy-of-site-centroids">Generate a data frame ‘xy’ of site centroids<a class="anchor" aria-label="anchor" href="#generate-a-data-frame-xy-of-site-centroids"></a>
-</h5>
-<p>Extract longitude–latitude coordinates and summary metrics for each
-occupied grid cell.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Grid centroids with 'gird_id', 'centroid_lon', 'centroid_lat', 'obs_sum' and `spp_rich`</span></span>
-<span><span class="va">grid_xy</span> <span class="op">=</span> <span class="va">grid_spp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Create species observations data.frame</span></span>
-<span><span class="va">spp_obs</span> <span class="op">=</span> <span class="va">site_obs</span></span>
-<span></span>
-<span><span class="co"># Check results</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">grid_xy</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 415   5</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">grid_xy</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   grid_id centroid_lon centroid_lat obs_sum spp_rich</span></span>
-<span><span class="co">#&gt; 1    1026        28.75    -22.25004       3        2</span></span>
-<span><span class="co">#&gt; 2    1027        29.25    -22.25004      41       31</span></span>
-<span><span class="co">#&gt; 3    1028        29.75    -22.25004      10       10</span></span>
-<span><span class="co">#&gt; 4    1029        30.25    -22.25004       7        7</span></span>
-<span><span class="co">#&gt; 5    1030        30.75    -22.25004       6        6</span></span>
-<span><span class="co">#&gt; 6    1031        31.25    -22.25004     107       76</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">spp_obs</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 79953     5</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">spp_obs</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   site_id        x         y                            species value</span></span>
-<span><span class="co">#&gt; 1       1 19.24410 -34.42086                   Pieris brassicae     1</span></span>
-<span><span class="co">#&gt; 2       2 18.75564 -33.96044                   Pieris brassicae     1</span></span>
-<span><span class="co">#&gt; 3       3 18.40321 -33.91651 Papilio demodocus subsp. demodocus     1</span></span>
-<span><span class="co">#&gt; 4       1 19.24410 -34.42086 Mylothris agathina subsp. agathina     1</span></span>
-<span><span class="co">#&gt; 5       4 18.47488 -34.35024                  Eutricha capensis     1</span></span>
-<span><span class="co">#&gt; 6       5 25.65097 -33.58570            Drepanogynis bifasciata     1</span></span></code></pre></div>
-</div>
-<div class="section level5">
-<h5 id="generate-a-map-of-rsa-with-occupied-grid-cells-as-centroid-points">Generate a map of RSA with occupied grid cells as centroid
-points<a class="anchor" aria-label="anchor" href="#generate-a-map-of-rsa-with-occupied-grid-cells-as-centroid-points"></a>
-</h5>
-<p>Visualize observation density across South Africa using
-centroid-based mapping of gridded biodiversity data.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">aoi_grid</span>, fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">"darkgrey"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">grid_spp</span>,</span>
-<span>             <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">centroid_lon</span>, y <span class="op">=</span> <span class="va">centroid_lat</span>,</span>
-<span>                 size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">obs_sum</span><span class="op">)</span>,</span>
-<span>                 color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">obs_sum</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_viridis_c</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"turbo"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">rsa</span>, fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"0.5° Grid with Observation Counts"</span>,</span>
-<span>       x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/full-map-aoi-1.png" width="100%"></p>
-<hr>
-</div>
 </div>
 </div>
 </div>

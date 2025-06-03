@@ -1,0 +1,150 @@
+---
+title: "5-bioregion"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{5-bioregion}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup-bioregion, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "figures/5-",
+  out.width = "100%",
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+------------------------------------------------------------------------
+
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+
+------------------------------------------------------------------------
+
+## Predicting and Mapping Compositional Turnover using Zeta Diversity
+
+This section describes the use of modeled zeta diversity (order 2) to assess spatial patterns of compositional dissimilarity and bioregional clustering under current and future environmental conditions. The analysis uses the `predict_dissim()` function to generate site-by-site dissimilarity matrices based on species composition, sampling effort, geographic distance, and a reduced set of non-collinear environmental predictors. The output matrix is then subjected to ordination and clustering procedures to delineate current bioregions (`map_bioreg()`), and to quantify and map potential bioregional change under future scenarios (`map_bioregDiff()`). Outputs include RGB maps of turnover structure, discrete bioregion clusters, and spatial layers representing various change metrics such as transition frequency, stability, and Shannon entropy.
+
+------------------------------------------------------------------------
+
+### Predict current Zeta Diversity (zeta2) using `predict_dissim()`
+
+-   *In the 'sbe' add 'sam.max', a constant for all sites = max(sam.eff)*
+-   *Predict for the updated sbe and xy*
+-   *Produce a site by site matrix of predicted zeta 'zeta.now'*
+
+```{r load-workspace, echo=FALSE}
+load('../inst/savedata/bioregion_workspace.RData')
+```
+
+```{r predict-zeta2), echo=FALSE}
+# Predict current zeta diversity using `predict_dissim` with sampling effort, geographic distance and environmental variables
+# Only non-colinear environmental variables used in `zeta2` model
+predictors_df = predict_dissim(
+  block_sp   = grid_spp[,-c(4:6)],
+  sbe        = sbe[,-c(1:3)],# env_vars_reduced[,-8]
+  zeta_model = zeta2,
+  mean_rich  = mean_rich_o1234,
+  mean_turn  = mean_turn_o2345,
+  sbs_xy     = xy,
+  x_col      = "centroid_lon",
+  y_col      = "centroid_lat",
+  rsa        = rsa
+)
+
+# Check results
+dim(predictors_df)
+head(predictors_df[,1:7])
+```
+
+-   *Run nmds for the predicted zeta matrix*
+-   *Plot RGB of the 3 component scores*
+
+------------------------------------------------------------------------
+
+### Run clustering analyses using `map_bioreg()`
+
+-   *Map bioregion clusters of current zeta2*
+-   *Generate maps of dissimilarity (the rgb plot)*
+-   *Generate map of bioregions (from clustering)*
+
+```{r zeta-cluster}
+# Run `map_bioreg` function to generate and plot clusters
+bioreg_result = map_bioreg(
+  data = predictors_df,
+  scale_cols = c("pred_zeta", "centroid_lon", "centroid_lat"),
+  clus_method = "all", # K-means, PAM, Hierarchical and GMM clustering
+  plot = TRUE,
+  interp = "both",
+  x_col ='centroid_lon',
+  y_col ='centroid_lat'
+)
+```
+
+------------------------------------------------------------------------
+
+### Predict future Zeta Diversity and map bioregion change using `map_bioregDiff()`
+
+-   *with appended (future scenarios) environmental variables and 'sam.max' in sbe*
+-   *For m number of scenarios plus the present scenario (step 14) and n sites of xy*
+-   *Updated sbe.future will have k = (m+1) x n number of rows*
+-   *'xy' also updated with k rows*
+-   *Predict a k by k matrix of predicted zeta 'zeta.future'*
+
+```{r predict-future}
+# NOT RUN YET
+# future_df = predict_dissim(
+#   block_sp   = grid_spp[,-c(4:6)],
+#   sbe        = sbe[,-c(1:3)],
+#   zeta_model = zeta2,
+#   mean_rich  = mean_rich_o1234,
+#   mean_turn  = mean_turn_o2345,
+#   sbs_xy     = sbs_xy,
+#   x_col      = "centroid_lon",
+#   y_col      = "centroid_lat",
+#   rsa        = rsa
+# )
+
+# Check results
+# dim(future_df)
+# head(future_df[,1:7])
+
+# Run `map_bioregDiff`
+# 'approach', specifies which metric to compute:
+# >> "difference_count": Counts cells with differing values across layers
+# >> "shannon_entropy": Calculates Shannon entropy, measuring diversity within layers
+# >> "stability": Identifies stable regions where values remain unchanged.
+# >> "transition_frequency": Quantifies the frequency of changes between layers
+# >> "weighted_change_index": Weighted score to changes based on a dissimilarity matrix
+# >> "all" (default): Returns all metrics as a combined SpatRaster
+
+result_bioregDiff = map_bioregDiff(bioreg_result$clusters, 
+                                   approach = "all")
+
+# See results
+result_bioregDiff
+
+# Mask `result_bioregDiff` to the RSA boundary
+mask_bioregDiff = mask(resample(result_bioregDiff, 
+                                grid_masked, method = "near"), 
+                       grid_masked)
+
+# Plot all change results
+plot(mask_bioregDiff, col = viridis(100, direction = -1))
+```
+
+-   *Nmds of zeta.future*
+-   *Clustering of zeta.future*
+-   *Map sub matrices to indicate predicted future dissimilarity*
+-   *Map predicted future bioregions*
+-   *Map temporal turnover*
+    *Note: step 14 is redundant if step 16 is needed*\
+    *Note: step 16 has the same code but more results including those from step 6 but potentially computational demanding*
+
+------------------------------------------------------------------------

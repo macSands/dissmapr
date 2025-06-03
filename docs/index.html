@@ -44,8 +44,12 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/getting-started.html">UNKNOWN TITLE</a></li>
-    <li><a class="dropdown-item" href="articles/tutorial_1.html">getting-started</a></li>
+<li><a class="dropdown-item" href="articles/1-setup.html">1-setup</a></li>
+    <li><a class="dropdown-item" href="articles/2-grid.html">2-grid</a></li>
+    <li><a class="dropdown-item" href="articles/3-enviro.html">3-enviro</a></li>
+    <li><a class="dropdown-item" href="articles/4-zeta.html">4-zeta</a></li>
+    <li><a class="dropdown-item" href="articles/5-bioregion.html">5-bioregion</a></li>
+    <li><a class="dropdown-item" href="articles/7-examples.html">7-examples</a></li>
   </ul>
 </li>
       </ul>
@@ -277,11 +281,10 @@
 <span><span class="co"># Species names</span></span>
 <span><span class="va">sp_cols</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">site_spp</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">sp_cols</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
-<span><span class="co">#&gt;  [1] "Mylothris agathina subsp. agathina" "Pieris brassicae"                  </span></span>
-<span><span class="co">#&gt;  [3] "Tarucus thespis"                    "Acraea horta"                      </span></span>
-<span><span class="co">#&gt;  [5] "Danaus chrysippus"                  "Papilio demodocus subsp. demodocus"</span></span>
-<span><span class="co">#&gt;  [7] "Eutricha capensis"                  "Mesocelis monticola"               </span></span>
-<span><span class="co">#&gt;  [9] "Vanessa cardui"                     "Cuneisigna obstans"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "Mylothris agathina subsp. agathina" "Pieris brassicae"                   "Tarucus thespis"                   </span></span>
+<span><span class="co">#&gt;  [4] "Acraea horta"                       "Danaus chrysippus"                  "Papilio demodocus subsp. demodocus"</span></span>
+<span><span class="co">#&gt;  [7] "Eutricha capensis"                  "Mesocelis monticola"                "Vanessa cardui"                    </span></span>
+<span><span class="co">#&gt; [10] "Cuneisigna obstans"</span></span></code></pre></div>
 <hr>
 </div>
 </div>
@@ -366,20 +369,13 @@
 <span><span class="co">#&gt; Dimension:     XY</span></span>
 <span><span class="co">#&gt; Bounding box:  xmin: 15.5 ymin: -36 xmax: 18.5 ymax: -35.5</span></span>
 <span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
-<span><span class="co">#&gt;   centroid_lon centroid_lat grid_id  mapsheet obs_sum spp_rich                       geometry</span></span>
-<span><span class="co">#&gt; 1        15.75       -35.75       1 E015S36BB      NA       NA POLYGON ((15.5 -36, 16 -36,...</span></span>
-<span><span class="co">#&gt; 2        16.25       -35.75       2 E016S36BB      NA       NA POLYGON ((16 -36, 16.5 -36,...</span></span>
-<span><span class="co">#&gt; 3        16.75       -35.75       3 E016S36BB      NA       NA POLYGON ((16.5 -36, 17 -36,...</span></span>
-<span><span class="co">#&gt; 4        17.25       -35.75       4 E017S36BB      NA       NA POLYGON ((17 -36, 17.5 -36,...</span></span>
-<span><span class="co">#&gt; 5        17.75       -35.75       5 E017S36BB      NA       NA POLYGON ((17.5 -36, 18 -36,...</span></span>
-<span><span class="co">#&gt; 6        18.25       -35.75       6 E018S36BB      NA       NA POLYGON ((18 -36, 18.5 -36,...</span></span>
-<span><span class="co">#&gt;               centroid</span></span>
-<span><span class="co">#&gt; 1 POINT (15.75 -35.75)</span></span>
-<span><span class="co">#&gt; 2 POINT (16.25 -35.75)</span></span>
-<span><span class="co">#&gt; 3 POINT (16.75 -35.75)</span></span>
-<span><span class="co">#&gt; 4 POINT (17.25 -35.75)</span></span>
-<span><span class="co">#&gt; 5 POINT (17.75 -35.75)</span></span>
-<span><span class="co">#&gt; 6 POINT (18.25 -35.75)</span></span>
+<span><span class="co">#&gt;   centroid_lon centroid_lat grid_id  mapsheet obs_sum spp_rich                       geometry             centroid</span></span>
+<span><span class="co">#&gt; 1        15.75       -35.75       1 E015S36BB      NA       NA POLYGON ((15.5 -36, 16 -36,... POINT (15.75 -35.75)</span></span>
+<span><span class="co">#&gt; 2        16.25       -35.75       2 E016S36BB      NA       NA POLYGON ((16 -36, 16.5 -36,... POINT (16.25 -35.75)</span></span>
+<span><span class="co">#&gt; 3        16.75       -35.75       3 E016S36BB      NA       NA POLYGON ((16.5 -36, 17 -36,... POINT (16.75 -35.75)</span></span>
+<span><span class="co">#&gt; 4        17.25       -35.75       4 E017S36BB      NA       NA POLYGON ((17 -36, 17.5 -36,... POINT (17.25 -35.75)</span></span>
+<span><span class="co">#&gt; 5        17.75       -35.75       5 E017S36BB      NA       NA POLYGON ((17.5 -36, 18 -36,... POINT (17.75 -35.75)</span></span>
+<span><span class="co">#&gt; 6        18.25       -35.75       6 E018S36BB      NA       NA POLYGON ((18 -36, 18.5 -36,... POINT (18.25 -35.75)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">grid_spp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]  415 2874</span></span>
@@ -393,7 +389,7 @@
 <span><span class="co">#&gt; 6    1031        31.25    -22.25004 E031S23BB     107       76</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="generate-a-data-frame-xy-of-site-centroids">Generate a data frame ‘xy’ of site centroids<a class="anchor" aria-label="anchor" href="#generate-a-data-frame-xy-of-site-centroids"></a>
+<h4 id="generate-a-data-frame-xy-of-site-centroids">Generate a data frame <code>xy</code> of site centroids<a class="anchor" aria-label="anchor" href="#generate-a-data-frame-xy-of-site-centroids"></a>
 </h4>
 <p>Extract longitude–latitude coordinates and summary metrics for each occupied grid cell.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -447,7 +443,8 @@
 </div>
 </div>
 <div class="section level3">
-<h3 id="example-1---species-richness-using-richness">Example 1 - Species Richness using <code>richness</code>()`<a class="anchor" aria-label="anchor" href="#example-1---species-richness-using-richness"></a>
+<h3 id="example-1---species-richness-using-richness">Example 1 - Species Richness using <code>richness()</code>
+<a class="anchor" aria-label="anchor" href="#example-1---species-richness-using-richness"></a>
 </h3>
 <p>Here we calculate species richness across sites in the <code>block_sp</code> dataset, using the <code><a href="reference/compute_orderwise.html">compute_orderwise()</a></code> function. The <code><a href="reference/richness.html">richness()</a></code> metric function is applied to the <code>grid_id</code> column for site identification, with species data specified by <code>sp_cols</code>. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -461,11 +458,11 @@
 <span>  order <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 10.03 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 17.00 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 52.68 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 52.70 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 1 minutes and 52.71 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 12.24 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 29.35 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 2 minutes and 43.87 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 5 minutes and 37.93 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 5 minutes and 37.95 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rich_o1234</span><span class="op">)</span></span>
@@ -527,11 +524,11 @@
 <span>  order <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 18.08 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 39.62 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 3 minutes and 24.04 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 5: 6 minutes and 4.39 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 6 minutes and 4.40 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 41.01 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 4 minutes and 28.48 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 8 minutes and 34.04 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 5: 14 minutes and 21.49 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 14 minutes and 21.53 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">turn_o2345</span><span class="op">)</span></span>
@@ -583,8 +580,8 @@
 <hr>
 </div>
 <div class="section level3">
-<h3 id="id_7-generate-site-by-species-matrix---site_spp">7. Generate site by species matrix - <code>site_spp</code>
-<a class="anchor" aria-label="anchor" href="#id_7-generate-site-by-species-matrix---site_spp"></a>
+<h3 id="id_7-generate-site-by-species-matrix-as-site_spp">7. Generate site by species matrix as <code>site_spp</code>
+<a class="anchor" aria-label="anchor" href="#id_7-generate-site-by-species-matrix-as-site_spp"></a>
 </h3>
 <p>Create a matrix of species counts per site for use in biodiversity and dissimilarity analyses.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -636,7 +633,8 @@
 <span><span class="co">#&gt; 6    1031        31.25    -22.25004     107</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="generate-a-binary-presenceabsence-data-frame-sbs">Generate a binary (presence/absence) data frame ‘sbs’<a class="anchor" aria-label="anchor" href="#generate-a-binary-presenceabsence-data-frame-sbs"></a>
+<h4 id="generate-a-binary-presenceabsence-data-frame-sbs">Generate a binary (presence/absence) data frame <code>sbs</code>
+<a class="anchor" aria-label="anchor" href="#generate-a-binary-presenceabsence-data-frame-sbs"></a>
 </h4>
 <p>Convert species abundance data to presence/absence format (<code>site_spp_pa</code>) for binary dissimilarity analyses.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
@@ -694,9 +692,9 @@
 <span><span class="co">#&gt; 6    1031        31.25    -22.25004     107       76                                  0</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="generate-obs_cnt-and-spp_rich-raster-maps">Generate ‘obs_cnt’ and ‘spp_rich’ raster maps<a class="anchor" aria-label="anchor" href="#generate-obs_cnt-and-spp_rich-raster-maps"></a>
+<h4 id="generate-obs_cnt-and-spp_rich-raster-maps">Generate <code>obs_cnt</code> and <code>spp_rich</code> raster maps<a class="anchor" aria-label="anchor" href="#generate-obs_cnt-and-spp_rich-raster-maps"></a>
 </h4>
-<p><code>generate_grid</code> also creates a <code>SpatRast</code> to help visualise sampling effort and species richness over the study area.</p>
+<p><code><a href="reference/generate_grid.html">generate_grid()</a></code> also creates a <code>SpatRast</code> to help visualise sampling effort and species richness over the study area.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Species richness and sampling effort SpatRast</span></span>
 <span><span class="va">ras_effRich</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid</span><span class="op">[[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span></span>
@@ -724,13 +722,14 @@
 <p>Use <code>get_enviro_data</code> to extract environmental variables for spatial points from either species observations or grid centroids. Data can be sourced from online repositories (e.g. <em>WorldClim</em>, <em>SoilGrids</em> via <code>geodata</code>) or local rasters. The function defines an area of interest with a buffer, extracts selected variables, and interpolates missing values using nearby non-NA points. Outputs include cropped rasters, spatial points (as an <code>sf</code> object), and a combined site-by-environment data frame (<code>site_env</code>) for downstream ecological analyses. Future support will extend to <em>CHELSA</em> (<code>climenv</code>), <em>Google Earth Engine</em> (<code>rgee</code>), and <code>mapme.biodiversity</code> for expanded environmental and biodiversity data access.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use `get_enviro_data` to fetch environmental data for your grid centroids</span></span>
+<span><span class="va">data_path</span> <span class="op">=</span> <span class="st">'inst/extdata'</span> <span class="co"># Step to your directory</span></span>
 <span><span class="va">enviro_list</span> <span class="op">=</span> <span class="fu"><a href="reference/get_enviro_data.html">get_enviro_data</a></span><span class="op">(</span></span>
 <span>  data      <span class="op">=</span> <span class="va">sbs</span>,</span>
 <span>  buffer_km <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  source    <span class="op">=</span> <span class="st">'geodata'</span>,</span>
 <span>  var       <span class="op">=</span> <span class="st">"bio"</span>,</span>
 <span>  res       <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  path      <span class="op">=</span> <span class="st">'download_data'</span>,</span>
+<span>  path      <span class="op">=</span> <span class="va">data_path</span>,</span>
 <span>  sp_cols   <span class="op">=</span> <span class="fl">6</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sbs</span><span class="op">)</span>,</span>
 <span>  ext_cols  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'obs_sum'</span>,<span class="st">'spp_rich'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -746,7 +745,7 @@
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">enviro_list</span><span class="op">$</span><span class="va">env_rast</span><span class="op">)</span> <span class="op">=</span> <span class="va">names_env</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ras_enviro</span><span class="op">)</span> <span class="op">=</span> <span class="va">names_env</span></span></code></pre></div>
 <div class="section level4">
-<h4 id="add-eff-rich-raster-to-the-enviro-stack-raster">Add ‘eff-rich’ raster to the enviro stack raster<a class="anchor" aria-label="anchor" href="#add-eff-rich-raster-to-the-enviro-stack-raster"></a>
+<h4 id="add-eff-rich-raster-to-the-enviro-stack-raster">Add <code>eff-rich</code> raster to the enviro stack raster<a class="anchor" aria-label="anchor" href="#add-eff-rich-raster-to-the-enviro-stack-raster"></a>
 </h4>
 <p>Combine environmental rasters with sampling effort and species richness layers for joint spatial analysis.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -758,9 +757,10 @@
 <p><img src="reference/figures/README-ras-1.png" width="100%"></p>
 </div>
 <div class="section level4">
-<h4 id="create-dataframe-of-environmental-variables-with-site-centroids-xy">Create data.frame of environmental variables with site centroids ‘xy’<a class="anchor" aria-label="anchor" href="#create-dataframe-of-environmental-variables-with-site-centroids-xy"></a>
+<h4 id="create-dataframe-of-environmental-variables-with-site-centroids-xy">Create data.frame of environmental variables with site centroids <code>xy</code>
+<a class="anchor" aria-label="anchor" href="#create-dataframe-of-environmental-variables-with-site-centroids-xy"></a>
 </h4>
-<p>Environmental data were linked to grid centroids using <code>get_enviro_data</code>, now visualise the spatial variation in selected climate variables to check results.</p>
+<p>Environmental data were linked to grid centroids using <code><a href="reference/get_enviro_data.html">get_enviro_data()</a></code>, now visualise the spatial variation in selected climate variables to check results.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create `env_df`</span></span>
 <span><span class="va">env_df</span> <span class="op">=</span> <span class="va">enviro_list</span><span class="op">$</span><span class="va">env_df</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">8</span><span class="op">:</span><span class="fl">26</span><span class="op">)</span><span class="op">]</span></span>
@@ -783,28 +783,48 @@
 <span><span class="co">#&gt; 5    1030        30.75    -22.25004       6        6  23.59879</span></span>
 <span><span class="co">#&gt; 6    1031        31.25    -22.25004     107       76  24.57367</span></span>
 <span></span>
-<span><span class="co"># Plot the results to check the conversion is accurate</span></span>
+<span><span class="co"># Plot the results to check the conversion is correct</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co"># Add 0.25deg grid layer</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">aoi_grid</span>, fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">"darkgrey"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co"># Add bfly points layer</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">env_df</span>, </span>
-<span>             <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">centroid_lon</span>,</span>
-<span>                 y <span class="op">=</span> <span class="va">centroid_lat</span>,</span>
-<span>                 size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">temp_mean</span><span class="op">)</span>,</span>
-<span>                 color <span class="op">=</span> <span class="va">temp_mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_viridis_c</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"turbo"</span><span class="op">)</span> <span class="op">+</span>  <span class="co"># Use turbo color scale</span></span>
+<span>  <span class="co"># Add 0.5° grid layer</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">aoi_grid</span>,</span>
+<span>    fill <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"darkgrey"</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.5</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># Add butterfly points layer, with shape = 15 (solid square) and size range</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">env_df</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">centroid_lon</span>,</span>
+<span>      y <span class="op">=</span> <span class="va">centroid_lat</span>,</span>
+<span>      size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">temp_mean</span><span class="op">)</span>,</span>
+<span>      color <span class="op">=</span> <span class="va">temp_mean</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    shape <span class="op">=</span> <span class="fl">15</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># Control the size‐scale range (adjust the c(min, max) values as needed)</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size_continuous</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># Use a turbo‐viridis color scale for temp_mean</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_viridis_c</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"turbo"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co"># Add boundary layer</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">rsa</span>, fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">rsa</span>,</span>
+<span>    fill <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"0.5° Grid Cells with temp_mean"</span>,</span>
 <span>    x <span class="op">=</span> <span class="st">"Longitude"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Latitude"</span><span class="op">)</span>   </span></code></pre></div>
+<span>    y <span class="op">=</span> <span class="st">"Latitude"</span></span>
+<span>  <span class="op">)</span>  </span></code></pre></div>
 <p><img src="reference/figures/README-env-df-1.png" width="100%"></p>
 </div>
 <div class="section level4">
-<h4 id="generate-site-by-environment-data-frame-sbe">Generate <em>Site-by-Environment</em> data frame ‘sbe’<a class="anchor" aria-label="anchor" href="#generate-site-by-environment-data-frame-sbe"></a>
+<h4 id="generate-site-by-environment-data-frame-sbe">Generate <em>Site-by-Environment</em> data frame <code>sbe</code>
+<a class="anchor" aria-label="anchor" href="#generate-site-by-environment-data-frame-sbe"></a>
 </h4>
 <p>Create a unified data frame of site coordinates, sampling effort, richness, and environmental variables for modelling called <code>sbe</code>.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
@@ -861,8 +881,8 @@
 <span>                                 plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-remove_var-1.png" width="100%"></p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="co">#&gt; Variables removed due to high correlation:</span></span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="co">#&gt;  [1] "temp_rang"  "temp_sea"   "mdr"        "temp_max"   "rain_mean"  "rain_dryQ"  "temp_min"  </span></span>
-<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="co">#&gt;  [8] "temp_warmQ" "temp_coldQ" "rain_coldQ" "rain_wetQ"  "rain_wet"   "rain_sea"  </span></span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="co">#&gt;  [1] "temp_rang"  "temp_sea"   "mdr"        "temp_max"   "rain_mean"  "rain_dryQ"  "temp_min"   "temp_warmQ"</span></span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="co">#&gt;  [9] "temp_coldQ" "rain_coldQ" "rain_wetQ"  "rain_wet"   "rain_sea"  </span></span>
 <span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a><span class="co">#&gt; Variables retained:</span></span>
 <span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a><span class="co">#&gt; [1] "obs_sum"    "temp_mean"  "iso"        "temp_wetQ"  "temp_dryQ"  "rain_dry"   "rain_warmQ"</span></span>
@@ -1143,7 +1163,7 @@ This may reflect widespread or core species that are consistently shared regardl
 <span>  y_col <span class="op">=</span><span class="st">'centroid_lat'</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; fitting ...</span></span>
-<span><span class="co">#&gt;   |                                                                                                        |                                                                                                |   0%  |                                                                                                        |======                                                                                          |   7%  |                                                                                                        |=============                                                                                   |  13%  |                                                                                                        |===================                                                                             |  20%  |                                                                                                        |==========================                                                                      |  27%  |                                                                                                        |================================                                                                |  33%  |                                                                                                        |======================================                                                          |  40%  |                                                                                                        |=============================================                                                   |  47%  |                                                                                                        |===================================================                                             |  53%  |                                                                                                        |==========================================================                                      |  60%  |                                                                                                        |================================================================                                |  67%  |                                                                                                        |======================================================================                          |  73%  |                                                                                                        |=============================================================================                   |  80%  |                                                                                                        |===================================================================================             |  87%  |                                                                                                        |==========================================================================================      |  93%  |                                                                                                        |================================================================================================| 100%</span></span></code></pre></div>
+<span><span class="co">#&gt;   |                                                                                                                  |                                                                                                          |   0%  |                                                                                                                  |=======                                                                                                   |   7%  |                                                                                                                  |==============                                                                                            |  13%  |                                                                                                                  |=====================                                                                                     |  20%  |                                                                                                                  |============================                                                                              |  27%  |                                                                                                                  |===================================                                                                       |  33%  |                                                                                                                  |==========================================                                                                |  40%  |                                                                                                                  |=================================================                                                         |  47%  |                                                                                                                  |=========================================================                                                 |  53%  |                                                                                                                  |================================================================                                          |  60%  |                                                                                                                  |=======================================================================                                   |  67%  |                                                                                                                  |==============================================================================                            |  73%  |                                                                                                                  |=====================================================================================                     |  80%  |                                                                                                                  |============================================================================================              |  87%  |                                                                                                                  |===================================================================================================       |  93%  |                                                                                                                  |==========================================================================================================| 100%</span></span></code></pre></div>
 <p><img src="reference/figures/README-zeta-cluster-1.png" width="100%"></p>
 <hr>
 </div>
@@ -1216,6 +1236,11 @@ This may reflect widespread or core species that are consistently shared regardl
 </li>
 </ul>
 <hr>
+<div class="section level4">
+<h4 id="save-all-data-needed-for-vignettes">Save all data needed for vignettes<a class="anchor" aria-label="anchor" href="#save-all-data-needed-for-vignettes"></a>
+</h4>
+<hr>
+</div>
 </div>
 <div class="section level3">
 <h3 id="id_17-deposit-all-results-into-zenodo">17. Deposit all results into Zenodo<a class="anchor" aria-label="anchor" href="#id_17-deposit-all-results-into-zenodo"></a>

@@ -2,9 +2,13 @@ pandoc: 3.1.1
 pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
-  getting-started: getting-started.html
-  tutorial_1: tutorial_1.html
-last_built: 2025-06-02T15:14Z
+  1-setup: 1-setup.html
+  2-grid: 2-grid.html
+  3-enviro: 3-enviro.html
+  4-zeta: 4-zeta.html
+  5-bioregion: 5-bioregion.html
+  7-examples: 7-examples.html
+last_built: 2025-06-03T11:17Z
 urls:
   reference: https://macsands.github.io/dissmapr/reference
   article: https://macsands.github.io/dissmapr/articles

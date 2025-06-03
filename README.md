@@ -271,11 +271,10 @@ head(site_spp[,1:6])
 # Species names
 sp_cols = names(site_spp)[-c(1:3)]
 sp_cols[1:10]
-#>  [1] "Mylothris agathina subsp. agathina" "Pieris brassicae"                  
-#>  [3] "Tarucus thespis"                    "Acraea horta"                      
-#>  [5] "Danaus chrysippus"                  "Papilio demodocus subsp. demodocus"
-#>  [7] "Eutricha capensis"                  "Mesocelis monticola"               
-#>  [9] "Vanessa cardui"                     "Cuneisigna obstans"
+#>  [1] "Mylothris agathina subsp. agathina" "Pieris brassicae"                   "Tarucus thespis"                   
+#>  [4] "Acraea horta"                       "Danaus chrysippus"                  "Papilio demodocus subsp. demodocus"
+#>  [7] "Eutricha capensis"                  "Mesocelis monticola"                "Vanessa cardui"                    
+#> [10] "Cuneisigna obstans"
 ```
 
 ------------------------------------------------------------------------
@@ -372,20 +371,13 @@ head(aoi_grid)
 #> Dimension:     XY
 #> Bounding box:  xmin: 15.5 ymin: -36 xmax: 18.5 ymax: -35.5
 #> Geodetic CRS:  WGS 84
-#>   centroid_lon centroid_lat grid_id  mapsheet obs_sum spp_rich                       geometry
-#> 1        15.75       -35.75       1 E015S36BB      NA       NA POLYGON ((15.5 -36, 16 -36,...
-#> 2        16.25       -35.75       2 E016S36BB      NA       NA POLYGON ((16 -36, 16.5 -36,...
-#> 3        16.75       -35.75       3 E016S36BB      NA       NA POLYGON ((16.5 -36, 17 -36,...
-#> 4        17.25       -35.75       4 E017S36BB      NA       NA POLYGON ((17 -36, 17.5 -36,...
-#> 5        17.75       -35.75       5 E017S36BB      NA       NA POLYGON ((17.5 -36, 18 -36,...
-#> 6        18.25       -35.75       6 E018S36BB      NA       NA POLYGON ((18 -36, 18.5 -36,...
-#>               centroid
-#> 1 POINT (15.75 -35.75)
-#> 2 POINT (16.25 -35.75)
-#> 3 POINT (16.75 -35.75)
-#> 4 POINT (17.25 -35.75)
-#> 5 POINT (17.75 -35.75)
-#> 6 POINT (18.25 -35.75)
+#>   centroid_lon centroid_lat grid_id  mapsheet obs_sum spp_rich                       geometry             centroid
+#> 1        15.75       -35.75       1 E015S36BB      NA       NA POLYGON ((15.5 -36, 16 -36,... POINT (15.75 -35.75)
+#> 2        16.25       -35.75       2 E016S36BB      NA       NA POLYGON ((16 -36, 16.5 -36,... POINT (16.25 -35.75)
+#> 3        16.75       -35.75       3 E016S36BB      NA       NA POLYGON ((16.5 -36, 17 -36,... POINT (16.75 -35.75)
+#> 4        17.25       -35.75       4 E017S36BB      NA       NA POLYGON ((17 -36, 17.5 -36,... POINT (17.25 -35.75)
+#> 5        17.75       -35.75       5 E017S36BB      NA       NA POLYGON ((17.5 -36, 18 -36,... POINT (17.75 -35.75)
+#> 6        18.25       -35.75       6 E018S36BB      NA       NA POLYGON ((18 -36, 18.5 -36,... POINT (18.25 -35.75)
 
 dim(grid_spp)
 #> [1]  415 2874
@@ -399,7 +391,7 @@ head(grid_spp[,1:6])
 #> 6    1031        31.25    -22.25004 E031S23BB     107       76
 ```
 
-#### Generate a data frame ‘xy’ of site centroids
+#### Generate a data frame `xy` of site centroids
 
 Extract longitude–latitude coordinates and summary metrics for each
 occupied grid cell.
@@ -458,7 +450,7 @@ ggplot() +
 
 ------------------------------------------------------------------------
 
-### Example 1 - Species Richness using `richness`()\`
+### Example 1 - Species Richness using `richness()`
 
 Here we calculate species richness across sites in the `block_sp`
 dataset, using the `compute_orderwise()` function. The `richness()`
@@ -483,11 +475,11 @@ rich_o1234 = compute_orderwise(
   order = 1:4,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 1: 0 minutes and 10.03 seconds
-#> Time elapsed for order 2: 0 minutes and 17.00 seconds
-#> Time elapsed for order 3: 0 minutes and 52.68 seconds
-#> Time elapsed for order 4: 1 minutes and 52.70 seconds
-#> Total computation time: 1 minutes and 52.71 seconds
+#> Time elapsed for order 1: 0 minutes and 12.24 seconds
+#> Time elapsed for order 2: 0 minutes and 29.35 seconds
+#> Time elapsed for order 3: 2 minutes and 43.87 seconds
+#> Time elapsed for order 4: 5 minutes and 37.93 seconds
+#> Total computation time: 5 minutes and 37.95 seconds
 
 # Check results
 head(rich_o1234)
@@ -565,11 +557,11 @@ turn_o2345 = compute_orderwise(
   order = 2:5,
   parallel = TRUE,
   n_workers = 4)
-#> Time elapsed for order 2: 0 minutes and 18.08 seconds
-#> Time elapsed for order 3: 1 minutes and 39.62 seconds
-#> Time elapsed for order 4: 3 minutes and 24.04 seconds
-#> Time elapsed for order 5: 6 minutes and 4.39 seconds
-#> Total computation time: 6 minutes and 4.40 seconds
+#> Time elapsed for order 2: 0 minutes and 41.01 seconds
+#> Time elapsed for order 3: 4 minutes and 28.48 seconds
+#> Time elapsed for order 4: 8 minutes and 34.04 seconds
+#> Time elapsed for order 5: 14 minutes and 21.49 seconds
+#> Total computation time: 14 minutes and 21.53 seconds
 
 # Check results
 head(turn_o2345)
@@ -643,7 +635,7 @@ ggplot() +
 
 ------------------------------------------------------------------------
 
-### 7. Generate site by species matrix - `site_spp`
+### 7. Generate site by species matrix as `site_spp`
 
 Create a matrix of species counts per site for use in biodiversity and
 dissimilarity analyses.
@@ -699,7 +691,7 @@ head(obs_cnt)
 #> 6    1031        31.25    -22.25004     107
 ```
 
-#### Generate a binary (presence/absence) data frame ‘sbs’
+#### Generate a binary (presence/absence) data frame `sbs`
 
 Convert species abundance data to presence/absence format
 (`site_spp_pa`) for binary dissimilarity analyses.
@@ -760,9 +752,9 @@ head(site_spp_pa[,1:6])
 #> 6    1031        31.25    -22.25004     107       76                                  0
 ```
 
-#### Generate ‘obs_cnt’ and ‘spp_rich’ raster maps
+#### Generate `obs_cnt` and `spp_rich` raster maps
 
-`generate_grid` also creates a `SpatRast` to help visualise sampling
+`generate_grid()` also creates a `SpatRast` to help visualise sampling
 effort and species richness over the study area.
 
 ``` r
@@ -807,13 +799,14 @@ biodiversity data access.
 
 ``` r
 # Use `get_enviro_data` to fetch environmental data for your grid centroids
+data_path = 'inst/extdata' # Step to your directory
 enviro_list = get_enviro_data(
   data      = sbs,
   buffer_km = 10,
   source    = 'geodata',
   var       = "bio",
   res       = 5,
-  path      = 'download_data',
+  path      = data_path,
   sp_cols   = 6:ncol(sbs),
   ext_cols  = c('obs_sum','spp_rich')
 )
@@ -830,7 +823,7 @@ names(enviro_list$env_rast) = names_env
 names(ras_enviro) = names_env
 ```
 
-#### Add ‘eff-rich’ raster to the enviro stack raster
+#### Add `eff-rich` raster to the enviro stack raster
 
 Combine environmental rasters with sampling effort and species richness
 layers for joint spatial analysis.
@@ -845,10 +838,10 @@ plot(ras_enviro_effRich[[1:4]], col = turbo(100))
 
 <img src="man/figures/README-ras-1.png" width="100%" />
 
-#### Create data.frame of environmental variables with site centroids ‘xy’
+#### Create data.frame of environmental variables with site centroids `xy`
 
 Environmental data were linked to grid centroids using
-`get_enviro_data`, now visualise the spatial variation in selected
+`get_enviro_data()`, now visualise the spatial variation in selected
 climate variables to check results.
 
 ``` r
@@ -873,29 +866,48 @@ head(env_df[,1:6])
 #> 5    1030        30.75    -22.25004       6        6  23.59879
 #> 6    1031        31.25    -22.25004     107       76  24.57367
 
-# Plot the results to check the conversion is accurate
+# Plot the results to check the conversion is correct
 ggplot() +
-  # Add 0.25deg grid layer
-  geom_sf(data = aoi_grid, fill = NA, color = "darkgrey", alpha = 0.5) +
-  # Add bfly points layer
-  geom_point(data = env_df, 
-             aes(x = centroid_lon,
-                 y = centroid_lat,
-                 size = sqrt(temp_mean),
-                 color = temp_mean)) +
-  scale_color_viridis_c(option = "turbo") +  # Use turbo color scale
+  # Add 0.5° grid layer
+  geom_sf(
+    data = aoi_grid,
+    fill = NA,
+    color = "darkgrey",
+    alpha = 0.5
+  ) +
+  # Add butterfly points layer, with shape = 15 (solid square) and size range
+  geom_point(
+    data = env_df,
+    aes(
+      x = centroid_lon,
+      y = centroid_lat,
+      size = sqrt(temp_mean),
+      color = temp_mean
+    ),
+    shape = 15
+  ) +
+  # Control the size‐scale range (adjust the c(min, max) values as needed)
+  scale_size_continuous(range = c(2, 6)) +
+  # Use a turbo‐viridis color scale for temp_mean
+  scale_color_viridis_c(option = "turbo") +
   # Add boundary layer
-  geom_sf(data = rsa, fill = NA, color = "black", alpha = 1) +
+  geom_sf(
+    data = rsa,
+    fill = NA,
+    color = "black",
+    alpha = 1
+  ) +
   theme_minimal() +
   labs(
     title = "0.5° Grid Cells with temp_mean",
     x = "Longitude",
-    y = "Latitude")   
+    y = "Latitude"
+  )  
 ```
 
 <img src="man/figures/README-env-df-1.png" width="100%" />
 
-#### Generate *Site-by-Environment* data frame ‘sbe’
+#### Generate *Site-by-Environment* data frame `sbe`
 
 Create a unified data frame of site coordinates, sampling effort,
 richness, and environmental variables for modelling called `sbe`.
@@ -962,8 +974,8 @@ env_vars_reduced = rm_correlated(data = env_df[,c(4,6:24)],
 <img src="man/figures/README-remove_var-1.png" width="100%" />
 
     #> Variables removed due to high correlation:
-    #>  [1] "temp_rang"  "temp_sea"   "mdr"        "temp_max"   "rain_mean"  "rain_dryQ"  "temp_min"  
-    #>  [8] "temp_warmQ" "temp_coldQ" "rain_coldQ" "rain_wetQ"  "rain_wet"   "rain_sea"  
+    #>  [1] "temp_rang"  "temp_sea"   "mdr"        "temp_max"   "rain_mean"  "rain_dryQ"  "temp_min"   "temp_warmQ"
+    #>  [9] "temp_coldQ" "rain_coldQ" "rain_wetQ"  "rain_wet"   "rain_sea"  
     #> 
     #> Variables retained:
     #> [1] "obs_sum"    "temp_mean"  "iso"        "temp_wetQ"  "temp_dryQ"  "rain_dry"   "rain_warmQ"
@@ -1327,7 +1339,7 @@ bioreg_result = map_bioreg(
   y_col ='centroid_lat'
 )
 #> fitting ...
-#>   |                                                                                                        |                                                                                                |   0%  |                                                                                                        |======                                                                                          |   7%  |                                                                                                        |=============                                                                                   |  13%  |                                                                                                        |===================                                                                             |  20%  |                                                                                                        |==========================                                                                      |  27%  |                                                                                                        |================================                                                                |  33%  |                                                                                                        |======================================                                                          |  40%  |                                                                                                        |=============================================                                                   |  47%  |                                                                                                        |===================================================                                             |  53%  |                                                                                                        |==========================================================                                      |  60%  |                                                                                                        |================================================================                                |  67%  |                                                                                                        |======================================================================                          |  73%  |                                                                                                        |=============================================================================                   |  80%  |                                                                                                        |===================================================================================             |  87%  |                                                                                                        |==========================================================================================      |  93%  |                                                                                                        |================================================================================================| 100%
+#>   |                                                                                                                  |                                                                                                          |   0%  |                                                                                                                  |=======                                                                                                   |   7%  |                                                                                                                  |==============                                                                                            |  13%  |                                                                                                                  |=====================                                                                                     |  20%  |                                                                                                                  |============================                                                                              |  27%  |                                                                                                                  |===================================                                                                       |  33%  |                                                                                                                  |==========================================                                                                |  40%  |                                                                                                                  |=================================================                                                         |  47%  |                                                                                                                  |=========================================================                                                 |  53%  |                                                                                                                  |================================================================                                          |  60%  |                                                                                                                  |=======================================================================                                   |  67%  |                                                                                                                  |==============================================================================                            |  73%  |                                                                                                                  |=====================================================================================                     |  80%  |                                                                                                                  |============================================================================================              |  87%  |                                                                                                                  |===================================================================================================       |  93%  |                                                                                                                  |==========================================================================================================| 100%
 ```
 
 <img src="man/figures/README-zeta-cluster-1.png" width="100%" />
@@ -1403,6 +1415,10 @@ plot(mask_bioregDiff, col = viridis(100, direction = -1))
   needed*  
   *Note: step 16 has the same code but more results including those from
   step 6 but potentially computational demanding*
+
+------------------------------------------------------------------------
+
+#### Save all data needed for vignettes
 
 ------------------------------------------------------------------------
 
