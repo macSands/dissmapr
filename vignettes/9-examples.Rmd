@@ -1,17 +1,21 @@
 ---
-title: "7-examples"
+title: "9-examples"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{7-examples}
+  %\VignetteIndexEntry{Compute orderwise examples}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup-examples, include=FALSE}
+```{r child-9, child = "_common.Rmd"}
+```
+
+
+```{r setup-9, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "figures/7-",
+  fig.path = "figures/9-",
   out.width = "100%",
   echo = TRUE,
   message = FALSE,
@@ -31,15 +35,11 @@ knitr::opts_chunk$set(
 
 Below we demonstrate how to quantify biodiversity patterns using two common ecological metrics: species richness and community turnover (beta diversity). Both analyses utilize the `compute_orderwise()` function from the `dissmapr` package, applying the metric functions `richness()` and `turnover()` respectively, to spatial biodiversity data organised in the `grid_spp` dataset.
 
-------------------------------------------------------------------------
+---
 
 ### Example 1 - Species Richness using `richness`()`
 
 Here we calculate species richness across sites in the `block_sp` dataset, using the `compute_orderwise()` function. The `richness()` metric function is applied to the `grid_id` column for site identification, with species data specified by `sp_cols`. Orders 1 to 4 are computed i.e. for order=1, it computes basic species richness at individual sites, while higher orders (2 to 4) represent the differences in richness between pairwise and/or multi-site combinations. A subset of 1000 samples is used for higher-order computations to speed-up computation time. Parallel processing is enabled with 4 worker threads to improve performance. The output is a table summarizing species richness across specified orders.
-
-```{r load-workspace, echo=FALSE}
-load('../inst/savedata/examples_workspace.RData')
-```
 
 ```{r compute-rich}
 # Compute species richness (order 1) and the difference thereof for orders 2 to 4
@@ -59,12 +59,12 @@ head(rich_o1234)
 
 ```{r richness-boxplot}
 # Plot species richness distribution by order
-boxplot(value ~ order,
+boxplot(sqrt(value) ~ order,
         data = rich_o1234,
         col = c('#4575b4', '#99ce8f', '#fefab8', '#d73027'),
         horizontal = TRUE,
         outline = FALSE,
-        main = 'Distribution of Species Richness by Order')
+        main = 'Distribution of √Species Richness by Order')
 
 # Link centroid coordinates back to `rich_o1234` data.frame for plotting
 rich_o1234$centroid_lon = grid_spp$centroid_lon[match(rich_o1234$site_from, grid_spp$grid_id)]
@@ -83,11 +83,11 @@ head(mean_rich_o1234)
 # Plot Richness calculated using `compute_orderwise(..., func = richness, ...)`
 ggplot() +
   geom_tile(data = mean_rich_o1234[mean_rich_o1234$order==1,],
-            aes(x = centroid_lon, y = centroid_lat, fill = value)) +
+            aes(x = centroid_lon, y = centroid_lat, fill = sqrt(value))) +
   scale_fill_gradientn(colors = viridis(8)) + #Apply viridis color palette
   geom_sf(data = rsa, fill = NA, color = "black", alpha = 0.5) +
   theme_minimal() +
-  labs(x = "Longitude", y = "Latitude", fill = "Species Richness") +
+  labs(x = "Longitude", y = "Latitude", fill = "√Species Richness") +
   theme(panel.grid = element_blank(),panel.border = element_blank()
   )
 ```
@@ -97,19 +97,19 @@ Plot order-wise richness (orders 2:5) calculated using `compute_orderwise(..., f
 ```{r richness-plot-orders2345}
 # Plot order-wise richness (orders 2:5) calculated using `compute_orderwise(..., func = richness, ...)`
 ggplot() +
-  geom_tile(data = mean_rich_o1234, aes(x = centroid_lon, y = centroid_lat, fill = value)) +
+  geom_tile(data = mean_rich_o1234, aes(x = centroid_lon, y = centroid_lat, fill = sqrt(value))) +
   scale_fill_viridis_c(option = "turbo", name = "Richness") +
   geom_sf(data = rsa, fill = NA, color = "black", alpha = 0.5) +
   theme_minimal() +
   labs(
-    title = "Mean Richness by Order",
+    title = "Mean √Richness by Order",
     x = "Longitude",
     y = "Latitude"
   ) +
   facet_wrap(~ order, ncol = 2)
 ```
 
-------------------------------------------------------------------------
+---
 
 ### Example 2 - Community Turnover using `turnover()`
 

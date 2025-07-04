@@ -1,0 +1,79 @@
+---
+title: "10-zenodo"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Zenodo basics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r child-10, child = "_common.Rmd"}
+```
+
+
+```{r setup-10, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "figures/10-",
+  out.width = "100%",
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+------------------------------------------------------------------------
+
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+
+------------------------------------------------------------------------
+
+### 1. Deposit all results into Zenodo
+
+All data frames, tables, maps, and standard metadata can be deposited into Zenodo using [`zen4R`](https://github.com/eblondel/zen4R/wiki) or [Zenodo UI](https://zenodo.org/records/10715460).
+
+Below is a minimal `zen4R` workflow showing how to create a new deposition, upload a file, and publish it to Zenodo:
+
+- Make sure `ZENODO_TOKEN` is set in your environment with `deposit:write` (and if plan to publish, `deposit:actions`) scope.   
+- `createDeposition()`, `uploadFile()`, and `publishDeposition()` are all methods of the R6 `ZenodoManager` object.   
+- Use `downloadFiles()` to pull back any/all files from a given record ID.   
+
+**NOTE**: This will only work if you have an existing Zenodo account.
+For step‐by‐step guidance on creating and managing your personal access token, consult the official [Zenodo Developers documentation under Authentication](https://developers.zenodo.org/#authentication).
+
+For a tutorial on using `zen4R` to upload (and download) data, see the official [zen4R vignette](https://cran.r-project.org/web/packages/zen4R/vignettes/zen4R.html).
+
+```{r zenodo}
+# # Install and load zen4R if you haven’t already
+# # install.packages("zen4R")
+# library(zen4R)
+# 
+# # 1. Authenticate (expects your token in ZENODO_TOKEN)
+# token  = Sys.getenv("ZENODO_TOKEN")
+# zenodo = ZenodoManager$new(token = token)
+# 
+# # 2. Create a new (empty) deposition with basic metadata
+# dep = zenodo$createDeposition(
+#   metadata = list(
+#     title       = "My Example Dataset",
+#     upload_type = "dataset",
+#     description = "A demo upload via zen4R",
+#     creators    = list(list(name = "Doe, Jane"))
+#   )
+# )
+# 
+# # 3. Upload your local file into that deposition
+# zenodo$uploadFile(deposition = dep, file = "path/to/my_data.csv")
+# 
+# # 4. Publish the deposition (this mints a DOI)
+# published = zenodo$publishDeposition(deposition = dep)
+# message("Published DOI: ", published$doi)
+# 
+# # 5. Later on: download all files from that record into a folder
+# zenodo$downloadFiles(record_id = dep$id, path = "downloads/")
+```
+
+------------------------------------------------------------------------

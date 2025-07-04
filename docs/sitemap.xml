@@ -1,7 +1,15 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://macsands.github.io/dissmapr/404.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/articles/1-setup.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/articles/10-zenodo.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/articles/2-grid.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/articles/3-enviro.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/articles/4-zeta.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/articles/5-zeta-workflow.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/articles/6-predict.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/articles/7-bioregion.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/articles/8-change.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/articles/9-examples.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/articles/getting-started.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/articles/index.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/articles/tutorial_1.html</loc></url>
@@ -35,10 +43,13 @@
 <url><loc>https://macsands.github.io/dissmapr/reference/optimized_compute_orderwise.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/reference/orderwise_diss_gower.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/reference/phi_coef.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/reference/plot_ispline_boxplots.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/reference/plot_ispline_lines.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/reference/predict_dissim.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/reference/required_packages.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/reference/richness.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/reference/rm_correlated.html</loc></url>
+<url><loc>https://macsands.github.io/dissmapr/reference/run_ispline_models.html</loc></url>
 <url><loc>https://macsands.github.io/dissmapr/reference/turnover.html</loc></url>
 </urlset>
 

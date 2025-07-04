@@ -8,25 +8,26 @@ map_bioreg(
   data,
   scale_cols,
   clus_method = "all",
-  plot = TRUE,
+  show_plot = TRUE,
   interp = "both",
   x_col = "x",
   y_col = "y",
-  resolution = 0.5
+  resolution = 0.5,
+  bndy_fc = NULL
 )
 }
 \arguments{
-\item{data}{A data frame containing longitude / latitude columns and the
+\item{data}{Data frame containing longitude/latitude plus the
 variables in \code{scale_cols}.}
 
-\item{scale_cols}{Character vector naming columns to \emph{z}-scale before
+\item{scale_cols}{Character vector of column names to z-scale before
 clustering.}
 
-\item{clus_method}{Character; one or more of \code{"kmeans"}, \code{"pam"},
-\code{"hclust"}, \code{"gmm"}, or \code{"all"} (default) for all four.}
+\item{clus_method}{Which algorithm(s) to run: one or more of
+\code{"kmeans"}, \code{"pam"}, \code{"hclust"}, \code{"gmm"}, or \code{"all"}.}
 
-\item{plot}{Logical; if \code{TRUE} (default) a 2×2 patchwork of cluster
-maps is printed.}
+\item{show_plot}{Logical; if \code{TRUE} (default), draw a 2×2 patchwork
+of the point-map partitions. Set \code{FALSE} to skip.}
 
 \item{interp}{Character; interpolation type: \code{"NN"}, \code{"Tps"}, or
 \code{"both"} (default).}
@@ -34,68 +35,27 @@ maps is printed.}
 \item{x_col, y_col}{Names of the longitude and latitude columns
 (defaults \code{"x"}, \code{"y"}).}
 
-\item{resolution}{Numeric. Grid cell size (map units) used to build the
-interpolation raster (default \code{0.5}).}
+\item{resolution}{Numeric; grid cell size for the interpolation raster.}
+
+\item{bndy_fc}{Optional \code{sf} or \code{SpatVector} polygon to overlay.}
 }
 \value{
-A list with three components
+A list with three elements:
 \describe{
-\item{data}{Original \code{data} with added cluster columns
-(\code{kmeans_opt}, \code{pam_opt_aligned}, \code{hc_opt_aligned},
-\code{gmm_opt_aligned}).}
-\item{interpolated}{A \code{SpatRaster} stack of continuous NN or TPS
+\item{\code{data}}{Original \code{data} with factor cluster columns
+(\code{kmeans_opt}, \code{pam_opt}, \code{pam_opt_aligned},
+\code{hc_opt}, \code{hc_opt_aligned}, \code{gmm_opt}, \code{gmm_opt_aligned}),
+all sharing levels 1…k.}
+\item{\code{interpolated}}{A \code{SpatRaster} of continuous NN or TPS
 predictions (one layer per algorithm).}
-\item{clusters}{A \code{SpatRaster} stack of re-classified discrete
-clusters (TPS only, \code{NULL} otherwise).}
+\item{\code{clusters}}{A \code{SpatRaster} of re-classified discrete
+clusters (TPS only), with the same levels 1…k.}
 }
 }
 \description{
 Runs several unsupervised clustering algorithms on multivariate
-environmental data, \emph{aligns} their cluster labels to a common
-k-means reference, visualises the resulting partitions, and produces
-gridded bioregion surfaces by nearest-neighbour (NN) and/or
-thin-plate-spline (TPS) interpolation.
-}
-\details{
-\itemize{
-\item \strong{Clustering}   The optimal number of clusters \emph{k} for k-means is
-selected with \strong{NbClust} using the silhouette criterion
-(\code{min.nc = 2}, \code{max.nc = 10}).
-\item \strong{Label alignment}   Because different algorithms label clusters
-arbitrarily, labels are remapped to match k-means centroids via a
-nearest-centroid assignment.
-\item \strong{Interpolation}   For each algorithm the point-wise clusters are
-projected to a raster grid:
-– \strong{NN}: a computationally cheap 1-nearest neighbour assignment
-– \strong{TPS}: smooth thin-plate splines fitted with \strong{fields}.
-Predicted fractional surfaces are optionally re-classified to
-discrete cluster IDs.
-}
-}
-\examples{
-\dontrun{
-## Synthetic example (≈ 10 s)
-set.seed(1)
-n  <- 150
-df <- data.frame(
-  x  = runif(n, 23, 24),               # longitude
-  y  = runif(n, -34, -33),             # latitude
-  t1 = rnorm(n),                       # environmental predictors
-  t2 = rnorm(n)
-)
-
-res <- map_bioreg(
-  data        = df,
-  scale_cols  = c("t1", "t2"),
-  clus_method = "kmeans",  # keep it light
-  plot        = FALSE,
-  interp      = "NN",
-  resolution  = 0.2
-)
-
-names(res)
-head(res$data)
-res$interpolated            # view with terra::plot(res$interpolated)
-}
-
+environmental data, aligns their cluster labels to a common
+k-means reference, visualises the resulting partitions (optionally),
+and produces gridded bioregion surfaces by nearest-neighbour (NN)
+and/or thin-plate-spline (TPS) interpolation.
 }

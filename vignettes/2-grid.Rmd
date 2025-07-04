@@ -2,12 +2,16 @@
 title: "2-grid"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{2-grid}
+  %\VignetteIndexEntry{Group by user-defined grid}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup-grid, include=FALSE}
+```{r child-2, child = "_common.Rmd"}
+```
+
+
+```{r setup-2, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -27,189 +31,173 @@ knitr::opts_chunk$set(
 
 ------------------------------------------------------------------------
 
-## Spatial aggregation and site-level derivatives
+### 1. User-defined area of interest and grid resolution
 
-This stage converts point-based occurrence records into a set of harmonised, grid-level data objects that underpin all downstream compositional-dissimilarity analyses. The workflow proceeds as follows:
+Defining the geographic extent and an analysis grid early ensures that all subsequent data extraction, aggregation, and visualisation tasks are carried out within a consistent spatial framework. In this vignette we:
 
-1. **Generate a reference lattice** with `generate_grid()`. A user-defined cell size (e.g. 0.5°) is draped over the study extent; each cell receives a unique `grid_id`, and point records are assigned to their respective cells without altering their original coordinates.  
-2. **Compile per-cell summaries**. For every grid cell the function records observation totals (`obs_sum`), species richness (`spp_rich`), centroid coordinates, and any additional column statistics requested by the user.  
-3. **Prepare spatial layers**. The routine returns three coordinated outputs—(i) a raster index (`grid`) for fast raster algebra, (ii) an `sf` polygon layer (`grid_sf`) for cartographic overlays, and (iii) a tidy data-frame (`block_sp`) that links grid attributes to biological information.  
-4. **Derive analysis-ready tables**. The grid summary is reshaped into (i) an abundance **site × species matrix** (`site_spp`), (ii) a binary presence–absence version (`sbs`) for incidence metrics, and (iii) a centroid table (`grid_xy`) for rapid spatial joins.  
-5. **Map effort and richness**. Observation counts (`obs_cnt`) and species richness (`spp_rich`) are promoted to rasters, providing an immediate visual check on sampling bias and baseline diversity.
+1. **Load the national boundary of South Africa** to set our area of interest (AoI).
+2. **Select a working resolution** of 0.5° (≈ 55 km) to balance spatial detail with computational cost.
+3. **Convert the AoI to a `terra` vector** so that raster operations run efficiently.
+4. **Create a blank raster template** using the chosen resolution and the AoI’s CRS (Coordinate Reference System).
+5. **Populate the raster with placeholder values** (here simply 1).
+6. **Mask the raster to the AoI** so that only cells whose centroids fall within South Africa remain.
 
-The objects created here—`grid_spp`, `site_spp`, `sbs`, `obs_cnt`, `spp_rich`, and their companion rasters—form the spatial backbone for the richness, turnover, and model-based sections that follow.
+```{r aoi}
+# 1. Load the national boundary 
+# The shapefile is shipped with the package for full reproducibility.
+rsa = sf::st_read(system.file("extdata", "rsa.shp", package = "dissmapr"))
 
-------------------------------------------------------------------------
+# 2. Choose a working resolution 
+# A 0.5‑degree cell size strikes a balance between computational load and
+# the spatial resolution at which national‑level biodiversity patterns remain
+# interpretable.
+res = 0.5   # decimal degrees° (≈ 55 km at the equator)
 
-### Summarise records by grid centroid using `generate_grid()`
+# 3. Convert the AoI to a 'terra' vector 
+# 'terra' supports fast raster operations; converting now avoids repeated
+# coercion later.
+rsa_vect = terra::vect(rsa)
 
-Use `generate_grid` to overlay a user-defined lattice on the study region—whose bounds are inferred from the occurrence data—without modifying the underlying observations themselves. The function constructs a raster‐based grid of the chosen cell size, assigns each point a unique `grid_id`, and compiles a summary of user-specified attributes for every cell. It returns three coordinated outputs: 
+# 4. Initialise a blank raster template 
+# The template inherits the AoI’s coordinate reference system (CRS) and is
+# discretised into equally‑sized cells according to the resolution chosen.
+grid = terra::rast(rsa_vect, resolution = res, crs = terra::crs(rsa_vect))
 
-*  **grid**: `SpatRaster` with grid index 
-*  **grid_sf**: `sf` and `data.frame` i.e. lattice polygon features for mapping or spatial joins 
-*  **block_sp**: `data.frame` that records per-cell totals, centroids, and other statistics. 
+# 5. Populate the raster with placeholder values 
+# We simply assign the value 1 to every cell; the values themselves are
+# irrelevant at this stage—the grid’s geometry is what matters.
+values(grid) = 1
 
-By aggregating raw records into consistent spatial units, `generate_grid` provides the structured foundation needed for subsequent landscape-scale biodiversity analyses.
-
-------------------------------------------------------------------------
-
-#### Assign records to a grid at a set resolution
-
-Aggregate species records into grid cells of user-specified size (e.g. 0.5°) to enable spatially standardized biodiversity analyses.
-
-```{r load-workspace, echo=FALSE}
-load('../inst/savedata/grid_workspace.RData')
+# 6. Clip the raster to the AoI 
+# Any cells whose centroids fall outside the boundary are set to NA, thereby
+# restricting subsequent computations to the AoI only.
+grid_masked = terra::mask(grid, rsa_vect)
+# grid_masked is now a 0.5° lattice clipped to South Africa and will serve as the common spatial denominator for all downstream summaries.
 ```
+
+---
+
+### 2. Summarise records by grid centroid using `generate_grid()`
+
+With the national lattice in place, we can now **condense point-level observations to grid cells** using `generate_grid()` to:
+
+1. **Construct a bounding grid**: Expands the extent of input points and tessellates it with square cells of the chosen size (here 0.5°).
+2. **Allocate a `grid_id`**: Every record inherits the ID of the cell in which it falls.
+3. **Aggregate user-selected columns** within each occupied cell, returning:  
+   - `grid_spp`: species counts / abundances.  
+   - `grid_spp_pa`: the same matrix recoded to presence (1) / absence (0) for binary dissimilarity metrics.  
+   - `obs_sum`: total observations across the aggregated columns.  
+   - `spp_rich`: number of columns with a non-zero count (simple species richness).
+4. **Compute cell centroids** and optional assign mapsheet codes (useful for atlasing projects).
+5. **Rasterise key layers** (`grid_id`, `obs_sum`, `spp_rich`) for fast map algebra.
+6. **Return four spatial objects** ready for further analysis:  
+   - `grid_r`: multi-layer `SpatRaster`  
+   - `grid_sf`: polygon lattice with centroids & summaries  
+   - `grid_spp`: abundance table (per cell × species)  
+   - `grid_spp_pa`: binary presence/absence table (same dimensions as `grid_spp`)
+
+Because every observation is now referenced to a regular grid, all downstream statistics and graphics are standardised to the same sample area.
 
 ```{r grid}
+# Generate a 0.5° grid summary for the point dataset `site_spp`
 grid_list = generate_grid(
-  data       = site_spp,
-  x_col      = "x",
-  y_col      = "y",
-  grid_size  = 0.5,
-  sum_col_range = 4:ncol(site_spp),
-  crs_epsg   = 4326
+  data          = site_spp,           # point data with x/y + species columns
+  x_col         = "x",                # longitude column
+  y_col         = "y",                # latitude  column
+  grid_size     = 0.5,                # cell size in degrees
+  sum_cols      = 4:ncol(site_spp),   # columns to aggregate
+  crs_epsg      = 4326                # WGS84
 )
 
-# Check `grid_list` structure
+# Inspect the returned list 
 str(grid_list, max.level = 1)
 
-# Optional: Create new objects from list items
-aoi_grid = grid_list$grid_sf
-grid_spp = grid_list$block_sp
+# (Optional) Promote list items to named objects 
+grid_sf = grid_list$grid_sf   # polygons for mapping or joins
+grid_spp = grid_list$grid_spp # tabular summary per cell
+grid_spp_pa = grid_list$grid_spp_pa # presence/absence summary
 
-# Check results
-dim(aoi_grid)
-head(aoi_grid)
-
-dim(grid_spp)
-head(grid_spp[,1:6])
+# Quick checks 
+dim(grid_sf); head(grid_sf)
+dim(grid_spp); head(grid_spp[, 1:8])
+dim(grid_spp_pa); head(grid_spp_pa[, 1:8])
 ```
 
-#### Generate a data frame 'xy' of site centroids
+`grid_spp` now serves as the **site‑level backbone** for modelling (e.g. spatial GLMs) or visualisation (e.g. dot plots), whereas `grid_spp_pa` slots directly into Jaccard- or Sørensen-based beta-diversity workflows. `site_spp` retains the raw observation detail for drill‑down analyses.
 
-Extract longitude--latitude coordinates and summary metrics for each occupied grid cell.
+---
 
-```{r site-xy}
-# Grid centroids with 'gird_id', 'centroid_lon', 'centroid_lat', 'obs_sum' and `spp_rich`
-grid_xy = grid_spp[,c(1:3,5:6)]
+### 3. Visualise observation density across South Africa
 
-# Create species observations data.frame
-spp_obs = site_obs
+With the grid summaries in hand we can now **map the spatial distribution of observation effort**. The recipe below layers three geometric objects in a single `ggplot2` call:
 
-# Check results
-dim(grid_xy)
-head(grid_xy)
+1. **Grid polygons (`grid_sf`)**: Outlined in semi‑transparent grey to give a subtle sense of the analytical lattice without overwhelming the figure.
+2. **Centroid points (`grid_spp`)**: Plotted using longitude/latitude coordinates and symbol attributes that encode sampling intensity. For example, below **size & colour** are mapped to `sqrt(obs_sum)`.  We use `sqrt()` because a square‑root transform is often preferable when counts span large orders of magnitude as it compresses large values while still highlighting structure among sparsely sampled cells.
+3. **National border (`rsa`)**: Emphasised in solid black to anchor the map in a familiar outline.
 
-dim(spp_obs)
-head(spp_obs)
-```
-
-#### Generate a map of RSA with occupied grid cells as centroid points
-
-Visualize observation density across South Africa using centroid-based mapping of gridded biodiversity data.
+A perceptually uniform `Viridis` palette (`option = "turbo"`) supports colour‑blind accessibility, while `theme_minimal()` removes visual clutter so the data can speak for themselves.
 
 ```{r map-aoi}
 ggplot() +
-  geom_sf(data = aoi_grid, fill = NA, color = "darkgrey", alpha = 0.5) +
-  geom_point(data = grid_spp,
-             aes(x = centroid_lon, y = centroid_lat,
-                 size = sqrt(obs_sum),
-                 color = sqrt(obs_sum))) +
-  scale_color_viridis_c(option = "turbo") +
-  geom_sf(data = rsa, fill = NA, color = "black") +
+  # 1. grid polygons as subtle backdrop 
+  geom_sf(data = grid_sf, fill = NA, colour = "darkgrey", linewidth = 0.2, alpha = 0.5) +
+  
+  # 2. centroids sized/coloured by sampling effort 
+  geom_point(
+    data = grid_spp,
+    aes(x = centroid_lon, y = centroid_lat,
+        size  = sqrt(obs_sum),
+        colour = sqrt(obs_sum)),
+    alpha = 0.8
+  ) +
+  
+  # Divergent colour scale 
+  scale_colour_viridis_c(option = "turbo", name = "√ Observations") +
+  scale_size_continuous(name = "√ Observations", guide = "none") +
+  
+  # 3. national outline 
+  geom_sf(data = rsa, fill = NA, colour = "black", linewidth = 0.4) +
+  
   theme_minimal() +
-  labs(title = "0.5° Grid with Observation Counts",
-       x = "Longitude", y = "Latitude")
+  labs(
+    title = "Observation density across South Africa (0.5° grid)",
+    x = "Longitude", y = "Latitude"
+  )
 ```
 
-------------------------------------------------------------------------
+---
 
-### Generate site by species matrix - `site_spp`
+### 4. Visualise sampling effort and richness
 
-Create a matrix of species counts per site for use in biodiversity and dissimilarity analyses.
+`generate_grid()` also returns a three-layer `SpatRaster` (`grid_r`) whose second and third bands store cell-level metrics:
 
-```{r site-spp}
-xy = grid_spp[,2:3]
-site_spp = grid_spp[,c(1:3,5:ncol(grid_spp))]
+- `obs_sum`: Total observations aggregated across the chosen species columns (units = observation count)
+- `spp_rich`:	Number of species (non-zero columns) recorded in the cell	(units = unique species count)
 
-# Check results
-dim(xy)
-head(xy)
-
-dim(site_spp)
-head(site_spp[,1:6])
-```
-
-#### Fetch record of occurrence counts calculated using `generate_grid()`
-
-`generate_grid` summarised the number of species observations per grid cell to assess sampling effort.
-
-```{r sam-eff}
-# Sampling effort = observation counts
-sam_eff = grid_spp[, c("grid_id","centroid_lon","centroid_lat","obs_sum")]
-obs_cnt = grid_spp[,c(1:3,5)]
-
-# Check results
-dim(obs_cnt)
-head(obs_cnt)
-```
-
-#### Generate a binary (presence/absence) data frame 'sbs'
-
-Convert species abundance data to presence/absence format (`site_spp_pa`) for binary dissimilarity analyses.
-
-```{r sbs}
-# Create site-by-species matrix
-sbs = site_spp %>%
-  mutate(across(all_of(sp_cols), ~ ifelse(. > 0, 1, 0)))
-
-# Check results
-dim(sbs)
-head(sbs[,1:6])
-
-# Assuming 'sp_cols' is a vector of column names
-site_spp_pa = site_spp %>%
-  mutate(across(all_of(sp_cols), ~ ifelse(!is.na(.) & . > 0, 1, 0)))
-
-# Check results
-dim(site_spp_pa)
-head(site_spp_pa[,1:6])
-```
-
-#### Fetch species richness values calculated using `generate_grid()`
-
-`generate_grid()` calculated species richness per site based on binary presence/absence records.
-
-```{r spp-rich}
-# Species richness
-spp_rich = grid_spp[, c("grid_id","centroid_lon","centroid_lat","spp_rich")]
-
-# Check results
-dim(site_spp_pa)
-head(site_spp_pa[,1:6])
-```
-
-#### Generate 'obs_cnt' and 'spp_rich' raster maps
-
-`generate_grid` also creates a `SpatRast` to help visualise sampling effort and species richness over the study area.
+The chunk below extracts those two layers, applies a square-root stretch (to dampen the influence of very large counts), and renders them side-by-side with a perceptually uniform turbo palette.
 
 ```{r eff-rich}
-# Species richness and sampling effort SpatRast
-ras_effRich = grid_list$grid[[2:3]]
+# 1. Extract & stretch the layers 
+effRich_r = sqrt(grid_list$grid_r[[c("obs_sum", "spp_rich")]])
 
-# Plot `ras_effRich` using colour palettes from `viridis`
-# plot(sqrt(ras_effRich), col = turbo(100))
-plot(
-  sqrt(ras_effRich),
-  col   = turbo(100),
-  colNA = NA,            # <-- NA cells completely transparent
-  axes  = FALSE
-)
+# 2. Open a 1×2 layout and plot each layer + outline 
+old_par = par(mfrow = c(1, 2), # multi‐figure by row: 1 row and 2 columns 
+              mar = c(1, 1, 1, 2))  # margins sizes: bottom (1 lines)|left (1)|top (1)|right (2)
 
-# plot(vect(rsa), add = TRUE, border = "black")
+for (i in 1:2) {
+  plot(effRich_r[[i]],
+       col   = viridisLite::turbo(100),
+       colNA = NA,
+       axes  = FALSE,
+       main  = c("Sampling effort (√obs count)",
+                 "Species richness (√unique count)")[i],
+       cex.main = 0.8)          # ← smaller title)
+  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+}
+
+par(old_par)  # reset plotting parameters
 ```
 
-***Note**: occurrence coordinates are only used for assigning then into grids; they are not needed beyond this step.*
+These maps quickly reveal where sampling effort is concentrated and how species richness varies across the landscape—useful diagnostics before any downstream modelling.
 
 ------------------------------------------------------------------------

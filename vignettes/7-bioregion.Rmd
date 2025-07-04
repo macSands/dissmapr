@@ -1,0 +1,135 @@
+---
+title: "7-bioregion"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Map bioregions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r child-7, child = "_common.Rmd"}
+```
+
+
+```{r setup-7, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "figures/7-",
+  out.width = "100%",
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+
+```{r load-change-rasters, include = FALSE}
+grid_masked = terra::rast(system.file("extdata", "grid_masked.tif", package = "dissmapr"))
+```
+
+------------------------------------------------------------------------
+
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+
+------------------------------------------------------------------------
+
+### 1. Run clustering analyses using `map_bioreg()` to map bioregions
+
+In this step we translate our site‐level ζ₂ predictions into spatial bioregions. Calling `map_bioreg()` on the predictors_df does the following:
+
+1. z-scales the predicted turnover, longitude and latitude;
+2. fits four clustering algorithms (k-means, PAM, hierarchical and GMM);
+  - **k-means** partitions points around centroids and is fast for large data sets.
+  - **PAM** (Partitioning Around Medoids) is a medoid-based analogue of k-means that is more robust to outliers.
+  - **Hierarchical** agglomerative clustering builds a dendrogram and then “cuts” it at the chosen k, capturing nested structure in the data.
+  - **GMM** (Gaussian Mixture Model) treats clusters as multivariate normal distributions and assigns each point by maximum likelihood.
+3. realigns each method’s labels to the k-means solution for consistency;
+4. builds both nearest-neighbour and thin-plate-spline interpolated surfaces;
+5. returns the raw cluster assignments and gridded rasters, and—because `show_plot=TRUE`—draws a 2×2 panel of maps.
+
+The result is a set of complementary bioregion maps and rasters you can use to compare how different algorithms partition the landscape based on compositional turnover and geography.
+
+```{r zeta-cluster, fig.width=11.25, fig.height=9, warning=FALSE, message=FALSE}
+# Run `map_bioreg` function to generate and plot clusters
+bioreg_result = map_bioreg(
+  data = predictors_df,
+  scale_cols = c("pred_zeta", "centroid_lon", "centroid_lat"),
+  clus_method = "all", # K-means, PAM, Hierarchical and GMM clustering
+  show_plot = TRUE,
+  interp = "both",
+  x_col ='centroid_lon',
+  y_col ='centroid_lat',
+  bndy_fc = rsa
+)
+```
+
+---
+
+### 2. Map future bioregions using `map_bioreg()`
+
+Below we expand our workflow to map the forecasted ζ₂  bioregions under three extreme climate futures (2030, 2040, 2050) alongside the current scenario.
+To see how the bioregional partitions shift, we split `all_preds` by scenario and apply `map_bioreg()` (k-means + hierarchical, both NN and TPS interpolation). We then extract the hierarchical cluster layers, mask them to our study area, and plot all four maps in a 2×2 layout:
+
+
+```{r future-cluster}
+# 1) Split your combined predictions by scenario into a named list
+by_scn = split(all_preds, all_preds$scenario)
+
+# 2) For each scenario, call map_bioreg() with k‐means + hierarchical, no plots
+hier_results = purrr::imap(
+  by_scn,
+  ~ map_bioreg(
+      data        = .x,
+      scale_cols  = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
+      clus_method = c("kmeans", "hclust"),
+      show_plot   = FALSE,
+      interp      = "both",            # only NN interpolation to avoid the TPS bug
+      x_col       = "centroid_lon",
+      y_col       = "centroid_lat"
+    )
+)
+
+# 3) Give the outer list the scenario names
+names(hier_results) = names(by_scn)
+
+# The result is a named list of map_bioreg outputs,
+# one element per scenario (current, 2030, 2040, 2050).
+str(hier_results, max.level = 1)
+
+# Create SpatRast
+future_r = c(hier_results[["current"]]$clusters$hc,
+             hier_results[["2030"]]$clusters$hc,
+             hier_results[["2040"]]$clusters$hc,
+             hier_results[["2050"]]$clusters$hc)
+names(future_r)
+
+# 4) Mask `result_bioregDiff` to the RSA boundary
+mask_future_r = terra::mask(resample(future_r, grid_masked, method = "near"), grid_masked)
+
+# 5) Quick visual QC in a 3×2 layout
+old_par = par(mfrow = c(3, 2), mar = c(1, 1, 1, 5))
+titles = c("Current",
+            "2030",
+            "2040",                       
+            "2050")
+
+for (i in 1:4) {
+  plot(mask_future_r[[i]],
+       # col      = viridisLite::turbo(100),
+       col      = viridis(100, direction = -1),
+       colNA    = NA,
+       axes     = FALSE,
+       main     = titles[i],
+       cex.main = 0.8)                        # smaller title
+  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+}
+
+par(old_par)
+```
+
+This end-to-end workflow shows how predicted turnover patterns and resulting bioregions might shift as climate warms and rainfall changes, highlighting potential future reorganization of biodiversity hotspots.
+
+------------------------------------------------------------------------

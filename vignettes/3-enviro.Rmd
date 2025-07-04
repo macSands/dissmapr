@@ -2,12 +2,16 @@
 title: "3-enviro"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{3-enviro}
+  %\VignetteIndexEntry{Get environmental data for sites}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup-enviro, include=FALSE}
+```{r child-3, child = "_common.Rmd"}
+```
+
+
+```{r setup-3, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -19,6 +23,13 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+```{r load-env-rasters, include = FALSE}
+grid_masked = terra::rast(system.file("extdata", "grid_masked.tif", package = "dissmapr"))
+effRich_r = terra::rast(system.file("extdata", "effRich_r.tif", package = "dissmapr"))
+```
+
+
 ------------------------------------------------------------------------
 
 # `dissmapr`
@@ -27,174 +38,214 @@ knitr::opts_chunk$set(
 
 ------------------------------------------------------------------------
 
-## Environmental Data Preparation
+### 1. Generate site by environment matrix using `get_enviro_data()`
 
-This vignette outlines a comprehensive workflow for preparing and analyzing environmental data in ecological studies. The primary objective is to extract relevant environmental variables associated with species observations or predefined grid centroids, facilitating robust ecological analyses and modeling.
+Spatial models are most informative when each sampling unit couples a biological response (in this example, **sampling effort** and **species richness**) with the same suite of environmental predictors.  
+`get_enviro_data()` attaches environmental predictors to each grid cell via a six-stage routine:    
+   o **buffer** *the analysis lattice*,   
+   o **retrieve** *or read the required rasters*,   
+   o **crop** *them to the buffered extent*,   
+   o **extract** *raster values at every grid-cell centroid*,   
+   o **interpolate** *any missing data gaps*, and   
+   o **append** *the finished covariate set to the grid summary*.
 
-Initially, environmental variables are sourced using the `get_enviro_data()` function from either online databases (e.g., `WorldClim`, `SoilGrids` via the `geodata` package) or local raster datasets. The function defines an area of interest with an adjustable buffer to ensure complete data coverage, extracts environmental information at specific points, and interpolates any missing values. Outputs include cropped environmental rasters, spatial points as `sf` objects, and a detailed site-by-environment data frame suitable for downstream analyses.
+The subsections below implement this workflow:
 
-The workflow further demonstrates the integration of environmental rasters with sampling effort and species richness layers, enabling joint spatial analyses. Visual checks through plotting ensure accurate integration and representation of spatial variation in environmental variables.
+1. **Download and sample 19 WorldClim bioclim variables**: obtains the 5-arc-min (~10 km) [WorldClim v2.1](https://worldclim.org/data/worldclim21.html), returns `bio` stack via [`geodata`](https://github.com/rspatial/geodata), crops it, and attaches climate values to every centroid.
+2. **Bind climate, effort, and richness into one raster stack**: combines √-scaled effort (`obs_sum`), √-scaled richness (`spp_rich`), and the 19 climate layers into a single `SpatRast` aligned to the 0.5° grid.
+3. **Inspect the extracted covariates**: produces a quick map (e.g. mean annual temperature) and previews the data to verify alignment and plausibility.
+4. **Assemble a modelling matrix**: consolidates coordinates, effort, richness, and all climate predictors into a tidy data frame (`grid_env`) ready for statistical modelling.
+5. *Optional >>* **Reproject centroids for metric-space analyses**: converts centroid coordinates from `WGS-84` ([EPSG:4326](https://epsg.io/4326)) to a `Albers Equal-Area` projection ([EPSG:9822](https://epsg.io/9822)) when analyses require distances in metres.
 
-Subsequent steps involve projecting geographic coordinates into a suitable projected coordinate system (e.g., Albers Equal Area) to facilitate spatially accurate analyses involving distance measurements.
+---
 
-Lastly, the workflow includes a critical step of checking for and addressing collinearity using the `rm_correlated()` function. This step ensures the removal of redundant environmental variables, optimising the stability and interpretability of ecological models by retaining only informative predictors based on a specified correlation threshold.
-
-------------------------------------------------------------------------
-
-### Generate site by environment matrix using `get_enviro_data()`
-
-Use `get_enviro_data` to extract environmental variables for spatial points from either species observations or grid centroids.
-Data can be sourced from online repositories (e.g. *WorldClim*, *SoilGrids* via `geodata`) or local rasters.
-The function defines an area of interest with a buffer, extracts selected variables, and interpolates missing values using nearby non-NA points.
-Outputs include cropped rasters, spatial points (as an `sf` object), and a combined site-by-environment data frame (`site_env`) for downstream ecological analyses.
-Future support will extend to *CHELSA* (`climenv`), *Google Earth Engine* (`rgee`), and `mapme.biodiversity` for expanded environmental and biodiversity data access.
-
-```{r load-workspace, echo=FALSE}
-load('../inst/savedata/enviro_workspace.RData')
-```
+**Download and sample 19 WorldClim bioclim variables**   
+Fetch the 5-arc-min (~10 km) bioclim stack via `geodata` package and attach values to every centroid.
 
 ```{r get-enviro}
-# Use `get_enviro_data` to fetch environmental data for your grid centroids
-data_path = 'extdata' # Step to your directory
+# Retrieve 19 bioclim layers (≈10-km, WorldClim v2.1) for all grid centroids
+data_path = system.file("extdata", package = "dissmapr")               # cache folder for rasters
 enviro_list = get_enviro_data(
-  data      = sbs,
-  buffer_km = 10,
-  source    = 'geodata',
-  var       = "bio",
-  res       = 5,
-  path      = data_path,
-  sp_cols   = 6:ncol(sbs),
-  ext_cols  = c('obs_sum','spp_rich')
+  data       = grid_spp,                  # centroids + obs_sum + spp_rich
+  buffer_km  = 10,                        # pad the AOI slightly
+  source     = "geodata",                 # WorldClim/SoilGrids interface
+  var        = "bio",                     # bioclim variable set
+  res        = 5,                         # 5-arc-min ≈ 10 km
+  path       = data_path,
+  sp_cols    = 7:ncol(grid_spp),          # ignore species columns
+  ext_cols   = c("obs_sum", "spp_rich")   # carry effort & richness through
 )
 
-# Optional: Create new objects from list items
-ras_enviro = enviro_list$env_rast
+# Quick checks 
+str(enviro_list, max.level = 1)
 
-# Optional: Rename the columns to something more descriptive
-names_env = c("temp_mean", "mdr", "iso", "temp_sea", "temp_max",
-                    "temp_min", "temp_rang","temp_wetQ","temp_dryQ", "temp_warmQ",
-                    "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
-                    "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
+# (Optional) Assign concise layer names for readability
+# Find names here https://www.worldclim.org/data/bioclim.html
+names_env = c("temp_mean","mdr","iso","temp_sea","temp_max","temp_min",
+              "temp_range","temp_wetQ","temp_dryQ","temp_warmQ",
+              "temp_coldQ","rain_mean","rain_wet","rain_dry",
+              "rain_sea","rain_wetQ","rain_dryQ","rain_warmQ","rain_coldQ")
 names(enviro_list$env_rast) = names_env
-names(ras_enviro) = names_env
+
+# (Optional) Promote frequently-used objects
+env_r = enviro_list$env_rast    # cropped climate stack
+env_df = enviro_list$env_df      # site × environment data-frame
+
+# Quick checks 
+env_r
+dim(env_df); head(env_df)
 ```
 
-#### Add 'eff-rich' raster to the enviro stack raster
+*`get_enviro_data()` buffered the grid centroids by 10 km, fetched the requested rasters, cropped them, extracted values at each centroid, filled isolated NAs, and merged the results with `obs_sum` and `spp_rich`.*
 
-Combine environmental rasters with sampling effort and species richness layers for joint spatial analysis.
+---
+
+### 2. Bind climate, effort, and richness into one raster stack
+  
+Fuse the √-scaled sampling‐effort (`obs_sum`) and richness (`spp_rich`) layers with the 19 `bioclim` rasters into a single, co-registered `SpatRast.` A unified stack ensures that all predictors share the same grid, streamlining downstream map algebra, multivariate modelling, and spatial cross-validation.
 
 ```{r ras}
-# Combine `SpatRast`
-ras_enviro_effRich = c(sqrt(ras_effRich), resample(ras_enviro, ras_effRich))
+# Resample climate stack to the 0.5 ° grid and concatenate
+env_effRich_r = c(
+  effRich_r,                               # effort + richness
+  resample(env_r, effRich_r)          # aligns 19 climate layers
+)
 
-# Plot the first 4 layers of `ras_enviro_effRich`
-plot(ras_enviro_effRich[[1:4]], col = turbo(100))
+# 2. Open a 2×2 layout and plot each layer + outline
+old_par = par(mfrow = c(2, 2), # multi‐figure by row: 1 row and 2 columns 
+              mar = c(1, 1, 1, 2))  # margins sizes: bottom (1 lines)|left (1)|top (1)|right (2)
+
+titles = c("Sampling effort (√obs count)",
+            "Species richness (√unique count)",
+            "BIO1: Annual Mean Temperature", 
+            "BIO2: Mean Diurnal Temperature Range")
+
+for (i in 1:4) {
+  plot(env_effRich_r[[i]],
+       col      = viridisLite::turbo(100),
+       colNA    = NA,
+       axes     = FALSE,
+       main     = titles[i],
+       cex.main = 0.8)                        # smaller title
+  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+}
+
+par(old_par) 
 ```
 
-#### Create data.frame of environmental variables with site centroids 'xy'
+---
 
-Environmental data were linked to grid centroids using `get_enviro_data`, now visualise the spatial variation in selected climate variables to check results.
+### 3. Inspect the extracted covariates
+
+Environmental data were linked to grid centroids using `get_enviro_data()`, now visualise the spatial variation in selected climate variables to check results.
 
 ```{r env-df}
-# Create `env_df`
-env_df = enviro_list$env_df[,c(1:5,8:26)]
+# Make column headers explicit
+# names(env_df)[1:5] = c("grid_id","centroid_lon","centroid_lat","obs_sum","spp_rich")
 
-# Make sure column names are correct
-names(env_df) = c("grid_id","centroid_lon","centroid_lat","obs_sum","spp_rich","temp_mean",
-                  "mdr", "iso", "temp_sea", "temp_max",
-                    "temp_min", "temp_rang","temp_wetQ","temp_dryQ", "temp_warmQ",
-                    "temp_coldQ", "rain_mean","rain_wet", "rain_dry", "rain_sea",
-                    "rain_wetQ", "rain_dryQ","rain_warmQ", "rain_coldQ")
-# Check results
+# Simple check of dimensions and first rows
 dim(env_df)
-head(env_df[,1:6])
+head(env_df[, 1:6])
 
-# Plot the results to check the conversion is correct
+# Quick map of mean annual temperature (√-scaled bubble size)
 ggplot() +
-  # Add 0.5° grid layer
-  geom_sf(
-    data = aoi_grid,
-    fill = NA,
-    color = "darkgrey",
-    alpha = 0.5
-  ) +
-  # Add butterfly points layer, with shape = 15 (solid square) and size range
-  geom_point(
-    data = env_df,
-    aes(
-      x = centroid_lon,
-      y = centroid_lat,
-      size = sqrt(temp_mean),
-      color = temp_mean
-    ),
-    shape = 15
-  ) +
-  # Control the size‐scale range (adjust the c(min, max) values as needed)
-  scale_size_continuous(range = c(2, 6)) +
-  # Use a turbo‐viridis color scale for temp_mean
-  scale_color_viridis_c(option = "turbo") +
-  # Add boundary layer
-  geom_sf(
-    data = rsa,
-    fill = NA,
-    color = "black",
-    alpha = 1
-  ) +
+  geom_sf(data = grid_sf, fill = NA, colour = "darkgrey", alpha = 0.4) +
+  geom_point(data = env_df,
+             aes(x = centroid_lon, 
+                 y = centroid_lat,
+                 colour = bio01),
+             shape = 15,
+             size = 3) +
+  # scale_size_continuous(range = c(2,6)) +
+  scale_colour_viridis_c(option = "turbo") +
+  geom_sf(data = rsa, fill = NA, colour = "black") +
   theme_minimal() +
-  labs(
-    title = "0.5° Grid Cells with temp_mean",
-    x = "Longitude",
-    y = "Latitude"
-  )
+  labs(title = "Grid-cell mean annual temperature (√-scaled)",
+       x = "Longitude", y = "Latitude")
 ```
 
-#### Generate *Site-by-Environment* data frame 'sbe'
+*Goal of this plot is to quickly check that the environmental predictors (e.g. `bio01` >> mean annual temperature) line up with the 0.5° grid.*
 
-Create a unified data frame of site coordinates, sampling effort, richness, and environmental variables for modelling called `sbe`.
+---
 
-```{r sbe}
-# Create `sbe` data.frame
-sbe = env_df %>%
-  select(grid_id, centroid_lon, centroid_lat, obs_sum, spp_rich, everything())
+### 4. Assemble the modelling matrix `grid_env`
+
+Compile a *site × environment* data frame (`grid_env`) in which each 0.5° cell contributes one row containing centroid coordinates, √-scaled sampling effort, species richness, and the 19 `bioclim` predictors. The resulting matrix is immediately usable for GLMs, GAMs, machine-learning, ordination, and β-diversity analyses.
+
+```{r grid-env}
+# Build the final site × environment table
+grid_env = env_df %>%
+  dplyr::select(grid_id, centroid_lon, centroid_lat,
+                obs_sum, spp_rich, dplyr::everything())
+
+str(grid_env, max.level = 1)
+head(grid_env)
 ```
 
-### Change coordinates projection using `sf::st_transform()`
+---
 
-Reproject spatial coordinates from geographic (WGS84) to a projected system (e.g. Albers Equal Area) for analyses requiring distance in meters, such as spatial clustering or environmental modelling.
+### 5. Reproject centroids for metric-space analyses** using `sf::st_transform()`[OPTIONAL]
+
+Certain analyses (e.g. spatial clustering, variogram modelling) require coordinates in metres rather than degrees.
+The snippet below converts the centroid layer to an `Albers Equal-Area` projection.
 
 ```{r reproject}
-# Convert to sf object with WGS84 geographic CRS
-xy_sf = st_as_sf(xy, coords = c("centroid_lon", "centroid_lat"), crs = 4326)
+# Convert the centroid columns to an sf object
+centroids_sf = sf::st_as_sf(
+  grid_env,
+  coords = c("centroid_lon", "centroid_lat"),
+  crs    = 4326,          # WGS-84
+  remove = FALSE
+)
 
-# Project to Albers Equal Area (meters)
-xy_utm = st_transform(xy_sf, crs = 9822)
+# Reproject to Albers Equal Area (EPSG 9822)
+centroids_aea = sf::st_transform(centroids_sf, 9822)
 
-# Extract transformed coordinates in meters
-# Combine transformed coordinates back into data frame
-xy_utm_df = cbind(xy, st_coordinates(xy_utm))
-
-# Check results and compare coordinate formats
-head(xy)
-head(xy_utm_df)
+# Append projected X–Y back onto the data-frame
+grid_env = cbind(
+  grid_env,
+  sf::st_coordinates(centroids_aea) |>
+    as.data.frame() |>
+    setNames(c("x_aea", "y_aea"))   # rename within the pipeline
+)
+names(grid_env)
+head(grid_env[, c("grid_id","centroid_lon","centroid_lat","x_aea","y_aea")])
 ```
 
-------------------------------------------------------------------------
+*At this point every grid cell has species metrics, climate predictors, and is optionally projected into metre coordinates, all in a single tidy object.*
 
-### Check for colinearity using `rm_correlated()`
+---
 
-Identify and remove highly correlated environmental variables to reduce multicollinearity in subsequent analyses.
-This step ensures model stability by retaining only informative, non-redundant predictors based on a user-defined correlation threshold.
+### 6. Diagnose and mitigate collinearity with `rm_correlated()`
 
-```{r remove_var}
-# Remove the highly correlated variables
-env_vars_reduced = rm_correlated(data = env_df[,c(4,6:24)],
-                                 cols = NULL,
-                                 threshold = 0.7,
-                                 plot = TRUE)
+Highly inter-correlated predictors inflate variance, bias coefficient estimates, and complicate ecological inference.  
+`rm_correlated()` screens the environmental matrix for pairwise correlations that exceed a user-defined threshold (here |r| > 0.70), then iteratively prunes the variable with the highest average absolute correlation.  The routine
 
-# Compare numbers of environmental variables
-ncol(env_df[,c(4,6:24)])
-ncol(env_vars_reduced)
+1. Computes a Pearson (default) **Correlation** matrix for the supplied columns;  
+2. **Ranks** variables by their mean absolute correlation;  
+3. **Discards** the worst offender, recomputes the matrix, and repeats until all remaining pairs lie below the threshold;  
+4. *Optional >>* displays the final **Correlation heat-map** for visual QC.
+
+The result is a reduced predictor set that retains maximal information while minimising multicollinearity.
+
+```{r var-vif, message = FALSE}
+# (Optional) Rename BIO
+names(env_df) = c("grid_id", "centroid_lon", "centroid_lat", names_env, "obs_sum", "spp_rich")
+  
+# Run the filter and compare dimensions
+# Filter environmental predictors for |r| > 0.70
+env_vars_reduced = rm_correlated(
+  data       = env_df[, c(4, 6:24)],  # drop ID + coord columns
+  cols       = NULL,                  # infer all numeric cols
+  threshold  = 0.70,
+  plot       = TRUE                   # show heat-map of retained vars
+)
+
+# Before vs after
+c(original = ncol(env_df[, c(4, 6:24)]),
+  reduced  = ncol(env_vars_reduced))
 ```
+
+*`env_vars_reduced` now contains a decorrelated subset of climate predictors suitable for stable GLMs, GAMs, machine-learning, or ordination workflows.*
 
 ------------------------------------------------------------------------

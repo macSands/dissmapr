@@ -7,6 +7,7 @@ template:
     heading_font:
       google: PT Sans
     primary: '#005856'
+
 navbar:
   bg: primary
   type: dark
@@ -46,6 +47,15 @@ reference:
       - map_bioreg
       - map_bioregDiff
 
+  # 3. Functions to run automated ζ-MSGDM with I-spline workflow
+  - title: "ζ-MSGDM Workflow"
+    desc: |
+      Functions to automate a ζ-MSGDM workflow that fits, extracts and visualizes I-spline models for any set of zeta orders in just three function calls:
+    contents:
+      - run_ispline_models
+      - plot_ispline_lines
+      - plot_ispline_boxplots
+
   # 4. The helper_indices “section”, with indented sub-functions
   - title: "Available Metrics"
     desc: |
@@ -61,5 +71,43 @@ reference:
       - diss_bcurt
       - orderwise_diss_gower
       - mutual_info
+
+# Controls the “Articles” page order & display names
+articles:
+  - title: "Getting started"
+    contents:
+      - 1-setup              # 1-setup.Rmd   (or .qmd / .md)
+  - title: "User-defined grid"
+    contents:
+      - 2-grid
+  - title: "Get environmental data"
+    contents:
+      - 3-enviro
+  - title: "Zeta diversity"
+    contents:
+      - 4-zeta
+  - title: "Zeta-MSGDM workflow"
+    contents:
+      - 5-zeta-workflow
+  - title: "Predict community turnover"
+    contents:
+      - 6-predict
+  - title: "Map bioregions"
+    contents:
+      - 7-bioregion
+  - title: "Map bioregion change"
+    contents:
+      - 8-change
+  - title: "Compute orderwise examples"
+    contents:
+      - 9-examples
+  - title: "Zenodo basics"
+    contents:
+      - 10-zenodo
+
+
+
+
+
 
 

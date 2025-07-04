@@ -2,116 +2,75 @@
 % Please edit documentation in R/predict_dissim.R
 \name{predict_dissim}
 \alias{predict_dissim}
-\title{Predict Pairwise Compositional Turnover (ζ-dissimilarity)}
+\title{Predict Pairwise Compositional Turnover (ζ-dissimilarity) with Richness}
 \usage{
 predict_dissim(
-  block_sp,
-  sbe_scaled,
+  grid_spp,
+  species_cols,
+  env_vars,
   zeta_model,
-  mean_rich,
-  mean_turn,
-  sbs_xy,
-  rsa = NULL,
+  grid_xy,
+  bndy_fc = NULL,
   x_col = "x",
-  y_col = "y"
+  y_col = "y",
+  show_plot = TRUE,
+  skip_scale = FALSE
 )
 }
 \arguments{
-\item{block_sp}{Data frame of site metadata; \strong{must} contain a unique
-\code{grid_id} column and coordinate columns given by \code{x_col},
-\code{y_col}.}
+\item{grid_spp}{Data frame containing site IDs, coordinates, and species
+presence–absence/abundance columns.}
 
-\item{sbe_scaled}{Data frame or matrix of \emph{scaled} environmental predictors
-(row order identical to \code{block_sp}).}
+\item{species_cols}{Integer or character vector giving the columns of
+\code{grid_spp} that hold species data.}
 
-\item{zeta_model}{A fitted model returned by
-\code{zetadiv::Zeta.msgdm()}.}
+\item{env_vars}{Data frame of raw environmental predictors (unscaled;
+rows must align with \code{grid_spp}).}
 
-\item{mean_rich}{Data frame with columns \code{order} and \code{value}
-giving the mean species richness (order = 1) for annotation.}
+\item{zeta_model}{Fitted object from \code{\link[zetadiv]{Zeta.msgdm}}
+(order = 2, reg.type = "ispline").}
 
-\item{mean_turn}{Data frame with columns \code{order} and \code{value}
-giving the mean turnover (order = 2) for annotation.}
+\item{grid_xy}{Data frame of site coordinates, same row‐order as
+\code{grid_spp}, with columns \code{x_col}, \code{y_col}.}
 
-\item{sbs_xy}{Data frame with site coordinates in the same order as
-\code{sbe_scaled}; must contain \code{x_col}, \code{y_col}.}
+\item{bndy_fc}{Optional \code{sf} or \code{SpatVector} polygon to overlay.}
 
-\item{rsa}{Optional \code{sf} or \code{SpatVector} polygon to draw on the
-figure.}
+\item{x_col}{Name of the x (longitude) column in \code{grid_spp}/\code{grid_xy}.}
 
-\item{x_col, y_col}{Names of the longitude / latitude columns
-(defaults \code{"x"}, \code{"y"}).}
+\item{y_col}{Name of the y (latitude) column.}
+
+\item{show_plot}{Logical; if TRUE (default), print the turnover heatmap.}
 }
 \value{
-A data frame containing all predictors plus:
+A data frame with one row per site, containing:
 \describe{
-\item{distance}{Mean great-circle distance (km) to all other sites.}
-\item{rich_o1}{Mean richness (order 1) from \code{mean_rich}.}
-\item{turn_o2}{Mean turnover (order 2) from \code{mean_turn}.}
-\item{pred_zeta}{Linear predictor on the logit scale.}
-\item{pred_zetaExp}{Predicted turnover on the 0–1 scale.}
-\item{log_pred_zetaExp}{Natural-log of \code{pred_zetaExp}.}
+\item{richness}{Species richness (sum across \code{species_cols}).}
+\item{distance}{Mean great‐circle distance (km) from each site to all others.}
+\item{<env_vars>}{All scaled environmental predictors.}
+\item{pred_zeta}{Linear predictor (logit scale) from \code{Predict.msgdm()}.}
+\item{pred_zetaExp}{Predicted turnover (0–1 scale).}
+\item{log_pred_zetaExp}{Natural log of \code{pred_zetaExp}.}
+\item{x_col, y_col}{Site coordinates (from \code{grid_xy}).}
 }
-A \code{ggplot2} heat-map is printed for visual inspection.
 }
 \description{
-Generates spatial predictions of order-2 compositional turnover
-(\eqn{\zeta_2}) from a fitted \strong{zetadiv} multi-site generalised
-dissimilarity model (\code{Zeta.msgdm}).  See
-\code{\link[=calculate_pairwise_distances_matrix]{calculate_pairwise_distances_matrix()}} for the distance routine that this
-function calls internally.
+Takes raw species and environmental data, fits a multi‐site GDM model output,
+computes predicted pairwise turnover (ζ₂) across the landscape, and returns a
+data frame with site‐level richness, environmental covariates, distance, and
+predicted turnover; optionally plots a heatmap of ζ₂ predictions.
 }
 \examples{
 \dontrun{
-##----------------------------------------------------------
-## Toy example with 15 sites, two predictors, 60 species
-##----------------------------------------------------------
-library(zetadiv)
-set.seed(123)
-
-n_sites <- 15
-block_sp <- data.frame(
-  grid_id = sprintf("g\%02d", 1:n_sites),
-  x       = runif(n_sites, 22, 24),
-  y       = runif(n_sites, -34, -33)
+result <- predict_dissim(
+  grid_spp     = bird.spec.fine,
+  species_cols = 3:102,
+  env_vars     = bird.env.fine[,3:9],
+  zeta_model   = z_mod,
+  grid_xy      = bird.spec.fine[,1:2],
+  bndy_fc      = rsa,
+  x_col        = "x",
+  y_col        = "y",
+  show_plot    = FALSE
 )
-
-env_raw <- data.frame(
-  temp = rnorm(n_sites, 20, 2),
-  rain = rnorm(n_sites, 600, 40)
-)
-sbe_scaled <- scale(env_raw) |> as.data.frame()
-
-## Simulate a simple community matrix
-comm <- matrix(rbinom(n_sites * 60, 1, 0.15),
-               nrow = n_sites,
-               dimnames = list(block_sp$grid_id, paste0("sp", 1:60)))
-
-## Fit a Zeta.msgdm model (quick settings for example)
-z_mod <- zetadiv::Zeta.msgdm(
-  data.spec = comm,
-  data.env  = env_raw,
-  xy        = block_sp[, c("x", "y")],
-  order     = 2,
-  sam       = 100
-)
-
-mean_rich <- data.frame(order = 1, value = mean(rowSums(comm)))
-mean_turn <- data.frame(order = 2, value = mean(z_mod$zeta.val))
-
-res <- predict_dissim(
-  block_sp   = block_sp,
-  sbe_scaled = sbe_scaled,
-  zeta_model = z_mod,
-  mean_rich  = mean_rich,
-  mean_turn  = mean_turn,
-  sbs_xy     = block_sp
-)
-
-head(res)
 }
-
-}
-\seealso{
-\code{\link{calculate_pairwise_distances_matrix}}
 }

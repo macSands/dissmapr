@@ -1,0 +1,151 @@
+---
+title: "6-predict"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Predict community turnover}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r child-6, child = "_common.Rmd"}
+```
+
+
+```{r setup-6, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "figures/6-",
+  out.width = "100%",
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+------------------------------------------------------------------------
+
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+
+------------------------------------------------------------------------
+
+### 1. Predict current Zeta Diversity (zeta2) using `predict_dissim()`
+
+In this step we use our fitted order-2 GDM (`zeta2`) to generate a spatial map of pairwise compositional turnover (ζ₂) under current conditions. By `calling predict_dissim()` we
+
+1. compute each site’s sampling‐effort‐adjusted species richness and mean distance to all other sites;   
+2. apply the same environmental I-spline transformations used in the model;   
+3. predict the Jaccard-scaled turnover (ζ₂) on the 0–1 scale;   
+4. optionally plot the resulting heatmap with your study boundary overlaid.
+
+We set a random seed for reproducibility (so Monte Carlo sampling inside `predict_dissim()` yields the same results each time), pull out just the species columns once, then inspect the returned `predictors_df` to confirm its dimensions, column names, and a quick peek at the key model outputs.
+
+```{r predict-zeta2}
+# Predict current zeta diversity using `predict_dissim` with sampling effort, geographic distance and environmental variables
+# Only non-colinear environmental variables used in `zeta2` model
+set.seed(123) # set.seed to generate exactly the same random results i.e. sam=100
+spp_cols = names(grid_spp_pa[,-(1:7)])
+predictors_df   = predict_dissim(
+  grid_spp      = grid_spp_pa,
+  species_cols  = spp_cols,
+  env_vars      = env_vars_reduced,# env_vars_reduced[,-8]
+  zeta_model    = zeta2, # From simple order 2 run above
+  # zeta_model = ispline_gdm_tab$zeta_gdm_list[[1]], # From list of Zeta.msgdm models
+  grid_xy       = grid_env,
+  x_col         = "centroid_lon",
+  y_col         = "centroid_lat",
+  bndy_fc       = rsa, # Optional feature collection to plot as boundary
+  show_plot     = TRUE
+)
+
+# Check results
+dim(predictors_df)
+names(predictors_df)
+head(predictors_df[,5:11])
+```
+
+---
+
+### 2. Predict future Zeta Diversity using `predict_dissim()`
+
+Below we expand our workflow to forecast how ζ₂ respond to three extreme climate futures (2030, 2040, 2050) alongside the current scenario.
+
+First, we define and center-scale each future by adding large temperature increments and rainfall multipliers, then bundle them into a named list of four environmental data frames:
+
+   
+```{r sim-future, message=FALSE}
+# 1. Identify species & env columns
+spp_cols  = names(grid_spp_pa)[-(1:7)]
+all_vars  = names(env_vars_reduced)
+temp_vars = grep("^temp", all_vars, value = TRUE)
+rain_vars = grep("^rain", all_vars, value = TRUE)
+
+# 2. Extreme future shifts
+temp_shifts  = c("2030"=20, "2040"=40, "2050"=60)
+rain_factors = c("2030"=10, "2040"=20, "2050"=30)
+
+# 3. Save original scaling parameters
+sc_params = scale(env_vars_reduced)
+mu    = attr(sc_params, "scaled:center")
+sigma = attr(sc_params, "scaled:scale")
+
+# 4. Build list of future env tibbles
+env_futures = purrr::map(names(temp_shifts), function(yr) {
+  df = env_vars_reduced
+  df[temp_vars] = df[temp_vars] + temp_shifts[yr]
+  df[rain_vars] = df[rain_vars] * rain_factors[yr]
+  df
+})
+names(env_futures) = names(temp_shifts)
+
+# 5. Prepend current conditions
+env_scenarios = c(list(current = env_vars_reduced), env_futures)
+str(env_scenarios, max.level = 1)
+```
+
+Next, we loop through each scenario, re-apply the original centering and scaling, and call our `predict_dissim()` helper to compute ζ₂. We tag each result with its scenario name and combine them into one tidy data frame:
+
+```{r predict-future, message=FALSE}
+set.seed(123)
+
+scenario_dfs = purrr::imap(env_scenarios, ~ {
+  df_scaled = sweep(sweep(.x, 2, mu, "-"), 2, sigma, "/") |> as.data.frame()
+  predict_dissim(
+    grid_spp     = grid_spp_pa,
+    species_cols = spp_cols,
+    env_vars     = df_scaled,
+    zeta_model   = zeta2,
+    grid_xy      = grid_env,
+    x_col        = "centroid_lon",
+    y_col        = "centroid_lat",
+    bndy_fc      = rsa,
+    show_plot    = FALSE,
+    skip_scale   = TRUE
+  ) %>% mutate(scenario = .y)
+})
+
+all_preds = bind_rows(scenario_dfs) %>%
+  mutate(scenario = factor(scenario, levels = c("current", names(temp_shifts))))
+head(all_preds)
+```
+
+We can then quickly compare the spatial ζ₂ surfaces under each future:
+
+```{r predict-future-plot, message=FALSE}
+ggplot(all_preds,
+       aes(centroid_lon, centroid_lat, fill = pred_zetaExp)) +
+  geom_tile() +
+  facet_wrap(~ scenario, ncol = 2) +
+  scale_fill_viridis_c(direction = -1, name = expression(zeta[2])) +
+  geom_sf(data = rsa, fill = NA, color = "black", inherit.aes = FALSE) +
+  coord_sf() +
+  labs(x = "Longitude", y = "Latitude",
+       title = expression("Predicted ζ"[2] * " under current & future scenarios")) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "bold"),
+        panel.grid = element_blank())
+```
+
+------------------------------------------------------------------------

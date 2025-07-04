@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_enviro_data.R
 \name{get_enviro_data}
 \alias{get_enviro_data}
-\title{Get Environmental Data}
+\title{Retrieve, crop, and link environmental rasters to sampling sites}
 \usage{
 get_enviro_data(
   data,
@@ -17,55 +17,81 @@ get_enviro_data(
   model = NULL,
   ssp = NULL,
   time = NULL,
-  temporal = FALSE,
-  time_col = "year",
-  layer_split_char = NULL,
   sp_cols = NULL,
   ext_cols = NULL
 )
 }
 \arguments{
-\item{data}{A data frame containing spatial points with x and y coordinates.}
+\item{data}{Data frame of spatial points; must include lon/lat columns
+such as \verb{"x","y"} or \verb{"centroid_lon","centroid_lat"}.}
 
-\item{buffer_km}{Numeric. Buffer distance around the input points in kilometers (default: 10).}
+\item{buffer_km}{Buffer width (km) for the AOI. Default 10.}
 
-\item{source}{Character. Data source: "geodata" for downloading or "local" for local rasters (default: "geodata").}
+\item{source}{\code{"geodata"} (default) to fetch layers via \strong{geodata} or
+\code{"local"} to supply a local \code{SpatRaster} or file path.}
 
-\item{var}{Character. Variable to retrieve (e.g., "bio" for bioclimatic variables, "elev" for elevation).}
+\item{var}{Raster product to download (see list above) or ignored when
+\code{source = "local"}.}
 
-\item{res}{Numeric. Resolution of the environmental data in arc-minutes (default: 2.5).}
+\item{res}{Resolution (arc-min) for WorldClim/WorldPop layers.}
 
-\item{path}{Character. Directory path to store downloaded data or to load local rasters (default: "data/").}
+\item{path}{Cache folder for downloaded rasters (created if absent).}
 
-\item{year}{Numeric. Year for temporal data (e.g., for population or footprint datasets; required for specific datasets).}
+\item{year, }{model, ssp, time  Optional arguments for time-stamped products
+(human footprint, population, CMIP6, etc.).}
 
-\item{depth}{Character. Depth range for soil data (e.g., "0-5cm").}
+\item{depth, }{stat  Arguments passed to \code{geodata::soil_world()}.}
 
-\item{stat}{Character. Statistic to summarize soil data (e.g., "mean").}
+\item{sp_cols}{\strong{Columns to drop} from the final table (e.g. a large
+species matrix). Accepts names or numeric indices \emph{relative
+to \code{data}}.}
 
-\item{model}{Character. Climate model for CMIP6 projections (e.g., "ACCESS-CM2").}
-
-\item{ssp}{Numeric. Shared Socioeconomic Pathway for CMIP6 (e.g., 245 for SSP2-4.5).}
-
-\item{time}{Character. Time period for CMIP6 projections (e.g., "2041-2060").}
+\item{ext_cols}{\strong{Columns to append} verbatim (e.g. \verb{"obs_sum","spp_rich"}).}
 }
 \value{
-A list containing:
+A list with
 \itemize{
-\item \code{env_rast}: Raster of the environmental data for the area of interest.
-\item \code{sites_sf}: Spatial points as an sf object.
-\item \code{env_df}: Data frame combining input data and extracted environmental variables.
+\item \code{env_rast}  \code{SpatRaster} – cropped environmental stack (all layers)
+\item \code{sites_sf}  \code{sf} POINT layer (WGS-84) of the input sites
+\item \code{env_df}    Tibble with site ID, coordinates, every raster variable,
+plus any columns requested in \code{ext_cols}
 }
 }
 \description{
-This function retrieves environmental data for spatial points, either by downloading data from
-specified sources (e.g., WorldClim, SoilGrids) or using local raster files. Data is extracted for
-a buffer region around the input points, and missing values are interpolated using surrounding values.
+\code{get_enviro_data()} automates five steps:
+\enumerate{
+\item \strong{AOI build} – buffers the convex hull of all input points.
+\item \strong{Raster acquisition} – downloads or loads a multi-layer stack
+(WorldClim, SoilGrids, footprint, population, or user-supplied).
+\item \strong{Cropping} – trims the stack to the buffered AOI.
+\item \strong{Extraction & gap fill} – pulls raster values at each site and
+linearly interpolates isolated NAs.
+\item \strong{Assembly} – returns a tidy \emph{site × environment} table plus the cropped
+raster and an \code{sf} layer of sites.
 }
+}
+\details{
+WorldClim BIO layers arrive as a multi-file \emph{SpatRasterDataset}; the function
+concatenates all sub-rasters so that \strong{bio01 – bio19} are returned together.
+Missing cells inside the AOI are filled with linear interpolation
+(\code{zoo::na.approx}).
+}
+\section{Supported raster sets (\code{var} when \code{source = "geodata"})}{
+
+\itemize{
+\item \code{"bio"}  19 WorldClim v2.1 bioclim variables
+\item \code{"elev"} WorldClim elevation layer
+\item \code{"footprint"} \emph{Global Human Footprint} (specify \code{year})
+\item \code{"population"} WorldPop population counts (specify \code{year} & \code{res})
+\item \code{"soil_world"} ISRIC SoilGrids layers (specify \code{depth}, \code{stat})
+}
+}
+
 \examples{
 # Example usage:
 data = data.frame(site_id = 1:5, x = c(10, 12, 14, 16, 18), y = c(20, 22, 24, 26, 28))
 env_data = get_enviro_data(data, buffer_km = 5, var = "bio", res = 2.5, path = "data/")
 plot(env_data$env_rast[[1]])
 points(env_data$sites_sf)
+
 }

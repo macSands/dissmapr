@@ -2,12 +2,13 @@
 title: "1-setup"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{1-setup}
+  %\VignetteIndexEntry{Getting started with `dissmapr`}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
+```{r setup-1, include=FALSE}
+# , child = '_common.Rmd'
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -27,21 +28,17 @@ knitr::opts_chunk$set(
 
 ------------------------------------------------------------------------
 
-## Step-by-Step Workflow
+## Introduction
 
-This section provides a concise, reproducible “from-scratch” pathway for setting up **`dissmapr`**.  By the end of these steps you will have:
+`dissmapr` is an R package for analysing compositional dissimilarity and biodiversity turnover across spatial gradients.
+It provides scalable, modular workflows that integrate species occurrence, environmental data, and multi-site compositional turnover metrics to quantify and predict biodiversity patterns.
+A core feature is the use of zeta diversity, which extends beyond pairwise comparisons to capture shared species across multiple sites - offering deeper insight into community assembly, turnover, and connectivity, for both rare and common species.
+By incorporating different regression methods within the framework of Multi-Site Generalised Dissimilarity Modelling (MS-GDM), `dissmapr` enables robust mapping, bioregional classification, and scenario-based forecasting.
+Designed for flexibility and reproducibility, it supports biodiversity monitoring and conservation planning at landscape to regional scales.
 
-1. **Installed and loaded** the latest development version of `dissmapr` from GitHub.  
-2. **Loaded all supporting packages** needed for spatial manipulation, biodiversity modelling, and visualisation.  
-3. **Downloaded exemplar occurrence data** (South African butterflies) with `get_occurrence_data()`, demonstrating how to pull records from local files, remote URLs, or GBIF archives.  
-4. **Tidied the records** into long and wide analytical formats via `format_df()`—crucially *without changing the native spatial resolution* of the observations.  
-5. **Defined a study extent and analysis grid**, creating a masked raster template that will act as the spatial backbone for downstream compositional dissimilarity and turnover analyses.
+---
 
-Execute each chunk in the order presented (the chunk labels mirror the headings) or adapt them to your own taxonomic group, area of interest, or grid resolution.  All subsequent vignettes assume you have completed this workflow and have the resulting `site_obs`, `site_spp`, and grid objects in your workspace.
-
-------------------------------------------------------------------------
-
-### Install and load `dissmapr`
+### 1. Install and load `dissmapr`
 
 Install and load the `dissmapr` package from GitHub, ensuring all functions are available for use in the workflow.
 
@@ -59,9 +56,9 @@ library(dissmapr)
 devtools::load_all()
 ```
 
-------------------------------------------------------------------------
+---
 
-### Load other R libraries
+### 2. Load other R libraries
 
 Load core libraries for spatial processing, biodiversity modelling, and visualization required across the `dissmapr` analysis pipeline.
 
@@ -79,20 +76,22 @@ library(tidyterra)  # supplies geom_spatraster()
 library(zetadiv)    # Multi-site dissimilarity modelling
 library(ggplot2)    # Grammar of graphics  
 library(viridis)    # Perceptual color scales  
+library(patchwork)  # Sequentially build up plots on one page
+library(mclust)     # Clustering, Classification, and Density Estimation
 ```
 
-------------------------------------------------------------------------
+---
 
-### Get species occurrence records using `get_occurrence_data()`
+### 3. Get species occurrence records using `get_occurrence_data()`
 
-To contextualise the following steps of the workflow, we use the butterfly data in South Africa, accessed from GBIF, as the case for demonstration. Ultimately, the choice for the AoI and taxa is user-specific. 
-This section focuses on automating the retrieval and pre-processing of biodiversity occurrence data from various sources, including:
+To contextualise the following steps of the workflow, we use South African butterfly data accessed from GBIF ([DOI: 10.15468/dl.jh6maj](https://www.gbif.org/occurrence/download/0006880-241024112534372)), as a demonstration case. Ultimately, the choice for the Area of Interest (AoI) and taxa is user-specific. 
+This section demonstrates how to automate the retrieval and pre-processing of biodiversity occurrence data from a GBIF query (stored locally as a `.csv` file), however the same workflow can ingest other sources as well (see the `get_occurrence_data()` documentation for details). Data inputs currently supported include:
 
-*  **local** `databases`.csv` files,
-*  **URLs** or `.zip` files from the Global Biodiversity Information Facility (GBIF), and
-*  species **occurrence cubes** from B3 (specification) [*work in progress*].
+*  **Local** databases or `.csv` files
+*  **URLs** or `.zip` files from the Global Biodiversity Information Facility (GBIF)
+*  Future inclusion of **GBIF species occurrence cubes**. Read the [species occurrence cubes in GBIF](https://www.gbif.org/occurrence-cubes) documentation for full details on creating, customizing and submitting queries for occurrence cubes. Read the [b-cubed](https://b-cubed.eu/) documentation on [specification for species occurrence cubes and their production](https://docs.b-cubed.eu/guides/occurrence-cube/).
 
-The function assembles data on species distributions across specified taxonomic groups and regions, producing presence-absence or abundance matrices that quantify species co-occurrence within locations.
+`get_occurrence_data()` then organises the records by the chosen taxonomic scope and region, returning presence–absence and/or abundance matrices that summarise species co-occurrence records with latitude and longitude coordinates.
 
 ```{r get-occurrence}
 bfly_data = get_occurrence_data(
@@ -101,24 +100,24 @@ bfly_data = get_occurrence_data(
   sep         = '\t'
 )
 
-# Check results
+# Check results but only a subset of columns to fit in console
 dim(bfly_data)
-str(bfly_data)
-head(bfly_data[,1:6])
+str(bfly_data[,c(51,52,22,23,1,14,16,17,30)]) 
+head(bfly_data[,c(51,52,22,23,1,14,16,17,30)])
 ```
 
-------------------------------------------------------------------------
+---
 
-### Format data using `format_df()`
+### 4. Format data using `format_df()`
 
-Use `format_df` to *standardise and reshape* raw biodiversity tables into the *long* or *wide* format required by later `dissmapr` steps.
-Importantly, this function does not alter the spatial resolution of the original observations - it simply tidies the data by automatically identifying key columns (e.g., coordinates, species, and values), assigning missing observation/site IDs, and reformatting the data for analysis.
+Use `format_df()` to *standardise and reshape* raw biodiversity tables into the *long* or *wide* format required by later `dissmapr` steps.
+Importantly, this function does not alter the spatial resolution of the original observations - it simply tidies the data by automatically identifying key columns (e.g., coordinates, species, and values), assigning unique site IDs (`site_id`), renaming or removing columns, and reformatting the data for analysis.
 Outputs include a cleaned `site_obs` dataset and `site_spp` matrix for further processing:
 
 *  **site_obs**: Simplified table with unique `site_id`, `x`, `y`, `species` and `value` records (long format).
 *  **site_spp**: Site-by-species matrix for biodiversity assessments (wide format).
 
-#### Format data into long (site_obs) and wide (site_spp) formats
+**Format data into long (`site_obs`) and wide (`site_spp`) formats**
 
 ```{r format-df}
 bfly_result = format_df(
@@ -150,29 +149,6 @@ head(site_spp[,1:6])
 # Species names
 sp_cols = names(site_spp)[-c(1:3)]
 sp_cols[1:10]
-```
-------------------------------------------------------------------------
-
-### User-defined area of interest and grid resolution
-
-Load the spatial boundary data for South Africa to serve as the geographic reference for all subsequent biodiversity analyses and visualizations.
-
-```{r aoi}
-# Read RSA shape file
-rsa = sf::st_read(system.file("extdata", "rsa.shp", package = "dissmapr"))
-
-# Define your resolution and create mask to use later
-res = 0.5 # 0.5 degrees is roughly 55km
-
-# Convert to a terra vector
-rsa_vect = vect(rsa)
-
-# Create an empty raster over RSA at your desired resolution
-grid = rast(rsa_vect, resolution = res, crs = crs(rsa_vect))
-values(grid) = 1   # fill with dummy values
-
-# Mask everything outside the RSA boundary
-grid_masked = mask(grid, rsa_vect)
 ```
 
 ------------------------------------------------------------------------

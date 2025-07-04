@@ -2,61 +2,73 @@
 % Please edit documentation in R/generate_grid.R
 \name{generate_grid}
 \alias{generate_grid}
-\title{Generate Spatial Grid}
+\title{Generate Spatial Grid and Gridded Summaries}
 \usage{
 generate_grid(
   data,
   x_col = "x",
   y_col = "y",
   grid_size = 0.5,
-  sum_col_range = NULL,
+  sum_cols = NULL,
   extra_cols = NULL,
   crs_epsg = 4326,
   unit = c("deg", "min", "sec", "m")
 )
 }
 \arguments{
-\item{data}{A data frame containing point data with x and y coordinates.}
+\item{data}{Data frame of points with x–y coordinates.}
 
-\item{x_col}{Character. Column name for x-coordinates (default: "x").}
+\item{x_col, }{y_col    Column names for longitude and latitude.}
 
-\item{y_col}{Character. Column name for y-coordinates (default: "y").}
+\item{grid_size}{Cell size (degrees or metres, depending on CRS).}
 
-\item{grid_size}{Numeric. Size of the grid cells. For geographic data (EPSG:4326) this is in degrees.}
+\item{sum_cols}{Character or numeric vector of columns to aggregate. Note: Numeric indices are converted to names internally.}
 
-\item{sum_col_range}{Numeric vector. Range of columns to summarize within each grid cell.}
+\item{extra_cols}{Additional columns to keep (optional).}
 
-\item{extra_cols}{Character vector of additional columns to retain in the output (optional).}
+\item{crs_epsg}{EPSG code of the coordinate reference system.}
 
-\item{crs_epsg}{Numeric. EPSG code for the coordinate reference system (default: 4326).}
-
-\item{unit}{Character. One of "deg", "min", "sec", or "m". For geographic data use "deg" (default).}
+\item{unit}{One of "deg", "min", "sec", or "m".}
 }
 \value{
-A list containing:
-\itemize{
-\item \code{grid}: terra raster object of the generated grid with unique grid IDs.
-\item \code{grid_sf}: sf object of the grid as polygons, with added centroid coordinates and (if applicable) mapsheet codes.
-\item \code{block_sp}: Data frame summarizing grid cell contents (including extra_cols if provided).
-}
+A list containing
+• \code{grid_r}      – multi-layer \strong{SpatRaster}
+• \code{grid_sf}     – polygon lattice with centroids & metrics
+• \code{grid_spp}    – abundance summary (\emph{data.frame})
+• \code{grid_spp_pa} – presence/absence summary (\emph{data.frame})
 }
 \description{
-This function generates a spatial grid over a geographic extent and assigns grid IDs to points.
-It also computes cell centroids and, for geographic grids (in degrees or minutes), a mapsheet code.
-Finally, it summarizes specified columns within each grid cell while preserving additional metadata
-provided via \code{extra_cols}.
+Builds a regular lattice over a point-occurrence data set, assigns every record
+a \code{grid_id}, and returns grid-level summaries in both abundance and
+presence/absence formats.
+}
+\details{
+The function:
+\enumerate{
+\item Tiles the study extent with square cells of size \code{grid_size}.
+\item Computes cell centroids and, for geographic CRS data, optional mapsheet
+codes (1:250 000 “BB” series).
+\item Aggregates user-specified columns (\code{sum_cols}) per cell, producing
+\itemize{
+\item \strong{\code{grid_spp}}    – counts / abundances
+\item \strong{\code{grid_spp_pa}} – binary 0 / 1 table for dissimilarity analyses.
+}
+\item Calculates helper metrics (\code{obs_sum}, \code{spp_rich}) for each cell.
+\item Rasterises key layers (\code{grid_id}, \code{obs_sum}, \code{spp_rich}) and preserves
+any extra metadata supplied via \code{extra_cols}.
+}
 }
 \examples{
 set.seed(123)
-data <- data.frame(
+data = data.frame(
   x = runif(100, -10, 10),
   y = runif(100, -10, 10),
   species1 = rpois(100, 5),
   species2 = rpois(100, 3),
   recordedBy = sample(LETTERS, 100, replace = TRUE)
 )
-grid_result <- generate_grid(data, x_col = "x", y_col = "y",
-                             grid_size = 1, sum_col_range = 3:4,
+grid_result = generate_grid(data, x_col = "x", y_col = "y",
+                             grid_size = 1, sum_cols = 3:4,
                              extra_cols = c("recordedBy"))
 print(grid_result$block_sp)
 plot(grid_result$grid_sf["grid_id"])
