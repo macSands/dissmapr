@@ -265,6 +265,7 @@ grid_list = generate_grid(
 str(grid_list, max.level = 1)
 
 # (Optional) Promote list items to named objects 
+grid_r = grid_list$grid_r$grid_id    # raster
 grid_sf = grid_list$grid_sf   # polygons for mapping or joins
 grid_spp = grid_list$grid_spp # tabular summary per cell
 grid_spp_pa = grid_list$grid_spp_pa # presence/absence summary
@@ -388,6 +389,7 @@ enviro_list = get_enviro_data(
   source     = "geodata",                 # WorldClim/SoilGrids interface
   var        = "bio",                     # bioclim variable set
   res        = 5,                         # 5-arc-min ≈ 10 km
+  grid_r     = grid_r,                      # To set resampling resolution, if necessary
   path       = data_path,
   sp_cols    = 7:ncol(grid_spp),          # ignore species columns
   ext_cols   = c("obs_sum", "spp_rich")   # carry effort & richness through
@@ -554,7 +556,7 @@ names(env_df) = c("grid_id", "centroid_lon", "centroid_lat", names_env, "obs_sum
 # Run the filter and compare dimensions
 # Filter environmental predictors for |r| > 0.70
 env_vars_reduced = rm_correlated(
-  data       = env_df[, c(4, 6:24)],  # drop ID + coord columns
+  data       = env_df[, 4:23],  # drop ID + coord columns
   cols       = NULL,                  # infer all numeric cols
   threshold  = 0.70,
   plot       = TRUE                   # show heat-map of retained vars
@@ -680,14 +682,14 @@ The fitted model (`zeta2`) contains partial I-splines for every predictor (note:
 
 ```{r zeta-msgdm}
 # Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set
-set.seed(123)
+# set.seed(264)
 zeta2 = Zeta.msgdm(
-  grid_spp_pa[,-(1:7)],                            # species matrix (rows = sites, cols = spp)
+  grid_spp_pa[,-(1:7)],                            # species matrix (rows=sites, cols=spp)
   env_vars_reduced,                                # decorrelated environmental variables
   # env_vars_reduced[,-7],                         # without sampling effort included
   grid_env[, c("centroid_lon", "centroid_lat")],   # longitude & latitude (°)
   # grid_env[, c("x_aea", "y_aea")],               # longitude & latitude (meters)
-  sam           = 1000,
+  sam           = 10000,
   order         = 2,
   distance.type = "Euclidean",
   normalize     = "Jaccard",
@@ -807,7 +809,7 @@ ispline_gdm_tab = run_ispline_models(
   env_df    = env_vars_reduced,
   xy_df     = grid_env[, c("centroid_lon", "centroid_lat")],
   orders    = 2:6,
-  sam       = 100, # Set really low to run fast
+  sam       = 1000, # Set really low to run fast
   normalize = "Jaccard",
   reg_type  = "ispline"
 )

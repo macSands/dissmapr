@@ -1,5 +1,5 @@
 ---
-title: "2-grid"
+title: "User-defined grid"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Group by user-defined grid}

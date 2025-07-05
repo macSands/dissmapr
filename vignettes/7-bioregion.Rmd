@@ -1,5 +1,5 @@
 ---
-title: "7-bioregion"
+title: "Map bioregions"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Map bioregions}

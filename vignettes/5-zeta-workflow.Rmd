@@ -1,5 +1,5 @@
 ---
-title: "5-zeta-workflow"
+title: "Zeta-MSGDM with dissmapr"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Zeta diversity with dissmapr}

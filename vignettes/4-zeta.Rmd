@@ -1,5 +1,5 @@
 ---
-title: "4-zeta"
+title: "Zeta diversity"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Zeta diversity}
@@ -143,7 +143,7 @@ zeta_decays = Zeta.ddecays(#grid_env[, c("centroid_lon", "centroid_lat")],  # WG
 The fitted model (`zeta2`) contains partial I-splines for every predictor (note: higher splines imply stronger turnover per unit change).
 
 ```{r zeta-msgdm}
-set.seed(123)
+set.seed(246)
 # Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set
 zeta2 = Zeta.msgdm(
   grid_spp_pa[,-(1:7)],                            # species matrix (rows = sites, cols = spp)
@@ -151,7 +151,7 @@ zeta2 = Zeta.msgdm(
   # env_vars_reduced[,-7],                         # without sampling effort included
   grid_env[, c("centroid_lon", "centroid_lat")],   # longitude & latitude (°)
   # grid_env[, c("x_aea", "y_aea")],               # longitude & latitude (meters)
-  sam           = 1000,
+  sam           = 2000,
   order         = 2,
   distance.type = "Euclidean",
   normalize     = "Jaccard",

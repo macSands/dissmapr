@@ -1,5 +1,5 @@
 ---
-title: "3-enviro"
+title: "Environmental data for sites"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Get environmental data for sites}
