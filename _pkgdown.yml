@@ -72,38 +72,52 @@ reference:
       - orderwise_diss_gower
       - mutual_info
 
-# Controls the “Articles” page order & display names
 articles:
-  - title: "Getting started"
+  - title: "All tutorials"
+    navbar: "Articles"
     contents:
-      - 1-setup              # 1-setup.Rmd   (or .qmd / .md)
-  - title: "User-defined grid"
-    contents:
-      - 2-grid
-  - title: "Get environmental data"
-    contents:
-      - 3-enviro
-  - title: "Zeta diversity"
-    contents:
-      - 4-zeta
-  - title: "Zeta-MSGDM workflow"
-    contents:
-      - 5-zeta-workflow
-  - title: "Predict community turnover"
-    contents:
-      - 6-predict
-  - title: "Map bioregions"
-    contents:
-      - 7-bioregion
-  - title: "Map bioregion change"
-    contents:
-      - 8-change
-  - title: "Compute orderwise examples"
-    contents:
-      - 9-examples
-  - title: "Zenodo basics"
-    contents:
-      - 10-zenodo
+      - "1-setup"
+      - "2-grid"
+      - "3-enviro"
+      - "4-zeta"
+      - "5-zeta-workflow"
+      - "6-predict"
+      - "7-bioregion"
+      - "8-change"
+      - "9-examples"
+      - "10-zenodo"
+# # Controls the “Articles” page order & display names
+# articles:
+#   - title: "Getting started"
+#     contents:
+#       - 1-setup              # 1-setup.Rmd   (or .qmd / .md)
+#   - title: "User-defined grid"
+#     contents:
+#       - 2-grid
+#   - title: "Get environmental data"
+#     contents:
+#       - 3-enviro
+#   - title: "Zeta diversity"
+#     contents:
+#       - 4-zeta
+#   - title: "Zeta-MSGDM workflow"
+#     contents:
+#       - 5-zeta-workflow
+#   - title: "Predict community turnover"
+#     contents:
+#       - 6-predict
+#   - title: "Map bioregions"
+#     contents:
+#       - 7-bioregion
+#   - title: "Map bioregion change"
+#     contents:
+#       - 8-change
+#   - title: "Compute orderwise examples"
+#     contents:
+#       - 9-examples
+#   - title: "Zenodo basics"
+#     contents:
+#       - 10-zenodo
 
 
 

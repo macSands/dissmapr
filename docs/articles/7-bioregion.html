@@ -38,7 +38,23 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Articles</h6></li>
+    <li><a class="dropdown-item" href="../articles/1-setup.html">1-setup</a></li>
+    <li><a class="dropdown-item" href="../articles/2-grid.html">2-grid</a></li>
+    <li><a class="dropdown-item" href="../articles/3-enviro.html">3-enviro</a></li>
+    <li><a class="dropdown-item" href="../articles/4-zeta.html">4-zeta</a></li>
+    <li><a class="dropdown-item" href="../articles/5-zeta-workflow.html">5-zeta-workflow</a></li>
+    <li><a class="dropdown-item" href="../articles/6-predict.html">6-predict</a></li>
+    <li><a class="dropdown-item" href="../articles/7-bioregion.html">7-bioregion</a></li>
+    <li><a class="dropdown-item" href="../articles/8-change.html">8-change</a></li>
+    <li><a class="dropdown-item" href="../articles/9-examples.html">9-examples</a></li>
+    <li><a class="dropdown-item" href="../articles/10-zenodo.html">10-zenodo</a></li>
+  </ul>
+</li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -117,18 +133,32 @@ surfaces;</li>
 can use to compare how different algorithms partition the landscape
 based on compositional turnover and geography.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Run `map_bioreg` function to generate and plot clusters</span></span>
-<span><span class="va">bioreg_result</span> <span class="op">=</span> <span class="fu"><a href="../reference/map_bioreg.html">map_bioreg</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># Add this to {, fig.width=11.25, fig.height=9, warning=FALSE, message=FALSE}</span></span>
+<span><span class="co"># Run `map_bioreg` function to generate and plot clusters</span></span>
+<span><span class="va">bioreg_current</span> <span class="op">=</span> <span class="fu"><a href="../reference/map_bioreg.html">map_bioreg</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">predictors_df</span>,</span>
-<span>  scale_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pred_zeta"</span>, <span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span>,</span>
-<span>  clus_method <span class="op">=</span> <span class="st">"all"</span>, <span class="co"># K-means, PAM, Hierarchical and GMM clustering</span></span>
-<span>  show_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  interp <span class="op">=</span> <span class="st">"both"</span>,</span>
+<span>  scale_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pred_zetaExp"</span>, <span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">'all'</span>, <span class="co"># Options: c("kmeans","pam","hclust","gmm","all"),</span></span>
+<span>  k_override  <span class="op">=</span> <span class="fl">8</span>,</span>
+<span>  interpolate <span class="op">=</span> <span class="st">'nn'</span>, <span class="co"># Options: c("none","nn","tps","all"),</span></span>
 <span>  x_col <span class="op">=</span><span class="st">'centroid_lon'</span>,</span>
 <span>  y_col <span class="op">=</span><span class="st">'centroid_lat'</span>,</span>
-<span>  bndy_fc <span class="op">=</span> <span class="va">rsa</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>  res <span class="op">=</span> <span class="fl">0.5</span>, </span>
+<span>  crs <span class="op">=</span> <span class="st">"EPSG:4326"</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  bndy_fc <span class="op">=</span> <span class="va">rsa</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figures/7-zeta-cluster-1.png" width="100%"></p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Check results</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">bioreg_current</span>, max.level<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 6</span></span>
+<span><span class="co">#&gt;  $ none   :List of 1</span></span>
+<span><span class="co">#&gt;  $ nn     :List of 1</span></span>
+<span><span class="co">#&gt;  $ tps    : NULL</span></span>
+<span><span class="co">#&gt;  $ table  :'data.frame': 415 obs. of  24 variables:</span></span>
+<span><span class="co">#&gt;  $ plots  :List of 1</span></span>
+<span><span class="co">#&gt;  $ methods: chr [1:4] "kmeans" "pam" "hclust" "gmm"</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level4">
@@ -141,67 +171,103 @@ current scenario. To see how the bioregional partitions shift, we split
 (k-means + hierarchical, both NN and TPS interpolation). We then extract
 the hierarchical cluster layers, mask them to our study area, and plot
 all four maps in a 2×2 layout:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># 1) Split your combined predictions by scenario into a named list</span></span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Split your combined predictions by scenario into a named list</span></span>
 <span><span class="va">by_scn</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">all_preds</span>, <span class="va">all_preds</span><span class="op">$</span><span class="va">scenario</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 2) For each scenario, call map_bioreg() with k‐means + hierarchical, no plots</span></span>
-<span><span class="va">hier_results</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html" class="external-link">imap</a></span><span class="op">(</span></span>
-<span>  <span class="va">by_scn</span>,</span>
-<span>  <span class="op">~</span> <span class="fu"><a href="../reference/map_bioreg.html">map_bioreg</a></span><span class="op">(</span></span>
-<span>      data        <span class="op">=</span> <span class="va">.x</span>,</span>
-<span>      scale_cols  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pred_zetaExp"</span>, <span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span>,</span>
-<span>      clus_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"kmeans"</span>, <span class="st">"hclust"</span><span class="op">)</span>,</span>
-<span>      show_plot   <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>      interp      <span class="op">=</span> <span class="st">"both"</span>,            <span class="co"># only NN interpolation to avoid the TPS bug</span></span>
-<span>      x_col       <span class="op">=</span> <span class="st">"centroid_lon"</span>,</span>
-<span>      y_col       <span class="op">=</span> <span class="st">"centroid_lat"</span></span>
-<span>    <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 3) Give the outer list the scenario names</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hier_results</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">by_scn</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># The result is a named list of map_bioreg outputs,</span></span>
-<span><span class="co"># one element per scenario (current, 2030, 2040, 2050).</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">hier_results</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 4</span></span>
-<span><span class="co">#&gt;  $ current:List of 3</span></span>
-<span><span class="co">#&gt;  $ 2030   :List of 3</span></span>
-<span><span class="co">#&gt;  $ 2040   :List of 3</span></span>
-<span><span class="co">#&gt;  $ 2050   :List of 3</span></span>
+<span><span class="co"># For each scenario, call map_bioreg() with all algorithms</span></span>
+<span><span class="va">bioreg_future</span> <span class="op">=</span> <span class="fu"><a href="../reference/map_bioreg.html">map_bioreg</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">by_scn</span>,</span>
+<span>  scale_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pred_zetaExp"</span>, <span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">'all'</span>, <span class="co"># Options: c("kmeans","pam","hclust","gmm","all"),</span></span>
+<span>  k_override  <span class="op">=</span> <span class="fl">8</span>,</span>
+<span>  interpolate <span class="op">=</span> <span class="st">'nn'</span>, <span class="co"># Options: c("none","nn","tps","all"),</span></span>
+<span>  x_col <span class="op">=</span><span class="st">'centroid_lon'</span>,</span>
+<span>  y_col <span class="op">=</span><span class="st">'centroid_lat'</span>,</span>
+<span>  res <span class="op">=</span> <span class="fl">0.5</span>, </span>
+<span>  crs <span class="op">=</span> <span class="st">"EPSG:4326"</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  bndy_fc <span class="op">=</span> <span class="va">rsa</span><span class="op">)</span></span></code></pre></div>
+<p><img src="figures/7-future-cluster-1.png" width="100%"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Check results</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">bioreg_future</span>, max.level<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 6</span></span>
+<span><span class="co">#&gt;  $ none   :List of 4</span></span>
+<span><span class="co">#&gt;  $ nn     :List of 4</span></span>
+<span><span class="co">#&gt;  $ tps    : NULL</span></span>
+<span><span class="co">#&gt;  $ table  :'data.frame': 1660 obs. of  24 variables:</span></span>
+<span><span class="co">#&gt;  $ plots  :List of 4</span></span>
+<span><span class="co">#&gt;  $ methods: chr [1:4] "kmeans" "pam" "hclust" "gmm"</span></span></code></pre></div>
+<p>Below we visualise the nearest-neighbour interpolated future‐scenario
+cluster outputs. First, we list the structure of the
+<code>bioreg_future</code> result to confirm available components. We
+then combine the k-means nearest-neighbour rasters for “current” and
+each future year into a single <code>SpatRaster</code> stack
+(<code>future_nn</code>), and resample, then mask it to the RSA boundary
+(<code>mask_future_nn</code>). Finally, we lay out a 2×2 plot grid,
+compute a discrete colour palette for each layer based on its unique
+classes, and render each masked layer with its boundary overlay for a
+quick inspection of bioregion changes across time.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Check results</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">bioreg_future</span>, max.level<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 6</span></span>
+<span><span class="co">#&gt;  $ none   :List of 4</span></span>
+<span><span class="co">#&gt;  $ nn     :List of 4</span></span>
+<span><span class="co">#&gt;  $ tps    : NULL</span></span>
+<span><span class="co">#&gt;  $ table  :'data.frame': 1660 obs. of  24 variables:</span></span>
+<span><span class="co">#&gt;  $ plots  :List of 4</span></span>
+<span><span class="co">#&gt;  $ methods: chr [1:4] "kmeans" "pam" "hclust" "gmm"</span></span>
 <span></span>
 <span><span class="co"># Create SpatRast</span></span>
-<span><span class="va">future_r</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">hier_results</span><span class="op">[[</span><span class="st">"current"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">clusters</span><span class="op">$</span><span class="va">hc</span>,</span>
-<span>             <span class="va">hier_results</span><span class="op">[[</span><span class="st">"2030"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">clusters</span><span class="op">$</span><span class="va">hc</span>,</span>
-<span>             <span class="va">hier_results</span><span class="op">[[</span><span class="st">"2040"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">clusters</span><span class="op">$</span><span class="va">hc</span>,</span>
-<span>             <span class="va">hier_results</span><span class="op">[[</span><span class="st">"2050"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">clusters</span><span class="op">$</span><span class="va">hc</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">future_r</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "lyr.1" "lyr.1" "lyr.1" "lyr.1"</span></span>
+<span><span class="va">future_nn</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">bioreg_future</span><span class="op">$</span><span class="va">nn</span><span class="op">$</span><span class="va">current</span><span class="op">$</span><span class="va">kmeans_current</span>,</span>
+<span>             <span class="va">bioreg_future</span><span class="op">$</span><span class="va">nn</span><span class="op">$</span><span class="va">`2030`</span><span class="op">$</span><span class="va">kmeans_2030</span>,</span>
+<span>             <span class="va">bioreg_future</span><span class="op">$</span><span class="va">nn</span><span class="op">$</span><span class="va">`2040`</span><span class="op">$</span><span class="va">kmeans_2040</span>,</span>
+<span>             <span class="va">bioreg_future</span><span class="op">$</span><span class="va">nn</span><span class="op">$</span><span class="va">`2050`</span><span class="op">$</span><span class="va">kmeans_2050</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">future_nn</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "kmeans_current" "kmeans_2030"    "kmeans_2040"    "kmeans_2050"</span></span>
 <span></span>
 <span><span class="co"># 4) Mask `result_bioregDiff` to the RSA boundary</span></span>
-<span><span class="va">mask_future_r</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">future_r</span>, <span class="va">grid_masked</span>, method <span class="op">=</span> <span class="st">"near"</span><span class="op">)</span>, <span class="va">grid_masked</span><span class="op">)</span></span>
+<span><span class="va">mask_future_nn</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">future_nn</span>, <span class="va">grid_masked</span>, method <span class="op">=</span> <span class="st">"mod"</span><span class="op">)</span>, <span class="va">grid_masked</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 5) Quick visual QC in a 3×2 layout</span></span>
-<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># 5) Quick visual QC in a 2×2 layout</span></span>
+<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">titles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Current"</span>,</span>
 <span>            <span class="st">"2030"</span>,</span>
-<span>            <span class="st">"2040"</span>,                       </span>
+<span>            <span class="st">"2040"</span>,</span>
 <span>            <span class="st">"2050"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mask_future_r</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>       <span class="co"># col      = viridisLite::turbo(100),</span></span>
-<span>       col      <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="co">## 1. how many distinct classes in this layer?</span></span>
+<span>  <span class="va">cls</span>  <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">mask_future_nn</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">cls</span>  <span class="op">=</span> <span class="va">cls</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">cls</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">n</span>    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cls</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co">## 2. build a discrete palette of n colours</span></span>
+<span>  <span class="va">pal</span> <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="va">n</span> <span class="op">&lt;=</span> <span class="fl">12</span><span class="op">)</span> <span class="op">{</span></span>
+<span>           <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="va">n</span>, <span class="st">"Set3"</span><span class="op">)</span>                      <span class="co"># native Set3</span></span>
+<span>         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>           <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html" class="external-link">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fl">12</span>, <span class="st">"Set3"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="co"># extended Set3</span></span>
+<span>         <span class="op">}</span></span>
+<span></span>
+<span>  <span class="co">## 3. plot</span></span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mask_future_nn</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>       col      <span class="op">=</span> <span class="va">pal</span>,</span>
+<span>       type     <span class="op">=</span> <span class="st">"classes"</span>,          <span class="co"># treats values as categories</span></span>
 <span>       colNA    <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>       axes     <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>       legend   <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>       main     <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
-<span>       cex.main <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>                        <span class="co"># smaller title</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
+<span>       cex.main <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span></span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">.4</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p><img src="figures/7-future-plots-1.png" width="100%"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">old_par</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/7-future-cluster-1.png" width="100%"></p>
 <p>This end-to-end workflow shows how predicted turnover patterns and
 resulting bioregions might shift as climate warms and rainfall changes,
 highlighting potential future reorganization of biodiversity

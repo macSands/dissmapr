@@ -2,60 +2,96 @@
 % Please edit documentation in R/map_bioreg.R
 \name{map_bioreg}
 \alias{map_bioreg}
-\title{Map Bioregion Clusters and Spatially Interpolate Assignments}
+\title{Raster-based Clustering and Interpolation of Bioregional Data}
 \usage{
 map_bioreg(
   data,
   scale_cols,
-  clus_method = "all",
-  show_plot = TRUE,
-  interp = "both",
+  method = c("kmeans", "pam", "hclust", "gmm", "all"),
+  k_override = NULL,
   x_col = "x",
   y_col = "y",
-  resolution = 0.5,
+  interpolate = c("none", "nn", "tps", "all"),
+  res = 0.5,
+  crs = "EPSG:4326",
+  plot = TRUE,
   bndy_fc = NULL
 )
 }
 \arguments{
-\item{data}{Data frame containing longitude/latitude plus the
-variables in \code{scale_cols}.}
+\item{data}{A single data.frame of point observations or a named list of such data.frames (e.g. different scenarios).
+Each data.frame must contain coordinate columns and variables to scale.}
 
-\item{scale_cols}{Character vector of column names to z-scale before
-clustering.}
+\item{scale_cols}{Character vector of column names in \code{data} to standardize before clustering.}
 
-\item{clus_method}{Which algorithm(s) to run: one or more of
-\code{"kmeans"}, \code{"pam"}, \code{"hclust"}, \code{"gmm"}, or \code{"all"}.}
+\item{method}{Character vector of clustering methods to apply; choices of "kmeans", "pam", "hclust", "gmm", or "all".}
 
-\item{show_plot}{Logical; if \code{TRUE} (default), draw a 2×2 patchwork
-of the point-map partitions. Set \code{FALSE} to skip.}
+\item{k_override}{Integer. If provided, fixes the number of clusters rather than computing via silhouette.}
 
-\item{interp}{Character; interpolation type: \code{"NN"}, \code{"Tps"}, or
-\code{"both"} (default).}
+\item{x_col, y_col}{Strings giving the names of the longitude (x) and latitude (y) columns for spatial mapping.}
 
-\item{x_col, y_col}{Names of the longitude and latitude columns
-(defaults \code{"x"}, \code{"y"}).}
+\item{interpolate}{One of "none", "nn", "tps", or "all"; selects which interpolation(s) to compute.}
 
-\item{resolution}{Numeric; grid cell size for the interpolation raster.}
+\item{res}{Numeric resolution of output rasters (in the same units as coordinates).}
+
+\item{crs}{Coordinate reference system string for raster outputs (e.g. "EPSG:4326").}
+
+\item{plot}{Logical; if TRUE, displays spatial tile plots of clusters/modes.}
 
 \item{bndy_fc}{Optional \code{sf} or \code{SpatVector} polygon to overlay.}
 }
 \value{
-A list with three elements:
+A named list with elements:
 \describe{
-\item{\code{data}}{Original \code{data} with factor cluster columns
-(\code{kmeans_opt}, \code{pam_opt}, \code{pam_opt_aligned},
-\code{hc_opt}, \code{hc_opt_aligned}, \code{gmm_opt}, \code{gmm_opt_aligned}),
-all sharing levels 1…k.}
-\item{\code{interpolated}}{A \code{SpatRaster} of continuous NN or TPS
-predictions (one layer per algorithm).}
-\item{\code{clusters}}{A \code{SpatRaster} of re-classified discrete
-clusters (TPS only), with the same levels 1…k.}
+\item{none, nn, tps}{Named lists of Terra SpatRaster stacks for each scenario, each layer labelled "\if{html}{\out{<method>}}\emph{algn}\if{html}{\out{<scenario>}}".}
+\item{table}{A data.frame: original points, cluster columns, modal label, aligned labels.}
+\item{plots}{List of ggplot objects (invisible) when \code{plot = TRUE}.}
+\item{methods}{Character vector of methods actually computed.}
 }
 }
 \description{
-Runs several unsupervised clustering algorithms on multivariate
-environmental data, aligns their cluster labels to a common
-k-means reference, visualises the resulting partitions (optionally),
-and produces gridded bioregion surfaces by nearest-neighbour (NN)
-and/or thin-plate-spline (TPS) interpolation.
+\code{map_bioreg} performs clustering (k-means, PAM, hierarchical, GMM) on spatial point data,
+computes modal or user-specified interpolation (none, nearest-neighbour, TPS), aligns
+cluster labels by overlap, and returns both data tables and raster stacks.
+}
+\details{
+Internally, the function standardizes \code{scale_cols}, runs requested clustering(s),
+computes a modal consensus label, and then aligns each algorithm's cluster numbers
+to the k-means reference by maximal cell overlap. Three interpolation functions
+(\code{fill_none_full}, \code{fill_nn_full}, \code{fill_tps_full}) generate rasters of raw and aligned
+labels. Progress bars display per scenario.
+}
+\examples{
+library(terra)
+# simulate a single data.frame
+set.seed(42)
+df = data.frame(
+    centroid_lon = runif(100, 16, 33),
+  centroid_lat = runif(100, -35, -22),
+  pred_zetaExp = rnorm(100)
+)
+# single scenario clustering
+out1 = map_bioreg(
+    data = df,
+  scale_cols = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
+  method = "all",
+  k_override = 4,
+  x_col = "centroid_lon",
+  y_col = "centroid_lat",
+  plot = FALSE
+)
+
+# simulate multiple scenarios
+df2 = df
+df2$centroid_lon = df2$centroid_lon + 5
+scen_list = list(current = df, future = df2)
+out2 = map_bioreg(
+    data = scen_list,
+  scale_cols = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
+  method = "kmeans",
+  k_override = 3,
+  x_col = "centroid_lon",
+  y_col = "centroid_lat",
+  plot = FALSE
+)
 }

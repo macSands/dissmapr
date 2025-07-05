@@ -1,190 +1,254 @@
-#' Map Bioregion Clusters and Spatially Interpolate Assignments
+#' Raster-based Clustering and Interpolation of Bioregional Data
 #'
-#' @description
-#' Runs several unsupervised clustering algorithms on multivariate
-#' environmental data, aligns their cluster labels to a common
-#' k-means reference, visualises the resulting partitions (optionally),
-#' and produces gridded bioregion surfaces by nearest-neighbour (NN)
-#' and/or thin-plate-spline (TPS) interpolation.
+#' `map_bioreg` performs clustering (k-means, PAM, hierarchical, GMM) on spatial point data,
+#' computes modal or user-specified interpolation (none, nearest-neighbour, TPS), aligns
+#' cluster labels by overlap, and returns both data tables and raster stacks.
 #'
-#' @param data         Data frame containing longitude/latitude plus the
-#'                     variables in `scale_cols`.
-#' @param scale_cols   Character vector of column names to z-scale before
-#'                     clustering.
-#' @param clus_method  Which algorithm(s) to run: one or more of
-#'                     `"kmeans"`, `"pam"`, `"hclust"`, `"gmm"`, or `"all"`.
-#' @param show_plot    Logical; if `TRUE` (default), draw a 2×2 patchwork
-#'                     of the point-map partitions. Set `FALSE` to skip.
-#' @param interp       Character; interpolation type: `"NN"`, `"Tps"`, or
-#'                     `"both"` (default).
-#' @param x_col,y_col  Names of the longitude and latitude columns
-#'                     (defaults `"x"`, `"y"`).
-#' @param resolution   Numeric; grid cell size for the interpolation raster.
+#' @param data A single data.frame of point observations or a named list of such data.frames (e.g. different scenarios).
+#'   Each data.frame must contain coordinate columns and variables to scale.
+#' @param scale_cols Character vector of column names in `data` to standardize before clustering.
+#' @param method Character vector of clustering methods to apply; choices of "kmeans", "pam", "hclust", "gmm", or "all".
+#' @param k_override Integer. If provided, fixes the number of clusters rather than computing via silhouette.
+#' @param x_col,y_col Strings giving the names of the longitude (x) and latitude (y) columns for spatial mapping.
+#' @param interpolate One of "none", "nn", "tps", or "all"; selects which interpolation(s) to compute.
+#' @param res Numeric resolution of output rasters (in the same units as coordinates).
+#' @param crs Coordinate reference system string for raster outputs (e.g. "EPSG:4326").
+#' @param plot Logical; if TRUE, displays spatial tile plots of clusters/modes.
 #' @param bndy_fc      Optional \code{sf} or \code{SpatVector} polygon to overlay.
 #'
-#' @return A list with three elements:
-#' \describe{
-#'   \item{\code{data}}{Original `data` with factor cluster columns
-#'         (`kmeans_opt`, `pam_opt`, `pam_opt_aligned`,
-#'         `hc_opt`, `hc_opt_aligned`, `gmm_opt`, `gmm_opt_aligned`),
-#'         all sharing levels 1…k.}
-#'   \item{\code{interpolated}}{A `SpatRaster` of continuous NN or TPS
-#'         predictions (one layer per algorithm).}
-#'   \item{\code{clusters}}{A `SpatRaster` of re-classified discrete
-#'         clusters (TPS only), with the same levels 1…k.}
-#' }
+#' @return A named list with elements:
+#'   \describe{
+#'     \item{none, nn, tps}{Named lists of Terra SpatRaster stacks for each scenario, each layer labelled "<method>_algn_<scenario>".}
+#'     \item{table}{A data.frame: original points, cluster columns, modal label, aligned labels.}
+#'     \item{plots}{List of ggplot objects (invisible) when `plot = TRUE`.}
+#'     \item{methods}{Character vector of methods actually computed.}
+#'   }
 #'
+#' @details
+#' Internally, the function standardizes `scale_cols`, runs requested clustering(s),
+#' computes a modal consensus label, and then aligns each algorithm's cluster numbers
+#' to the k-means reference by maximal cell overlap. Three interpolation functions
+#' (`fill_none_full`, `fill_nn_full`, `fill_tps_full`) generate rasters of raw and aligned
+#' labels. Progress bars display per scenario.
+#'
+#' @examples
+#' library(terra)
+#' # simulate a single data.frame
+#' set.seed(42)
+#' df = data.frame(
+#'     centroid_lon = runif(100, 16, 33),
+#'   centroid_lat = runif(100, -35, -22),
+#'   pred_zetaExp = rnorm(100)
+#' )
+#' # single scenario clustering
+#' out1 = map_bioreg(
+#'     data = df,
+#'   scale_cols = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
+#'   method = "all",
+#'   k_override = 4,
+#'   x_col = "centroid_lon",
+#'   y_col = "centroid_lat",
+#'   plot = FALSE
+#' )
+#'
+#' # simulate multiple scenarios
+#' df2 = df
+#' df2$centroid_lon = df2$centroid_lon + 5
+#' scen_list = list(current = df, future = df2)
+#' out2 = map_bioreg(
+#'     data = scen_list,
+#'   scale_cols = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
+#'   method = "kmeans",
+#'   k_override = 3,
+#'   x_col = "centroid_lon",
+#'   y_col = "centroid_lat",
+#'   plot = FALSE
+#' )
+#' @importFrom terra rast ext vect crds rasterize setValues levels
+#' @importFrom fields Tps
+#' @importFrom sf st_as_sf
 #' @importFrom NbClust NbClust
 #' @importFrom cluster pam
 #' @importFrom factoextra hcut
-#' @importFrom stats kmeans dist
-#' @importFrom mclust Mclust mclustBIC
-#' @importFrom sf st_as_sf st_bbox st_coordinates
-#' @importFrom terra rast ext crds interpolate classify vect crs
-#' @importFrom fields Tps
-#' @importFrom ggplot2 ggplot geom_tile aes_string scale_fill_brewer labs theme_minimal
-#' @import patchwork
+#' @importFrom mclust Mclust
+#' @importFrom pbapply pblapply
+#' @importFrom dplyr bind_rows group_split
+#' @importFrom tidyr pivot_longer
+#' @importFrom ggplot2 ggplot geom_tile aes_string scale_fill_manual labs theme_minimal facet_wrap
+#' @importFrom patchwork wrap_plots
 #' @export
 map_bioreg = function(data,
                        scale_cols,
-                       clus_method = "all",
-                       show_plot   = TRUE,
-                       interp      = "both",
+                       method      = c("kmeans","pam","hclust","gmm","all"),
+                       k_override  = NULL,
                        x_col       = "x",
                        y_col       = "y",
-                       resolution  = 0.5,
+                       interpolate = c("none","nn","tps","all"),
+                       res         = 0.5,
+                       crs         = "EPSG:4326",
+                       plot        = TRUE,
                        bndy_fc     = NULL) {
-  #--- sanity
-  if (!all(c(x_col, y_col, scale_cols) %in% names(data))) {
-    stop("`data` must contain: ", paste(c(x_col,y_col,scale_cols), collapse=", "))
+  #-- helper: no-interpolation (modal majority per cell)
+  fill_none_full = function(df, x_col, y_col, cls_col, res, crs) {
+    xy  = as.matrix(df[, c(x_col, y_col)])
+    ids = as.integer(df[[cls_col]])
+    r   = rast(ext(range(xy[,1]), range(xy[,2])), resolution=res, crs=crs)
+    pts = vect(data.frame(x=xy[,1], y=xy[,2], cls=ids), geom=c("x","y"), crs=crs)
+    majority = function(x, ...) { if(all(is.na(x))) NA_integer_ else {ux=unique(x); ux[which.max(tabulate(match(x,ux)))] }}
+    rcls = rasterize(pts, r, field="cls", fun=majority, background=NA_integer_)
+    levels(rcls) = data.frame(value=sort(unique(ids)), lbl=as.character(sort(unique(ids))))
+    names(rcls) = cls_col
+    rcls
   }
 
-  #--- helper to align labels
-  align_clusters = function(df, ref_col, tgt_col) {
-    ref_ctr = aggregate(df[,c(x_col,y_col)], by=list(cluster=df[[ref_col]]), FUN=mean)
-    tgt_ctr = aggregate(df[,c(x_col,y_col)], by=list(cluster=df[[tgt_col]]), FUN=mean)
-    dm      = as.matrix(dist(rbind(ref_ctr[,-1], tgt_ctr[,-1])))
-    dm      = dm[1:nrow(ref_ctr), (nrow(ref_ctr)+1):ncol(dm)]
-    map_idx = apply(dm, 2, which.min)
-    factor(map_idx[df[[tgt_col]]], levels = seq_len(nrow(ref_ctr)))
+  #-- helper: nearest-neighbour fill
+  fill_nn_full = function(df, x_col, y_col, cls_col, res, crs) {
+    xy  = as.matrix(df[, c(x_col, y_col)])
+    ids = as.integer(df[[cls_col]])
+    r   = rast(ext(range(xy[,1]), range(xy[,2])), resolution=res, crs=crs)
+    idx = apply(crds(r), 1, function(pt) which.min(colSums((t(xy)-pt)^2)))
+    r   = setValues(r, ids[idx])
+    levels(r) = data.frame(value=sort(unique(ids)), lbl=as.character(sort(unique(ids))))
+    names(r) = cls_col
+    r
   }
 
-  #--- 1. scale
-  data_scaled = scale(data[, scale_cols])
-
-  #--- 2. choose k via silhouette on k-means
-  if (!("kmeans" %in% clus_method || "all" %in% clus_method)) {
-    stop("`clus_method` must include `kmeans` for reference")
-  }
-  nc = NbClust(data_scaled, distance="euclidean",
-                min.nc=2, max.nc=10,
-                method="kmeans", index="silhouette")
-  k  = nc$Best.nc[1]
-
-  #--- 3. clustering w/ fixed factor levels 1:k
-  km = kmeans(data_scaled, centers=k, nstart=10)
-  data$kmeans_opt = factor(km$cluster, levels = 1:k)
-
-  if ("pam" %in% clus_method || "all" %in% clus_method) {
-    pm = pam(data_scaled, k = k)
-    data$pam_opt         = factor(pm$clustering, levels = 1:k)
-    data$pam_opt_aligned = align_clusters(data, "kmeans_opt", "pam_opt")
-  }
-  if ("hclust" %in% clus_method || "all" %in% clus_method) {
-    hc = hcut(data_scaled, k = k, hc_method = "complete")
-    data$hc_opt         = factor(hc$cluster, levels = 1:k)
-    data$hc_opt_aligned = align_clusters(data, "kmeans_opt", "hc_opt")
-  }
-  if ("gmm" %in% clus_method || "all" %in% clus_method) {
-    gm = mclust::Mclust(data_scaled, G = k)
-    data$gmm_opt         = factor(gm$classification, levels = 1:k)
-    data$gmm_opt_aligned = align_clusters(data, "kmeans_opt", "gmm_opt")
+  #-- helper: thin-plate spline fill
+  fill_tps_full = function(df, x_col, y_col, cls_col, res, crs) {
+    r = rast(ext(range(df[[x_col]]), range(df[[y_col]])), resolution=res, crs=crs)
+    fit = Tps(as.matrix(df[, c(x_col, y_col)]), as.numeric(df[[cls_col]]))
+    rnum = interpolate(r, fit)
+    rcls = as.int(round(rnum))
+    levels(rcls) = data.frame(value=sort(unique(as.integer(df[[cls_col]]))),
+                               lbl=as.character(sort(unique(as.integer(df[[cls_col]])))))
+    names(rcls) = cls_col
+    rcls
   }
 
-  #--- 4. optional plot
-  if (show_plot) {
+  #-- 0. unpack and name scenarios
+  if (inherits(data, "data.frame")) {
+    df_list = list(current = data)
+  } else if (is.list(data) && all(vapply(data, is.data.frame, logical(1)))) {
+    df_list = data
+    if (is.null(names(df_list))) names(df_list) = paste0("set", seq_along(df_list))
+  } else stop("`data` must be a data.frame or list of data.frames")
 
-    ## helper that builds one map, optionally adds a boundary -----------------
-    mk = function(fill_col, title) {
+  #-- 1. argument processing
+  method      = match.arg(method, several.ok=TRUE)
+  if ("all" %in% method) method = c("kmeans","pam","hclust","gmm")
+  interpolate = match.arg(interpolate)
+  dat         = bind_rows(df_list, .id="scenario")
+  zmat        = scale(dat[, scale_cols])
+  if (!all(c(x_col, y_col) %in% names(dat))) stop("x_col/y_col not found in data.")
 
-      p = ggplot(data) +
-        geom_tile(aes_string(x = x_col, y = y_col, fill = fill_col)) +
-        scale_fill_brewer(palette = "Set3", drop = FALSE) +
-        labs(title = title, x = "Longitude", y = "Latitude",
-             fill = "Cluster") +
-        theme_minimal()
+  #-- 2. choose number of clusters
+  k = if(!is.null(k_override)) k_override else
+    NbClust(zmat, "euclidean", 2, 10, "kmeans", "silhouette")$Best.nc[1]
 
-      # ---- add the boundary if one was supplied -----------------------------
-      if (!is.null(bndy_fc)) {
-        ## convert sp -> sf on-the-fly if necessary
-        if (inherits(bndy_fc, "Spatial")) bndy_fc = sf::st_as_sf(bndy_fc)
+  #-- 3. run clustering methods
+  if ("kmeans" %in% method) dat$kmeans = kmeans(zmat, k, nstart=10)$cluster
+  if ("pam"    %in% method) dat$pam    = pam(zmat, k)$clustering
+  if ("hclust" %in% method) dat$hclust = hcut(zmat, k)$cluster
+  if ("gmm"    %in% method) dat$gmm    = Mclust(zmat, G=k)$classification
+  algo_cols = intersect(c("kmeans","pam","hclust","gmm"), names(dat))
 
-        p = p +
-          geom_sf(data = bndy_fc,            # outline only
-                  fill  = NA,
-                  colour = "black",
-                  linewidth = .4)
+  #-- 4. modal consensus label
+  mode_row = function(r) { r = na.omit(r); r[which.max(tabulate(match(r,r)))] }
+  dat$cluster_mode = factor(apply(dat[algo_cols],1,mode_row), levels=1:k)
+
+  #-- 5. align by overlap (_algn suffix)
+  align_by_overlap = function(ref, clust) {
+    tab = table(ref, clust)
+    map = apply(tab,2, function(col) as.integer(names(which.max(col))))
+    unname(map[as.character(clust)])
+  }
+  aligned_cols = paste0(algo_cols, "_algn")
+  for (i in seq_along(algo_cols)) {
+    dat[[aligned_cols[i]]] = align_by_overlap(dat$kmeans, dat[[algo_cols[i]]])
+  }
+  cluster_cols = c(algo_cols, aligned_cols)
+
+  #-- 6. plotting
+  plots = NULL
+  if (plot) {
+    # prepare palette
+    pal = if (k <= 12) RColorBrewer::brewer.pal(k, "Set3") else
+      colorRampPalette(RColorBrewer::brewer.pal(12, "Set3"))(k)
+
+    # if boundary provided, convert to sf
+    if (!is.null(bndy_fc)) {
+      if (inherits(bndy_fc, "SpatVector")) {
+        bndy_sf = sf::st_as_sf(bndy_fc)
+      } else if (inherits(bndy_fc, "sf")) {
+        bndy_sf = bndy_fc
+      } else {
+        stop("`bndy_fc` must be an sf or SpatVector object.")
       }
-      p
     }
 
-    ## build the four possible panels ----------------------------------------
-    p1 = mk("kmeans_opt"      , "K-means")
-    p2 = if ("pam_opt_aligned" %in% names(data)) mk("pam_opt_aligned", "PAM")
-    p3 = if ("hc_opt_aligned"  %in% names(data)) mk("hc_opt_aligned" , "Hierarchical")
-    p4 = if ("gmm_opt_aligned" %in% names(data)) mk("gmm_opt_aligned", "GMM")
+    n_scn = length(unique(dat$scenario))
+    n_alg = length(algo_cols)
 
-    ## print the figure (keeps old layout)
-    print((p1 + p2) / (p3 + p4))
-  }
-
-  #--- 5. prepare grid
-  pts  = sf::st_as_sf(data, coords = c(x_col, y_col), crs = 4326)
-  bb   = sf::st_bbox(pts)
-  base = rast(ext(bb$xmin, bb$xmax, bb$ymin, bb$ymax),
-               resolution = resolution,
-               crs        = "EPSG:4326")
-
-  #--- 6. NN interpolation
-  interpolated = NULL
-  if (interp %in% c("NN","both")) {
-    crd = sf::st_coordinates(pts)
-    for (col in c("kmeans_opt","pam_opt_aligned","hc_opt_aligned","gmm_opt_aligned")) {
-      if (!col %in% names(data)) next
-      vals = apply(crds(base), 1, function(pt) {
-        i = which.min((crd[,1]-pt[1])^2 + (crd[,2]-pt[2])^2)
-        as.integer(as.character(data[[col]][i]))
+    if (n_scn == 1 && n_alg > 1) {
+      # single scenario: plot aligned clusters
+      dat_long = pivot_longer(dat, cols = all_of(aligned_cols),
+                               names_to = "algorithm", values_to = "cluster")
+      p = ggplot(dat_long) +
+        geom_tile(aes_string(x = x_col, y = y_col, fill = "factor(cluster)")) +
+        scale_fill_manual(values = pal, drop = FALSE) +
+        facet_wrap(~algorithm) +
+        labs(title = unique(dat_long$scenario), fill = "Cluster") +
+        theme_minimal()
+      # overlay boundary if present
+      if (!is.null(bndy_fc)) p = p + geom_sf(data = bndy_sf, fill = NA, color = "black", inherit.aes = FALSE)
+      plots = list(p)
+    } else {
+      # multiple scenarios or single algorithm
+      plots = dat |> group_split(scenario) |> lapply(function(dd) {
+        sc = unique(dd$scenario)
+        if (length(algo_cols) > 1) {
+          mapping = aes_string(x = x_col, y = y_col, fill = "cluster_mode")
+          fill_lab = "Mode"
+        } else {
+          mapping = aes_string(x = x_col, y = y_col,
+                                fill = paste0("factor(", algo_cols[1], ")"))
+          fill_lab = algo_cols[1]
+        }
+        p = ggplot(dd) +
+          geom_tile(mapping) +
+          scale_fill_manual(values = pal, drop = FALSE) +
+          labs(title = sc, fill = fill_lab) +
+          theme_minimal()
+        # overlay boundary if present
+        if (!is.null(bndy_fc)) p = p + geom_sf(data = bndy_sf, fill = NA, color = "black", inherit.aes = FALSE)
+        p
       })
-      base[[col]] = vals
     }
-    interpolated = base
+    print(wrap_plots(plots))
   }
 
-  #--- 7. TPS interpolation + dynamic reclass
-  clusters_rcl = NULL
-  if (interp %in% c("Tps","both")) {
-    grid_r = rast(ext(pts), resolution=resolution, crs=crs(base))
-    tps_mods = list(
-      kmeans = Tps(data[,c(x_col,y_col)], as.integer(data$kmeans_opt)),
-      pam    = if("pam_opt_aligned"%in%names(data)) Tps(data[,c(x_col,y_col)], as.integer(data$pam_opt_aligned)),
-      hc     = if("hc_opt_aligned"%in%names(data)) Tps(data[,c(x_col,y_col)], as.integer(data$hc_opt_aligned)),
-      gmm    = if("gmm_opt_aligned"%in%names(data)) Tps(data[,c(x_col,y_col)], as.integer(data$gmm_opt_aligned))
-    )
-    preds = lapply(tps_mods, function(m) if(!is.null(m)) terra::interpolate(grid_r,m) else NULL)
-    valid = names(preds)[!vapply(preds, is.null, logical(1))]
-    stack = do.call(c, preds[valid])
-    names(stack) = valid
-    rcl = cbind(
-      from    = seq(0.5, k-0.5, by=1),
-      to      = seq(1.5, k+0.5, by=1),
-      becomes = 1:k
-    )
-    clusters_rcl = do.call(c, lapply(stack, classify, rcl=rcl))
+  #-- 7. build raster stacks
+  make_stack = function(fun) {
+    scen_list = split(dat,dat$scenario)
+    pblapply(scen_list, function(dd){
+      sc = unique(dd$scenario)
+      lays = lapply(cluster_cols, function(col){
+        r = fun(dd, x_col, y_col, col, res, crs)
+        names(r) = col; r
+      })
+      stk = do.call(c,lays)
+      names(stk) = paste0(cluster_cols,"_",sc)
+      stk
+    })
   }
 
+  #-- 8. return list
   list(
-    data         = data,
-    interpolated = interpolated,
-    clusters     = clusters_rcl
+    none    = make_stack(fill_none_full),
+    nn      = if(interpolate %in% c("nn","all")) make_stack(fill_nn_full) else NULL,
+    tps     = if(interpolate %in% c("tps","all")) make_stack(fill_tps_full) else NULL,
+    table   = dat,
+    plots   = plots,
+    methods = algo_cols
   )
 }

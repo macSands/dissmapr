@@ -1,3 +1,4 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
@@ -105,6 +106,10 @@ library(ggplot2)    # Grammar of graphics
 library(viridis)    # Perceptual color scales  
 library(patchwork)  # Sequentially build up plots on one page
 library(mclust)     # Clustering, Classification, and Density Estimation
+library(zen4R)      # client for the Zenodo REST API
+library(purrr)      # tidyverse functional-programming toolkit
+library(RColorBrewer) # set of colour palettes
+# library(clue)
 ```
 
 ------------------------------------------------------------------------
@@ -632,7 +637,7 @@ spatial cross-validation.
 
 ``` r
 # Square-root stretch effort & richness layers (created in Section 7)
-effRich_r = sqrt(effRich_r)             # two layers: obs_sum, spp_rich
+# effRich_r = sqrt(effRich_r)             # two layers: obs_sum, spp_rich
 
 # Resample climate stack to the 0.5 ° grid and concatenate
 env_effRich_r = c(
@@ -1136,6 +1141,7 @@ change).
 
 ``` r
 # Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set
+set.seed(123)
 zeta2 = Zeta.msgdm(
   grid_spp_pa[,-(1:7)],                            # species matrix (rows = sites, cols = spp)
   env_vars_reduced,                                # decorrelated environmental variables
@@ -1211,7 +1217,7 @@ effectively slow that loss.
 ``` r
 # Deviance explained summary results
 with(summary(zeta2$model), 1 - deviance/null.deviance) 
-#> [1] 0.3324925
+#> [1] 0.3006643
 # [1] 0.3733073
 # 0.3733073 means that approximately 37% of the variability in the response
 # variable is explained by your model. This is relatively low, suggesting that the
@@ -1227,39 +1233,39 @@ summary(zeta2$model)
 #> 
 #> Coefficients:
 #>             Estimate Std. Error z value Pr(>|z|)   
-#> (Intercept) -1.71695    0.67831  -2.531  0.01137 * 
-#> temp_mean1  -0.20950    5.74351  -0.036  0.97090   
-#> temp_mean2  -0.33505    1.97519  -0.170  0.86530   
-#> temp_mean3   0.00000    2.73390   0.000  1.00000   
-#> iso1        -0.22365    1.87395  -0.119  0.90500   
-#> iso2         0.00000    1.28985   0.000  1.00000   
-#> iso3        -0.05404    1.91848  -0.028  0.97753   
-#> temp_wetQ1   0.00000    1.52962   0.000  1.00000   
-#> temp_wetQ2  -0.14365    1.34108  -0.107  0.91469   
-#> temp_wetQ3   0.00000    2.32637   0.000  1.00000   
-#> temp_dryQ1   0.00000    4.98815   0.000  1.00000   
-#> temp_dryQ2  -0.29807    1.64628  -0.181  0.85632   
-#> temp_dryQ3   0.00000    1.59791   0.000  1.00000   
-#> rain_dry1   -0.79053    1.15260  -0.686  0.49280   
-#> rain_dry2   -0.06938    1.21761  -0.057  0.95456   
-#> rain_dry3    0.00000    1.82829   0.000  1.00000   
-#> rain_warmQ1 -0.10383    1.26531  -0.082  0.93460   
-#> rain_warmQ2 -0.51474    1.43719  -0.358  0.72023   
-#> rain_warmQ3  0.00000    1.73516   0.000  1.00000   
-#> obs_sum1    -2.00533    0.71461  -2.806  0.00501 **
-#> obs_sum2     0.00000    2.08737   0.000  1.00000   
-#> obs_sum3     0.00000    3.30378   0.000  1.00000   
-#> distance1   -0.74605    1.16380  -0.641  0.52150   
-#> distance2   -0.14513    1.63173  -0.089  0.92913   
-#> distance3    0.00000    2.40912   0.000  1.00000   
+#> (Intercept) -1.75622    0.73280  -2.397   0.0165 * 
+#> temp_mean1   0.00000    5.35410   0.000   1.0000   
+#> temp_mean2  -0.12901    1.80366  -0.072   0.9430   
+#> temp_mean3   0.00000    2.45052   0.000   1.0000   
+#> iso1        -0.12769    1.82815  -0.070   0.9443   
+#> iso2         0.00000    1.32845   0.000   1.0000   
+#> iso3         0.00000    1.84405   0.000   1.0000   
+#> temp_wetQ1   0.00000    1.46571   0.000   1.0000   
+#> temp_wetQ2  -0.21001    1.24872  -0.168   0.8664   
+#> temp_wetQ3  -0.35297    1.96909  -0.179   0.8577   
+#> temp_dryQ1   0.00000    4.60011   0.000   1.0000   
+#> temp_dryQ2  -0.28917    1.52155  -0.190   0.8493   
+#> temp_dryQ3   0.00000    1.64760   0.000   1.0000   
+#> rain_dry1   -0.08475    1.08271  -0.078   0.9376   
+#> rain_dry2   -0.22911    1.22210  -0.187   0.8513   
+#> rain_dry3    0.00000    1.61694   0.000   1.0000   
+#> rain_warmQ1 -0.38844    1.16271  -0.334   0.7383   
+#> rain_warmQ2 -0.18553    1.50201  -0.124   0.9017   
+#> rain_warmQ3 -0.34562    2.29405  -0.151   0.8802   
+#> obs_sum1    -2.12828    0.66640  -3.194   0.0014 **
+#> obs_sum2    -0.11889    2.16925  -0.055   0.9563   
+#> obs_sum3     0.00000    3.25547   0.000   1.0000   
+#> distance1   -0.52361    1.23063  -0.425   0.6705   
+#> distance2   -0.29026    1.57052  -0.185   0.8534   
+#> distance3   -0.14665    2.42153  -0.061   0.9517   
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> (Dispersion parameter for binomial family taken to be 1)
 #> 
-#>     Null deviance: 58.239  on 999  degrees of freedom
-#> Residual deviance: 38.875  on 975  degrees of freedom
-#> AIC: 92.007
+#>     Null deviance: 65.233  on 999  degrees of freedom
+#> Residual deviance: 45.620  on 975  degrees of freedom
+#> AIC: 98.771
 #> 
 #> Number of Fisher Scoring iterations: 7
 ```
@@ -1665,12 +1671,12 @@ names(predictors_df)
 #> [13] "centroid_lon"     "centroid_lat"
 head(predictors_df[,5:11])
 #>    rain_dry rain_warmQ    obs_sum distance richness  pred_zeta pred_zetaExp
-#> 1 -1.171906 -0.2222718 -0.2926985 903.0437        2 0.02753392    0.5068830
-#> 2 -1.171906 -0.1743223 -0.2340532 915.4655       31 0.03503025    0.5087567
-#> 3 -1.051673  0.1852987 -0.2818954 931.1100       10 0.02394963    0.5059871
-#> 4 -1.171906  0.2572229 -0.2865253 949.9390        7 0.02067473    0.5051685
-#> 5 -1.051673  0.4889786 -0.2880686 971.8672        6 0.01865257    0.5046630
-#> 6 -1.051673  0.5449196 -0.1321955 996.7561       76 0.01762109    0.5044052
+#> 1 -1.171906 -0.2222718 -0.2926985 903.0437        2 0.03351645    0.5083783
+#> 2 -1.171906 -0.1743223 -0.2340532 915.4655       31 0.03717936    0.5092938
+#> 3 -1.051673  0.1852987 -0.2818954 931.1100       10 0.02307935    0.5057696
+#> 4 -1.171906  0.2572229 -0.2865253 949.9390        7 0.01872533    0.5046812
+#> 5 -1.051673  0.4889786 -0.2880686 971.8672        6 0.01686626    0.5042165
+#> 6 -1.051673  0.5449196 -0.1321955 996.7561       76 0.01456113    0.5036402
 ```
 
 ------------------------------------------------------------------------
@@ -1684,31 +1690,44 @@ temperature increments and rainfall multipliers, then bundle them into a
 named list of four environmental data frames:
 
 ``` r
-# 1. Identify species & env columns
-spp_cols  = names(grid_spp_pa)[-(1:7)]
-all_vars  = names(env_vars_reduced)
-temp_vars = grep("^temp", all_vars, value = TRUE)
-rain_vars = grep("^rain", all_vars, value = TRUE)
+## 1. variable groups
+spp_cols   = names(grid_spp_pa)[-(1:7)]
+all_vars   = names(env_vars_reduced)
 
-# 2. Extreme future shifts
-temp_shifts  = c("2030"=20, "2040"=40, "2050"=60)
-rain_factors = c("2030"=10, "2040"=20, "2050"=30)
+temp_vars  = grep("^temp", all_vars, value = TRUE)
+iso_vars   = grep("^iso",  all_vars, value = TRUE)
+rain_vars  = grep("^rain", all_vars, value = TRUE)
+obs_var    = "obs_sum" 
 
-# 3. Save original scaling parameters
-sc_params = scale(env_vars_reduced)
-mu    = attr(sc_params, "scaled:center")
-sigma = attr(sc_params, "scaled:scale")
+## 2. realistic ∆ per horizon
+temp_delta   = c("2030" =  +2,   "2040" =  +4,   "2050" =  +6)   # °C
+iso_delta    = c("2030" = +0.5,  "2040" = +1.0,  "2050" = +1.5)  # unitless index
+rain_factor  = c("2030" =  0.9,  "2040" =  0.8,  "2050" =  0.7)  # × current
+# new_obs      = max(env_vars_reduced$obs_sum) # Maximum survey effort from current
+effort_mult  = c("2030" = 1.3, "2040" = 1.6,"2050" = 2.0)      # ↑ effort
 
-# 4. Build list of future env tibbles
-env_futures = purrr::map(names(temp_shifts), function(yr) {
+## 3. original centering / scaling
+mu     = attr(scale(env_vars_reduced), "scaled:center")
+sigma  = attr(scale(env_vars_reduced), "scaled:scale")
+
+## 4. build future tables
+env_futures = purrr::map(names(temp_delta), function(yr) {
+
   df = env_vars_reduced
-  df[temp_vars] = df[temp_vars] + temp_shifts[yr]
-  df[rain_vars] = df[rain_vars] * rain_factors[yr]
+
+  ## apply the deltas / factors
+  df[temp_vars] = df[temp_vars] + temp_delta[yr]
+  df[iso_vars]  = df[iso_vars]  + iso_delta[yr]
+  df[rain_vars] = df[rain_vars] * rain_factor[yr]
+  # df[[obs_var]] = new_obs
+  df[[obs_var]] = df[[obs_var]] * effort_mult[yr] # preserve spatial pattern but raise mean
+  ## clamp to 50–8000 to avoid absurd values
+  df[[obs_var]] = pmax(pmin(df[[obs_var]], 8000), 50)
   df
 })
-names(env_futures) = names(temp_shifts)
+names(env_futures) = names(temp_delta)
 
-# 5. Prepend current conditions
+## 5. prepend present-day baseline
 env_scenarios = c(list(current = env_vars_reduced), env_futures)
 str(env_scenarios, max.level = 1)
 #> List of 4
@@ -1725,9 +1744,9 @@ frame:
 
 ``` r
 set.seed(123)
-
-scenario_dfs = imap(env_scenarios, ~ {
-  df_scaled = sweep(sweep(.x, 2, mu, "-"), 2, sigma, "/") |> as.data.frame()
+## split → predict → add scenario tag
+scenario_dfs <- imap(env_scenarios, ~ {
+  df_scaled <- sweep(sweep(.x, 2, mu, "-"), 2, sigma, "/") |> as.data.frame()
   predict_dissim(
     grid_spp     = grid_spp_pa,
     species_cols = spp_cols,
@@ -1739,33 +1758,47 @@ scenario_dfs = imap(env_scenarios, ~ {
     bndy_fc      = rsa,
     show_plot    = FALSE,
     skip_scale   = TRUE
-  ) %>% mutate(scenario = .y)
+  ) |>
+  mutate(scenario = .y)
 })
 
-all_preds = bind_rows(scenario_dfs) %>%
-  mutate(scenario = factor(scenario, levels = c("current", names(temp_shifts))))
-head(all_preds)
-#>   temp_mean         iso temp_wetQ temp_dryQ  rain_dry rain_warmQ    obs_sum
-#> 1  1.730095  0.01726121  1.386855 0.5441361 -1.171906 -0.2222718 -0.2926985
-#> 2  1.683898 -0.53540287  1.471251 0.4496825 -1.171906 -0.1743223 -0.2340532
-#> 3  1.589813  0.21693689  1.234714 0.5570195 -1.051673  0.1852987 -0.2818954
-#> 4  2.185359  0.69302984  1.511219 0.9937463 -1.171906  0.2572229 -0.2865253
-#> 5  2.418605  1.23977219  1.589519 1.2042260 -1.051673  0.4889786 -0.2880686
-#> 6  2.810088  1.89130325  1.817424 1.4313345 -1.051673  0.5449196 -0.1321955
-#>   distance richness  pred_zeta pred_zetaExp log_pred_zetaExp centroid_lon
-#> 1 903.0437        2 0.02753392    0.5068830       -0.6794750        28.75
-#> 2 915.4655       31 0.03503025    0.5087567       -0.6757854        29.25
-#> 3 931.1100       10 0.02394963    0.5059871       -0.6812441        29.75
-#> 4 949.9390        7 0.02067473    0.5051685       -0.6828632        30.25
-#> 5 971.8672        6 0.01865257    0.5046630       -0.6838644        30.75
-#> 6 996.7561       76 0.01762109    0.5044052       -0.6843754        31.25
-#>   centroid_lat scenario
-#> 1    -22.25004  current
-#> 2    -22.25004  current
-#> 3    -22.25004  current
-#> 4    -22.25004  current
-#> 5    -22.25004  current
-#> 6    -22.25004  current
+## bind & set factor levels — use names(env_scenarios) instead of temp_shifts
+all_preds <- bind_rows(scenario_dfs) |>
+  mutate(scenario = factor(scenario,
+                           levels = names(env_scenarios)))  # "current", "2030", …
+# by(all_preds, all_preds$scenario, summary)
+summary(all_preds)
+#>    temp_mean            iso            temp_wetQ          temp_dryQ      
+#>  Min.   :-4.8892   Min.   :-2.7147   Min.   :-2.83685   Min.   :-2.8916  
+#>  1st Qu.: 0.2746   1st Qu.:-0.5428   1st Qu.: 0.01453   1st Qu.:-0.1552  
+#>  Median : 1.1874   Median : 0.2099   Median : 0.85086   Median : 0.5655  
+#>  Mean   : 1.2047   Mean   : 0.2344   Mean   : 0.73636   Mean   : 0.6741  
+#>  3rd Qu.: 2.1583   3rd Qu.: 0.9342   3rd Qu.: 1.54618   3rd Qu.: 1.4288  
+#>  Max.   : 5.2195   Max.   : 3.6594   Max.   : 3.29015   Max.   : 3.7682  
+#>     rain_dry         rain_warmQ         obs_sum            distance    
+#>  Min.   :-1.2921   Min.   :-1.6392   Min.   :-0.29579   Min.   :513.2  
+#>  1st Qu.:-0.8112   1st Qu.:-1.0240   1st Qu.:-0.22016   1st Qu.:594.8  
+#>  Median :-0.4265   Median :-0.2830   Median :-0.22016   Median :675.9  
+#>  Mean   :-0.1938   Mean   :-0.2551   Mean   : 0.14440   Mean   :690.0  
+#>  3rd Qu.: 0.1507   3rd Qu.: 0.4027   3rd Qu.:-0.03281   3rd Qu.:771.2  
+#>  Max.   : 4.1183   Max.   : 3.6377   Max.   :12.04905   Max.   :996.8  
+#>     richness        pred_zeta         pred_zetaExp    log_pred_zetaExp 
+#>  Min.   :  1.00   Min.   :0.001602   Min.   :0.5004   Min.   :-0.6923  
+#>  1st Qu.:  4.00   1st Qu.:0.021060   1st Qu.:0.5053   1st Qu.:-0.6827  
+#>  Median : 15.00   Median :0.045229   Median :0.5113   Median :-0.6708  
+#>  Mean   : 57.58   Mean   :0.041808   Mean   :0.5104   Mean   :-0.6725  
+#>  3rd Qu.: 76.00   3rd Qu.:0.060646   3rd Qu.:0.5152   3rd Qu.:-0.6633  
+#>  Max.   :853.00   Max.   :0.093702   Max.   :0.5234   Max.   :-0.6474  
+#>   centroid_lon    centroid_lat       scenario  
+#>  Min.   :16.75   Min.   :-34.75   current:415  
+#>  1st Qu.:22.25   1st Qu.:-31.75   2030   :415  
+#>  Median :26.25   Median :-29.25   2040   :415  
+#>  Mean   :25.57   Mean   :-29.10   2050   :415  
+#>  3rd Qu.:29.25   3rd Qu.:-26.75                
+#>  Max.   :32.75   Max.   :-22.25
+
+# 1) Split your combined predictions by scenario into a named list
+by_scn = split(all_preds, all_preds$scenario)
 ```
 
 We can then compare the predicted ζ₂ surfaces under each future
@@ -1840,20 +1873,36 @@ producing a quick 2×2 panel that highlights areas where the different
 methods agree and/or where biogeographic boundaries are more uncertain.
 
 ``` r
+# Add this to {, fig.width=11.25, fig.height=9, warning=FALSE, message=FALSE}
 # Run `map_bioreg` function to generate and plot clusters
-bioreg_result = map_bioreg(
+bioreg_current = map_bioreg(
   data = predictors_df,
-  scale_cols = c("pred_zeta", "centroid_lon", "centroid_lat"),
-  clus_method = "all", # K-means, PAM, Hierarchical and GMM clustering
-  show_plot = TRUE,
-  interp = "both",
+  scale_cols = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
+  method = 'all', # Options: c("kmeans","pam","hclust","gmm","all"),
+  k_override  = 8,
+  interpolate = 'nn', # Options: c("none","nn","tps","all"),
   x_col ='centroid_lon',
   y_col ='centroid_lat',
-  bndy_fc = rsa
-)
+  res = 0.5, 
+  crs = "EPSG:4326",
+  plot = TRUE,
+  bndy_fc = rsa)
 ```
 
 <img src="man/figures/README-zeta-cluster-1.png" width="100%" />
+
+``` r
+
+# Check results
+str(bioreg_current, max.level=1)
+#> List of 6
+#>  $ none   :List of 1
+#>  $ nn     :List of 1
+#>  $ tps    : NULL
+#>  $ table  :'data.frame': 415 obs. of  24 variables:
+#>  $ plots  :List of 1
+#>  $ methods: chr [1:4] "kmeans" "pam" "hclust" "gmm"
+```
 
 ------------------------------------------------------------------------
 
@@ -1870,66 +1919,106 @@ and rainfall changes, highlighting potential future reorganization of
 biodiversity hotspots.
 
 ``` r
-# 1) Split your combined predictions by scenario into a named list
+# Split your combined predictions by scenario into a named list
 by_scn = split(all_preds, all_preds$scenario)
 
-# 2) For each scenario, call map_bioreg() with k‐means + hierarchical, no plots
-hier_results = imap(
-  by_scn,
-  ~ map_bioreg(
-      data        = .x,
-      scale_cols  = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
-      clus_method = c("kmeans", "hclust"),
-      show_plot   = FALSE,
-      interp      = "both",            # only NN interpolation to avoid the TPS bug
-      x_col       = "centroid_lon",
-      y_col       = "centroid_lat"
-    )
-)
+# For each scenario, call map_bioreg() with all algorithms
+bioreg_future = map_bioreg(
+  data = by_scn,
+  scale_cols = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
+  method = 'all', # Options: c("kmeans","pam","hclust","gmm","all"),
+  k_override  = 8,
+  interpolate = 'nn', # Options: c("none","nn","tps","all"),
+  x_col ='centroid_lon',
+  y_col ='centroid_lat',
+  res = 0.5, 
+  crs = "EPSG:4326",
+  plot = TRUE,
+  bndy_fc = rsa)
+```
 
-# 3) Give the outer list the scenario names
-names(hier_results) = names(by_scn)
+<img src="man/figures/README-future-cluster-1.png" width="100%" />
 
-# The result is a named list of map_bioreg outputs,
-# one element per scenario (current, 2030, 2040, 2050).
-str(hier_results, max.level = 1)
-#> List of 4
-#>  $ current:List of 3
-#>  $ 2030   :List of 3
-#>  $ 2040   :List of 3
-#>  $ 2050   :List of 3
+``` r
+
+# Check results
+str(bioreg_future, max.level=1)
+#> List of 6
+#>  $ none   :List of 4
+#>  $ nn     :List of 4
+#>  $ tps    : NULL
+#>  $ table  :'data.frame': 1660 obs. of  24 variables:
+#>  $ plots  :List of 4
+#>  $ methods: chr [1:4] "kmeans" "pam" "hclust" "gmm"
+```
+
+Below we visualise the nearest-neighbour interpolated future‐scenario
+cluster outputs. First, we list the structure of the `bioreg_future`
+result to confirm available components. We then combine the k-means
+nearest-neighbour rasters for “current” and each future year into a
+single `SpatRaster` stack (`future_nn`), and resample, then mask it to
+the RSA boundary (`mask_future_nn`). Finally, we lay out a 2×2 plot
+grid, compute a discrete colour palette for each layer based on its
+unique classes, and render each masked layer with its boundary overlay
+for a quick inspection of bioregion changes across time.
+
+``` r
+# Check results
+str(bioreg_future, max.level=1)
+#> List of 6
+#>  $ none   :List of 4
+#>  $ nn     :List of 4
+#>  $ tps    : NULL
+#>  $ table  :'data.frame': 1660 obs. of  24 variables:
+#>  $ plots  :List of 4
+#>  $ methods: chr [1:4] "kmeans" "pam" "hclust" "gmm"
 
 # Create SpatRast
-future_r = c(hier_results[["current"]]$clusters$hc,
-             hier_results[["2030"]]$clusters$hc,
-             hier_results[["2040"]]$clusters$hc,
-             hier_results[["2050"]]$clusters$hc)
-names(future_r)
-#> [1] "lyr.1" "lyr.1" "lyr.1" "lyr.1"
+future_nn = c(bioreg_future$nn$current$kmeans_current,
+             bioreg_future$nn$`2030`$kmeans_2030,
+             bioreg_future$nn$`2040`$kmeans_2040,
+             bioreg_future$nn$`2050`$kmeans_2050)
+names(future_nn)
+#> [1] "kmeans_current" "kmeans_2030"    "kmeans_2040"    "kmeans_2050"
 
 # 4) Mask `result_bioregDiff` to the RSA boundary
-mask_future_r = terra::mask(resample(future_r, grid_masked, method = "near"), grid_masked)
+mask_future_nn = terra::mask(resample(future_nn, grid_masked, method = "mod"), grid_masked)
 
 # 5) Quick visual QC in a 2×2 layout
 old_par = par(mfrow = c(2, 2), mar = c(1, 1, 1, 5))
 titles = c("Current",
             "2030",
-            "2040",                       
+            "2040",
             "2050")
 
 for (i in 1:4) {
-  plot(mask_future_r[[i]],
-       # col      = viridisLite::turbo(100),
-       col      = viridis(100, direction = -1),
+  ## 1. how many distinct classes in this layer?
+  cls  = sort(unique(values(mask_future_nn[[i]])))
+  cls  = cls[!is.na(cls)]
+  n    = length(cls)
+
+  ## 2. build a discrete palette of n colours
+  pal = if (n <= 12) {
+           RColorBrewer::brewer.pal(n, "Set3")                      # native Set3
+         } else {
+           colorRampPalette(brewer.pal(12, "Set3"))(n) # extended Set3
+         }
+
+  ## 3. plot
+  plot(mask_future_nn[[i]],
+       col      = pal,
+       type     = "classes",          # treats values as categories
        colNA    = NA,
        axes     = FALSE,
+       legend   = TRUE,
        main     = titles[i],
-       cex.main = 0.8)                        # smaller title
-  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+       cex.main = 0.8)
+
+  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = .4)
 }
 ```
 
-<img src="man/figures/README-future-cluster-1.png" width="100%" />
+<img src="man/figures/README-future-plots-1.png" width="100%" />
 
 ``` r
 
@@ -1966,15 +2055,24 @@ argument):
   metric.
 
 ``` r
+# Create SpatRast
+current_nn = c(bioreg_current$nn$current$kmeans_algn_current,
+             bioreg_current$nn$current$pam_algn_current,
+             bioreg_current$nn$current$hclust_algn_current,
+             bioreg_current$nn$current$gmm_algn_current)
+names(current_nn)
+#> [1] "kmeans_algn_current" "pam_algn_current"    "hclust_algn_current"
+#> [4] "gmm_algn_current"
+
 # Run `map_bioregDiff`
 # 'approach', specifies which metric to compute:
-result_bioregDiff = map_bioregDiff(
-  bioreg_result$clusters,
+sens_bioregDiff = map_bioregDiff(
+  current_nn,
   approach = "all"
 )
 
 # Inspect the output layers
-result_bioregDiff
+sens_bioregDiff
 #> class       : SpatRaster 
 #> size        : 25, 32, 5  (nrow, ncol, nlyr)
 #> resolution  : 0.5, 0.4999984  (x, y)
@@ -1982,12 +2080,12 @@ result_bioregDiff
 #> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
 #> source(s)   : memory
 #> names       : Differ~_Count, Shanno~ntropy, Stability, Transi~quency, Weight~_Index 
-#> min values  :             0,      0.000000,         0,             0,      0.000000 
-#> max values  :             3,      1.386294,         1,             3,      2.994186
+#> min values  :             0,      0.000000,         0,             0,       0.00000 
+#> max values  :             3,      1.039721,         1,             3,       2.97973
 
 # Crop to our study area and prepare for plotting
-mask_bioregDiff = terra::mask(
-  terra::resample(result_bioregDiff, grid_masked, method = "near"),
+mask_sens_bioregDiff = terra::mask(
+  terra::resample(sens_bioregDiff, grid_masked, method = "near"),
   grid_masked
 )
 
@@ -1997,7 +2095,7 @@ titles = c("Difference count", "Shannon entropy", "Stability",
            "Transition frequency", "Weighted change index")
 
 for (i in seq_along(titles)) {
-  plot(mask_bioregDiff[[i]],
+  plot(mask_sens_bioregDiff[[i]],
        col      = viridis(100, direction = -1),
        colNA    = NA,
        axes     = FALSE,
@@ -2024,19 +2122,20 @@ climate-driven reorganization in the hierarchical map itself.
 
 ``` r
 # 1. Build a multi‐layer SpatRaster of hierarchical clusters for each scenario
-hc_stack = c(list(
-  hc_current = hier_results[["current"]]$clusters[["hc"]],
-  hc_2030    = hier_results[["2030"]]$clusters[["hc"]],
-  hc_2040    = hier_results[["2040"]]$clusters[["hc"]],
-  hc_2050    = hier_results[["2050"]]$clusters[["hc"]]
-))
+# Create SpatRast
+future_hclt = c(bioreg_future$nn$current$hclust_current,
+             bioreg_future$nn$`2030`$hclust_2030,
+             bioreg_future$nn$`2040`$hclust_2040,
+             bioreg_future$nn$`2050`$hclust_2050)
+names(future_hclt)
+#> [1] "hclust_current" "hclust_2030"    "hclust_2040"    "hclust_2050"
 
 # 2. Compute change metrics across those four layers
-future_bioregDiff = map_bioregDiff(hc_stack, approach = "all")
+future_bioregDiff = map_bioregDiff(future_hclt, approach = "all")
 
 # 3. Mask to your RSA boundary (assuming 'grid_masked' is your template)
 mask_future_bioregDiff = terra::mask(
-  terra::resample(result_bioregDiff, grid_masked, method = "near"),
+  terra::resample(future_bioregDiff, grid_masked, method = "near"),
   grid_masked
 )
 

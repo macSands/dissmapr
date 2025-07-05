@@ -26,9 +26,9 @@ knitr::opts_chunk$set(
 
 ```{r load-change-rasters, include = FALSE}
 grid_masked = terra::rast(system.file("extdata", "grid_masked.tif", package = "dissmapr"))
-future_r = terra::rast(system.file("extdata", "future_r.tif", package = "dissmapr"))
-result_bioregDiff = terra::rast(system.file("extdata", "result_bioregDiff.tif", package = "dissmapr"))
-future_bioregDiff = terra::rast(system.file("extdata", "future_bioregDiff.tif", package = "dissmapr"))
+future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
+current_nn = terra::rast(system.file("extdata", "current_nn.tif", package = "dissmapr"))
+future_hclt = terra::rast(system.file("extdata", "future_hclt.tif", package = "dissmapr"))
 ```
 
 ------------------------------------------------------------------------
@@ -54,29 +54,36 @@ In the sections below we use `map_bioregDiff()` to assess how much our four clus
 
 
 ```{r bioreg-Diff}
+# Get current nn rasters
+# current_nn = c(bioreg_current$nn$current$kmeans_algn_current,
+#              bioreg_current$nn$current$pam_algn_current,
+#              bioreg_current$nn$current$hclust_algn_current,
+#              bioreg_current$nn$current$gmm_algn_current)
+names(current_nn)
+
 # Run `map_bioregDiff`
 # 'approach', specifies which metric to compute:
-# result_bioregDiff = map_bioregDiff(
-#   bioreg_result$clusters,
-#   approach = "all"
-# )
+sens_bioregDiff = map_bioregDiff(
+  current_nn,
+  approach = "all"
+)
 
 # Inspect the output layers
-result_bioregDiff
+sens_bioregDiff
 
 # Crop to our study area and prepare for plotting
-mask_bioregDiff = terra::mask(
-  terra::resample(result_bioregDiff, grid_masked, method = "near"),
+mask_sens_bioregDiff = terra::mask(
+  terra::resample(sens_bioregDiff, grid_masked, method = "near"),
   grid_masked
 )
 
 # Quick visual QC in a 3×2 layout
-old_par = par(mfrow = c(3,2), mar = c(1, 1, 1, 5))
+old_par = par(mfrow = c(3, 2), mar = c(1, 1, 1, 5))
 titles = c("Difference count", "Shannon entropy", "Stability",
            "Transition frequency", "Weighted change index")
 
 for (i in seq_along(titles)) {
-  plot(mask_bioregDiff[[i]],
+  plot(mask_sens_bioregDiff[[i]],
        col      = viridis(100, direction = -1),
        colNA    = NA,
        axes     = FALSE,
@@ -96,16 +103,15 @@ Here we use `map_bioregDiff()` to track how the hierarchical‐cluster map itsel
 
 ```{r bioreg-diff-futures, message=FALSE}
 # 1. Build a multi‐layer SpatRaster of hierarchical clusters for each scenario
-# hc_stack = c(list(
-#   hc_current = hier_results[["current"]]$clusters[["hc"]],
-#   hc_2030    = hier_results[["2030"]]$clusters[["hc"]],
-#   hc_2040    = hier_results[["2040"]]$clusters[["hc"]],
-#   hc_2050    = hier_results[["2050"]]$clusters[["hc"]]
-# ))
+# Create SpatRast
+# future_hclt = c(bioreg_future$nn$current$hclust_current,
+#              bioreg_future$nn$`2030`$hclust_2030,
+#              bioreg_future$nn$`2040`$hclust_2040,
+#              bioreg_future$nn$`2050`$hclust_2050)
+names(future_hclt)
 
 # 2. Compute change metrics across those four layers
-# future_bioregDiff = map_bioregDiff(hc_stack, approach = "all")
-future_bioregDiff
+future_bioregDiff = map_bioregDiff(future_hclt, approach = "all")
 
 # 3. Mask to your RSA boundary (assuming 'grid_masked' is your template)
 mask_future_bioregDiff = terra::mask(
@@ -114,7 +120,7 @@ mask_future_bioregDiff = terra::mask(
 )
 
 # 4. Plot all five metrics in a 3×2 panel
-old_par = par(mfrow = c(3,2), mar = c(1, 1, 1, 5))
+old_par = par(mfrow = c(3, 2), mar = c(1, 1, 1, 5))
 titles = c(
   "Difference count",
   "Shannon entropy",
