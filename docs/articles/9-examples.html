@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>9-examples • dissmapr</title>
+<title>Compute orderwise examples • dissmapr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="9-examples">
+<meta property="og:title" content="Compute orderwise examples">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -43,16 +43,16 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Articles</h6></li>
-    <li><a class="dropdown-item" href="../articles/1-setup.html">1-setup</a></li>
-    <li><a class="dropdown-item" href="../articles/2-grid.html">2-grid</a></li>
-    <li><a class="dropdown-item" href="../articles/3-enviro.html">3-enviro</a></li>
-    <li><a class="dropdown-item" href="../articles/4-zeta.html">4-zeta</a></li>
-    <li><a class="dropdown-item" href="../articles/5-zeta-workflow.html">5-zeta-workflow</a></li>
-    <li><a class="dropdown-item" href="../articles/6-predict.html">6-predict</a></li>
-    <li><a class="dropdown-item" href="../articles/7-bioregion.html">7-bioregion</a></li>
-    <li><a class="dropdown-item" href="../articles/8-change.html">8-change</a></li>
-    <li><a class="dropdown-item" href="../articles/9-examples.html">9-examples</a></li>
-    <li><a class="dropdown-item" href="../articles/10-zenodo.html">10-zenodo</a></li>
+    <li><a class="dropdown-item" href="../articles/1-setup.html">Getting started</a></li>
+    <li><a class="dropdown-item" href="../articles/2-grid.html">User-defined grid</a></li>
+    <li><a class="dropdown-item" href="../articles/3-enviro.html">Environmental data for sites</a></li>
+    <li><a class="dropdown-item" href="../articles/4-zeta.html">Zeta diversity</a></li>
+    <li><a class="dropdown-item" href="../articles/5-zeta-workflow.html">Zeta-MSGDM with dissmapr</a></li>
+    <li><a class="dropdown-item" href="../articles/6-predict.html">Predict community turnover</a></li>
+    <li><a class="dropdown-item" href="../articles/7-bioregion.html">Map bioregions</a></li>
+    <li><a class="dropdown-item" href="../articles/8-change.html">Map bioregion change</a></li>
+    <li><a class="dropdown-item" href="../articles/9-examples.html">Compute orderwise examples</a></li>
+    <li><a class="dropdown-item" href="../articles/10-zenodo.html">Zenodo basics</a></li>
   </ul>
 </li>
       </ul>
@@ -74,7 +74,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>9-examples</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Compute orderwise examples</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/macSands/dissmapr/blob/HEAD/vignettes/9-examples.Rmd" class="external-link"><code>vignettes/9-examples.Rmd</code></a></small>
@@ -131,11 +131,11 @@ species richness across specified orders.</p>
 <span>  order <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 1.37 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 6.06 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 31.85 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 0.25 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 1 minutes and 0.26 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 1.33 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 5.61 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 28.55 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 0 minutes and 55.09 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 0 minutes and 55.09 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rich_o1234</span><span class="op">)</span></span>
@@ -237,11 +237,11 @@ a table summarizing species turnover across the specified orders.</p>
 <span>  order <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 8.76 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 43.44 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 20.13 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 5: 2 minutes and 1.25 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 2 minutes and 1.27 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 7.83 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 49.28 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 27.67 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 5: 2 minutes and 10.29 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 2 minutes and 10.30 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">turn_o2345</span><span class="op">)</span></span>

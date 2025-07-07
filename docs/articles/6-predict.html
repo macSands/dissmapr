@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>6-predict • dissmapr</title>
+<title>Predict community turnover • dissmapr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="6-predict">
+<meta property="og:title" content="Predict community turnover">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -43,16 +43,16 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Articles</h6></li>
-    <li><a class="dropdown-item" href="../articles/1-setup.html">1-setup</a></li>
-    <li><a class="dropdown-item" href="../articles/2-grid.html">2-grid</a></li>
-    <li><a class="dropdown-item" href="../articles/3-enviro.html">3-enviro</a></li>
-    <li><a class="dropdown-item" href="../articles/4-zeta.html">4-zeta</a></li>
-    <li><a class="dropdown-item" href="../articles/5-zeta-workflow.html">5-zeta-workflow</a></li>
-    <li><a class="dropdown-item" href="../articles/6-predict.html">6-predict</a></li>
-    <li><a class="dropdown-item" href="../articles/7-bioregion.html">7-bioregion</a></li>
-    <li><a class="dropdown-item" href="../articles/8-change.html">8-change</a></li>
-    <li><a class="dropdown-item" href="../articles/9-examples.html">9-examples</a></li>
-    <li><a class="dropdown-item" href="../articles/10-zenodo.html">10-zenodo</a></li>
+    <li><a class="dropdown-item" href="../articles/1-setup.html">Getting started</a></li>
+    <li><a class="dropdown-item" href="../articles/2-grid.html">User-defined grid</a></li>
+    <li><a class="dropdown-item" href="../articles/3-enviro.html">Environmental data for sites</a></li>
+    <li><a class="dropdown-item" href="../articles/4-zeta.html">Zeta diversity</a></li>
+    <li><a class="dropdown-item" href="../articles/5-zeta-workflow.html">Zeta-MSGDM with dissmapr</a></li>
+    <li><a class="dropdown-item" href="../articles/6-predict.html">Predict community turnover</a></li>
+    <li><a class="dropdown-item" href="../articles/7-bioregion.html">Map bioregions</a></li>
+    <li><a class="dropdown-item" href="../articles/8-change.html">Map bioregion change</a></li>
+    <li><a class="dropdown-item" href="../articles/9-examples.html">Compute orderwise examples</a></li>
+    <li><a class="dropdown-item" href="../articles/10-zenodo.html">Zenodo basics</a></li>
   </ul>
 </li>
       </ul>
@@ -74,7 +74,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>6-predict</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Predict community turnover</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/macSands/dissmapr/blob/HEAD/vignettes/6-predict.Rmd" class="external-link"><code>vignettes/6-predict.Rmd</code></a></small>
@@ -146,13 +146,13 @@ a quick peek at the key model outputs.</p>
 <span><span class="co">#&gt;  [9] "richness"         "pred_zeta"        "pred_zetaExp"     "log_pred_zetaExp"</span></span>
 <span><span class="co">#&gt; [13] "centroid_lon"     "centroid_lat"</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">predictors_df</span><span class="op">[</span>,<span class="fl">5</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    rain_dry rain_warmQ    obs_sum distance richness   pred_zeta pred_zetaExp</span></span>
-<span><span class="co">#&gt; 1 -1.171906 -0.2222718 -0.2926985 903.0437        2 0.016310251    0.5040775</span></span>
-<span><span class="co">#&gt; 2 -1.171906 -0.1743223 -0.2340532 915.4655       31 0.023229642    0.5058071</span></span>
-<span><span class="co">#&gt; 3 -1.051673  0.1852987 -0.2818954 931.1100       10 0.014752626    0.5036881</span></span>
-<span><span class="co">#&gt; 4 -1.171906  0.2572229 -0.2865253 949.9390        7 0.012252222    0.5030630</span></span>
-<span><span class="co">#&gt; 5 -1.051673  0.4889786 -0.2880686 971.8672        6 0.011076571    0.5027691</span></span>
-<span><span class="co">#&gt; 6 -1.051673  0.5449196 -0.1321955 996.7561       76 0.009272238    0.5023180</span></span></code></pre></div>
+<span><span class="co">#&gt;    rain_dry  rain_warmQ    obs_sum distance richness  pred_zeta pred_zetaExp</span></span>
+<span><span class="co">#&gt; 1 -1.227648 -0.17604221 -0.2926985 903.0437        2 0.01930100    0.5048251</span></span>
+<span><span class="co">#&gt; 2 -1.223151 -0.11642238 -0.2340532 915.4655       31 0.02632131    0.5065799</span></span>
+<span><span class="co">#&gt; 3 -1.154108  0.06618959 -0.2818954 931.1100       10 0.01570100    0.5039252</span></span>
+<span><span class="co">#&gt; 4 -1.149209  0.38933728 -0.2865253 949.9390        7 0.01506016    0.5037650</span></span>
+<span><span class="co">#&gt; 5 -1.080356  0.62285852 -0.2880686 971.8672        6 0.01472191    0.5036804</span></span>
+<span><span class="co">#&gt; 6 -1.048567  0.57126837 -0.1321955 996.7561       76 0.01438702    0.5035967</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level4">
@@ -167,31 +167,56 @@ temperature increments and rainfall multipliers, then bundle them into a
 named list of four environmental data frames:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1. Identify species &amp; env columns</span></span>
-<span><span class="va">spp_cols</span>  <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">grid_spp_pa</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co"># spp_cols  = names(grid_spp_pa)[-(1:7)]</span></span>
 <span><span class="va">all_vars</span>  <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">env_vars_reduced</span><span class="op">)</span></span>
 <span><span class="va">temp_vars</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"^temp"</span>, <span class="va">all_vars</span>, value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">rain_vars</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"^rain"</span>, <span class="va">all_vars</span>, value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">iso_vars</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"^iso"</span>, <span class="va">all_vars</span>, value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">obs_var</span> <span class="op">=</span> <span class="st">"obs_sum"</span></span>
 <span></span>
 <span><span class="co"># 2. Extreme future shifts</span></span>
-<span><span class="va">temp_shifts</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2030"</span><span class="op">=</span><span class="fl">20</span>, <span class="st">"2040"</span><span class="op">=</span><span class="fl">40</span>, <span class="st">"2050"</span><span class="op">=</span><span class="fl">60</span><span class="op">)</span></span>
-<span><span class="va">rain_factors</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2030"</span><span class="op">=</span><span class="fl">10</span>, <span class="st">"2040"</span><span class="op">=</span><span class="fl">20</span>, <span class="st">"2050"</span><span class="op">=</span><span class="fl">30</span><span class="op">)</span></span>
+<span><span class="va">horizons</span>     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2030"</span>,<span class="st">"2040"</span>,<span class="st">"2050"</span><span class="op">)</span></span>
+<span><span class="va">mean_delta</span>   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  temp  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2030"</span><span class="op">=</span> <span class="op">+</span><span class="fl">2</span>,  <span class="st">"2040"</span><span class="op">=</span> <span class="op">+</span><span class="fl">4</span>,  <span class="st">"2050"</span><span class="op">=</span> <span class="op">+</span><span class="fl">6</span><span class="op">)</span>,</span>
+<span>  iso   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2030"</span><span class="op">=</span> <span class="op">+</span><span class="fl">0.5</span>,<span class="st">"2040"</span><span class="op">=</span> <span class="op">+</span><span class="fl">1.0</span>,<span class="st">"2050"</span><span class="op">=</span> <span class="op">+</span><span class="fl">1.5</span><span class="op">)</span>,</span>
+<span>  rain  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2030"</span><span class="op">=</span> <span class="fl">0.9</span>, <span class="st">"2040"</span><span class="op">=</span> <span class="fl">0.8</span>, <span class="st">"2050"</span><span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>,</span>
+<span>  effort<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2030"</span><span class="op">=</span> <span class="fl">1.3</span>, <span class="st">"2040"</span><span class="op">=</span> <span class="fl">1.6</span>, <span class="st">"2050"</span><span class="op">=</span> <span class="fl">2.0</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">exagg_factor</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2030"</span><span class="op">=</span><span class="fl">1.5</span>, <span class="st">"2040"</span><span class="op">=</span><span class="fl">2.0</span>, <span class="st">"2050"</span><span class="op">=</span><span class="fl">2.5</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 3. Save original scaling parameters</span></span>
-<span><span class="va">sc_params</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">env_vars_reduced</span><span class="op">)</span></span>
-<span><span class="va">mu</span>    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">sc_params</span>, <span class="st">"scaled:center"</span><span class="op">)</span></span>
-<span><span class="va">sigma</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">sc_params</span>, <span class="st">"scaled:scale"</span><span class="op">)</span></span>
+<span><span class="co"># 3) helper to amplify deviation from the mean</span></span>
+<span><span class="va">amplify</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">factor</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">m</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">m</span> <span class="op">+</span> <span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="va">m</span><span class="op">)</span> <span class="op">*</span> <span class="va">factor</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># # 4. Save original scaling parameters</span></span>
+<span><span class="co"># sc_params = scale(env_vars_reduced)</span></span>
+<span><span class="co"># mu    = attr(sc_params, "scaled:center")</span></span>
+<span><span class="co"># sigma = attr(sc_params, "scaled:scale")</span></span>
 <span></span>
 <span><span class="co"># 4. Build list of future env tibbles</span></span>
-<span><span class="va">env_futures</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temp_shifts</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">yr</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">df</span> <span class="op">=</span> <span class="va">env_vars_reduced</span></span>
-<span>  <span class="va">df</span><span class="op">[</span><span class="va">temp_vars</span><span class="op">]</span> <span class="op">=</span> <span class="va">df</span><span class="op">[</span><span class="va">temp_vars</span><span class="op">]</span> <span class="op">+</span> <span class="va">temp_shifts</span><span class="op">[</span><span class="va">yr</span><span class="op">]</span></span>
-<span>  <span class="va">df</span><span class="op">[</span><span class="va">rain_vars</span><span class="op">]</span> <span class="op">=</span> <span class="va">df</span><span class="op">[</span><span class="va">rain_vars</span><span class="op">]</span> <span class="op">*</span> <span class="va">rain_factors</span><span class="op">[</span><span class="va">yr</span><span class="op">]</span></span>
-<span>  <span class="va">df</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">env_futures</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temp_shifts</span><span class="op">)</span></span>
+<span><span class="va">env_scenarios</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>current <span class="op">=</span> <span class="va">env_vars_reduced</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://mclust-org.github.io/mclust/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">horizons</span>, <span class="kw">function</span><span class="op">(</span><span class="va">yr</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">df</span> <span class="op">=</span> <span class="va">env_vars_reduced</span></span>
+<span>    <span class="co"># mean shifts</span></span>
+<span>    <span class="va">df</span><span class="op">[</span><span class="va">temp_vars</span><span class="op">]</span> <span class="op">=</span> <span class="va">df</span><span class="op">[</span><span class="va">temp_vars</span><span class="op">]</span> <span class="op">+</span> <span class="va">mean_delta</span><span class="op">$</span><span class="va">temp</span><span class="op">[</span><span class="va">yr</span><span class="op">]</span></span>
+<span>    <span class="va">df</span><span class="op">[</span><span class="va">iso_vars</span><span class="op">]</span>  <span class="op">=</span> <span class="va">df</span><span class="op">[</span><span class="va">iso_vars</span><span class="op">]</span>  <span class="op">+</span> <span class="va">mean_delta</span><span class="op">$</span><span class="va">iso</span><span class="op">[</span><span class="va">yr</span><span class="op">]</span></span>
+<span>    <span class="va">df</span><span class="op">[</span><span class="va">rain_vars</span><span class="op">]</span> <span class="op">=</span> <span class="va">df</span><span class="op">[</span><span class="va">rain_vars</span><span class="op">]</span> <span class="op">*</span> <span class="va">mean_delta</span><span class="op">$</span><span class="va">rain</span><span class="op">[</span><span class="va">yr</span><span class="op">]</span></span>
+<span>    <span class="va">df</span><span class="op">[[</span><span class="va">obs_var</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="va">df</span><span class="op">[[</span><span class="va">obs_var</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="va">mean_delta</span><span class="op">$</span><span class="va">effort</span><span class="op">[</span><span class="va">yr</span><span class="op">]</span></span>
+<span>    <span class="co"># amplify spatial variation</span></span>
+<span>    <span class="va">df</span><span class="op">[</span><span class="va">temp_vars</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map_dfr.html" class="external-link">map_dfc</a></span><span class="op">(</span><span class="va">df</span><span class="op">[</span><span class="va">temp_vars</span><span class="op">]</span>, <span class="va">amplify</span>, factor <span class="op">=</span> <span class="va">exagg_factor</span><span class="op">[</span><span class="va">yr</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="va">df</span><span class="op">[</span><span class="va">iso_vars</span><span class="op">]</span>  <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map_dfr.html" class="external-link">map_dfc</a></span><span class="op">(</span><span class="va">df</span><span class="op">[</span><span class="va">iso_vars</span><span class="op">]</span>,  <span class="va">amplify</span>, factor <span class="op">=</span> <span class="va">exagg_factor</span><span class="op">[</span><span class="va">yr</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="co"># clamp obs_sum</span></span>
+<span>    <span class="va">df</span><span class="op">[[</span><span class="va">obs_var</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="va">df</span><span class="op">[[</span><span class="va">obs_var</span><span class="op">]</span><span class="op">]</span>, <span class="fl">50</span><span class="op">)</span>, <span class="fl">8000</span><span class="op">)</span></span>
+<span>    <span class="va">df</span></span>
+<span>  <span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/set_names.html" class="external-link">set_names</a></span><span class="op">(</span><span class="va">horizons</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># names(env_scenarios) = names(horizons)</span></span>
 <span></span>
 <span><span class="co"># 5. Prepend current conditions</span></span>
-<span><span class="va">env_scenarios</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>current <span class="op">=</span> <span class="va">env_vars_reduced</span><span class="op">)</span>, <span class="va">env_futures</span><span class="op">)</span></span>
+<span><span class="co"># env_scenarios = c(list(current = env_vars_reduced), env_futures)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">env_scenarios</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 4</span></span>
 <span><span class="co">#&gt;  $ current: tibble [415 × 7] (S3: tbl_df/tbl/data.frame)</span></span>
@@ -206,38 +231,45 @@ into one tidy data frame:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">scenario_dfs</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html" class="external-link">imap</a></span><span class="op">(</span><span class="va">env_scenarios</span>, <span class="op">~</span> <span class="op">{</span></span>
-<span>  <span class="va">df_scaled</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sweep.html" class="external-link">sweep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sweep.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">.x</span>, <span class="fl">2</span>, <span class="va">mu</span>, <span class="st">"-"</span><span class="op">)</span>, <span class="fl">2</span>, <span class="va">sigma</span>, <span class="st">"/"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="../reference/predict_dissim.html">predict_dissim</a></span><span class="op">(</span></span>
-<span>    grid_spp     <span class="op">=</span> <span class="va">grid_spp_pa</span>,</span>
+<span>  <span class="va">df</span> <span class="op">=</span> <span class="fu"><a href="../reference/predict_dissim.html">predict_dissim</a></span><span class="op">(</span></span>
+<span>    grid_spp     <span class="op">=</span> <span class="va">grid_spp</span>,</span>
 <span>    species_cols <span class="op">=</span> <span class="va">spp_cols</span>,</span>
-<span>    env_vars     <span class="op">=</span> <span class="va">df_scaled</span>,</span>
+<span>    env_vars     <span class="op">=</span> <span class="va">.x</span>,</span>
 <span>    zeta_model   <span class="op">=</span> <span class="va">zeta2</span>,</span>
 <span>    grid_xy      <span class="op">=</span> <span class="va">grid_env</span>,</span>
 <span>    x_col        <span class="op">=</span> <span class="st">"centroid_lon"</span>,</span>
 <span>    y_col        <span class="op">=</span> <span class="st">"centroid_lat"</span>,</span>
-<span>    bndy_fc      <span class="op">=</span> <span class="va">rsa</span>,</span>
-<span>    show_plot    <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>    skip_scale   <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>scenario <span class="op">=</span> <span class="va">.y</span><span class="op">)</span></span>
+<span>    skip_scale   <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    show_plot    <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="va">df</span><span class="op">$</span><span class="va">scenario</span> <span class="op">=</span> <span class="va">.y</span></span>
+<span>  <span class="va">df</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">scenario_dfs</span>, max.level<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 4</span></span>
+<span><span class="co">#&gt;  $ current:'data.frame': 415 obs. of  15 variables:</span></span>
+<span><span class="co">#&gt;  $ 2030   :'data.frame': 415 obs. of  15 variables:</span></span>
+<span><span class="co">#&gt;  $ 2040   :'data.frame': 415 obs. of  15 variables:</span></span>
+<span><span class="co">#&gt;  $ 2050   :'data.frame': 415 obs. of  15 variables:</span></span>
 <span></span>
-<span><span class="va">all_preds</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">scenario_dfs</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">scenario</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"current"</span>, <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temp_shifts</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># all_preds = bind_rows(scenario_dfs) %&gt;%</span></span>
+<span><span class="co">#   mutate(scenario = factor(scenario, levels = c("current", names(temp_shifts))))</span></span>
+<span><span class="va">all_preds</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">scenario_dfs</span><span class="op">)</span> </span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_preds</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   temp_mean         iso temp_wetQ temp_dryQ  rain_dry rain_warmQ    obs_sum</span></span>
-<span><span class="co">#&gt; 1  1.730095  0.01726121  1.386855 0.5441361 -1.171906 -0.2222718 -0.2926985</span></span>
-<span><span class="co">#&gt; 2  1.683898 -0.53540287  1.471251 0.4496825 -1.171906 -0.1743223 -0.2340532</span></span>
-<span><span class="co">#&gt; 3  1.589813  0.21693689  1.234714 0.5570195 -1.051673  0.1852987 -0.2818954</span></span>
-<span><span class="co">#&gt; 4  2.185359  0.69302984  1.511219 0.9937463 -1.171906  0.2572229 -0.2865253</span></span>
-<span><span class="co">#&gt; 5  2.418605  1.23977219  1.589519 1.2042260 -1.051673  0.4889786 -0.2880686</span></span>
-<span><span class="co">#&gt; 6  2.810088  1.89130325  1.817424 1.4313345 -1.051673  0.5449196 -0.1321955</span></span>
-<span><span class="co">#&gt;   distance richness   pred_zeta pred_zetaExp log_pred_zetaExp centroid_lon</span></span>
-<span><span class="co">#&gt; 1 903.0437        2 0.016310251    0.5040775       -0.6850253        28.75</span></span>
-<span><span class="co">#&gt; 2 915.4655       31 0.023229642    0.5058071       -0.6815998        29.25</span></span>
-<span><span class="co">#&gt; 3 931.1100       10 0.014752626    0.5036881       -0.6857981        29.75</span></span>
-<span><span class="co">#&gt; 4 949.9390        7 0.012252222    0.5030630       -0.6870398        30.25</span></span>
-<span><span class="co">#&gt; 5 971.8672        6 0.011076571    0.5027691       -0.6876242        30.75</span></span>
-<span><span class="co">#&gt; 6 996.7561       76 0.009272238    0.5023180       -0.6885218        31.25</span></span>
+<span><span class="co">#&gt;   temp_mean         iso temp_wetQ temp_dryQ  rain_dry  rain_warmQ    obs_sum</span></span>
+<span><span class="co">#&gt; 1  1.841044  0.05124962  1.426512 0.5759178 -1.227648 -0.17604221 -0.2926985</span></span>
+<span><span class="co">#&gt; 2  1.770287 -0.16040417  1.434249 0.5279913 -1.223151 -0.11642238 -0.2340532</span></span>
+<span><span class="co">#&gt; 3  1.888447  0.23118933  1.406438 0.6828768 -1.154108  0.06618959 -0.2818954</span></span>
+<span><span class="co">#&gt; 4  2.222843  0.75512585  1.510132 0.9797353 -1.149209  0.38933728 -0.2865253</span></span>
+<span><span class="co">#&gt; 5  2.424011  1.38701985  1.551582 1.1832058 -1.080356  0.62285852 -0.2880686</span></span>
+<span><span class="co">#&gt; 6  2.809129  1.80976342  1.766238 1.4127484 -1.048567  0.57126837 -0.1321955</span></span>
+<span><span class="co">#&gt;   distance richness  pred_zeta pred_zetaExp log_pred_zetaExp centroid_lon</span></span>
+<span><span class="co">#&gt; 1 903.0437        3 0.01930100    0.5048251       -0.6835432        28.75</span></span>
+<span><span class="co">#&gt; 2 915.4655       41 0.02632131    0.5065799       -0.6800731        29.25</span></span>
+<span><span class="co">#&gt; 3 931.1100       10 0.01570100    0.5039252       -0.6853275        29.75</span></span>
+<span><span class="co">#&gt; 4 949.9390        7 0.01506016    0.5037650       -0.6856454        30.25</span></span>
+<span><span class="co">#&gt; 5 971.8672        6 0.01472191    0.5036804       -0.6858133        30.75</span></span>
+<span><span class="co">#&gt; 6 996.7561      107 0.01438702    0.5035967       -0.6859795        31.25</span></span>
 <span><span class="co">#&gt;   centroid_lat scenario</span></span>
 <span><span class="co">#&gt; 1    -22.25004  current</span></span>
 <span><span class="co">#&gt; 2    -22.25004  current</span></span>

@@ -46,7 +46,7 @@ We set a random seed for reproducibility (so Monte Carlo sampling inside `predic
 # Predict current zeta diversity using `predict_dissim` with sampling effort, geographic distance and environmental variables
 # Only non-colinear environmental variables used in `zeta2` model
 set.seed(123) # set.seed to generate exactly the same random results i.e. sam=100
-# spp_cols = names(grid_spp_pa[,-(1:7)])
+spp_cols = names(grid_spp_pa[,-(1:7)])
 predictors_df   = predict_dissim(
   grid_spp      = grid_spp_pa,
   species_cols  = spp_cols,
@@ -81,6 +81,7 @@ First, we define and center-scale each future by adding large temperature increm
 all_vars  = names(env_vars_reduced)
 temp_vars = grep("^temp", all_vars, value = TRUE)
 rain_vars = grep("^rain", all_vars, value = TRUE)
+iso_vars = grep("^iso", all_vars, value = TRUE)
 obs_var = "obs_sum"
 
 # 2. Extreme future shifts

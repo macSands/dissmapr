@@ -46,16 +46,16 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Articles</h6></li>
-    <li><a class="dropdown-item" href="articles/1-setup.html">1-setup</a></li>
-    <li><a class="dropdown-item" href="articles/2-grid.html">2-grid</a></li>
-    <li><a class="dropdown-item" href="articles/3-enviro.html">3-enviro</a></li>
-    <li><a class="dropdown-item" href="articles/4-zeta.html">4-zeta</a></li>
-    <li><a class="dropdown-item" href="articles/5-zeta-workflow.html">5-zeta-workflow</a></li>
-    <li><a class="dropdown-item" href="articles/6-predict.html">6-predict</a></li>
-    <li><a class="dropdown-item" href="articles/7-bioregion.html">7-bioregion</a></li>
-    <li><a class="dropdown-item" href="articles/8-change.html">8-change</a></li>
-    <li><a class="dropdown-item" href="articles/9-examples.html">9-examples</a></li>
-    <li><a class="dropdown-item" href="articles/10-zenodo.html">10-zenodo</a></li>
+    <li><a class="dropdown-item" href="articles/1-setup.html">Getting started</a></li>
+    <li><a class="dropdown-item" href="articles/2-grid.html">User-defined grid</a></li>
+    <li><a class="dropdown-item" href="articles/3-enviro.html">Environmental data for sites</a></li>
+    <li><a class="dropdown-item" href="articles/4-zeta.html">Zeta diversity</a></li>
+    <li><a class="dropdown-item" href="articles/5-zeta-workflow.html">Zeta-MSGDM with dissmapr</a></li>
+    <li><a class="dropdown-item" href="articles/6-predict.html">Predict community turnover</a></li>
+    <li><a class="dropdown-item" href="articles/7-bioregion.html">Map bioregions</a></li>
+    <li><a class="dropdown-item" href="articles/8-change.html">Map bioregion change</a></li>
+    <li><a class="dropdown-item" href="articles/9-examples.html">Compute orderwise examples</a></li>
+    <li><a class="dropdown-item" href="articles/10-zenodo.html">Zenodo basics</a></li>
   </ul>
 </li>
       </ul>
@@ -409,6 +409,7 @@
 <span><span class="co">#&gt;  $ grid_spp_pa: tibble [415 × 2,874] (S3: tbl_df/tbl/data.frame)</span></span>
 <span></span>
 <span><span class="co"># (Optional) Promote list items to named objects </span></span>
+<span><span class="va">grid_r</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_r</span><span class="op">$</span><span class="va">grid_id</span>    <span class="co"># raster</span></span>
 <span><span class="va">grid_sf</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_sf</span>   <span class="co"># polygons for mapping or joins</span></span>
 <span><span class="va">grid_spp</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_spp</span> <span class="co"># tabular summary per cell</span></span>
 <span><span class="va">grid_spp_pa</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_spp_pa</span> <span class="co"># presence/absence summary</span></span>
@@ -554,6 +555,7 @@ Fetch the 5-arc-min (~10 km) bioclim stack via <code>{geodata}</code> package an
 <span>  source     <span class="op">=</span> <span class="st">"geodata"</span>,                 <span class="co"># WorldClim/SoilGrids interface</span></span>
 <span>  var        <span class="op">=</span> <span class="st">"bio"</span>,                     <span class="co"># bioclim variable set</span></span>
 <span>  res        <span class="op">=</span> <span class="fl">5</span>,                         <span class="co"># 5-arc-min ≈ 10 km</span></span>
+<span>  grid_r     <span class="op">=</span> <span class="va">grid_r</span>,                      <span class="co"># To set resampling resolution, if necessary</span></span>
 <span>  path       <span class="op">=</span> <span class="va">data_path</span>,</span>
 <span>  sp_cols    <span class="op">=</span> <span class="fl">7</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">grid_spp</span><span class="op">)</span>,          <span class="co"># ignore species columns</span></span>
 <span>  ext_cols   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"obs_sum"</span>, <span class="st">"spp_rich"</span><span class="op">)</span>   <span class="co"># carry effort &amp; richness through</span></span>
@@ -584,25 +586,25 @@ Fetch the 5-arc-min (~10 km) bioclim stack via <code>{geodata}</code> package an
 <span><span class="co"># Quick checks </span></span>
 <span><span class="va">env_r</span></span>
 <span><span class="co">#&gt; class       : SpatRaster </span></span>
-<span><span class="co">#&gt; size        : 154, 195, 19  (nrow, ncol, nlyr)</span></span>
-<span><span class="co">#&gt; resolution  : 0.08333333, 0.08333333  (x, y)</span></span>
-<span><span class="co">#&gt; extent      : 16.66667, 32.91667, -34.91667, -22.08333  (xmin, xmax, ymin, ymax)</span></span>
+<span><span class="co">#&gt; size        : 30, 37, 19  (nrow, ncol, nlyr)</span></span>
+<span><span class="co">#&gt; resolution  : 0.5, 0.5  (x, y)</span></span>
+<span><span class="co">#&gt; extent      : 15.5, 34, -36, -21  (xmin, xmax, ymin, ymax)</span></span>
 <span><span class="co">#&gt; coord. ref. : lon/lat WGS 84 (EPSG:4326) </span></span>
 <span><span class="co">#&gt; source(s)   : memory</span></span>
-<span><span class="co">#&gt; names       : temp_mean,       mdr,      iso, temp_sea, temp_max, temp_min, ... </span></span>
-<span><span class="co">#&gt; min values  :  5.158916,  5.891667, 45.32084, 143.0743,   14.832,   -6.284, ... </span></span>
-<span><span class="co">#&gt; max values  : 24.796417, 18.659584, 67.09737, 701.3335,   38.518,   13.800, ...</span></span>
+<span><span class="co">#&gt; names       : temp_mean,       mdr,      iso, temp_sea, temp_max,  temp_min, ... </span></span>
+<span><span class="co">#&gt; min values  :  9.779773,  8.977007, 47.10606, 228.9986, 19.92147, -4.110302, ... </span></span>
+<span><span class="co">#&gt; max values  : 24.406433, 18.352308, 64.92966, 653.4167, 36.19497, 12.005042, ...</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">env_df</span><span class="op">)</span>; <span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">env_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 415  24</span></span>
 <span><span class="co">#&gt; # A tibble: 6 × 24</span></span>
 <span><span class="co">#&gt;   grid_id centroid_lon centroid_lat bio01 bio02 bio03 bio04 bio05 bio06 bio07</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 1026            28.8        -22.3  21.9  14.5  55.7  427.  32.4  6.44  26.0</span></span>
-<span><span class="co">#&gt; 2 1027            29.2        -22.3  21.8  14.6  53.9  453.  33.0  5.87  27.1</span></span>
-<span><span class="co">#&gt; 3 1028            29.7        -22.3  21.5  14.0  56.3  393.  31.7  6.80  24.9</span></span>
-<span><span class="co">#&gt; 4 1029            30.3        -22.3  23.0  13.7  57.8  358.  32.8  9.14  23.7</span></span>
-<span><span class="co">#&gt; 5 1030            30.8        -22.3  23.6  13.8  59.6  334.  33.5 10.3   23.2</span></span>
-<span><span class="co">#&gt; 6 1031            31.3        -22.3  24.6  14.6  61.7  332.  34.8 11.0   23.8</span></span>
+<span><span class="co">#&gt; 1 1026            28.8        -22.3  21.9  14.5  55.8  425.  32.5  6.44  26.1</span></span>
+<span><span class="co">#&gt; 2 1027            29.2        -22.3  21.8  14.5  55.1  430.  32.6  6.30  26.3</span></span>
+<span><span class="co">#&gt; 3 1028            29.7        -22.3  22.0  14.2  56.3  396.  32.3  7.15  25.2</span></span>
+<span><span class="co">#&gt; 4 1029            30.3        -22.3  22.8  13.9  58.0  359.  32.7  8.79  23.9</span></span>
+<span><span class="co">#&gt; 5 1030            30.8        -22.3  23.3  13.9  60.0  332.  33.2  9.97  23.2</span></span>
+<span><span class="co">#&gt; 6 1031            31.3        -22.3  24.2  14.2  61.3  326.  34.2 10.9   23.2</span></span>
 <span><span class="co">#&gt; # ℹ 14 more variables: bio08 &lt;dbl&gt;, bio09 &lt;dbl&gt;, bio10 &lt;dbl&gt;, bio11 &lt;dbl&gt;,</span></span>
 <span><span class="co">#&gt; #   bio12 &lt;dbl&gt;, bio13 &lt;dbl&gt;, bio14 &lt;dbl&gt;, bio15 &lt;dbl&gt;, bio16 &lt;dbl&gt;,</span></span>
 <span><span class="co">#&gt; #   bio17 &lt;dbl&gt;, bio18 &lt;dbl&gt;, bio19 &lt;dbl&gt;, obs_sum &lt;dbl&gt;, spp_rich &lt;dbl&gt;</span></span></code></pre></div>
@@ -661,12 +663,12 @@ Fetch the 5-arc-min (~10 km) bioclim stack via <code>{geodata}</code> package an
 <span><span class="co">#&gt; # A tibble: 6 × 6</span></span>
 <span><span class="co">#&gt;   grid_id centroid_lon centroid_lat bio01 bio02 bio03</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 1026            28.8        -22.3  21.9  14.5  55.7</span></span>
-<span><span class="co">#&gt; 2 1027            29.2        -22.3  21.8  14.6  53.9</span></span>
-<span><span class="co">#&gt; 3 1028            29.7        -22.3  21.5  14.0  56.3</span></span>
-<span><span class="co">#&gt; 4 1029            30.3        -22.3  23.0  13.7  57.8</span></span>
-<span><span class="co">#&gt; 5 1030            30.8        -22.3  23.6  13.8  59.6</span></span>
-<span><span class="co">#&gt; 6 1031            31.3        -22.3  24.6  14.6  61.7</span></span>
+<span><span class="co">#&gt; 1 1026            28.8        -22.3  21.9  14.5  55.8</span></span>
+<span><span class="co">#&gt; 2 1027            29.2        -22.3  21.8  14.5  55.1</span></span>
+<span><span class="co">#&gt; 3 1028            29.7        -22.3  22.0  14.2  56.3</span></span>
+<span><span class="co">#&gt; 4 1029            30.3        -22.3  22.8  13.9  58.0</span></span>
+<span><span class="co">#&gt; 5 1030            30.8        -22.3  23.3  13.9  60.0</span></span>
+<span><span class="co">#&gt; 6 1031            31.3        -22.3  24.2  14.2  61.3</span></span>
 <span></span>
 <span><span class="co"># Quick map of mean annual temperature (√-scaled bubble size)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -704,12 +706,12 @@ Fetch the 5-arc-min (~10 km) bioclim stack via <code>{geodata}</code> package an
 <span><span class="co">#&gt; # A tibble: 6 × 24</span></span>
 <span><span class="co">#&gt;   grid_id centroid_lon centroid_lat obs_sum spp_rich bio01 bio02 bio03 bio04</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 1026            28.8        -22.3       3        2  21.9  14.5  55.7  427.</span></span>
-<span><span class="co">#&gt; 2 1027            29.2        -22.3      41       31  21.8  14.6  53.9  453.</span></span>
-<span><span class="co">#&gt; 3 1028            29.7        -22.3      10       10  21.5  14.0  56.3  393.</span></span>
-<span><span class="co">#&gt; 4 1029            30.3        -22.3       7        7  23.0  13.7  57.8  358.</span></span>
-<span><span class="co">#&gt; 5 1030            30.8        -22.3       6        6  23.6  13.8  59.6  334.</span></span>
-<span><span class="co">#&gt; 6 1031            31.3        -22.3     107       76  24.6  14.6  61.7  332.</span></span>
+<span><span class="co">#&gt; 1 1026            28.8        -22.3       3        2  21.9  14.5  55.8  425.</span></span>
+<span><span class="co">#&gt; 2 1027            29.2        -22.3      41       31  21.8  14.5  55.1  430.</span></span>
+<span><span class="co">#&gt; 3 1028            29.7        -22.3      10       10  22.0  14.2  56.3  396.</span></span>
+<span><span class="co">#&gt; 4 1029            30.3        -22.3       7        7  22.8  13.9  58.0  359.</span></span>
+<span><span class="co">#&gt; 5 1030            30.8        -22.3       6        6  23.3  13.9  60.0  332.</span></span>
+<span><span class="co">#&gt; 6 1031            31.3        -22.3     107       76  24.2  14.2  61.3  326.</span></span>
 <span><span class="co">#&gt; # ℹ 15 more variables: bio05 &lt;dbl&gt;, bio06 &lt;dbl&gt;, bio07 &lt;dbl&gt;, bio08 &lt;dbl&gt;,</span></span>
 <span><span class="co">#&gt; #   bio09 &lt;dbl&gt;, bio10 &lt;dbl&gt;, bio11 &lt;dbl&gt;, bio12 &lt;dbl&gt;, bio13 &lt;dbl&gt;,</span></span>
 <span><span class="co">#&gt; #   bio14 &lt;dbl&gt;, bio15 &lt;dbl&gt;, bio16 &lt;dbl&gt;, bio17 &lt;dbl&gt;, bio18 &lt;dbl&gt;,</span></span>
@@ -782,16 +784,16 @@ Fetch the 5-arc-min (~10 km) bioclim stack via <code>{geodata}</code> package an
 <span><span class="co"># Run the filter and compare dimensions</span></span>
 <span><span class="co"># Filter environmental predictors for |r| &gt; 0.70</span></span>
 <span><span class="va">env_vars_reduced</span> <span class="op">=</span> <span class="fu"><a href="reference/rm_correlated.html">rm_correlated</a></span><span class="op">(</span></span>
-<span>  data       <span class="op">=</span> <span class="va">env_df</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span><span class="op">:</span><span class="fl">24</span><span class="op">)</span><span class="op">]</span>,  <span class="co"># drop ID + coord columns</span></span>
+<span>  data       <span class="op">=</span> <span class="va">env_df</span><span class="op">[</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">23</span><span class="op">]</span>,  <span class="co"># drop ID + coord columns</span></span>
 <span>  cols       <span class="op">=</span> <span class="cn">NULL</span>,                  <span class="co"># infer all numeric cols</span></span>
 <span>  threshold  <span class="op">=</span> <span class="fl">0.70</span>,</span>
 <span>  plot       <span class="op">=</span> <span class="cn">TRUE</span>                   <span class="co"># show heat-map of retained vars</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-var-vif-1.png" width="100%"></p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co">#&gt; Variables removed due to high correlation:</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co">#&gt;  [1] "temp_range" "temp_sea"   "temp_max"   "rain_mean"  "rain_dryQ" </span></span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt;  [6] "temp_min"   "temp_warmQ" "temp_coldQ" "rain_wetQ"  "rain_wet"  </span></span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#&gt; [11] "rain_coldQ" "rain_sea"   "spp_rich"  </span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co">#&gt;  [1] "temp_range" "mdr"        "temp_sea"   "temp_max"   "rain_mean" </span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt;  [6] "rain_dryQ"  "temp_warmQ" "temp_min"   "temp_coldQ" "rain_coldQ"</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#&gt; [11] "rain_wetQ"  "rain_wet"   "rain_sea"  </span></span>
 <span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co">#&gt; Variables retained:</span></span>
 <span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; [1] "temp_mean"  "iso"        "temp_wetQ"  "temp_dryQ"  "rain_dry"  </span></span>
@@ -954,14 +956,14 @@ For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.</li
 <p>The fitted model (<code>zeta2</code>) contains partial I-splines for every predictor (note: higher splines imply stronger turnover per unit change).</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">264</span><span class="op">)</span></span>
 <span><span class="va">zeta2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.msgdm.html" class="external-link">Zeta.msgdm</a></span><span class="op">(</span></span>
-<span>  <span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">]</span>,                            <span class="co"># species matrix (rows = sites, cols = spp)</span></span>
+<span>  <span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">]</span>,                            <span class="co"># species matrix (rows=sites, cols=spp)</span></span>
 <span>  <span class="va">env_vars_reduced</span>,                                <span class="co"># decorrelated environmental variables</span></span>
 <span>  <span class="co"># env_vars_reduced[,-7],                         # without sampling effort included</span></span>
 <span>  <span class="va">grid_env</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span><span class="op">]</span>,   <span class="co"># longitude &amp; latitude (°)</span></span>
 <span>  <span class="co"># grid_env[, c("x_aea", "y_aea")],               # longitude &amp; latitude (meters)</span></span>
-<span>  sam           <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  sam           <span class="op">=</span> <span class="fl">2000</span>,</span>
 <span>  order         <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  distance.type <span class="op">=</span> <span class="st">"Euclidean"</span>,</span>
 <span>  normalize     <span class="op">=</span> <span class="st">"Jaccard"</span>,</span>
@@ -1000,7 +1002,7 @@ For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.</li
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Deviance explained summary results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">zeta2</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">deviance</span><span class="op">/</span><span class="va">null.deviance</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; [1] 0.3006643</span></span>
+<span><span class="co">#&gt; [1] 0.2938658</span></span>
 <span><span class="co"># [1] 0.3733073</span></span>
 <span><span class="co"># 0.3733073 means that approximately 37% of the variability in the response</span></span>
 <span><span class="co"># variable is explained by your model. This is relatively low, suggesting that the</span></span>
@@ -1015,40 +1017,40 @@ For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.</li
 <span><span class="co">#&gt;     cons.inter = cons.inter)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)   </span></span>
-<span><span class="co">#&gt; (Intercept) -1.75622    0.73280  -2.397   0.0165 * </span></span>
-<span><span class="co">#&gt; temp_mean1   0.00000    5.35410   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_mean2  -0.12901    1.80366  -0.072   0.9430   </span></span>
-<span><span class="co">#&gt; temp_mean3   0.00000    2.45052   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso1        -0.12769    1.82815  -0.070   0.9443   </span></span>
-<span><span class="co">#&gt; iso2         0.00000    1.32845   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso3         0.00000    1.84405   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ1   0.00000    1.46571   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ2  -0.21001    1.24872  -0.168   0.8664   </span></span>
-<span><span class="co">#&gt; temp_wetQ3  -0.35297    1.96909  -0.179   0.8577   </span></span>
-<span><span class="co">#&gt; temp_dryQ1   0.00000    4.60011   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_dryQ2  -0.28917    1.52155  -0.190   0.8493   </span></span>
-<span><span class="co">#&gt; temp_dryQ3   0.00000    1.64760   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_dry1   -0.08475    1.08271  -0.078   0.9376   </span></span>
-<span><span class="co">#&gt; rain_dry2   -0.22911    1.22210  -0.187   0.8513   </span></span>
-<span><span class="co">#&gt; rain_dry3    0.00000    1.61694   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_warmQ1 -0.38844    1.16271  -0.334   0.7383   </span></span>
-<span><span class="co">#&gt; rain_warmQ2 -0.18553    1.50201  -0.124   0.9017   </span></span>
-<span><span class="co">#&gt; rain_warmQ3 -0.34562    2.29405  -0.151   0.8802   </span></span>
-<span><span class="co">#&gt; obs_sum1    -2.12828    0.66640  -3.194   0.0014 **</span></span>
-<span><span class="co">#&gt; obs_sum2    -0.11889    2.16925  -0.055   0.9563   </span></span>
-<span><span class="co">#&gt; obs_sum3     0.00000    3.25547   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; distance1   -0.52361    1.23063  -0.425   0.6705   </span></span>
-<span><span class="co">#&gt; distance2   -0.29026    1.57052  -0.185   0.8534   </span></span>
-<span><span class="co">#&gt; distance3   -0.14665    2.42153  -0.061   0.9517   </span></span>
+<span><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span><span class="co">#&gt; (Intercept) -2.09927    0.57679  -3.640 0.000273 ***</span></span>
+<span><span class="co">#&gt; temp_mean1   0.00000    2.15557   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_mean2  -0.24807    1.08178  -0.229 0.818623    </span></span>
+<span><span class="co">#&gt; temp_mean3   0.00000    1.60213   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; iso1        -0.30889    1.54849  -0.199 0.841888    </span></span>
+<span><span class="co">#&gt; iso2         0.00000    0.89723   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; iso3         0.00000    1.32413   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_wetQ1   0.00000    1.26557   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_wetQ2  -0.26509    0.97371  -0.272 0.785433    </span></span>
+<span><span class="co">#&gt; temp_wetQ3   0.00000    1.39019   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_dryQ1  -0.19613    1.76387  -0.111 0.911462    </span></span>
+<span><span class="co">#&gt; temp_dryQ2  -0.09067    0.96817  -0.094 0.925383    </span></span>
+<span><span class="co">#&gt; temp_dryQ3   0.00000    1.26689   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_dry1   -0.42846    0.76701  -0.559 0.576429    </span></span>
+<span><span class="co">#&gt; rain_dry2   -0.04003    0.87903  -0.046 0.963674    </span></span>
+<span><span class="co">#&gt; rain_dry3    0.00000    1.28032   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_warmQ1 -0.18795    0.93470  -0.201 0.840634    </span></span>
+<span><span class="co">#&gt; rain_warmQ2  0.00000    0.91001   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_warmQ3  0.00000    1.04710   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; obs_sum1    -2.16820    0.53186  -4.077 4.57e-05 ***</span></span>
+<span><span class="co">#&gt; obs_sum2     0.00000    1.41890   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; obs_sum3     0.00000    1.81529   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; distance1   -0.40166    0.92696  -0.433 0.664794    </span></span>
+<span><span class="co">#&gt; distance2   -0.41374    1.15223  -0.359 0.719536    </span></span>
+<span><span class="co">#&gt; distance3   -0.04255    1.50976  -0.028 0.977516    </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Null deviance: 65.233  on 999  degrees of freedom</span></span>
-<span><span class="co">#&gt; Residual deviance: 45.620  on 975  degrees of freedom</span></span>
-<span><span class="co">#&gt; AIC: 98.771</span></span>
+<span><span class="co">#&gt;     Null deviance: 112.158  on 1999  degrees of freedom</span></span>
+<span><span class="co">#&gt; Residual deviance:  79.199  on 1975  degrees of freedom</span></span>
+<span><span class="co">#&gt; AIC: 132.64</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Number of Fisher Scoring iterations: 7</span></span></code></pre></div>
 <hr>
@@ -1081,7 +1083,7 @@ For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.</li
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Deviance explained summary results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">zeta2_noEff</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">deviance</span><span class="op">/</span><span class="va">null.deviance</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; [1] 0.08242748</span></span>
+<span><span class="co">#&gt; [1] 0.08816599</span></span>
 <span><span class="co"># [1] 0.09495599</span></span>
 <span><span class="co"># 0.09495599 means that approximately 1% of the variability in the response</span></span>
 <span><span class="co"># variable is explained by your model. This is relatively low, suggesting that the</span></span>
@@ -1096,37 +1098,37 @@ For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.</li
 <span><span class="co">#&gt;     cons.inter = cons.inter)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
-<span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)   </span></span>
-<span><span class="co">#&gt; (Intercept) -2.305658   0.721582  -3.195   0.0014 **</span></span>
-<span><span class="co">#&gt; temp_mean1   0.000000   5.272991   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_mean2  -0.007174   1.832546  -0.004   0.9969   </span></span>
-<span><span class="co">#&gt; temp_mean3   0.000000   2.455489   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso1        -0.725370   1.979859  -0.366   0.7141   </span></span>
-<span><span class="co">#&gt; iso2         0.000000   1.361778   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso3         0.000000   1.855347   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ1   0.000000   1.590495   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ2  -0.171049   1.323547  -0.129   0.8972   </span></span>
-<span><span class="co">#&gt; temp_wetQ3  -0.245476   2.004934  -0.122   0.9026   </span></span>
-<span><span class="co">#&gt; temp_dryQ1   0.000000   4.616249   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_dryQ2  -0.383202   1.607839  -0.238   0.8116   </span></span>
-<span><span class="co">#&gt; temp_dryQ3   0.000000   1.705136   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_dry1   -0.393967   1.102892  -0.357   0.7209   </span></span>
-<span><span class="co">#&gt; rain_dry2   -0.100666   1.235870  -0.081   0.9351   </span></span>
-<span><span class="co">#&gt; rain_dry3    0.000000   1.648879   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_warmQ1 -0.305181   1.152039  -0.265   0.7911   </span></span>
-<span><span class="co">#&gt; rain_warmQ2 -0.282461   1.498674  -0.188   0.8505   </span></span>
-<span><span class="co">#&gt; rain_warmQ3  0.000000   2.172390   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; distance1   -0.566322   1.239954  -0.457   0.6479   </span></span>
-<span><span class="co">#&gt; distance2   -0.245610   1.595757  -0.154   0.8777   </span></span>
-<span><span class="co">#&gt; distance3    0.000000   2.453390   0.000   1.0000   </span></span>
+<span><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)   </span></span>
+<span><span class="co">#&gt; (Intercept) -2.30749    0.71576  -3.224  0.00126 **</span></span>
+<span><span class="co">#&gt; temp_mean1   0.00000    2.72985   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; temp_mean2  -0.21672    1.53696  -0.141  0.88787   </span></span>
+<span><span class="co">#&gt; temp_mean3   0.00000    2.36184   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; iso1        -0.64639    2.07603  -0.311  0.75553   </span></span>
+<span><span class="co">#&gt; iso2        -0.01169    1.34429  -0.009  0.99306   </span></span>
+<span><span class="co">#&gt; iso3         0.00000    1.69884   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; temp_wetQ1   0.00000    1.60974   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; temp_wetQ2  -0.05815    1.34254  -0.043  0.96545   </span></span>
+<span><span class="co">#&gt; temp_wetQ3  -0.27615    1.87980  -0.147  0.88321   </span></span>
+<span><span class="co">#&gt; temp_dryQ1   0.00000    2.14957   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; temp_dryQ2  -0.44304    1.37079  -0.323  0.74654   </span></span>
+<span><span class="co">#&gt; temp_dryQ3   0.00000    1.72340   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; rain_dry1   -0.38117    1.08562  -0.351  0.72550   </span></span>
+<span><span class="co">#&gt; rain_dry2   -0.16497    1.26607  -0.130  0.89633   </span></span>
+<span><span class="co">#&gt; rain_dry3    0.00000    1.74241   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; rain_warmQ1 -0.36204    1.24736  -0.290  0.77163   </span></span>
+<span><span class="co">#&gt; rain_warmQ2 -0.37857    1.35207  -0.280  0.77948   </span></span>
+<span><span class="co">#&gt; rain_warmQ3  0.00000    1.55813   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; distance1   -0.45944    1.26391  -0.364  0.71622   </span></span>
+<span><span class="co">#&gt; distance2   -0.09850    1.62880  -0.060  0.95178   </span></span>
+<span><span class="co">#&gt; distance3    0.00000    2.50094   0.000  1.00000   </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Null deviance: 65.233  on 999  degrees of freedom</span></span>
-<span><span class="co">#&gt; Residual deviance: 59.856  on 978  degrees of freedom</span></span>
-<span><span class="co">#&gt; AIC: 106.99</span></span>
+<span><span class="co">#&gt; Residual deviance: 59.482  on 978  degrees of freedom</span></span>
+<span><span class="co">#&gt; AIC: 106.61</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Number of Fisher Scoring iterations: 7</span></span></code></pre></div>
 <p><strong>Without sampling effort</strong> (<code>obs_sum</code>) temperature and rainfall curves climb high and fast: climate looks like the main reason sites stop sharing species. Distance (blue line) still matters, but less than several climate variables. Furthermore, when sampling effort is removed the model only explains ≈ 8% of the deviance, compared to 37% when it’s included. In other words, after discounting chance, less than one-tenth of the variation in shared-species counts is captured by climate and distance alone, confirming that survey effort had been the primary driver of the much higher explanatory power in the full model.</p>
@@ -1182,38 +1184,38 @@ For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.</li
 <span>  env_df    <span class="op">=</span> <span class="va">env_vars_reduced</span>,</span>
 <span>  xy_df     <span class="op">=</span> <span class="va">grid_env</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>  orders    <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">6</span>,</span>
-<span>  sam       <span class="op">=</span> <span class="fl">100</span>, <span class="co"># Set really low to run fast</span></span>
+<span>  sam       <span class="op">=</span> <span class="fl">1000</span>, <span class="co"># Set really low to run fast</span></span>
 <span>  normalize <span class="op">=</span> <span class="st">"Jaccard"</span>,</span>
 <span>  reg_type  <span class="op">=</span> <span class="st">"ispline"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ispline_gdm_tab</span>, max.level<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
 <span><span class="co">#&gt;  $ zeta_gdm_list:List of 5</span></span>
-<span><span class="co">#&gt;  $ ispline_table:'data.frame':   500 obs. of  17 variables:</span></span>
+<span><span class="co">#&gt;  $ ispline_table:'data.frame':   2075 obs. of  17 variables:</span></span>
 <span></span>
 <span><span class="va">ispline_tabs_all</span> <span class="op">=</span> <span class="va">ispline_gdm_tab</span><span class="op">$</span><span class="va">ispline_table</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ispline_tabs_all</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   temp_mean        iso  temp_wetQ temp_dryQ   rain_dry rain_warmQ obs_sum</span></span>
-<span><span class="co">#&gt; 1 0.0000000 0.00000000 0.00000000 0.0000000 0.00000000 0.00000000       0</span></span>
-<span><span class="co">#&gt; 2 0.2896355 0.09884044 0.01960870 0.1041687 0.00000000 0.00877193       0</span></span>
-<span><span class="co">#&gt; 3 0.3842598 0.15863757 0.03114836 0.1160104 0.00000000 0.01096491       0</span></span>
-<span><span class="co">#&gt; 4 0.3874364 0.16800387 0.06060482 0.1609354 0.00000000 0.02412281       0</span></span>
-<span><span class="co">#&gt; 5 0.3927655 0.17380612 0.09836887 0.1903078 0.00000000 0.02631579       0</span></span>
-<span><span class="co">#&gt; 6 0.3973209 0.18186992 0.11965861 0.2000578 0.02272727 0.03070175       0</span></span>
-<span><span class="co">#&gt;     distance temp_mean_is iso_is temp_wetQ_is temp_dryQ_is rain_dry_is</span></span>
-<span><span class="co">#&gt; 1 0.03214127            0      0            0   0.02831627   0.1529665</span></span>
-<span><span class="co">#&gt; 2 0.03214127            0      0            0   0.04242732   0.1529665</span></span>
-<span><span class="co">#&gt; 3 0.04545457            0      0            0   0.04380618   0.1529665</span></span>
-<span><span class="co">#&gt; 4 0.09642380            0      0            0   0.04861907   0.1529665</span></span>
-<span><span class="co">#&gt; 5 0.09642380            0      0            0   0.05140793   0.1529665</span></span>
-<span><span class="co">#&gt; 6 0.10163911            0      0            0   0.05227112   0.2890950</span></span>
+<span><span class="co">#&gt;     temp_mean        iso  temp_wetQ   temp_dryQ    rain_dry  rain_warmQ obs_sum</span></span>
+<span><span class="co">#&gt; 1 0.000000000 0.00000000 0.00000000 0.000000000 0.000000000 0.000000000       0</span></span>
+<span><span class="co">#&gt; 2 0.007228375 0.06709322 0.01941640 0.009263111 0.002562338 0.004589507       0</span></span>
+<span><span class="co">#&gt; 3 0.094074777 0.07481225 0.03968812 0.024493796 0.012988982 0.005220299       0</span></span>
+<span><span class="co">#&gt; 4 0.164589610 0.08141449 0.06781475 0.045757693 0.013835167 0.008904397       0</span></span>
+<span><span class="co">#&gt; 5 0.207855825 0.11314906 0.07539076 0.072819805 0.015023675 0.009974474       0</span></span>
+<span><span class="co">#&gt; 6 0.216768580 0.12561452 0.09582285 0.073039544 0.015023675 0.011407648       0</span></span>
+<span><span class="co">#&gt;     distance temp_mean_is     iso_is temp_wetQ_is temp_dryQ_is rain_dry_is</span></span>
+<span><span class="co">#&gt; 1 0.02992069 0.000000e+00 0.00000000 0.000000e+00 0.000000e+00 0.000000000</span></span>
+<span><span class="co">#&gt; 2 0.02992076 2.606628e-05 0.02151319 2.988341e-05 7.596014e-05 0.001896652</span></span>
+<span><span class="co">#&gt; 3 0.02992079 4.415137e-03 0.02378903 1.248573e-04 5.311096e-04 0.009563608</span></span>
+<span><span class="co">#&gt; 4 0.02992085 1.351458e-02 0.02570297 3.645367e-04 1.853533e-03 0.010182243</span></span>
+<span><span class="co">#&gt; 5 0.04231437 2.155372e-02 0.03448283 4.505356e-04 4.694302e-03 0.011050239</span></span>
+<span><span class="co">#&gt; 6 0.04231444 2.344177e-02 0.03774149 7.278318e-04 4.722675e-03 0.011050239</span></span>
 <span><span class="co">#&gt;   rain_warmQ_is obs_sum_is distance_is zOrder</span></span>
-<span><span class="co">#&gt; 1             0          0   0.2105816 Order2</span></span>
-<span><span class="co">#&gt; 2             0          0   0.2105816 Order2</span></span>
-<span><span class="co">#&gt; 3             0          0   0.2935477 Order2</span></span>
-<span><span class="co">#&gt; 4             0          0   0.5881165 Order2</span></span>
-<span><span class="co">#&gt; 5             0          0   0.5881165 Order2</span></span>
-<span><span class="co">#&gt; 6             0          0   0.6161951 Order2</span></span></code></pre></div>
+<span><span class="co">#&gt; 1    0.00000000          0  0.06333395 Order2</span></span>
+<span><span class="co">#&gt; 2    0.01096718          0  0.06333410 Order2</span></span>
+<span><span class="co">#&gt; 3    0.01246634          0  0.06333415 Order2</span></span>
+<span><span class="co">#&gt; 4    0.02118262          0  0.06333428 Order2</span></span>
+<span><span class="co">#&gt; 5    0.02370168          0  0.08833203 Order2</span></span>
+<span><span class="co">#&gt; 6    0.02706660          0  0.08833217 Order2</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level3">
@@ -1362,13 +1364,13 @@ For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.</li
 <span><span class="co">#&gt;  [9] "richness"         "pred_zeta"        "pred_zetaExp"     "log_pred_zetaExp"</span></span>
 <span><span class="co">#&gt; [13] "centroid_lon"     "centroid_lat"</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">predictors_df</span><span class="op">[</span>,<span class="fl">5</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    rain_dry rain_warmQ    obs_sum distance richness  pred_zeta pred_zetaExp</span></span>
-<span><span class="co">#&gt; 1 -1.171906 -0.2222718 -0.2926985 903.0437        2 0.03351645    0.5083783</span></span>
-<span><span class="co">#&gt; 2 -1.171906 -0.1743223 -0.2340532 915.4655       31 0.03717936    0.5092938</span></span>
-<span><span class="co">#&gt; 3 -1.051673  0.1852987 -0.2818954 931.1100       10 0.02307935    0.5057696</span></span>
-<span><span class="co">#&gt; 4 -1.171906  0.2572229 -0.2865253 949.9390        7 0.01872533    0.5046812</span></span>
-<span><span class="co">#&gt; 5 -1.051673  0.4889786 -0.2880686 971.8672        6 0.01686626    0.5042165</span></span>
-<span><span class="co">#&gt; 6 -1.051673  0.5449196 -0.1321955 996.7561       76 0.01456113    0.5036402</span></span></code></pre></div>
+<span><span class="co">#&gt;    rain_dry  rain_warmQ    obs_sum distance richness  pred_zeta pred_zetaExp</span></span>
+<span><span class="co">#&gt; 1 -1.227648 -0.17604221 -0.2926985 903.0437        2 0.01930100    0.5048251</span></span>
+<span><span class="co">#&gt; 2 -1.223151 -0.11642238 -0.2340532 915.4655       31 0.02632131    0.5065799</span></span>
+<span><span class="co">#&gt; 3 -1.154108  0.06618959 -0.2818954 931.1100       10 0.01570100    0.5039252</span></span>
+<span><span class="co">#&gt; 4 -1.149209  0.38933728 -0.2865253 949.9390        7 0.01506016    0.5037650</span></span>
+<span><span class="co">#&gt; 5 -1.080356  0.62285852 -0.2880686 971.8672        6 0.01472191    0.5036804</span></span>
+<span><span class="co">#&gt; 6 -1.048567  0.57126837 -0.1321955 996.7561       76 0.01438702    0.5035967</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level3">
@@ -1450,36 +1452,33 @@ For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.</li
 <span><span class="co"># by(all_preds, all_preds$scenario, summary)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">all_preds</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    temp_mean            iso            temp_wetQ          temp_dryQ      </span></span>
-<span><span class="co">#&gt;  Min.   :-4.8892   Min.   :-2.7147   Min.   :-2.83685   Min.   :-2.8916  </span></span>
-<span><span class="co">#&gt;  1st Qu.: 0.2746   1st Qu.:-0.5428   1st Qu.: 0.01453   1st Qu.:-0.1552  </span></span>
-<span><span class="co">#&gt;  Median : 1.1874   Median : 0.2099   Median : 0.85086   Median : 0.5655  </span></span>
-<span><span class="co">#&gt;  Mean   : 1.2047   Mean   : 0.2344   Mean   : 0.73636   Mean   : 0.6741  </span></span>
-<span><span class="co">#&gt;  3rd Qu.: 2.1583   3rd Qu.: 0.9342   3rd Qu.: 1.54618   3rd Qu.: 1.4288  </span></span>
-<span><span class="co">#&gt;  Max.   : 5.2195   Max.   : 3.6594   Max.   : 3.29015   Max.   : 3.7682  </span></span>
+<span><span class="co">#&gt;  Min.   :-3.3102   Min.   :-2.7172   Min.   :-2.83980   Min.   :-2.0108  </span></span>
+<span><span class="co">#&gt;  1st Qu.: 0.2998   1st Qu.:-0.5280   1st Qu.: 0.03097   1st Qu.:-0.1527  </span></span>
+<span><span class="co">#&gt;  Median : 1.2700   Median : 0.1940   Median : 0.88709   Median : 0.6070  </span></span>
+<span><span class="co">#&gt;  Mean   : 1.2854   Mean   : 0.2395   Mean   : 0.76814   Mean   : 0.7004  </span></span>
+<span><span class="co">#&gt;  3rd Qu.: 2.2569   3rd Qu.: 1.0005   3rd Qu.: 1.58190   3rd Qu.: 1.4677  </span></span>
+<span><span class="co">#&gt;  Max.   : 5.3799   Max.   : 3.4535   Max.   : 3.30251   Max.   : 3.7162  </span></span>
 <span><span class="co">#&gt;     rain_dry         rain_warmQ         obs_sum            distance    </span></span>
-<span><span class="co">#&gt;  Min.   :-1.2921   Min.   :-1.6392   Min.   :-0.29579   Min.   :513.2  </span></span>
-<span><span class="co">#&gt;  1st Qu.:-0.8112   1st Qu.:-1.0240   1st Qu.:-0.22016   1st Qu.:594.8  </span></span>
-<span><span class="co">#&gt;  Median :-0.4265   Median :-0.2830   Median :-0.22016   Median :675.9  </span></span>
-<span><span class="co">#&gt;  Mean   :-0.1938   Mean   :-0.2551   Mean   : 0.14440   Mean   :690.0  </span></span>
-<span><span class="co">#&gt;  3rd Qu.: 0.1507   3rd Qu.: 0.4027   3rd Qu.:-0.03281   3rd Qu.:771.2  </span></span>
-<span><span class="co">#&gt;  Max.   : 4.1183   Max.   : 3.6377   Max.   :12.04905   Max.   :996.8  </span></span>
+<span><span class="co">#&gt;  Min.   :-1.3115   Min.   :-1.6465   Min.   :-0.29579   Min.   :513.2  </span></span>
+<span><span class="co">#&gt;  1st Qu.:-0.8556   1st Qu.:-1.0366   1st Qu.:-0.22016   1st Qu.:594.8  </span></span>
+<span><span class="co">#&gt;  Median :-0.4122   Median :-0.2986   Median :-0.22016   Median :675.9  </span></span>
+<span><span class="co">#&gt;  Mean   :-0.2019   Mean   :-0.2561   Mean   : 0.14440   Mean   :690.0  </span></span>
+<span><span class="co">#&gt;  3rd Qu.: 0.1728   3rd Qu.: 0.4349   3rd Qu.:-0.03281   3rd Qu.:771.2  </span></span>
+<span><span class="co">#&gt;  Max.   : 4.0169   Max.   : 2.4507   Max.   :12.04905   Max.   :996.8  </span></span>
 <span><span class="co">#&gt;     richness        pred_zeta         pred_zetaExp    log_pred_zetaExp </span></span>
-<span><span class="co">#&gt;  Min.   :  1.00   Min.   :0.001602   Min.   :0.5004   Min.   :-0.6923  </span></span>
-<span><span class="co">#&gt;  1st Qu.:  4.00   1st Qu.:0.021060   1st Qu.:0.5053   1st Qu.:-0.6827  </span></span>
-<span><span class="co">#&gt;  Median : 15.00   Median :0.045229   Median :0.5113   Median :-0.6708  </span></span>
-<span><span class="co">#&gt;  Mean   : 57.58   Mean   :0.041808   Mean   :0.5104   Mean   :-0.6725  </span></span>
-<span><span class="co">#&gt;  3rd Qu.: 76.00   3rd Qu.:0.060646   3rd Qu.:0.5152   3rd Qu.:-0.6633  </span></span>
-<span><span class="co">#&gt;  Max.   :853.00   Max.   :0.093702   Max.   :0.5234   Max.   :-0.6474  </span></span>
+<span><span class="co">#&gt;  Min.   :  1.00   Min.   :0.001154   Min.   :0.5003   Min.   :-0.6926  </span></span>
+<span><span class="co">#&gt;  1st Qu.:  4.00   1st Qu.:0.014822   1st Qu.:0.5037   1st Qu.:-0.6858  </span></span>
+<span><span class="co">#&gt;  Median : 15.00   Median :0.027757   Median :0.5069   Median :-0.6794  </span></span>
+<span><span class="co">#&gt;  Mean   : 57.58   Mean   :0.027634   Mean   :0.5069   Mean   :-0.6795  </span></span>
+<span><span class="co">#&gt;  3rd Qu.: 76.00   3rd Qu.:0.040202   3rd Qu.:0.5100   3rd Qu.:-0.6732  </span></span>
+<span><span class="co">#&gt;  Max.   :853.00   Max.   :0.070791   Max.   :0.5177   Max.   :-0.6584  </span></span>
 <span><span class="co">#&gt;   centroid_lon    centroid_lat       scenario  </span></span>
 <span><span class="co">#&gt;  Min.   :16.75   Min.   :-34.75   current:415  </span></span>
 <span><span class="co">#&gt;  1st Qu.:22.25   1st Qu.:-31.75   2030   :415  </span></span>
 <span><span class="co">#&gt;  Median :26.25   Median :-29.25   2040   :415  </span></span>
 <span><span class="co">#&gt;  Mean   :25.57   Mean   :-29.10   2050   :415  </span></span>
 <span><span class="co">#&gt;  3rd Qu.:29.25   3rd Qu.:-26.75                </span></span>
-<span><span class="co">#&gt;  Max.   :32.75   Max.   :-22.25</span></span>
-<span></span>
-<span><span class="co"># 1) Split your combined predictions by scenario into a named list</span></span>
-<span><span class="va">by_scn</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">all_preds</span>, <span class="va">all_preds</span><span class="op">$</span><span class="va">scenario</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;  Max.   :32.75   Max.   :-22.25</span></span></code></pre></div>
 <p>We can then compare the predicted ζ₂ surfaces under each future scenario:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">all_preds</span>,</span>
@@ -1716,8 +1715,8 @@ For example, zeta order 2 looks at pairs of sites, order 3 at triplets, etc.</li
 <span><span class="co">#&gt; coord. ref. : lon/lat WGS 84 (EPSG:4326) </span></span>
 <span><span class="co">#&gt; source(s)   : memory</span></span>
 <span><span class="co">#&gt; names       : Differ~_Count, Shanno~ntropy, Stability, Transi~quency, Weight~_Index </span></span>
-<span><span class="co">#&gt; min values  :             0,      0.000000,         0,             0,       0.00000 </span></span>
-<span><span class="co">#&gt; max values  :             3,      1.039721,         1,             3,       2.97973</span></span>
+<span><span class="co">#&gt; min values  :             0,      0.000000,         0,             0,    0.01694915 </span></span>
+<span><span class="co">#&gt; max values  :             3,      1.039721,         1,             3,    2.99011299</span></span>
 <span></span>
 <span><span class="co"># Crop to our study area and prepare for plotting</span></span>
 <span><span class="va">mask_sens_bioregDiff</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span></span>

@@ -682,14 +682,14 @@ The fitted model (`zeta2`) contains partial I-splines for every predictor (note:
 
 ```{r zeta-msgdm}
 # Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set
-# set.seed(264)
+set.seed(264)
 zeta2 = Zeta.msgdm(
   grid_spp_pa[,-(1:7)],                            # species matrix (rows=sites, cols=spp)
   env_vars_reduced,                                # decorrelated environmental variables
   # env_vars_reduced[,-7],                         # without sampling effort included
   grid_env[, c("centroid_lon", "centroid_lat")],   # longitude & latitude (°)
   # grid_env[, c("x_aea", "y_aea")],               # longitude & latitude (meters)
-  sam           = 10000,
+  sam           = 2000,
   order         = 2,
   distance.type = "Euclidean",
   normalize     = "Jaccard",
@@ -1025,8 +1025,6 @@ all_preds <- bind_rows(scenario_dfs) |>
 # by(all_preds, all_preds$scenario, summary)
 summary(all_preds)
 
-# 1) Split your combined predictions by scenario into a named list
-by_scn = split(all_preds, all_preds$scenario)
 ```
 
 We can then compare the predicted ζ₂ surfaces under each future scenario:

@@ -1,4 +1,3 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
@@ -388,6 +387,7 @@ str(grid_list, max.level = 1)
 #>  $ grid_spp_pa: tibble [415 × 2,874] (S3: tbl_df/tbl/data.frame)
 
 # (Optional) Promote list items to named objects 
+grid_r = grid_list$grid_r$grid_id    # raster
 grid_sf = grid_list$grid_sf   # polygons for mapping or joins
 grid_spp = grid_list$grid_spp # tabular summary per cell
 grid_spp_pa = grid_list$grid_spp_pa # presence/absence summary
@@ -566,6 +566,7 @@ enviro_list = get_enviro_data(
   source     = "geodata",                 # WorldClim/SoilGrids interface
   var        = "bio",                     # bioclim variable set
   res        = 5,                         # 5-arc-min ≈ 10 km
+  grid_r     = grid_r,                      # To set resampling resolution, if necessary
   path       = data_path,
   sp_cols    = 7:ncol(grid_spp),          # ignore species columns
   ext_cols   = c("obs_sum", "spp_rich")   # carry effort & richness through
@@ -596,25 +597,25 @@ env_df = enviro_list$env_df      # site × environment data-frame
 # Quick checks 
 env_r
 #> class       : SpatRaster 
-#> size        : 154, 195, 19  (nrow, ncol, nlyr)
-#> resolution  : 0.08333333, 0.08333333  (x, y)
-#> extent      : 16.66667, 32.91667, -34.91667, -22.08333  (xmin, xmax, ymin, ymax)
+#> size        : 30, 37, 19  (nrow, ncol, nlyr)
+#> resolution  : 0.5, 0.5  (x, y)
+#> extent      : 15.5, 34, -36, -21  (xmin, xmax, ymin, ymax)
 #> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
 #> source(s)   : memory
-#> names       : temp_mean,       mdr,      iso, temp_sea, temp_max, temp_min, ... 
-#> min values  :  5.158916,  5.891667, 45.32084, 143.0743,   14.832,   -6.284, ... 
-#> max values  : 24.796417, 18.659584, 67.09737, 701.3335,   38.518,   13.800, ...
+#> names       : temp_mean,       mdr,      iso, temp_sea, temp_max,  temp_min, ... 
+#> min values  :  9.779773,  8.977007, 47.10606, 228.9986, 19.92147, -4.110302, ... 
+#> max values  : 24.406433, 18.352308, 64.92966, 653.4167, 36.19497, 12.005042, ...
 dim(env_df); head(env_df)
 #> [1] 415  24
 #> # A tibble: 6 × 24
 #>   grid_id centroid_lon centroid_lat bio01 bio02 bio03 bio04 bio05 bio06 bio07
 #>   <chr>          <dbl>        <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#> 1 1026            28.8        -22.3  21.9  14.5  55.7  427.  32.4  6.44  26.0
-#> 2 1027            29.2        -22.3  21.8  14.6  53.9  453.  33.0  5.87  27.1
-#> 3 1028            29.7        -22.3  21.5  14.0  56.3  393.  31.7  6.80  24.9
-#> 4 1029            30.3        -22.3  23.0  13.7  57.8  358.  32.8  9.14  23.7
-#> 5 1030            30.8        -22.3  23.6  13.8  59.6  334.  33.5 10.3   23.2
-#> 6 1031            31.3        -22.3  24.6  14.6  61.7  332.  34.8 11.0   23.8
+#> 1 1026            28.8        -22.3  21.9  14.5  55.8  425.  32.5  6.44  26.1
+#> 2 1027            29.2        -22.3  21.8  14.5  55.1  430.  32.6  6.30  26.3
+#> 3 1028            29.7        -22.3  22.0  14.2  56.3  396.  32.3  7.15  25.2
+#> 4 1029            30.3        -22.3  22.8  13.9  58.0  359.  32.7  8.79  23.9
+#> 5 1030            30.8        -22.3  23.3  13.9  60.0  332.  33.2  9.97  23.2
+#> 6 1031            31.3        -22.3  24.2  14.2  61.3  326.  34.2 10.9   23.2
 #> # ℹ 14 more variables: bio08 <dbl>, bio09 <dbl>, bio10 <dbl>, bio11 <dbl>,
 #> #   bio12 <dbl>, bio13 <dbl>, bio14 <dbl>, bio15 <dbl>, bio16 <dbl>,
 #> #   bio17 <dbl>, bio18 <dbl>, bio19 <dbl>, obs_sum <dbl>, spp_rich <dbl>
@@ -690,12 +691,12 @@ head(env_df[, 1:6])
 #> # A tibble: 6 × 6
 #>   grid_id centroid_lon centroid_lat bio01 bio02 bio03
 #>   <chr>          <dbl>        <dbl> <dbl> <dbl> <dbl>
-#> 1 1026            28.8        -22.3  21.9  14.5  55.7
-#> 2 1027            29.2        -22.3  21.8  14.6  53.9
-#> 3 1028            29.7        -22.3  21.5  14.0  56.3
-#> 4 1029            30.3        -22.3  23.0  13.7  57.8
-#> 5 1030            30.8        -22.3  23.6  13.8  59.6
-#> 6 1031            31.3        -22.3  24.6  14.6  61.7
+#> 1 1026            28.8        -22.3  21.9  14.5  55.8
+#> 2 1027            29.2        -22.3  21.8  14.5  55.1
+#> 3 1028            29.7        -22.3  22.0  14.2  56.3
+#> 4 1029            30.3        -22.3  22.8  13.9  58.0
+#> 5 1030            30.8        -22.3  23.3  13.9  60.0
+#> 6 1031            31.3        -22.3  24.2  14.2  61.3
 
 # Quick map of mean annual temperature (√-scaled bubble size)
 ggplot() +
@@ -741,12 +742,12 @@ head(grid_env)
 #> # A tibble: 6 × 24
 #>   grid_id centroid_lon centroid_lat obs_sum spp_rich bio01 bio02 bio03 bio04
 #>   <chr>          <dbl>        <dbl>   <dbl>    <dbl> <dbl> <dbl> <dbl> <dbl>
-#> 1 1026            28.8        -22.3       3        2  21.9  14.5  55.7  427.
-#> 2 1027            29.2        -22.3      41       31  21.8  14.6  53.9  453.
-#> 3 1028            29.7        -22.3      10       10  21.5  14.0  56.3  393.
-#> 4 1029            30.3        -22.3       7        7  23.0  13.7  57.8  358.
-#> 5 1030            30.8        -22.3       6        6  23.6  13.8  59.6  334.
-#> 6 1031            31.3        -22.3     107       76  24.6  14.6  61.7  332.
+#> 1 1026            28.8        -22.3       3        2  21.9  14.5  55.8  425.
+#> 2 1027            29.2        -22.3      41       31  21.8  14.5  55.1  430.
+#> 3 1028            29.7        -22.3      10       10  22.0  14.2  56.3  396.
+#> 4 1029            30.3        -22.3       7        7  22.8  13.9  58.0  359.
+#> 5 1030            30.8        -22.3       6        6  23.3  13.9  60.0  332.
+#> 6 1031            31.3        -22.3     107       76  24.2  14.2  61.3  326.
 #> # ℹ 15 more variables: bio05 <dbl>, bio06 <dbl>, bio07 <dbl>, bio08 <dbl>,
 #> #   bio09 <dbl>, bio10 <dbl>, bio11 <dbl>, bio12 <dbl>, bio13 <dbl>,
 #> #   bio14 <dbl>, bio15 <dbl>, bio16 <dbl>, bio17 <dbl>, bio18 <dbl>,
@@ -830,7 +831,7 @@ names(env_df) = c("grid_id", "centroid_lon", "centroid_lat", names_env, "obs_sum
 # Run the filter and compare dimensions
 # Filter environmental predictors for |r| > 0.70
 env_vars_reduced = rm_correlated(
-  data       = env_df[, c(4, 6:24)],  # drop ID + coord columns
+  data       = env_df[, 4:23],  # drop ID + coord columns
   cols       = NULL,                  # infer all numeric cols
   threshold  = 0.70,
   plot       = TRUE                   # show heat-map of retained vars
@@ -840,9 +841,9 @@ env_vars_reduced = rm_correlated(
 <img src="man/figures/README-var-vif-1.png" width="100%" />
 
     #> Variables removed due to high correlation:
-    #>  [1] "temp_range" "temp_sea"   "temp_max"   "rain_mean"  "rain_dryQ" 
-    #>  [6] "temp_min"   "temp_warmQ" "temp_coldQ" "rain_wetQ"  "rain_wet"  
-    #> [11] "rain_coldQ" "rain_sea"   "spp_rich"  
+    #>  [1] "temp_range" "mdr"        "temp_sea"   "temp_max"   "rain_mean" 
+    #>  [6] "rain_dryQ"  "temp_warmQ" "temp_min"   "temp_coldQ" "rain_coldQ"
+    #> [11] "rain_wetQ"  "rain_wet"   "rain_sea"  
     #> 
     #> Variables retained:
     #> [1] "temp_mean"  "iso"        "temp_wetQ"  "temp_dryQ"  "rain_dry"  
@@ -1141,14 +1142,14 @@ change).
 
 ``` r
 # Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set
-set.seed(123)
+set.seed(264)
 zeta2 = Zeta.msgdm(
-  grid_spp_pa[,-(1:7)],                            # species matrix (rows = sites, cols = spp)
+  grid_spp_pa[,-(1:7)],                            # species matrix (rows=sites, cols=spp)
   env_vars_reduced,                                # decorrelated environmental variables
   # env_vars_reduced[,-7],                         # without sampling effort included
   grid_env[, c("centroid_lon", "centroid_lat")],   # longitude & latitude (°)
   # grid_env[, c("x_aea", "y_aea")],               # longitude & latitude (meters)
-  sam           = 1000,
+  sam           = 2000,
   order         = 2,
   distance.type = "Euclidean",
   normalize     = "Jaccard",
@@ -1217,7 +1218,7 @@ effectively slow that loss.
 ``` r
 # Deviance explained summary results
 with(summary(zeta2$model), 1 - deviance/null.deviance) 
-#> [1] 0.3006643
+#> [1] 0.2938658
 # [1] 0.3733073
 # 0.3733073 means that approximately 37% of the variability in the response
 # variable is explained by your model. This is relatively low, suggesting that the
@@ -1232,40 +1233,40 @@ summary(zeta2$model)
 #>     cons.inter = cons.inter)
 #> 
 #> Coefficients:
-#>             Estimate Std. Error z value Pr(>|z|)   
-#> (Intercept) -1.75622    0.73280  -2.397   0.0165 * 
-#> temp_mean1   0.00000    5.35410   0.000   1.0000   
-#> temp_mean2  -0.12901    1.80366  -0.072   0.9430   
-#> temp_mean3   0.00000    2.45052   0.000   1.0000   
-#> iso1        -0.12769    1.82815  -0.070   0.9443   
-#> iso2         0.00000    1.32845   0.000   1.0000   
-#> iso3         0.00000    1.84405   0.000   1.0000   
-#> temp_wetQ1   0.00000    1.46571   0.000   1.0000   
-#> temp_wetQ2  -0.21001    1.24872  -0.168   0.8664   
-#> temp_wetQ3  -0.35297    1.96909  -0.179   0.8577   
-#> temp_dryQ1   0.00000    4.60011   0.000   1.0000   
-#> temp_dryQ2  -0.28917    1.52155  -0.190   0.8493   
-#> temp_dryQ3   0.00000    1.64760   0.000   1.0000   
-#> rain_dry1   -0.08475    1.08271  -0.078   0.9376   
-#> rain_dry2   -0.22911    1.22210  -0.187   0.8513   
-#> rain_dry3    0.00000    1.61694   0.000   1.0000   
-#> rain_warmQ1 -0.38844    1.16271  -0.334   0.7383   
-#> rain_warmQ2 -0.18553    1.50201  -0.124   0.9017   
-#> rain_warmQ3 -0.34562    2.29405  -0.151   0.8802   
-#> obs_sum1    -2.12828    0.66640  -3.194   0.0014 **
-#> obs_sum2    -0.11889    2.16925  -0.055   0.9563   
-#> obs_sum3     0.00000    3.25547   0.000   1.0000   
-#> distance1   -0.52361    1.23063  -0.425   0.6705   
-#> distance2   -0.29026    1.57052  -0.185   0.8534   
-#> distance3   -0.14665    2.42153  -0.061   0.9517   
+#>             Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept) -2.09927    0.57679  -3.640 0.000273 ***
+#> temp_mean1   0.00000    2.15557   0.000 1.000000    
+#> temp_mean2  -0.24807    1.08178  -0.229 0.818623    
+#> temp_mean3   0.00000    1.60213   0.000 1.000000    
+#> iso1        -0.30889    1.54849  -0.199 0.841888    
+#> iso2         0.00000    0.89723   0.000 1.000000    
+#> iso3         0.00000    1.32413   0.000 1.000000    
+#> temp_wetQ1   0.00000    1.26557   0.000 1.000000    
+#> temp_wetQ2  -0.26509    0.97371  -0.272 0.785433    
+#> temp_wetQ3   0.00000    1.39019   0.000 1.000000    
+#> temp_dryQ1  -0.19613    1.76387  -0.111 0.911462    
+#> temp_dryQ2  -0.09067    0.96817  -0.094 0.925383    
+#> temp_dryQ3   0.00000    1.26689   0.000 1.000000    
+#> rain_dry1   -0.42846    0.76701  -0.559 0.576429    
+#> rain_dry2   -0.04003    0.87903  -0.046 0.963674    
+#> rain_dry3    0.00000    1.28032   0.000 1.000000    
+#> rain_warmQ1 -0.18795    0.93470  -0.201 0.840634    
+#> rain_warmQ2  0.00000    0.91001   0.000 1.000000    
+#> rain_warmQ3  0.00000    1.04710   0.000 1.000000    
+#> obs_sum1    -2.16820    0.53186  -4.077 4.57e-05 ***
+#> obs_sum2     0.00000    1.41890   0.000 1.000000    
+#> obs_sum3     0.00000    1.81529   0.000 1.000000    
+#> distance1   -0.40166    0.92696  -0.433 0.664794    
+#> distance2   -0.41374    1.15223  -0.359 0.719536    
+#> distance3   -0.04255    1.50976  -0.028 0.977516    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> (Dispersion parameter for binomial family taken to be 1)
 #> 
-#>     Null deviance: 65.233  on 999  degrees of freedom
-#> Residual deviance: 45.620  on 975  degrees of freedom
-#> AIC: 98.771
+#>     Null deviance: 112.158  on 1999  degrees of freedom
+#> Residual deviance:  79.199  on 1975  degrees of freedom
+#> AIC: 132.64
 #> 
 #> Number of Fisher Scoring iterations: 7
 ```
@@ -1305,7 +1306,7 @@ Plot.ispline(splines_noEff, distance = TRUE)
 
 # Deviance explained summary results
 with(summary(zeta2_noEff$model), 1 - deviance/null.deviance) 
-#> [1] 0.08242748
+#> [1] 0.08816599
 # [1] 0.09495599
 # 0.09495599 means that approximately 1% of the variability in the response
 # variable is explained by your model. This is relatively low, suggesting that the
@@ -1320,37 +1321,37 @@ summary(zeta2_noEff$model)
 #>     cons.inter = cons.inter)
 #> 
 #> Coefficients:
-#>              Estimate Std. Error z value Pr(>|z|)   
-#> (Intercept) -2.305658   0.721582  -3.195   0.0014 **
-#> temp_mean1   0.000000   5.272991   0.000   1.0000   
-#> temp_mean2  -0.007174   1.832546  -0.004   0.9969   
-#> temp_mean3   0.000000   2.455489   0.000   1.0000   
-#> iso1        -0.725370   1.979859  -0.366   0.7141   
-#> iso2         0.000000   1.361778   0.000   1.0000   
-#> iso3         0.000000   1.855347   0.000   1.0000   
-#> temp_wetQ1   0.000000   1.590495   0.000   1.0000   
-#> temp_wetQ2  -0.171049   1.323547  -0.129   0.8972   
-#> temp_wetQ3  -0.245476   2.004934  -0.122   0.9026   
-#> temp_dryQ1   0.000000   4.616249   0.000   1.0000   
-#> temp_dryQ2  -0.383202   1.607839  -0.238   0.8116   
-#> temp_dryQ3   0.000000   1.705136   0.000   1.0000   
-#> rain_dry1   -0.393967   1.102892  -0.357   0.7209   
-#> rain_dry2   -0.100666   1.235870  -0.081   0.9351   
-#> rain_dry3    0.000000   1.648879   0.000   1.0000   
-#> rain_warmQ1 -0.305181   1.152039  -0.265   0.7911   
-#> rain_warmQ2 -0.282461   1.498674  -0.188   0.8505   
-#> rain_warmQ3  0.000000   2.172390   0.000   1.0000   
-#> distance1   -0.566322   1.239954  -0.457   0.6479   
-#> distance2   -0.245610   1.595757  -0.154   0.8777   
-#> distance3    0.000000   2.453390   0.000   1.0000   
+#>             Estimate Std. Error z value Pr(>|z|)   
+#> (Intercept) -2.30749    0.71576  -3.224  0.00126 **
+#> temp_mean1   0.00000    2.72985   0.000  1.00000   
+#> temp_mean2  -0.21672    1.53696  -0.141  0.88787   
+#> temp_mean3   0.00000    2.36184   0.000  1.00000   
+#> iso1        -0.64639    2.07603  -0.311  0.75553   
+#> iso2        -0.01169    1.34429  -0.009  0.99306   
+#> iso3         0.00000    1.69884   0.000  1.00000   
+#> temp_wetQ1   0.00000    1.60974   0.000  1.00000   
+#> temp_wetQ2  -0.05815    1.34254  -0.043  0.96545   
+#> temp_wetQ3  -0.27615    1.87980  -0.147  0.88321   
+#> temp_dryQ1   0.00000    2.14957   0.000  1.00000   
+#> temp_dryQ2  -0.44304    1.37079  -0.323  0.74654   
+#> temp_dryQ3   0.00000    1.72340   0.000  1.00000   
+#> rain_dry1   -0.38117    1.08562  -0.351  0.72550   
+#> rain_dry2   -0.16497    1.26607  -0.130  0.89633   
+#> rain_dry3    0.00000    1.74241   0.000  1.00000   
+#> rain_warmQ1 -0.36204    1.24736  -0.290  0.77163   
+#> rain_warmQ2 -0.37857    1.35207  -0.280  0.77948   
+#> rain_warmQ3  0.00000    1.55813   0.000  1.00000   
+#> distance1   -0.45944    1.26391  -0.364  0.71622   
+#> distance2   -0.09850    1.62880  -0.060  0.95178   
+#> distance3    0.00000    2.50094   0.000  1.00000   
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> (Dispersion parameter for binomial family taken to be 1)
 #> 
 #>     Null deviance: 65.233  on 999  degrees of freedom
-#> Residual deviance: 59.856  on 978  degrees of freedom
-#> AIC: 106.99
+#> Residual deviance: 59.482  on 978  degrees of freedom
+#> AIC: 106.61
 #> 
 #> Number of Fisher Scoring iterations: 7
 ```
@@ -1430,38 +1431,38 @@ ispline_gdm_tab = run_ispline_models(
   env_df    = env_vars_reduced,
   xy_df     = grid_env[, c("centroid_lon", "centroid_lat")],
   orders    = 2:6,
-  sam       = 100, # Set really low to run fast
+  sam       = 1000, # Set really low to run fast
   normalize = "Jaccard",
   reg_type  = "ispline"
 )
 str(ispline_gdm_tab, max.level=1)
 #> List of 2
 #>  $ zeta_gdm_list:List of 5
-#>  $ ispline_table:'data.frame':   500 obs. of  17 variables:
+#>  $ ispline_table:'data.frame':   2075 obs. of  17 variables:
 
 ispline_tabs_all = ispline_gdm_tab$ispline_table
 head(ispline_tabs_all)
-#>   temp_mean        iso  temp_wetQ temp_dryQ   rain_dry rain_warmQ obs_sum
-#> 1 0.0000000 0.00000000 0.00000000 0.0000000 0.00000000 0.00000000       0
-#> 2 0.2896355 0.09884044 0.01960870 0.1041687 0.00000000 0.00877193       0
-#> 3 0.3842598 0.15863757 0.03114836 0.1160104 0.00000000 0.01096491       0
-#> 4 0.3874364 0.16800387 0.06060482 0.1609354 0.00000000 0.02412281       0
-#> 5 0.3927655 0.17380612 0.09836887 0.1903078 0.00000000 0.02631579       0
-#> 6 0.3973209 0.18186992 0.11965861 0.2000578 0.02272727 0.03070175       0
-#>     distance temp_mean_is iso_is temp_wetQ_is temp_dryQ_is rain_dry_is
-#> 1 0.03214127            0      0            0   0.02831627   0.1529665
-#> 2 0.03214127            0      0            0   0.04242732   0.1529665
-#> 3 0.04545457            0      0            0   0.04380618   0.1529665
-#> 4 0.09642380            0      0            0   0.04861907   0.1529665
-#> 5 0.09642380            0      0            0   0.05140793   0.1529665
-#> 6 0.10163911            0      0            0   0.05227112   0.2890950
+#>     temp_mean        iso  temp_wetQ   temp_dryQ    rain_dry  rain_warmQ obs_sum
+#> 1 0.000000000 0.00000000 0.00000000 0.000000000 0.000000000 0.000000000       0
+#> 2 0.007228375 0.06709322 0.01941640 0.009263111 0.002562338 0.004589507       0
+#> 3 0.094074777 0.07481225 0.03968812 0.024493796 0.012988982 0.005220299       0
+#> 4 0.164589610 0.08141449 0.06781475 0.045757693 0.013835167 0.008904397       0
+#> 5 0.207855825 0.11314906 0.07539076 0.072819805 0.015023675 0.009974474       0
+#> 6 0.216768580 0.12561452 0.09582285 0.073039544 0.015023675 0.011407648       0
+#>     distance temp_mean_is     iso_is temp_wetQ_is temp_dryQ_is rain_dry_is
+#> 1 0.02992069 0.000000e+00 0.00000000 0.000000e+00 0.000000e+00 0.000000000
+#> 2 0.02992076 2.606628e-05 0.02151319 2.988341e-05 7.596014e-05 0.001896652
+#> 3 0.02992079 4.415137e-03 0.02378903 1.248573e-04 5.311096e-04 0.009563608
+#> 4 0.02992085 1.351458e-02 0.02570297 3.645367e-04 1.853533e-03 0.010182243
+#> 5 0.04231437 2.155372e-02 0.03448283 4.505356e-04 4.694302e-03 0.011050239
+#> 6 0.04231444 2.344177e-02 0.03774149 7.278318e-04 4.722675e-03 0.011050239
 #>   rain_warmQ_is obs_sum_is distance_is zOrder
-#> 1             0          0   0.2105816 Order2
-#> 2             0          0   0.2105816 Order2
-#> 3             0          0   0.2935477 Order2
-#> 4             0          0   0.5881165 Order2
-#> 5             0          0   0.5881165 Order2
-#> 6             0          0   0.6161951 Order2
+#> 1    0.00000000          0  0.06333395 Order2
+#> 2    0.01096718          0  0.06333410 Order2
+#> 3    0.01246634          0  0.06333415 Order2
+#> 4    0.02118262          0  0.06333428 Order2
+#> 5    0.02370168          0  0.08833203 Order2
+#> 6    0.02706660          0  0.08833217 Order2
 ```
 
 ------------------------------------------------------------------------
@@ -1670,13 +1671,13 @@ names(predictors_df)
 #>  [9] "richness"         "pred_zeta"        "pred_zetaExp"     "log_pred_zetaExp"
 #> [13] "centroid_lon"     "centroid_lat"
 head(predictors_df[,5:11])
-#>    rain_dry rain_warmQ    obs_sum distance richness  pred_zeta pred_zetaExp
-#> 1 -1.171906 -0.2222718 -0.2926985 903.0437        2 0.03351645    0.5083783
-#> 2 -1.171906 -0.1743223 -0.2340532 915.4655       31 0.03717936    0.5092938
-#> 3 -1.051673  0.1852987 -0.2818954 931.1100       10 0.02307935    0.5057696
-#> 4 -1.171906  0.2572229 -0.2865253 949.9390        7 0.01872533    0.5046812
-#> 5 -1.051673  0.4889786 -0.2880686 971.8672        6 0.01686626    0.5042165
-#> 6 -1.051673  0.5449196 -0.1321955 996.7561       76 0.01456113    0.5036402
+#>    rain_dry  rain_warmQ    obs_sum distance richness  pred_zeta pred_zetaExp
+#> 1 -1.227648 -0.17604221 -0.2926985 903.0437        2 0.01930100    0.5048251
+#> 2 -1.223151 -0.11642238 -0.2340532 915.4655       31 0.02632131    0.5065799
+#> 3 -1.154108  0.06618959 -0.2818954 931.1100       10 0.01570100    0.5039252
+#> 4 -1.149209  0.38933728 -0.2865253 949.9390        7 0.01506016    0.5037650
+#> 5 -1.080356  0.62285852 -0.2880686 971.8672        6 0.01472191    0.5036804
+#> 6 -1.048567  0.57126837 -0.1321955 996.7561       76 0.01438702    0.5035967
 ```
 
 ------------------------------------------------------------------------
@@ -1769,26 +1770,26 @@ all_preds <- bind_rows(scenario_dfs) |>
 # by(all_preds, all_preds$scenario, summary)
 summary(all_preds)
 #>    temp_mean            iso            temp_wetQ          temp_dryQ      
-#>  Min.   :-4.8892   Min.   :-2.7147   Min.   :-2.83685   Min.   :-2.8916  
-#>  1st Qu.: 0.2746   1st Qu.:-0.5428   1st Qu.: 0.01453   1st Qu.:-0.1552  
-#>  Median : 1.1874   Median : 0.2099   Median : 0.85086   Median : 0.5655  
-#>  Mean   : 1.2047   Mean   : 0.2344   Mean   : 0.73636   Mean   : 0.6741  
-#>  3rd Qu.: 2.1583   3rd Qu.: 0.9342   3rd Qu.: 1.54618   3rd Qu.: 1.4288  
-#>  Max.   : 5.2195   Max.   : 3.6594   Max.   : 3.29015   Max.   : 3.7682  
+#>  Min.   :-3.3102   Min.   :-2.7172   Min.   :-2.83980   Min.   :-2.0108  
+#>  1st Qu.: 0.2998   1st Qu.:-0.5280   1st Qu.: 0.03097   1st Qu.:-0.1527  
+#>  Median : 1.2700   Median : 0.1940   Median : 0.88709   Median : 0.6070  
+#>  Mean   : 1.2854   Mean   : 0.2395   Mean   : 0.76814   Mean   : 0.7004  
+#>  3rd Qu.: 2.2569   3rd Qu.: 1.0005   3rd Qu.: 1.58190   3rd Qu.: 1.4677  
+#>  Max.   : 5.3799   Max.   : 3.4535   Max.   : 3.30251   Max.   : 3.7162  
 #>     rain_dry         rain_warmQ         obs_sum            distance    
-#>  Min.   :-1.2921   Min.   :-1.6392   Min.   :-0.29579   Min.   :513.2  
-#>  1st Qu.:-0.8112   1st Qu.:-1.0240   1st Qu.:-0.22016   1st Qu.:594.8  
-#>  Median :-0.4265   Median :-0.2830   Median :-0.22016   Median :675.9  
-#>  Mean   :-0.1938   Mean   :-0.2551   Mean   : 0.14440   Mean   :690.0  
-#>  3rd Qu.: 0.1507   3rd Qu.: 0.4027   3rd Qu.:-0.03281   3rd Qu.:771.2  
-#>  Max.   : 4.1183   Max.   : 3.6377   Max.   :12.04905   Max.   :996.8  
+#>  Min.   :-1.3115   Min.   :-1.6465   Min.   :-0.29579   Min.   :513.2  
+#>  1st Qu.:-0.8556   1st Qu.:-1.0366   1st Qu.:-0.22016   1st Qu.:594.8  
+#>  Median :-0.4122   Median :-0.2986   Median :-0.22016   Median :675.9  
+#>  Mean   :-0.2019   Mean   :-0.2561   Mean   : 0.14440   Mean   :690.0  
+#>  3rd Qu.: 0.1728   3rd Qu.: 0.4349   3rd Qu.:-0.03281   3rd Qu.:771.2  
+#>  Max.   : 4.0169   Max.   : 2.4507   Max.   :12.04905   Max.   :996.8  
 #>     richness        pred_zeta         pred_zetaExp    log_pred_zetaExp 
-#>  Min.   :  1.00   Min.   :0.001602   Min.   :0.5004   Min.   :-0.6923  
-#>  1st Qu.:  4.00   1st Qu.:0.021060   1st Qu.:0.5053   1st Qu.:-0.6827  
-#>  Median : 15.00   Median :0.045229   Median :0.5113   Median :-0.6708  
-#>  Mean   : 57.58   Mean   :0.041808   Mean   :0.5104   Mean   :-0.6725  
-#>  3rd Qu.: 76.00   3rd Qu.:0.060646   3rd Qu.:0.5152   3rd Qu.:-0.6633  
-#>  Max.   :853.00   Max.   :0.093702   Max.   :0.5234   Max.   :-0.6474  
+#>  Min.   :  1.00   Min.   :0.001154   Min.   :0.5003   Min.   :-0.6926  
+#>  1st Qu.:  4.00   1st Qu.:0.014822   1st Qu.:0.5037   1st Qu.:-0.6858  
+#>  Median : 15.00   Median :0.027757   Median :0.5069   Median :-0.6794  
+#>  Mean   : 57.58   Mean   :0.027634   Mean   :0.5069   Mean   :-0.6795  
+#>  3rd Qu.: 76.00   3rd Qu.:0.040202   3rd Qu.:0.5100   3rd Qu.:-0.6732  
+#>  Max.   :853.00   Max.   :0.070791   Max.   :0.5177   Max.   :-0.6584  
 #>   centroid_lon    centroid_lat       scenario  
 #>  Min.   :16.75   Min.   :-34.75   current:415  
 #>  1st Qu.:22.25   1st Qu.:-31.75   2030   :415  
@@ -1796,9 +1797,6 @@ summary(all_preds)
 #>  Mean   :25.57   Mean   :-29.10   2050   :415  
 #>  3rd Qu.:29.25   3rd Qu.:-26.75                
 #>  Max.   :32.75   Max.   :-22.25
-
-# 1) Split your combined predictions by scenario into a named list
-by_scn = split(all_preds, all_preds$scenario)
 ```
 
 We can then compare the predicted ζ₂ surfaces under each future
@@ -2080,8 +2078,8 @@ sens_bioregDiff
 #> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
 #> source(s)   : memory
 #> names       : Differ~_Count, Shanno~ntropy, Stability, Transi~quency, Weight~_Index 
-#> min values  :             0,      0.000000,         0,             0,       0.00000 
-#> max values  :             3,      1.039721,         1,             3,       2.97973
+#> min values  :             0,      0.000000,         0,             0,    0.01694915 
+#> max values  :             3,      1.039721,         1,             3,    2.99011299
 
 # Crop to our study area and prepare for plotting
 mask_sens_bioregDiff = terra::mask(

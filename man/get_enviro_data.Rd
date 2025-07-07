@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_enviro_data.R
 \name{get_enviro_data}
 \alias{get_enviro_data}
-\title{Retrieve, crop, and link environmental rasters to sampling sites}
+\title{Retrieve, crop, resample, and link environmental rasters to sampling sites}
 \usage{
 get_enviro_data(
   data,
@@ -10,6 +10,7 @@ get_enviro_data(
   source = "geodata",
   var = "bio",
   res = 2.5,
+  grid_r = NULL,
   path = "data/",
   year = NULL,
   depth = NULL,
@@ -30,10 +31,14 @@ such as \verb{"x","y"} or \verb{"centroid_lon","centroid_lat"}.}
 \item{source}{\code{"geodata"} (default) to fetch layers via \strong{geodata} or
 \code{"local"} to supply a local \code{SpatRaster} or file path.}
 
-\item{var}{Raster product to download (see list above) or ignored when
+\item{var}{Raster product to download (see details) or ignored when
 \code{source = "local"}.}
 
-\item{res}{Resolution (arc-min) for WorldClim/WorldPop layers.}
+\item{res}{Resolution (arc-min) for WorldClim/WorldPop layers (geodata).}
+
+\item{grid_r}{Optional grid resolution (in same CRS units) to which the
+cropped raster is resampled before extraction. If \code{NULL}, no
+resampling is performed.}
 
 \item{path}{Cache folder for downloaded rasters (created if absent).}
 
@@ -51,47 +56,23 @@ to \code{data}}.}
 \value{
 A list with
 \itemize{
-\item \code{env_rast}  \code{SpatRaster} – cropped environmental stack (all layers)
+\item \code{env_rast}  \code{SpatRaster} – cropped (and optionally resampled) environmental stack
 \item \code{sites_sf}  \code{sf} POINT layer (WGS-84) of the input sites
 \item \code{env_df}    Tibble with site ID, coordinates, every raster variable,
 plus any columns requested in \code{ext_cols}
 }
 }
 \description{
-\code{get_enviro_data()} automates five steps:
+\code{get_enviro_data()} automates six steps:
 \enumerate{
 \item \strong{AOI build} – buffers the convex hull of all input points.
 \item \strong{Raster acquisition} – downloads or loads a multi-layer stack
 (WorldClim, SoilGrids, footprint, population, or user-supplied).
 \item \strong{Cropping} – trims the stack to the buffered AOI.
+\item \strong{Optional resampling} – resamples the cropped stack to a user-defined grid resolution.
 \item \strong{Extraction & gap fill} – pulls raster values at each site and
 linearly interpolates isolated NAs.
 \item \strong{Assembly} – returns a tidy \emph{site × environment} table plus the cropped
-raster and an \code{sf} layer of sites.
+(and resampled) raster and an \code{sf} layer of sites.
 }
-}
-\details{
-WorldClim BIO layers arrive as a multi-file \emph{SpatRasterDataset}; the function
-concatenates all sub-rasters so that \strong{bio01 – bio19} are returned together.
-Missing cells inside the AOI are filled with linear interpolation
-(\code{zoo::na.approx}).
-}
-\section{Supported raster sets (\code{var} when \code{source = "geodata"})}{
-
-\itemize{
-\item \code{"bio"}  19 WorldClim v2.1 bioclim variables
-\item \code{"elev"} WorldClim elevation layer
-\item \code{"footprint"} \emph{Global Human Footprint} (specify \code{year})
-\item \code{"population"} WorldPop population counts (specify \code{year} & \code{res})
-\item \code{"soil_world"} ISRIC SoilGrids layers (specify \code{depth}, \code{stat})
-}
-}
-
-\examples{
-# Example usage:
-data = data.frame(site_id = 1:5, x = c(10, 12, 14, 16, 18), y = c(20, 22, 24, 26, 28))
-env_data = get_enviro_data(data, buffer_km = 5, var = "bio", res = 2.5, path = "data/")
-plot(env_data$env_rast[[1]])
-points(env_data$sites_sf)
-
 }

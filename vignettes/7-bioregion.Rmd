@@ -26,6 +26,7 @@ knitr::opts_chunk$set(
 
 ```{r load-change-rasters, include = FALSE}
 grid_masked = terra::rast(system.file("extdata", "grid_masked.tif", package = "dissmapr"))
+future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
 ```
 
 ------------------------------------------------------------------------
@@ -109,10 +110,10 @@ Below we visualise the nearest-neighbour interpolated future‐scenario cluster 
 str(bioreg_future, max.level=1)
 
 # Create SpatRast
-future_nn = c(bioreg_future$nn$current$kmeans_current,
-             bioreg_future$nn$`2030`$kmeans_2030,
-             bioreg_future$nn$`2040`$kmeans_2040,
-             bioreg_future$nn$`2050`$kmeans_2050)
+# future_nn = c(bioreg_future$nn$current$kmeans_current,
+#              bioreg_future$nn$`2030`$kmeans_2030,
+#              bioreg_future$nn$`2040`$kmeans_2040,
+#              bioreg_future$nn$`2050`$kmeans_2050)
 names(future_nn)
 
 # 4) Mask `result_bioregDiff` to the RSA boundary

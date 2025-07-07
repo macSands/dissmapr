@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>4-zeta • dissmapr</title>
+<title>Zeta diversity • dissmapr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="4-zeta">
+<meta property="og:title" content="Zeta diversity">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -43,16 +43,16 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Articles</h6></li>
-    <li><a class="dropdown-item" href="../articles/1-setup.html">1-setup</a></li>
-    <li><a class="dropdown-item" href="../articles/2-grid.html">2-grid</a></li>
-    <li><a class="dropdown-item" href="../articles/3-enviro.html">3-enviro</a></li>
-    <li><a class="dropdown-item" href="../articles/4-zeta.html">4-zeta</a></li>
-    <li><a class="dropdown-item" href="../articles/5-zeta-workflow.html">5-zeta-workflow</a></li>
-    <li><a class="dropdown-item" href="../articles/6-predict.html">6-predict</a></li>
-    <li><a class="dropdown-item" href="../articles/7-bioregion.html">7-bioregion</a></li>
-    <li><a class="dropdown-item" href="../articles/8-change.html">8-change</a></li>
-    <li><a class="dropdown-item" href="../articles/9-examples.html">9-examples</a></li>
-    <li><a class="dropdown-item" href="../articles/10-zenodo.html">10-zenodo</a></li>
+    <li><a class="dropdown-item" href="../articles/1-setup.html">Getting started</a></li>
+    <li><a class="dropdown-item" href="../articles/2-grid.html">User-defined grid</a></li>
+    <li><a class="dropdown-item" href="../articles/3-enviro.html">Environmental data for sites</a></li>
+    <li><a class="dropdown-item" href="../articles/4-zeta.html">Zeta diversity</a></li>
+    <li><a class="dropdown-item" href="../articles/5-zeta-workflow.html">Zeta-MSGDM with dissmapr</a></li>
+    <li><a class="dropdown-item" href="../articles/6-predict.html">Predict community turnover</a></li>
+    <li><a class="dropdown-item" href="../articles/7-bioregion.html">Map bioregions</a></li>
+    <li><a class="dropdown-item" href="../articles/8-change.html">Map bioregion change</a></li>
+    <li><a class="dropdown-item" href="../articles/9-examples.html">Compute orderwise examples</a></li>
+    <li><a class="dropdown-item" href="../articles/10-zenodo.html">Zenodo basics</a></li>
   </ul>
 </li>
       </ul>
@@ -74,7 +74,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>4-zeta</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Zeta diversity</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/macSands/dissmapr/blob/HEAD/vignettes/4-zeta.Rmd" class="external-link"><code>vignettes/4-zeta.Rmd</code></a></small>
@@ -408,7 +408,7 @@ environmental effects from Euclidean geographic distance
 every predictor (note: higher splines imply stronger turnover per unit
 change).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">246</span><span class="op">)</span></span>
 <span><span class="co"># Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set</span></span>
 <span><span class="va">zeta2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.msgdm.html" class="external-link">Zeta.msgdm</a></span><span class="op">(</span></span>
 <span>  <span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">]</span>,                            <span class="co"># species matrix (rows = sites, cols = spp)</span></span>
@@ -416,7 +416,7 @@ change).</p>
 <span>  <span class="co"># env_vars_reduced[,-7],                         # without sampling effort included</span></span>
 <span>  <span class="va">grid_env</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span><span class="op">]</span>,   <span class="co"># longitude &amp; latitude (°)</span></span>
 <span>  <span class="co"># grid_env[, c("x_aea", "y_aea")],               # longitude &amp; latitude (meters)</span></span>
-<span>  sam           <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  sam           <span class="op">=</span> <span class="fl">2000</span>,</span>
 <span>  order         <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  distance.type <span class="op">=</span> <span class="st">"Euclidean"</span>,</span>
 <span>  normalize     <span class="op">=</span> <span class="st">"Jaccard"</span>,</span>
@@ -496,7 +496,7 @@ this landscape.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Deviance explained summary results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">zeta2</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">deviance</span><span class="op">/</span><span class="va">null.deviance</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; [1] 0.3006643</span></span>
+<span><span class="co">#&gt; [1] 0.3295694</span></span>
 <span><span class="co"># [1] 0.3733073</span></span>
 <span><span class="co"># 0.3733073 means that approximately 37% of the variability in the response</span></span>
 <span><span class="co"># variable is explained by your model. This is relatively low, suggesting that the</span></span>
@@ -511,40 +511,40 @@ this landscape.</p>
 <span><span class="co">#&gt;     cons.inter = cons.inter)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)   </span></span>
-<span><span class="co">#&gt; (Intercept) -1.75622    0.73280  -2.397   0.0165 * </span></span>
-<span><span class="co">#&gt; temp_mean1   0.00000    5.35410   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_mean2  -0.12901    1.80366  -0.072   0.9430   </span></span>
-<span><span class="co">#&gt; temp_mean3   0.00000    2.45052   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso1        -0.12769    1.82815  -0.070   0.9443   </span></span>
-<span><span class="co">#&gt; iso2         0.00000    1.32845   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso3         0.00000    1.84405   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ1   0.00000    1.46571   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ2  -0.21001    1.24872  -0.168   0.8664   </span></span>
-<span><span class="co">#&gt; temp_wetQ3  -0.35297    1.96909  -0.179   0.8577   </span></span>
-<span><span class="co">#&gt; temp_dryQ1   0.00000    4.60011   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_dryQ2  -0.28917    1.52155  -0.190   0.8493   </span></span>
-<span><span class="co">#&gt; temp_dryQ3   0.00000    1.64760   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_dry1   -0.08475    1.08271  -0.078   0.9376   </span></span>
-<span><span class="co">#&gt; rain_dry2   -0.22911    1.22210  -0.187   0.8513   </span></span>
-<span><span class="co">#&gt; rain_dry3    0.00000    1.61694   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_warmQ1 -0.38844    1.16271  -0.334   0.7383   </span></span>
-<span><span class="co">#&gt; rain_warmQ2 -0.18553    1.50201  -0.124   0.9017   </span></span>
-<span><span class="co">#&gt; rain_warmQ3 -0.34562    2.29405  -0.151   0.8802   </span></span>
-<span><span class="co">#&gt; obs_sum1    -2.12828    0.66640  -3.194   0.0014 **</span></span>
-<span><span class="co">#&gt; obs_sum2    -0.11889    2.16925  -0.055   0.9563   </span></span>
-<span><span class="co">#&gt; obs_sum3     0.00000    3.25547   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; distance1   -0.52361    1.23063  -0.425   0.6705   </span></span>
-<span><span class="co">#&gt; distance2   -0.29026    1.57052  -0.185   0.8534   </span></span>
-<span><span class="co">#&gt; distance3   -0.14665    2.42153  -0.061   0.9517   </span></span>
+<span><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span><span class="co">#&gt; (Intercept) -2.15772    0.59128  -3.649 0.000263 ***</span></span>
+<span><span class="co">#&gt; temp_mean1   0.00000    2.13983   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_mean2   0.00000    1.11988   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_mean3   0.00000    1.61548   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; iso1        -0.41087    1.61039  -0.255 0.798615    </span></span>
+<span><span class="co">#&gt; iso2        -0.04217    0.89248  -0.047 0.962312    </span></span>
+<span><span class="co">#&gt; iso3        -0.34620    1.43598  -0.241 0.809485    </span></span>
+<span><span class="co">#&gt; temp_wetQ1   0.00000    1.24962   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_wetQ2  -0.58101    0.98797  -0.588 0.556473    </span></span>
+<span><span class="co">#&gt; temp_wetQ3   0.00000    1.35706   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_dryQ1  -0.50195    1.79367  -0.280 0.779599    </span></span>
+<span><span class="co">#&gt; temp_dryQ2   0.00000    0.96997   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_dryQ3   0.00000    1.18512   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_dry1   -0.52046    0.74338  -0.700 0.483842    </span></span>
+<span><span class="co">#&gt; rain_dry2    0.00000    0.86227   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_dry3    0.00000    1.11076   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_warmQ1  0.00000    0.92368   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_warmQ2 -0.15443    0.90639  -0.170 0.864709    </span></span>
+<span><span class="co">#&gt; rain_warmQ3  0.00000    1.03507   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; obs_sum1    -2.35810    0.52901  -4.458 8.29e-06 ***</span></span>
+<span><span class="co">#&gt; obs_sum2     0.00000    1.31778   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; obs_sum3     0.00000    1.85521   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; distance1    0.00000    0.92147   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; distance2   -0.66283    1.28674  -0.515 0.606464    </span></span>
+<span><span class="co">#&gt; distance3   -0.05719    2.17657  -0.026 0.979037    </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Null deviance: 65.233  on 999  degrees of freedom</span></span>
-<span><span class="co">#&gt; Residual deviance: 45.620  on 975  degrees of freedom</span></span>
-<span><span class="co">#&gt; AIC: 98.771</span></span>
+<span><span class="co">#&gt;     Null deviance: 125.425  on 1999  degrees of freedom</span></span>
+<span><span class="co">#&gt; Residual deviance:  84.089  on 1975  degrees of freedom</span></span>
+<span><span class="co">#&gt; AIC: 137.47</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Number of Fisher Scoring iterations: 7</span></span></code></pre></div>
 <hr>
@@ -584,7 +584,7 @@ matters, but less than several climate variables.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Deviance explained summary results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">zeta2_noEff</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">deviance</span><span class="op">/</span><span class="va">null.deviance</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; [1] 0.08242748</span></span>
+<span><span class="co">#&gt; [1] 0.08816599</span></span>
 <span><span class="co"># [1] 0.09495599</span></span>
 <span><span class="co"># 0.09495599 means that approximately 1% of the variability in the response</span></span>
 <span><span class="co"># variable is explained by your model. This is relatively low, suggesting that the</span></span>
@@ -599,37 +599,37 @@ matters, but less than several climate variables.</p>
 <span><span class="co">#&gt;     cons.inter = cons.inter)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
-<span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)   </span></span>
-<span><span class="co">#&gt; (Intercept) -2.305658   0.721582  -3.195   0.0014 **</span></span>
-<span><span class="co">#&gt; temp_mean1   0.000000   5.272991   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_mean2  -0.007174   1.832546  -0.004   0.9969   </span></span>
-<span><span class="co">#&gt; temp_mean3   0.000000   2.455489   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso1        -0.725370   1.979859  -0.366   0.7141   </span></span>
-<span><span class="co">#&gt; iso2         0.000000   1.361778   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso3         0.000000   1.855347   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ1   0.000000   1.590495   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ2  -0.171049   1.323547  -0.129   0.8972   </span></span>
-<span><span class="co">#&gt; temp_wetQ3  -0.245476   2.004934  -0.122   0.9026   </span></span>
-<span><span class="co">#&gt; temp_dryQ1   0.000000   4.616249   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_dryQ2  -0.383202   1.607839  -0.238   0.8116   </span></span>
-<span><span class="co">#&gt; temp_dryQ3   0.000000   1.705136   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_dry1   -0.393967   1.102892  -0.357   0.7209   </span></span>
-<span><span class="co">#&gt; rain_dry2   -0.100666   1.235870  -0.081   0.9351   </span></span>
-<span><span class="co">#&gt; rain_dry3    0.000000   1.648879   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_warmQ1 -0.305181   1.152039  -0.265   0.7911   </span></span>
-<span><span class="co">#&gt; rain_warmQ2 -0.282461   1.498674  -0.188   0.8505   </span></span>
-<span><span class="co">#&gt; rain_warmQ3  0.000000   2.172390   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; distance1   -0.566322   1.239954  -0.457   0.6479   </span></span>
-<span><span class="co">#&gt; distance2   -0.245610   1.595757  -0.154   0.8777   </span></span>
-<span><span class="co">#&gt; distance3    0.000000   2.453390   0.000   1.0000   </span></span>
+<span><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)   </span></span>
+<span><span class="co">#&gt; (Intercept) -2.30749    0.71576  -3.224  0.00126 **</span></span>
+<span><span class="co">#&gt; temp_mean1   0.00000    2.72985   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; temp_mean2  -0.21672    1.53696  -0.141  0.88787   </span></span>
+<span><span class="co">#&gt; temp_mean3   0.00000    2.36184   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; iso1        -0.64639    2.07603  -0.311  0.75553   </span></span>
+<span><span class="co">#&gt; iso2        -0.01169    1.34429  -0.009  0.99306   </span></span>
+<span><span class="co">#&gt; iso3         0.00000    1.69884   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; temp_wetQ1   0.00000    1.60974   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; temp_wetQ2  -0.05815    1.34254  -0.043  0.96545   </span></span>
+<span><span class="co">#&gt; temp_wetQ3  -0.27615    1.87980  -0.147  0.88321   </span></span>
+<span><span class="co">#&gt; temp_dryQ1   0.00000    2.14957   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; temp_dryQ2  -0.44304    1.37079  -0.323  0.74654   </span></span>
+<span><span class="co">#&gt; temp_dryQ3   0.00000    1.72340   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; rain_dry1   -0.38117    1.08562  -0.351  0.72550   </span></span>
+<span><span class="co">#&gt; rain_dry2   -0.16497    1.26607  -0.130  0.89633   </span></span>
+<span><span class="co">#&gt; rain_dry3    0.00000    1.74241   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; rain_warmQ1 -0.36204    1.24736  -0.290  0.77163   </span></span>
+<span><span class="co">#&gt; rain_warmQ2 -0.37857    1.35207  -0.280  0.77948   </span></span>
+<span><span class="co">#&gt; rain_warmQ3  0.00000    1.55813   0.000  1.00000   </span></span>
+<span><span class="co">#&gt; distance1   -0.45944    1.26391  -0.364  0.71622   </span></span>
+<span><span class="co">#&gt; distance2   -0.09850    1.62880  -0.060  0.95178   </span></span>
+<span><span class="co">#&gt; distance3    0.00000    2.50094   0.000  1.00000   </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Null deviance: 65.233  on 999  degrees of freedom</span></span>
-<span><span class="co">#&gt; Residual deviance: 59.856  on 978  degrees of freedom</span></span>
-<span><span class="co">#&gt; AIC: 106.99</span></span>
+<span><span class="co">#&gt; Residual deviance: 59.482  on 978  degrees of freedom</span></span>
+<span><span class="co">#&gt; AIC: 106.61</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Number of Fisher Scoring iterations: 7</span></span></code></pre></div>
 <p>With sampling effort removed the model explains only ≈ 8% of the
