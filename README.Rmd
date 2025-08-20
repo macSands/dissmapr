@@ -28,7 +28,15 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/nithecs-biomath/RBasicPack/master?urlpath=rstudio) [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable) [![test-coverage](https://github.com/macSands/dissmapr/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/macSands/dissmapr/actions/workflows/test-coverage.yaml) [![Codecov test coverage](https://codecov.io/gh/macSands/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/macSands/dissmapr) [![R-CMD-check](https://github.com/macSands/dissmapr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/macSands/dissmapr/actions/workflows/R-CMD-check.yaml)
+[![repo status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Release](https://img.shields.io/github/release/b-cubed-eu/dissmapr.svg)](https://github.com/b-cubed-eu/dissmapr/releases)
+[![dissmapr status
+badge](https://b-cubed-eu.r-universe.dev/dissmapr/badges/version)](https://b-cubed-eu.r-universe.dev/dissmapr)
+[![CRAN status](https://www.r-pkg.org/badges/version/dissmapr)](https://cran.r-project.org//package=dissmapr)
+[![R-CMD-check](https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/b-cubed-eu/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/dissmapr)
+[![DOI](https://img.shields.io/badge/DOI-awaiting_upload_to_zenodo-orange)](https://zenodo.org)
+[![name status badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
 
 <!-- badges: end -->
 
