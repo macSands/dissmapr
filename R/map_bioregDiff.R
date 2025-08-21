@@ -5,15 +5,15 @@
 #' (e.g. bioregion / cluster) label of each raster cell changes across a
 #' temporal or scenario stack of rasters:
 #'
-#' * **Difference count** – total number of times a cell’s label differs from
+#' * **Difference count** - total number of times a cell's label differs from
 #'   the first layer.
-#' * **Shannon entropy** – information‐theoretic diversity of labels within the
-#'   cell’s time-series.
-#' * **Stability** – proportion of layers in which the label is identical to
+#' * **Shannon entropy** - information-theoretic diversity of labels within the
+#'   cell's time-series.
+#' * **Stability** - proportion of layers in which the label is identical to
 #'   the first layer *(1 = always unchanged, 0 = always different)*.
-#' * **Transition frequency** – sum of binary change maps between successive
+#' * **Transition frequency** - sum of binary change maps between successive
 #'   layers (*how often a change occurs between any pair of neighbours*).
-#' * **Weighted change index** – cumulative dissimilarity-weighted change where
+#' * **Weighted change index** - cumulative dissimilarity-weighted change where
 #'   the weight is derived from the empirical frequency of transitions between
 #'   all pairs of labels.
 #'

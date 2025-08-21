@@ -43,7 +43,7 @@ Here we calculate species richness across sites in the `block_sp` dataset, using
 
 ```{r compute-rich}
 # Compute species richness (order 1) and the difference thereof for orders 2 to 4
-rich_o1234 = compute_orderwise(
+rich_o1234 = dissmapr::compute_orderwise(
   df = grid_spp,
   func = richness,
   site_col = 'grid_id',
@@ -117,7 +117,7 @@ Here we calculate species turnover (beta diversity) across sites in the `block_s
 
 ```{r compute-turn}
 # Compute community turnover for orders 2 to 5
-turn_o2345 = compute_orderwise(
+turn_o2345 = dissmapr::compute_orderwise(
   df = grid_spp,
   func = turnover,
   site_col = 'grid_id',

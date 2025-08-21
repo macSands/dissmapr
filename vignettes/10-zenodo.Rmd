@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r child-10, child = "_common.Rmd"}
+```{r child-10, child = "_common.R"}
 ```
 
 
@@ -21,6 +21,10 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE
 )
+
+has_zen4r <- requireNamespace("zen4R", quietly = TRUE)
+knitr::opts_chunk$set(eval = has_zen4r)
+if (!has_zen4r) message("zen4R not installed - zenodo-related chunks are skipped during build/check.")
 ```
 
 ------------------------------------------------------------------------

@@ -61,7 +61,7 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://b-cubed.eu/" aria-label="B-Cubed website"><span class="fa fa-cube"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/macSands/dissmapr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/b-cubed-eu/dissmapr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -77,7 +77,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>User-defined grid</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/macSands/dissmapr/blob/HEAD/vignettes/2-grid.Rmd" class="external-link"><code>vignettes/2-grid.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/HEAD/vignettes/2-grid.Rmd" class="external-link"><code>vignettes/2-grid.Rmd</code></a></small>
       <div class="d-none name"><code>2-grid.Rmd</code></div>
     </div>
 
@@ -125,7 +125,7 @@ centroids fall within South Africa remain.</li>
 <span><span class="co"># The shapefile is shipped with the package for full reproducibility.</span></span>
 <span><span class="va">rsa</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"rsa.shp"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reading layer `rsa' from data source </span></span>
-<span><span class="co">#&gt;   `C:\Users\macfadyen\AppData\Local\R\cache\R\renv\library\dissmapr-c8cae55a\windows\R-4.5\x86_64-w64-mingw32\dissmapr\extdata\rsa.shp' </span></span>
+<span><span class="co">#&gt;   `C:\Users\macfadyen\AppData\Local\R\cache\R\renv\library\dissmapr-ee60f76d\windows\R-4.5\x86_64-w64-mingw32\dissmapr\extdata\rsa.shp' </span></span>
 <span><span class="co">#&gt;   using driver `ESRI Shapefile'</span></span>
 <span><span class="co">#&gt; Simple feature collection with 1 feature and 1 field</span></span>
 <span><span class="co">#&gt; Geometry type: POLYGON</span></span>
@@ -152,7 +152,7 @@ centroids fall within South Africa remain.</li>
 <span><span class="co"># 5. Populate the raster with placeholder values </span></span>
 <span><span class="co"># We simply assign the value 1 to every cell; the values themselves are</span></span>
 <span><span class="co"># irrelevant at this stage—the grid’s geometry is what matters.</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span> <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span> <span class="op">=</span> <span class="fl">1</span></span>
 <span></span>
 <span><span class="co"># 6. Clip the raster to the AoI </span></span>
 <span><span class="co"># Any cells whose centroids fall outside the boundary are set to NA, thereby</span></span>
@@ -227,7 +227,7 @@ downstream statistics and graphics are standardised to the same sample
 area.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate a 0.5° grid summary for the point dataset `site_spp`</span></span>
-<span><span class="va">grid_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/generate_grid.html">generate_grid</a></span><span class="op">(</span></span>
+<span><span class="va">grid_list</span> <span class="op">=</span> <span class="fu">dissmapr</span><span class="fu">::</span><span class="fu"><a href="../reference/generate_grid.html">generate_grid</a></span><span class="op">(</span></span>
 <span>  data          <span class="op">=</span> <span class="va">site_spp</span>,           <span class="co"># point data with x/y + species columns</span></span>
 <span>  x_col         <span class="op">=</span> <span class="st">"x"</span>,                <span class="co"># longitude column</span></span>
 <span>  y_col         <span class="op">=</span> <span class="st">"y"</span>,                <span class="co"># latitude  column</span></span>

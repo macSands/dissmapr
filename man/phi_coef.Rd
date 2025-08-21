@@ -15,5 +15,5 @@ phi_coef(vec_from, vec_to)
 The Phi Coefficient value.
 }
 \description{
-Phi coefficient for presence–absence; –1 to +1 pairwise, summary of means/variances across combinations.
+Phi coefficient for presence-absence; -1 to +1 pairwise, summary of means/variances across combinations.
 }

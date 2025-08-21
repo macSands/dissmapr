@@ -61,7 +61,7 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://b-cubed.eu/" aria-label="B-Cubed website"><span class="fa fa-cube"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/macSands/dissmapr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/b-cubed-eu/dissmapr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -77,7 +77,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Compute orderwise examples</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/macSands/dissmapr/blob/HEAD/vignettes/9-examples.Rmd" class="external-link"><code>vignettes/9-examples.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/HEAD/vignettes/9-examples.Rmd" class="external-link"><code>vignettes/9-examples.Rmd</code></a></small>
       <div class="d-none name"><code>9-examples.Rmd</code></div>
     </div>
 
@@ -122,7 +122,7 @@ threads to improve performance. The output is a table summarizing
 species richness across specified orders.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute species richness (order 1) and the difference thereof for orders 2 to 4</span></span>
-<span><span class="va">rich_o1234</span> <span class="op">=</span> <span class="fu"><a href="../reference/compute_orderwise.html">compute_orderwise</a></span><span class="op">(</span></span>
+<span><span class="va">rich_o1234</span> <span class="op">=</span> <span class="fu">dissmapr</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_orderwise.html">compute_orderwise</a></span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">grid_spp</span>,</span>
 <span>  func <span class="op">=</span> <span class="va">richness</span>,</span>
 <span>  site_col <span class="op">=</span> <span class="st">'grid_id'</span>,</span>
@@ -131,11 +131,11 @@ species richness across specified orders.</p>
 <span>  order <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 1.33 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 5.61 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 28.55 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 0 minutes and 55.09 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 0 minutes and 55.09 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 1.47 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 19.42 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 52.37 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 28.18 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 1 minutes and 28.19 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rich_o1234</span><span class="op">)</span></span>
@@ -228,7 +228,7 @@ processing with 4 worker threads improves efficiency, and the output is
 a table summarizing species turnover across the specified orders.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute community turnover for orders 2 to 5</span></span>
-<span><span class="va">turn_o2345</span> <span class="op">=</span> <span class="fu"><a href="../reference/compute_orderwise.html">compute_orderwise</a></span><span class="op">(</span></span>
+<span><span class="va">turn_o2345</span> <span class="op">=</span> <span class="fu">dissmapr</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_orderwise.html">compute_orderwise</a></span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">grid_spp</span>,</span>
 <span>  func <span class="op">=</span> <span class="va">turnover</span>,</span>
 <span>  site_col <span class="op">=</span> <span class="st">'grid_id'</span>,</span>
@@ -237,11 +237,11 @@ a table summarizing species turnover across the specified orders.</p>
 <span>  order <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 7.83 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 49.28 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 27.67 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 5: 2 minutes and 10.29 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 2 minutes and 10.30 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 10.90 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 5.17 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 59.92 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 5: 2 minutes and 53.17 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 2 minutes and 53.19 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">turn_o2345</span><span class="op">)</span></span>

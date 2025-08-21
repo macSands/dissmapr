@@ -26,14 +26,14 @@ predictor columns whose absolute pairwise correlations are \eqn{<}
 \description{
 Detects pairs (or groups) of strongly collinear predictors and eliminates
 the minimum subset necessary to keep every absolute pairwise correlation
-below a user‐defined threshold.  Correlations are computed with
+below a user-defined threshold.  Correlations are computed with
 \code{stats::cor()}; the variables to discard are chosen via the
 \code{caret::findCorrelation()} algorithm.  An optional heat-map of the
 correlation matrix is produced with \strong{corrplot} for rapid inspection.
 }
 \details{
 \itemize{
-\item Non‐numeric columns are silently dropped prior to correlation
+\item Non-numeric columns are silently dropped prior to correlation
 calculation.
 \item When \code{cols} is supplied (numeric or character), only those columns are
 tested; otherwise all numeric columns in \code{data} are used.
@@ -51,7 +51,7 @@ df <- data.frame(
   d = rnorm(n) * 0.9 + rnorm(n) * 0.1   # moderately corr. with 'b'
 )
 
-## Remove predictors with |r| ≥ 0.75
+## Remove predictors with r >= 0.75
 df_reduced <- rm_correlated(df, threshold = 0.75, plot = FALSE)
 names(df_reduced)
 

@@ -2,7 +2,7 @@
 title: "Zeta-MSGDM with dissmapr"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Zeta diversity with dissmapr}
+  %\VignetteIndexEntry{Zeta-MSGDM with dissmapr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -59,7 +59,7 @@ The following chunk uses our `run_ispline_models()` helper to fit `Zeta.msgdm(re
 ```{r run-ispline}
 # Fit & gather ispline outputs for orders 2:6
 set.seed(123) # set.seed to generate exactly the same random results i.e. sam=100
-ispline_gdm_tab = run_ispline_models(
+ispline_gdm_tab = dissmapr::run_ispline_models(
   spp_df    = grid_spp_pa[,-(1:7)],
   env_df    = env_vars_reduced,
   xy_df     = grid_env[, c("centroid_lon", "centroid_lat")],
@@ -94,7 +94,7 @@ raw_vars = sub("_is$", "",
 
 # 2. Generate one plot per covariate
 plots = lapply(raw_vars, function(var) {
-  plot_ispline_lines(
+  dissmapr::plot_ispline_lines(
     ispline_data = ispline_tabs_all,
     x_var        = var,
     orders       = paste("Order", 2:6),
@@ -139,7 +139,7 @@ Finally, we summarize the distribution of every _is basis across orders using `p
 
 ```{r plot-isp-box, warning=FALSE, message=FALSE, fig.width=10, fig.height=12}
 # Facetted boxplots of all *_is columns
-plot_ispline_boxplots(
+dissmapr::plot_ispline_boxplots(
   ispline_data   = ispline_tabs_all,
   ispline_suffix = "_is",
   order_col      = "zOrder",

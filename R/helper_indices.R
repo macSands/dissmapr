@@ -157,7 +157,7 @@ calculate_pairwise_distances_matrix <- function(
   # extract coords matrix
   coords <- data[, c(x_col, y_col)]
 
-  # compute distance matrix (meters → km)
+  # compute distance matrix (meters -> km)
   distance_matrix <- distm(coords, fun = distance_fun) / 1000
 
   # reshape to long format
@@ -168,7 +168,7 @@ calculate_pairwise_distances_matrix <- function(
   distances$site_from <- data$grid_id[distances$site_from_index]
   distances$site_to   <- data$grid_id[distances$site_to_index]
 
-  # drop self‐distances and indices
+  # drop self-distances and indices
   distances <- distances[distances$site_from != distances$site_to, ]
   distances <- distances[, c("site_from", "site_to", "value")]
 
@@ -203,7 +203,7 @@ richness <- function(vec_from, vec_to = NULL) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Species Turnover or Beta Diversity
 #'
-#' Computes beta diversity as proportion unshared; 0–1 for pairwise, extended to multi-site averages or totals.
+#' Computes beta diversity as proportion unshared; 0-1 for pairwise, extended to multi-site averages or totals.
 #'
 #' @param vec_from A numeric vector representing species counts at the first site.
 #' @param vec_to (Optional) A numeric vector for pairwise or higher-order comparisons.
@@ -268,7 +268,7 @@ abund <- function(vec_from, vec_to = NULL) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Phi Coefficient
 #'
-#' Phi coefficient for presence–absence; –1 to +1 pairwise, summary of means/variances across combinations.
+#' Phi coefficient for presence-absence; -1 to +1 pairwise, summary of means/variances across combinations.
 #'
 #' @param vec_from A binary presence-absence vector for the first site.
 #' @param vec_to A binary presence-absence vector for the second site.
@@ -309,7 +309,7 @@ phi_coef <- function(vec_from, vec_to) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Spearman's Rank Correlation
 #'
-#' Spearman’s rank correlation for abundances; pairwise and averaged multi-site.
+#' Spearman's rank correlation for abundances; pairwise and averaged multi-site.
 #'
 #' @param vec_from A numeric vector representing species abundances at the first site.
 #' @param vec_to A numeric vector representing species abundances at the second site.
@@ -326,12 +326,12 @@ cor_spear <- function(vec_from, vec_to) {
   }
 }
 
-# Spearman’s Rank Correlation (Abundance Data):
+# Spearman's Rank Correlation (Abundance Data):
 # Measures the rank-based association between species pairs, also ranging from -1 to +1.
 # >> Description: Measures the strength and direction of a monotonic association between two species' abundances.
 # >> When to Use: When data is non-parametric/doesn't meet assumptions of normality.
 # It is based on ranks i.e. is robust to outliers.
-# >> Interpretation: Ranges from −1 (perfect negative correlation) to
+# >> Interpretation: Ranges from -1 (perfect negative correlation) to
 # 1 (perfect positive correlation), with 0 indicating no association.
 
 # --> Intrepretting plots:
@@ -346,7 +346,7 @@ cor_spear <- function(vec_from, vec_to) {
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Pearson's Correlation
 #'
-#' Pearson’s correlation for linear abundance relationships; aggregated across sites.
+#' Pearson's correlation for linear abundance relationships; aggregated across sites.
 #'
 #' @param vec_from A numeric vector representing species abundances at the first site.
 #' @param vec_to A numeric vector representing species abundances at the second site.
@@ -366,14 +366,14 @@ cor_pears <- function(vec_from, vec_to) {
 # >> Description: Measures the linear association between two species' abundances.
 # >> When to Use: When the data is normally distributed and you are interested in
 # linear relationships.
-# >> Interpretation: Similar to Spearman’s, it ranges from −1 to 1.
+# >> Interpretation: Similar to Spearman's, it ranges from -1 to 1.
 
 
 # BRAY-CURTIS DISSIMILARITY
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Calculate Bray-Curtis Dissimilarity
 #'
-#' Bray–Curtis dissimilarity on abundances; 0–1 for pairwise, averages or totals for multi-site.
+#' Bray-Curtis dissimilarity on abundances; 0-1 for pairwise, averages or totals for multi-site.
 #'
 #' @param vec_from A numeric vector representing species abundances at the first site.
 #' @param vec_to A numeric vector for species abundances at the second site.
@@ -421,7 +421,7 @@ gower_dissimilarity <- function(vec_from, vec_to) {
 
 #' Compute Gower dissimilarity between two site vectors
 #'
-#' Calculates the Gower dissimilarity (a bounded 0–1 measure) between two numeric
+#' Calculates the Gower dissimilarity (a bounded 0-1 measure) between two numeric
 #' vectors (e.g., species abundances) using the `cluster::daisy()` function. When
 #' the second vector is `NULL` (order 1), returns `NA_real_` since a pairwise
 #' comparison is not meaningful.
@@ -438,7 +438,7 @@ gower_dissimilarity <- function(vec_from, vec_to) {
 #' @export
 orderwise_diss_gower <- function(vec_from, vec_to = NULL) {
   # If the second vector is missing, we cannot compute a dissimilarity between two groups.
-  # (For order=1 this function returns NA because comparing a single site to nothing isn’t meaningful.)
+  # >> For order=1 this function returns NA because comparing a single site to nothing isn't meaningful
   if (is.null(vec_to)) {
     return(NA_real_)
   }
@@ -525,6 +525,6 @@ mutual_info <- function(vec_from, vec_to) {
 # >> Interpretation: Higher values indicate stronger associations.
 # Does not have fixed range but is always non-negative.
 
-# Non-Negative Values (≥ 0)
+# Non-Negative Values (>= 0)
 # A value of 0 means the two variables are independent (no shared information).
 # Higher values indicate greater dependency or shared information between the two variables.

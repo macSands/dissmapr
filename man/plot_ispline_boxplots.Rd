@@ -27,7 +27,7 @@ Default is \dQuote{_is}.}
 \item{palette}{One of the Viridis options (\dQuote{viridis}, \dQuote{magma},
 \dQuote{plasma}, \dQuote{cividis}, etc.). Default \dQuote{viridis}.}
 
-\item{direction}{Integer 1 or –1 to control palette direction. Default –1 (reversed).}
+\item{direction}{Integer 1 or -1 to control palette direction. Default -1 (reversed).}
 
 \item{ncol}{Number of columns in the facet wrap. Default 3.}
 
@@ -37,10 +37,10 @@ Default is \dQuote{_is}.}
 A \pkg{ggplot2} object showing one boxplot per spline term.
 }
 \description{
-Creates a multi‐facet boxplot of every ispline basis column in your data,
+Creates a multi-facet boxplot of every ispline basis column in your data,
 grouped by a specified order factor (e.g. zeta orders). Each spline term
 (columns ending in \code{_is}) gets its own facet, and uses a
-color‐blind–friendly Viridis palette.
+color-blind-friendly Viridis palette.
 }
 \details{
 \enumerate{

@@ -15,5 +15,5 @@ turnover(vec_from, vec_to = NULL)
 The species turnover value.
 }
 \description{
-Computes beta diversity as proportion unshared; 0–1 for pairwise, extended to multi-site averages or totals.
+Computes beta diversity as proportion unshared; 0-1 for pairwise, extended to multi-site averages or totals.
 }

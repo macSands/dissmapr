@@ -56,7 +56,7 @@ The result is a set of complementary bioregion maps and rasters you can use to c
 ```{r zeta-cluster, fig.width=11.25, fig.height=9, warning=FALSE, message=FALSE}
 # Add this to {, fig.width=11.25, fig.height=9, warning=FALSE, message=FALSE}
 # Run `map_bioreg` function to generate and plot clusters
-bioreg_current = map_bioreg(
+bioreg_current = dissmapr::map_bioreg(
   data = predictors_df,
   scale_cols = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
   method = 'all', # Options: c("kmeans","pam","hclust","gmm","all"),
@@ -86,7 +86,7 @@ To see how the bioregional partitions shift, we split `all_preds` by scenario an
 by_scn = split(all_preds, all_preds$scenario)
 
 # For each scenario, call map_bioreg() with all algorithms
-bioreg_future = map_bioreg(
+bioreg_future = dissmapr::map_bioreg(
   data = by_scn,
   scale_cols = c("pred_zetaExp", "centroid_lon", "centroid_lat"),
   method = 'all', # Options: c("kmeans","pam","hclust","gmm","all"),

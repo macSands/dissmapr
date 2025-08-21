@@ -2,7 +2,7 @@
 title: "Environmental data for sites"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Get environmental data for sites}
+  %\VignetteIndexEntry{Environmental data for sites}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -65,7 +65,7 @@ Fetch the 5-arc-min (~10 km) bioclim stack via `geodata` package and attach valu
 ```{r get-enviro}
 # Retrieve 19 bioclim layers (≈10-km, WorldClim v2.1) for all grid centroids
 data_path = system.file("extdata", package = "dissmapr")               # cache folder for rasters
-enviro_list = get_enviro_data(
+enviro_list = dissmapr::get_enviro_data(
   data       = grid_spp,                  # centroids + obs_sum + spp_rich
   buffer_km  = 10,                        # pad the AOI slightly
   source     = "geodata",                 # WorldClim/SoilGrids interface
@@ -234,7 +234,7 @@ names(env_df) = c("grid_id", "centroid_lon", "centroid_lat", names_env, "obs_sum
   
 # Run the filter and compare dimensions
 # Filter environmental predictors for |r| > 0.70
-env_vars_reduced = rm_correlated(
+env_vars_reduced = dissmapr::rm_correlated(
   data       = env_df[, c(4, 6:24)],  # drop ID + coord columns
   cols       = NULL,                  # infer all numeric cols
   threshold  = 0.70,

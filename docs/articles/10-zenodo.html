@@ -61,7 +61,7 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://b-cubed.eu/" aria-label="B-Cubed website"><span class="fa fa-cube"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/macSands/dissmapr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/b-cubed-eu/dissmapr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -77,13 +77,31 @@
       <img src="../logo.png" class="logo" alt=""><h1>Zenodo basics</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/macSands/dissmapr/blob/HEAD/vignettes/10-zenodo.Rmd" class="external-link"><code>vignettes/10-zenodo.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/HEAD/vignettes/10-zenodo.Rmd" class="external-link"><code>vignettes/10-zenodo.Rmd</code></a></small>
       <div class="d-none name"><code>10-zenodo.Rmd</code></div>
     </div>
 
     
     
+<p>#’ — #’ title: “Your title” #’ output: rmarkdown::html_vignette #’
+vignette: &gt; #’ % #’ % #’ % #’ —</p>
+<p>#+ setup-0, include=FALSE knitr::opts_chunk$set( collapse = TRUE,
+comment = “#&gt;”, message = FALSE, warning = FALSE, echo = FALSE,
+fig.path = “figures/” )</p>
+<div class="section level2">
+<h2 id="packages">Packages ————————————————————–<a class="anchor" aria-label="anchor" href="#packages"></a>
+</h2>
+<p>library(dissmapr) library(httr); library(geodata);
+library(data.table); library(dplyr) library(tidyr); library(zoo);
+library(sf); library(terra); library(tidyterra) library(zetadiv);
+library(ggplot2); library(viridis); library(patchwork) # guard optional
+deps has_zen4r &lt;- requireNamespace(“zen4R”, quietly = TRUE) if
+(has_zen4r) library(zen4R) library(purrr); library(RColorBrewer)</p>
+<p>#+ cache, include=FALSE load(system.file(“extdata”,
+“dissmapr_cache.RData”, package = “dissmapr”), envir =
+knitr::knit_global())</p>
 <hr>
+</div>
 <div class="section level2">
 <h2 id="dissmapr">
 <code>dissmapr</code><a class="anchor" aria-label="anchor" href="#dissmapr"></a>

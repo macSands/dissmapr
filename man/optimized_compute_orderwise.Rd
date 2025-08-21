@@ -26,14 +26,14 @@ value (e.g. \code{orderwise_diss_gower}, \code{geodist_helper}).}
 \item{site_col}{Character; column with the unique site identifiers.}
 
 \item{sp_cols}{Character or integer vector giving the columns used to
-build each site’s numeric vector \strong{when \code{func} is not
+build each site's numeric vector \strong{when \code{func} is not
 \code{geodist_helper}}.}
 
-\item{order}{Integer scalar or vector of orders (≥ 1).  For values
+\item{order}{Integer scalar or vector of orders (>= 1).  For values
 \eqn{> 2} the function iterates through each order.}
 
 \item{sample_no}{Integer. Maximum \emph{number} of combinations to sample
-\strong{per focal site} for orders ≥ 3. If \code{NULL} (default) all
+\strong{per focal site} for orders >= 3. If \code{NULL} (default) all
 combinations are used (subject to \code{sample_portion}).}
 
 \item{sample_portion}{Numeric in (0, 1]. Proportion of combinations to
@@ -69,7 +69,7 @@ combination of \eqn{(order-1)} other sites.  The routine supports:
 \code{order = 2} when \code{func = orderwise_diss_gower};
 \item great-circle distances via \code{geodist_helper}
 (requires \code{coord_cols});
-\item arbitrary metrics acting on numeric “site vectors” defined by
+\item arbitrary metrics acting on numeric "site vectors" defined by
 \code{sp_cols};
 \item parallel execution with \strong{future.apply} and progress bars
 from \strong{pbapply};
@@ -92,7 +92,7 @@ assumes \code{orderwise_diss_gower()} is exported by \emph{dissmapr}.
 
 \examples{
 ## ---------------------------------------------------------------
-## Example 1 – Gower dissimilarity between species vectors (order 2)
+## Example 1 - Gower dissimilarity between species vectors (order 2)
 ## ---------------------------------------------------------------
 if (requireNamespace("cluster", quietly = TRUE)) {
   set.seed(1)
@@ -119,7 +119,7 @@ if (requireNamespace("cluster", quietly = TRUE)) {
 }
 
 ## ---------------------------------------------------------------
-## Example 2 – Great-circle distance (km) between site centroids
+## Example 2 - Great-circle distance (km) between site centroids
 ## ---------------------------------------------------------------
 if (requireNamespace("geosphere", quietly = TRUE)) {
   # geodist_helper is expected to be exported by dissmapr

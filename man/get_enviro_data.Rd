@@ -56,7 +56,7 @@ to \code{data}}.}
 \value{
 A list with
 \itemize{
-\item \code{env_rast}  \code{SpatRaster} – cropped (and optionally resampled) environmental stack
+\item \code{env_rast}  \code{SpatRaster} - cropped (and optionally resampled) environmental stack
 \item \code{sites_sf}  \code{sf} POINT layer (WGS-84) of the input sites
 \item \code{env_df}    Tibble with site ID, coordinates, every raster variable,
 plus any columns requested in \code{ext_cols}
@@ -65,14 +65,14 @@ plus any columns requested in \code{ext_cols}
 \description{
 \code{get_enviro_data()} automates six steps:
 \enumerate{
-\item \strong{AOI build} – buffers the convex hull of all input points.
-\item \strong{Raster acquisition} – downloads or loads a multi-layer stack
+\item \strong{AOI build} - buffers the convex hull of all input points.
+\item \strong{Raster acquisition} - downloads or loads a multi-layer stack
 (WorldClim, SoilGrids, footprint, population, or user-supplied).
-\item \strong{Cropping} – trims the stack to the buffered AOI.
-\item \strong{Optional resampling} – resamples the cropped stack to a user-defined grid resolution.
-\item \strong{Extraction & gap fill} – pulls raster values at each site and
+\item \strong{Cropping} - trims the stack to the buffered AOI.
+\item \strong{Optional resampling} - resamples the cropped stack to a user-defined grid resolution.
+\item \strong{Extraction & gap fill} - pulls raster values at each site and
 linearly interpolates isolated NAs.
-\item \strong{Assembly} – returns a tidy \emph{site × environment} table plus the cropped
+\item \strong{Assembly} - returns a tidy \emph{site x environment} table plus the cropped
 (and resampled) raster and an \code{sf} layer of sites.
 }
 }

@@ -37,6 +37,7 @@ badge](https://b-cubed-eu.r-universe.dev/dissmapr/badges/version)](https://b-cub
 [![Codecov test coverage](https://codecov.io/gh/b-cubed-eu/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/dissmapr)
 [![DOI](https://img.shields.io/badge/DOI-awaiting_upload_to_zenodo-orange)](https://zenodo.org)
 [![name status badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
+[![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
 <!-- badges: end -->
 
@@ -78,7 +79,7 @@ Install and load the `dissmapr` package from GitHub, ensuring all functions are 
 ```{r install, eval=FALSE, include=TRUE}
 # install remotes if needed
 # install.packages("remotes")
-remotes::install_github("macSands/dissmapr")
+remotes::install_github("b-cubed-eu/dissmapr")
 ```
 
 ```{r load-dissmapr, include=TRUE}

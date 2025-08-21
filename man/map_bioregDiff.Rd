@@ -28,15 +28,15 @@ Calculates five complementary indices that quantify how the categorical
 (e.g. bioregion / cluster) label of each raster cell changes across a
 temporal or scenario stack of rasters:
 \itemize{
-\item \strong{Difference count} – total number of times a cell’s label differs from
+\item \strong{Difference count} - total number of times a cell's label differs from
 the first layer.
-\item \strong{Shannon entropy} – information‐theoretic diversity of labels within the
-cell’s time-series.
-\item \strong{Stability} – proportion of layers in which the label is identical to
+\item \strong{Shannon entropy} - information-theoretic diversity of labels within the
+cell's time-series.
+\item \strong{Stability} - proportion of layers in which the label is identical to
 the first layer \emph{(1 = always unchanged, 0 = always different)}.
-\item \strong{Transition frequency} – sum of binary change maps between successive
+\item \strong{Transition frequency} - sum of binary change maps between successive
 layers (\emph{how often a change occurs between any pair of neighbours}).
-\item \strong{Weighted change index} – cumulative dissimilarity-weighted change where
+\item \strong{Weighted change index} - cumulative dissimilarity-weighted change where
 the weight is derived from the empirical frequency of transitions between
 all pairs of labels.
 }

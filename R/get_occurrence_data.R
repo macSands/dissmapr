@@ -17,7 +17,7 @@
 #' @section Workflow:
 #' 1. **Read** the data from `source_type`.
 #' 2. **Detect / insert** compulsory columns (site, coords, species, value).
-#' 3. **Validate** coordinates (-180 ≤ lon ≤ 180, -90 ≤ lat ≤ 90).
+#' 3. **Validate** coordinates (-180 <= lon <= 180, -90 <= lat <= 90).
 #' 4. **Return**
 #'    * a long table (`site_id`, `x`, `y`, `sp_name`, `pa|abund`) when species
 #'      name + value columns are present; or
@@ -43,7 +43,7 @@
 #' \describe{
 #'   \item{Long format}{Columns `site_id`, `x`, `y`, `sp_name`, plus `pa`
 #'     *or* `abund`.}
-#'   \item{Wide → long}{Same columns after stacking the specified or
+#'   \item{Wide - long}{Same columns after stacking the specified or
 #'     auto-detected species columns.}
 #' }
 #'

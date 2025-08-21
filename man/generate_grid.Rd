@@ -16,7 +16,7 @@ generate_grid(
 )
 }
 \arguments{
-\item{data}{Data frame of points with x–y coordinates.}
+\item{data}{Data frame of points with x-y coordinates.}
 
 \item{x_col, }{y_col    Column names for longitude and latitude.}
 
@@ -32,10 +32,12 @@ generate_grid(
 }
 \value{
 A list containing
-• \code{grid_r}      – multi-layer \strong{SpatRaster}
-• \code{grid_sf}     – polygon lattice with centroids & metrics
-• \code{grid_spp}    – abundance summary (\emph{data.frame})
-• \code{grid_spp_pa} – presence/absence summary (\emph{data.frame})
+\itemize{
+\item \code{grid_r}      - multi-layer \strong{SpatRaster}
+\item \code{grid_sf}     - polygon lattice with centroids & metrics
+\item \code{grid_spp}    - abundance summary (\emph{data.frame})
+\item \code{grid_spp_pa} - presence/absence summary (\emph{data.frame})
+}
 }
 \description{
 Builds a regular lattice over a point-occurrence data set, assigns every record
@@ -47,11 +49,11 @@ The function:
 \enumerate{
 \item Tiles the study extent with square cells of size \code{grid_size}.
 \item Computes cell centroids and, for geographic CRS data, optional mapsheet
-codes (1:250 000 “BB” series).
+codes (1:250 000 "BB" series).
 \item Aggregates user-specified columns (\code{sum_cols}) per cell, producing
 \itemize{
-\item \strong{\code{grid_spp}}    – counts / abundances
-\item \strong{\code{grid_spp_pa}} – binary 0 / 1 table for dissimilarity analyses.
+\item \strong{\code{grid_spp}}    - counts / abundances
+\item \strong{\code{grid_spp_pa}} - binary 0 / 1 table for dissimilarity analyses.
 }
 \item Calculates helper metrics (\code{obs_sum}, \code{spp_rich}) for each cell.
 \item Rasterises key layers (\code{grid_id}, \code{obs_sum}, \code{spp_rich}) and preserves

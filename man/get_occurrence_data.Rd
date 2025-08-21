@@ -46,7 +46,7 @@ A \code{data.frame}:
 \describe{
 \item{Long format}{Columns \code{site_id}, \code{x}, \code{y}, \code{sp_name}, plus \code{pa}
 \emph{or} \code{abund}.}
-\item{Wide → long}{Same columns after stacking the specified or
+\item{Wide - long}{Same columns after stacking the specified or
 auto-detected species columns.}
 }
 }
@@ -71,7 +71,7 @@ vector of column names when the species columns do \strong{not} follow the
 \enumerate{
 \item \strong{Read} the data from \code{source_type}.
 \item \strong{Detect / insert} compulsory columns (site, coords, species, value).
-\item \strong{Validate} coordinates (-180 ≤ lon ≤ 180, -90 ≤ lat ≤ 90).
+\item \strong{Validate} coordinates (-180 <= lon <= 180, -90 <= lat <= 90).
 \item \strong{Return}
 \itemize{
 \item a long table (\code{site_id}, \code{x}, \code{y}, \code{sp_name}, \code{pa|abund}) when species

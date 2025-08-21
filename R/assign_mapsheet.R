@@ -23,7 +23,7 @@
 #' @param data A data.frame containing at least the coordinate columns.
 #' @param x_col Character. Name of the longitude (x) column. Default `"x"`.
 #' @param y_col Character. Name of the latitude (y) column. Default `"y"`.
-#' @param cell_size Numeric. Cell size: e.g. 1 for 1° cells, 15 for 15′ cells.
+#' @param cell_size Numeric. Cell size: e.g. 1 for 1deg cells, 15 for 15' cells.
 #' @param unit Character. Unit of `cell_size`; one of:
 #'   - `"deg"` for decimal degrees (default)
 #'   - `"min"` for arc-minutes
@@ -49,7 +49,7 @@
 #'   day = c(12, 4, 3, 1, 4, 21)
 #' )
 #'
-#' # For 1° mapsheet cells:
+#' # For 1deg mapsheet cells:
 #' bird_obs2 = assign_mapsheet(bird_obs, cell_size = 1, unit = "deg")
 #' head(bird_obs2)
 #'

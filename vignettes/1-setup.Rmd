@@ -2,13 +2,13 @@
 title: "Getting started"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting started with `dissmapr`}
+  %\VignetteIndexEntry{Getting started`}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup-1, include=FALSE}
-# , child = '_common.Rmd'
+# , child = '_common.R'
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",

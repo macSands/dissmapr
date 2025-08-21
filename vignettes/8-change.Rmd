@@ -63,7 +63,7 @@ names(current_nn)
 
 # Run `map_bioregDiff`
 # 'approach', specifies which metric to compute:
-sens_bioregDiff = map_bioregDiff(
+sens_bioregDiff = dissmapr::map_bioregDiff(
   current_nn,
   approach = "all"
 )
@@ -111,7 +111,7 @@ Here we use `map_bioregDiff()` to track how the hierarchical‐cluster map itsel
 names(future_hclt)
 
 # 2. Compute change metrics across those four layers
-future_bioregDiff = map_bioregDiff(future_hclt, approach = "all")
+future_bioregDiff = dissmapr::map_bioregDiff(future_hclt, approach = "all")
 
 # 3. Mask to your RSA boundary (assuming 'grid_masked' is your template)
 mask_future_bioregDiff = terra::mask(

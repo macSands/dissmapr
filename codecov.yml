@@ -1,17 +1,21 @@
-comment: true
-
+codecov:
+  notify:
+    wait_for_ci: true
+  require_ci_to_pass: true
+comment:
+  behavior: default
+  layout: reach,diff,flags,tree,reach
+  show_carryforward_flags: false
 coverage:
-  precision: 1
+  precision: 2
+  range:
+  - 60.0
+  - 80.0
   round: down
-  range: "70...100"
   status:
-    patch:
-      default:
-        target: auto
-        threshold: 10%
-        informational: true
-    project:
-      default:
-        target: auto
-        threshold: 1%
-        informational: false
+    changes: false
+    default_rules:
+      flag_coverage_not_uploaded_behavior: include
+    patch: true
+    project: true
+slack_app: true

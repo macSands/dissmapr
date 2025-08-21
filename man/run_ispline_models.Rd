@@ -20,7 +20,7 @@ run_ispline_models(
 
 \item{env_df}{A data frame of environmental covariates.}
 
-\item{xy_df}{A two‐column data frame or matrix of site coordinates.}
+\item{xy_df}{A two-column data frame or matrix of site coordinates.}
 
 \item{orders}{Integer vector of zeta orders to fit (e.g. 2:6).}
 
@@ -42,7 +42,7 @@ original covariates (including \code{distance}), the ispline bases suffixed
 }
 }
 \description{
-Fits \code{Zeta.msgdm} models of type \dQuote{ispline} for a series of zeta‐orders,
+Fits \code{Zeta.msgdm} models of type \dQuote{ispline} for a series of zeta-orders,
 extracts the raw environmental covariates (plus distance) and their ispline bases,
 and returns both the list of fitted models and one tidy data frame combining all orders.
 }

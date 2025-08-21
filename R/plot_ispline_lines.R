@@ -1,12 +1,12 @@
-#' Plot ispline partial effects with quantile and start‐point markers
+#' Plot ispline partial effects with quantile and start-point markers
 #'
 #' @description
 #' Given a tidy data frame of ispline basis outputs (from \code{\link{run_ispline_models}}),
 #' this function identifies the ispline column matching a specified covariate,
 #' draws thinner ispline curves for each \code{zOrder}, and overlays:
 #' \itemize{
-#'   \item Small symbols at user‐defined quantiles of the raw covariate.
-#'   \item A larger symbol at each curve’s starting point (minimum covariate value).
+#'   \item Small symbols at user-defined quantiles of the raw covariate.
+#'   \item A larger symbol at each curve's starting point (minimum covariate value).
 #' }
 #'
 #' @param ispline_data A data frame as returned by \code{\link{run_ispline_models}},
@@ -23,21 +23,21 @@
 #'   small quantile markers. Default \code{c(0, .25, .5, .75, 1)}.
 #' @param line_size    Numeric; line width for the spline curves. Default 0.5.
 #' @param point_size   Numeric; size of the quantile markers. Default 1.5.
-#' @param start_size   Numeric; size of the big start‐point markers. Default 3.
+#' @param start_size   Numeric; size of the big start-point markers. Default 3.
 #' @param start_stroke Numeric; stroke width for the big start markers. Default 0.
 #'
 #' @return A \pkg{ggplot2} object showing:
 #' \itemize{
 #'   \item \code{geom_line()} for each curve.
 #'   \item \code{geom_point()} at the specified quantiles.
-#'   \item A larger \code{geom_point()} at each curve’s minimum.
+#'   \item A larger \code{geom_point()} at each curve's minimum.
 #' }
 #'
 #' @details
-#' 1. Detects all columns ending in \code{_is} and fuzzy‐matches \code{x_var} against them.
+#' 1. Detects all columns ending in \code{_is} and fuzzy-matches \code{x_var} against them.
 #' 2. Extracts the raw covariate name by stripping \code{_is}.
-#' 3. Computes one “start” point per \code{zOrder} at the minimum raw covariate.
-#' 4. Computes quantile‐closest points per \code{zOrder} at the user’s \code{probs}.
+#' 3. Computes one "start" point per \code{zOrder} at the minimum raw covariate.
+#' 4. Computes quantile-closest points per \code{zOrder} at the user's \code{probs}.
 #'
 #' @examples
 #' \dontrun{

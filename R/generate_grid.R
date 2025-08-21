@@ -7,15 +7,15 @@
 #' The function:
 #'   1. Tiles the study extent with square cells of size `grid_size`.
 #'   2. Computes cell centroids and, for geographic CRS data, optional mapsheet
-#'      codes (1:250 000 “BB” series).
+#'      codes (1:250 000 "BB" series).
 #'   3. Aggregates user-specified columns (`sum_cols`) per cell, producing
-#'      * **`grid_spp`**    – counts / abundances
-#'      * **`grid_spp_pa`** – binary 0 / 1 table for dissimilarity analyses.
+#'      * **`grid_spp`**    - counts / abundances
+#'      * **`grid_spp_pa`** - binary 0 / 1 table for dissimilarity analyses.
 #'   4. Calculates helper metrics (`obs_sum`, `spp_rich`) for each cell.
 #'   5. Rasterises key layers (`grid_id`, `obs_sum`, `spp_rich`) and preserves
 #'      any extra metadata supplied via `extra_cols`.
 #'
-#' @param data            Data frame of points with x–y coordinates.
+#' @param data            Data frame of points with x-y coordinates.
 #' @param x_col, y_col    Column names for longitude and latitude.
 #' @param grid_size       Cell size (degrees or metres, depending on CRS).
 #' @param sum_cols        Character or numeric vector of columns to aggregate. Note: Numeric indices are converted to names internally.
@@ -24,10 +24,10 @@
 #' @param unit            One of "deg", "min", "sec", or "m".
 #'
 #' @return A list containing
-#'   • `grid_r`      – multi-layer **SpatRaster**
-#'   • `grid_sf`     – polygon lattice with centroids & metrics
-#'   • `grid_spp`    – abundance summary (*data.frame*)
-#'   • `grid_spp_pa` – presence/absence summary (*data.frame*)
+#'   - `grid_r`      - multi-layer **SpatRaster**
+#'   - `grid_sf`     - polygon lattice with centroids & metrics
+#'   - `grid_spp`    - abundance summary (*data.frame*)
+#'   - `grid_spp_pa` - presence/absence summary (*data.frame*)
 #'
 #' @import sf terra dplyr
 #' @export
@@ -55,14 +55,14 @@ generate_grid <- function(data,
                           crs_epsg   = 4326,
                           unit       = c("deg", "min", "sec", "m"))
 {
-  # ── checks & setup ─────────────────────────────────────────────────────────
+  # checks & setup
   unit <- match.arg(unit)
   stopifnot(all(c(x_col, y_col) %in% names(data)))
 
   if (is.null(sum_cols))
     stop("Please supply `sum_cols` (column names or indices of species).")
 
-  # convert numeric indices → names, verify all present
+  # convert numeric indices -> names, verify all present
   if (is.numeric(sum_cols)) {
     if (max(sum_cols) > ncol(data))
       stop("`sum_cols` indices exceed number of columns in `data`.")
@@ -88,11 +88,11 @@ generate_grid <- function(data,
   data$orig_y <- data[[y_col]]
   pts_sf      <- sf::st_as_sf(data, coords = c(x_col, y_col), crs = crs_epsg)
 
-  # ── branch 1 : grid_size == 0  →  one site per unique coordinate ───────────
+  # branch 1 : grid_size == 0  ->  one site per unique coordinate
   if (grid_size == 0) {
-    message("grid_size = 0 → no lattice; grouping by unique coordinates.")
+    message("grid_size = 0 -> no lattice; grouping by unique coordinates.")
 
-    # unique coords → grid_id
+    # unique coords -> grid_id
     data <- dplyr::left_join(
       data,
       data.frame(orig_x = data$orig_x, orig_y = data$orig_y) |>
@@ -119,8 +119,8 @@ generate_grid <- function(data,
       grid_spp_pa = make_pa(grid_spp)))
   }
 
-  # ── branch 2 : build lattice ───────────────────────────────────────────────
-  message("Generating ", grid_size, "-", unit, " grid …")
+  # branch 2 : build lattice
+  message("Generating ", grid_size, "-", unit, " grid ...")
 
   # bounding box (expand a little)
   bb <- sf::st_bbox(pts_sf)

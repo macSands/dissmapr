@@ -6,8 +6,8 @@ Authors@R:
   person("Sandra", "MacFadyen", email = "macfadyen@sun.ac.za", role = c("aut", "cre"))
 Description: Tools to compute and map biodiversity turnover at the macroscale.
 License: MIT + file LICENSE
-URL: https://github.com/macSands/dissmapr, https://macsands.github.io/dissmapr/
-BugReports: https://github.com/macSands/dissmapr/issues
+URL: https://github.com/b-cubed-eu/dissmapr, https://b-cubed-eu.github.io/dissmapr/
+BugReports: https://github.com/b-cubed-eu/dissmapr/issues
 Suggests:
     devtools,
     knitr,
@@ -45,7 +45,8 @@ Imports:
     vegan,
     viridis,
     zoo,
-    zetadiv
+    zetadiv,
+    zen4R
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

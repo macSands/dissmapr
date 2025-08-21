@@ -20,7 +20,7 @@ contact:
     affiliation: Stellenbosch University
     # orcid: 0000-0002-5316-440X
 license: MIT
-repository-code: https://github.com/macSands/dissmapr/
+repository-code: https://github.com/b-cubed-eu/dissmapr/
 type: software
 abstract: >
   `dissmapr` provides a reproducible, end-to-end workflow for computing and mapping
@@ -29,6 +29,6 @@ abstract: >
   flexible grid generation, order-wise dissimilarity computations, and intuitive bioregional mapping.
 identifiers:
   - type: url
-    value: https://github.com/macSands/dissmapr/
+    value: https://github.com/b-cubed-eu/dissmapr/
   - type: doi
     value: 10.xxxx/dissmapr

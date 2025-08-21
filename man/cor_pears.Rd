@@ -15,5 +15,5 @@ cor_pears(vec_from, vec_to)
 Pearson's correlation coefficient.
 }
 \description{
-Pearson’s correlation for linear abundance relationships; aggregated across sites.
+Pearson's correlation for linear abundance relationships; aggregated across sites.
 }

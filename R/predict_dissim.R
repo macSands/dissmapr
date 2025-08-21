@@ -1,20 +1,20 @@
-#' Predict Pairwise Compositional Turnover (ζ-dissimilarity) with Richness
+#' Predict Pairwise Compositional Turnover (zeta-dissimilarity) with Richness
 #'
 #' @description
-#' Takes raw species and environmental data, fits a multi‐site GDM model output,
-#' computes predicted pairwise turnover (ζ₂) across the landscape, and returns a
-#' data frame with site‐level richness, environmental covariates, distance, and
-#' predicted turnover; optionally plots a heatmap of ζ₂ predictions.
+#' Takes raw species and environmental data, fits a multi-site GDM model output,
+#' computes predicted pairwise turnover (zeta2) across the landscape, and returns a
+#' data frame with site-level richness, environmental covariates, distance, and
+#' predicted turnover; optionally plots a heatmap of zeta2 predictions.
 #'
 #' @param grid_spp     Data frame containing site IDs, coordinates, and species
-#'                     presence–absence/abundance columns.
+#'                     presence-absence/abundance columns.
 #' @param species_cols Integer or character vector giving the columns of
 #'                     \code{grid_spp} that hold species data.
 #' @param env_vars     Data frame of raw environmental predictors (unscaled;
 #'                     rows must align with \code{grid_spp}).
 #' @param zeta_model   Fitted object from \code{\link[zetadiv]{Zeta.msgdm}}
 #'                     (order = 2, reg.type = "ispline").
-#' @param grid_xy      Data frame of site coordinates, same row‐order as
+#' @param grid_xy      Data frame of site coordinates, same row-order as
 #'                     \code{grid_spp}, with columns \code{x_col}, \code{y_col}.
 #' @param bndy_fc      Optional \code{sf} or \code{SpatVector} polygon to overlay.
 #' @param x_col        Name of the x (longitude) column in \code{grid_spp}/\code{grid_xy}.
@@ -25,10 +25,10 @@
 #' A data frame with one row per site, containing:
 #' \describe{
 #'   \item{richness}{Species richness (sum across \code{species_cols}).}
-#'   \item{distance}{Mean great‐circle distance (km) from each site to all others.}
+#'   \item{distance}{Mean great-circle distance (km) from each site to all others.}
 #'   \item{<env_vars>}{All scaled environmental predictors.}
 #'   \item{pred_zeta}{Linear predictor (logit scale) from \code{Predict.msgdm()}.}
-#'   \item{pred_zetaExp}{Predicted turnover (0–1 scale).}
+#'   \item{pred_zetaExp}{Predicted turnover (0-1 scale).}
 #'   \item{log_pred_zetaExp}{Natural log of \code{pred_zetaExp}.}
 #'   \item{x_col, y_col}{Site coordinates (from \code{grid_xy}).}
 #' }

@@ -1,0 +1,10 @@
+citHeader("To cite dissmapr in publications use:")
+
+citEntry(
+  entry    = "manual",
+  title    = "dissmapr: A framework for Compositional Dissimilarity and Biodiversity Turnover Analysis",
+  author   = person("Sandra", "MacFadyen"),
+  year     = "2025",
+  note     = "R package version 0.1.0",
+  url      = "https://github.com/b-cubed-eu/dissmapr"
+)

@@ -18,7 +18,7 @@ A single numeric dissimilarity value between 0 and 1, or \code{NA_real_} if
 \code{vec_to} is \code{NULL}.
 }
 \description{
-Calculates the Gower dissimilarity (a bounded 0–1 measure) between two numeric
+Calculates the Gower dissimilarity (a bounded 0-1 measure) between two numeric
 vectors (e.g., species abundances) using the \code{cluster::daisy()} function. When
 the second vector is \code{NULL} (order 1), returns \code{NA_real_} since a pairwise
 comparison is not meaningful.

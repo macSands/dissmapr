@@ -47,7 +47,7 @@ We set a random seed for reproducibility (so Monte Carlo sampling inside `predic
 # Only non-colinear environmental variables used in `zeta2` model
 set.seed(123) # set.seed to generate exactly the same random results i.e. sam=100
 spp_cols = names(grid_spp_pa[,-(1:7)])
-predictors_df   = predict_dissim(
+predictors_df   = dissmapr::predict_dissim(
   grid_spp      = grid_spp_pa,
   species_cols  = spp_cols,
   env_vars      = env_vars_reduced,# env_vars_reduced[,-8]
@@ -136,7 +136,7 @@ Next, we loop through each scenario, re-apply the original centering and scaling
 set.seed(123)
 
 scenario_dfs = purrr::imap(env_scenarios, ~ {
-  df = predict_dissim(
+  df = dissmapr::predict_dissim(
     grid_spp     = grid_spp,
     species_cols = spp_cols,
     env_vars     = .x,

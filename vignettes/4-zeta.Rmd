@@ -59,10 +59,15 @@ The next sections offer a simple, step-by-step guide to spot where shared biodiv
 
 `Zeta.decline.ex()` calculates the theoretical number of species that should be shared by 1, 2, … k sites (orders 1–15 here) using a closed-form formula based solely on each species’ occupancy frequency. Because no resampling is involved, the output is an exact expectation of how ζ-diversity ought to fall as more sites are considered, assuming site identity plays no role. The function also fits exponential and power-law models to the expected curve, yielding parameters and fit statistics that provide a baseline against which observed or Monte-Carlo ζ-decline patterns can be evaluated.
 
-```{r zeta-decline-ex}
+```{r zeta-decline-ex, fig.width=7, fig.height=5}
+op = par(no.readonly = TRUE)
+on.exit(par(op), add = TRUE)
+par(mfrow = c(1,1), mar = c(4,4,1,1), oma = c(0,0,0,0))
+
 set.seed(123)
 zeta_decline_ex = Zeta.decline.ex(grid_spp_pa[,7:ncol(grid_spp_pa)], # Only species columns
-                                  orders = 1:15)
+                                  orders = 1:15, plot = FALSE)
+zetadiv::Plot.zeta.decline(zeta_decline_ex, sd.plot = TRUE)
 ```
 
 > -   **Panel 1 (Zeta diversity decline)**: Shows how rapidly species that are common across multiple sites decline as you look at groups of more and more sites simultaneously (increasing zeta order). The sharp drop means fewer species are shared among many sites compared to just a few.

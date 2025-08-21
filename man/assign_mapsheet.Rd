@@ -19,7 +19,7 @@ assign_mapsheet(
 
 \item{y_col}{Character. Name of the latitude (y) column. Default \code{"y"}.}
 
-\item{cell_size}{Numeric. Cell size: e.g. 1 for 1° cells, 15 for 15′ cells.}
+\item{cell_size}{Numeric. Cell size: e.g. 1 for 1deg cells, 15 for 15' cells.}
 
 \item{unit}{Character. Unit of \code{cell_size}; one of:
 \itemize{
@@ -64,7 +64,7 @@ bird_obs = data.frame(
   day = c(12, 4, 3, 1, 4, 21)
 )
 
-# For 1° mapsheet cells:
+# For 1deg mapsheet cells:
 bird_obs2 = assign_mapsheet(bird_obs, cell_size = 1, unit = "deg")
 head(bird_obs2)
 

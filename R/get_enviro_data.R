@@ -1,14 +1,14 @@
 #' Retrieve, crop, resample, and link environmental rasters to sampling sites
 #'
 #' `get_enviro_data()` automates six steps:
-#' 1. **AOI build** – buffers the convex hull of all input points.
-#' 2. **Raster acquisition** – downloads or loads a multi-layer stack
+#' 1. **AOI build** - buffers the convex hull of all input points.
+#' 2. **Raster acquisition** - downloads or loads a multi-layer stack
 #'    (WorldClim, SoilGrids, footprint, population, or user-supplied).
-#' 3. **Cropping** – trims the stack to the buffered AOI.
-#' 4. **Optional resampling** – resamples the cropped stack to a user-defined grid resolution.
-#' 5. **Extraction & gap fill** – pulls raster values at each site and
+#' 3. **Cropping** - trims the stack to the buffered AOI.
+#' 4. **Optional resampling** - resamples the cropped stack to a user-defined grid resolution.
+#' 5. **Extraction & gap fill** - pulls raster values at each site and
 #'    linearly interpolates isolated NAs.
-#' 6. **Assembly** – returns a tidy *site × environment* table plus the cropped
+#' 6. **Assembly** - returns a tidy *site x environment* table plus the cropped
 #'    (and resampled) raster and an `sf` layer of sites.
 #'
 #' @param data      Data frame of spatial points; must include lon/lat columns
@@ -32,7 +32,7 @@
 #' @param ext_cols  **Columns to append** verbatim (e.g. `"obs_sum","spp_rich"`).
 #'
 #' @return A list with
-#' * `env_rast`  `SpatRaster` – cropped (and optionally resampled) environmental stack
+#' * `env_rast`  `SpatRaster` - cropped (and optionally resampled) environmental stack
 #' * `sites_sf`  `sf` POINT layer (WGS-84) of the input sites
 #' * `env_df`    Tibble with site ID, coordinates, every raster variable,
 #'               plus any columns requested in `ext_cols`
@@ -51,14 +51,14 @@ get_enviro_data = function(data,
                            sp_cols   = NULL,
                            ext_cols  = NULL) {
 
-  ## ── deps ────────────────────────────────────────────────────────────────
+  ## - deps --------------------------------
   for (pkg in c("terra","sf","dplyr","geodata","zoo"))
     if (!requireNamespace(pkg, quietly = TRUE))
       stop("Package '", pkg, "' is required but not installed.")
 
   if (!dir.exists(path)) dir.create(path, recursive = TRUE)
 
-  ## ── identify coord columns ──────────────────────────────────────────────
+  ## - identify coord columns -----------------------
   x_col = intersect(tolower(names(data)),
                     c("x","lon","longitude","decimallongitude","centroid_lon"))[1]
   y_col = intersect(tolower(names(data)),
@@ -68,9 +68,9 @@ get_enviro_data = function(data,
   if (is.na(x_col) || is.na(y_col))
     stop("Coordinate columns not found in `data`.")
 
-  message("• Using coord cols: ", x_col, ", ", y_col)
+  message("- Using coord cols: ", x_col, ", ", y_col)
 
-  ## ── build AOI ───────────────────────────────────────────────────────────
+  ## - build AOI ----------------
   cols_xy = c(id_col, x_col, y_col); cols_xy = cols_xy[!is.na(cols_xy)]
   data_xy = data |>
     dplyr::select(dplyr::all_of(cols_xy)) |>
@@ -80,10 +80,10 @@ get_enviro_data = function(data,
   aoi      = sf::st_buffer(sf::st_convex_hull(sf::st_union(sites_sf)),
                            buffer_km * 1e3)
 
-  message("• AOI built and buffered by ", buffer_km, " km")
+  message("- AOI built and buffered by ", buffer_km, " km")
 
-  ## ── download / load rasters ─────────────────────────────────────────────
-  message("• Acquiring raster stack")
+  # download / load rasters
+  message("- Acquiring raster stack")
   env_rast = switch(source,
                     geodata = switch(var,
                                      bio  = geodata::worldclim_global("bio",  res, path),
@@ -111,9 +111,9 @@ get_enviro_data = function(data,
   if (var == "bio")
     names(env_rast) = sprintf("bio%02d", seq_len(terra::nlyr(env_rast)))
 
-  ## ── optional resampling ─────────────────────────────────────────────────
+  # optional resampling
   if (!is.null(grid_r)) {
-    message("• Resampling raster layers")
+    message("- Resampling raster layers")
     if (inherits(grid_r, "SpatRaster")) {
       # use user-supplied template raster
       tmpl = grid_r
@@ -125,8 +125,8 @@ get_enviro_data = function(data,
     env_rast = resample(env_rast, tmpl, method = "bilinear")
   }
 
-  ## ── extract values ──────────────────────────────────────────────────────
-  message("• Extracting raster values at ", nrow(sites_sf), " points")
+  ## - extract values ---------------------------
+  message("- Extracting raster values at ", nrow(sites_sf), " points")
   vals_df = terra::extract(env_rast, terra::vect(sites_sf), df = TRUE) |>
     as.data.frame()
 
@@ -135,13 +135,13 @@ get_enviro_data = function(data,
   vals_df = vals_df[ , -1, drop = FALSE]
   env_df  = dplyr::bind_cols(data_xy, vals_df)
 
-  ## ── interpolate small gaps ──────────────────────────────────────────────
+  ## - interpolate small gaps -----------------------
   env_df = dplyr::mutate(
     env_df,
     dplyr::across(where(is.numeric),
                   ~ zoo::na.approx(.x, na.rm = FALSE, rule = 2)))
 
-  ## ── tidy: drop species cols, add extra cols ──────────────────────────────
+  ## - tidy: drop species cols, add extra cols ---------------
   if (!is.null(sp_cols)) {
     sp_cols_names = if (is.numeric(sp_cols)) names(data)[sp_cols] else sp_cols
     env_df = dplyr::select(env_df, -dplyr::any_of(sp_cols_names))
@@ -150,7 +150,7 @@ get_enviro_data = function(data,
   if (!is.null(ext_cols))
     env_df = dplyr::bind_cols(env_df, data[, ext_cols, drop = FALSE])
 
-  message("• Final env_df cols: ", paste(names(env_df), collapse = ", "))
+  message("- Final env_df cols: ", paste(names(env_df), collapse = ", "))
 
   list(env_rast = env_rast,
        sites_sf = sites_sf,

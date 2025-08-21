@@ -2,9 +2,9 @@
 #  Internal imports and global-variable declarations
 #
 #  This file is purely for package hygiene:
-#    • collects all @importFrom tags so roxygen can write NAMESPACE cleanly
-#    • registers symbols used in data-table / tidy-eval to silence
-#      “no visible binding for global variable …” notes.
+#    - collects all @importFrom tags so roxygen can write NAMESPACE cleanly
+#    - registers symbols used in data-table / tidy-eval to silence
+#      "no visible binding for global variable ..." notes.
 #
 #  It exports **nothing** (hence the terminating NULL).
 # -------------------------------------------------------------------------
@@ -45,7 +45,7 @@
 #' @importFrom reshape2 melt
 NULL
 
-# ---- Silence R CMD check “no visible binding …” --------------------------
+# Silence R CMD check "no visible binding ..." --------------------------
 
 utils::globalVariables(c(
   # generic / tidy-eval helpers

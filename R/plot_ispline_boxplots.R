@@ -1,10 +1,10 @@
 #' Plot facetted boxplots for all ispline basis columns
 #'
 #' @description
-#' Creates a multi‐facet boxplot of every ispline basis column in your data,
+#' Creates a multi-facet boxplot of every ispline basis column in your data,
 #' grouped by a specified order factor (e.g. zeta orders). Each spline term
 #' (columns ending in \code{_is}) gets its own facet, and uses a
-#' color‐blind–friendly Viridis palette.
+#' color-blind-friendly Viridis palette.
 #'
 #' @param ispline_data   A data frame as returned by \code{\link{run_ispline_models}},
 #'                       containing raw covariates, their spline bases (suffixed \code{_is}),
@@ -14,7 +14,7 @@
 #' @param order_col      The name of the grouping column (e.g. \dQuote{zOrder}).
 #' @param palette        One of the Viridis options (\dQuote{viridis}, \dQuote{magma},
 #'                       \dQuote{plasma}, \dQuote{cividis}, etc.). Default \dQuote{viridis}.
-#' @param direction      Integer 1 or –1 to control palette direction. Default –1 (reversed).
+#' @param direction      Integer 1 or -1 to control palette direction. Default -1 (reversed).
 #' @param ncol           Number of columns in the facet wrap. Default 3.
 #' @param outlier_size   Size of the outlier points. Default 0.5.
 #'
@@ -90,7 +90,7 @@ plot_ispline_boxplots <- function(ispline_data,
     ggplot2::facet_wrap(~ variable, scales = "free", ncol = ncol) +
     ggplot2::scale_fill_viridis_d(option    = palette,
                                   direction = direction,
-                                  name      = "Order\n(intensity ↗)") +
+                                  name      = "Order\n(intensity ^)") +
     ggplot2::labs(
       x     = "Order",
       y     = "Value",

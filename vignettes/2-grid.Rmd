@@ -2,7 +2,7 @@
 title: "User-defined grid"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Group by user-defined grid}
+  %\VignetteIndexEntry{User-defined grid}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -66,7 +66,7 @@ grid = terra::rast(rsa_vect, resolution = res, crs = terra::crs(rsa_vect))
 # 5. Populate the raster with placeholder values 
 # We simply assign the value 1 to every cell; the values themselves are
 # irrelevant at this stage—the grid’s geometry is what matters.
-values(grid) = 1
+terra::values(grid) = 1
 
 # 6. Clip the raster to the AoI 
 # Any cells whose centroids fall outside the boundary are set to NA, thereby
@@ -100,7 +100,7 @@ Because every observation is now referenced to a regular grid, all downstream st
 
 ```{r grid}
 # Generate a 0.5° grid summary for the point dataset `site_spp`
-grid_list = generate_grid(
+grid_list = dissmapr::generate_grid(
   data          = site_spp,           # point data with x/y + species columns
   x_col         = "x",                # longitude column
   y_col         = "y",                # latitude  column

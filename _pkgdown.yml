@@ -1,4 +1,4 @@
-url: https://macsands.github.io/dissmapr/
+url: https://b-cubed-eu.github.io/dissmapr/
 template:
   bootstrap: 5
   bslib:
@@ -13,14 +13,14 @@ navbar:
   type: dark
   structure:
     left:
-    - intro
-    - reference
-    - news
-    - articles
+      - intro
+      - reference
+      - news
+      - articles
     right:
-    - search
-    - mainsite
-    - github
+      - search
+      - mainsite
+      - github
   components:
     mainsite:
       icon: fa-cube
@@ -28,12 +28,14 @@ navbar:
       aria-label: B-Cubed website
 
 reference:
-  # 1. Overview block
-  - title: "Overview of dissMapR functions"
+  - title: "Package"
+    contents:
+      - dissmapr
+
+  - title: "Overview of dissmapr functions"
     desc: |
       The package consists of 10 core functions that address key steps in biodiversity data analysis, from sourcing raw occurrence and environmental data to mapping bioregions and predicting compositional turnover. It also leverages existing tools, such as the `zetadiv` package (specifically the `zetadiv::Zeta.msgdm` function) for MS-GDM, alongside widely used R libraries like `terra`, `sf`, and `ggplot2`.
 
-# 2. First five functions, in order
   - title: "Core Functions"
     contents:
       - get_occurrence_data
@@ -47,7 +49,6 @@ reference:
       - map_bioreg
       - map_bioregDiff
 
-  # 3. Functions to run automated ζ-MSGDM with I-spline workflow
   - title: "ζ-MSGDM Workflow"
     desc: |
       Functions to automate a ζ-MSGDM workflow that fits, extracts and visualizes I-spline models for any set of zeta orders in just three function calls:
@@ -56,7 +57,6 @@ reference:
       - plot_ispline_lines
       - plot_ispline_boxplots
 
-  # 4. The helper_indices “section”, with indented sub-functions
   - title: "Available Metrics"
     desc: |
       Use `helper_indices` to choose a specific function for the func parameter in `compute_orderwise`, enabling the calculation of one of the following metrics:
@@ -76,16 +76,17 @@ articles:
   - title: "All tutorials"
     navbar: "Articles"
     contents:
-      - "1-setup"
-      - "2-grid"
-      - "3-enviro"
-      - "4-zeta"
-      - "5-zeta-workflow"
-      - "6-predict"
-      - "7-bioregion"
-      - "8-change"
-      - "9-examples"
-      - "10-zenodo"
+      - 1-setup
+      - 2-grid
+      - 3-enviro
+      - 4-zeta
+      - 5-zeta-workflow
+      - 6-predict
+      - 7-bioregion
+      - 8-change
+      - 9-examples
+      - 10-zenodo
+
 # # Controls the “Articles” page order & display names
 # articles:
 #   - title: "Getting started"
@@ -118,10 +119,3 @@ articles:
 #   - title: "Zenodo basics"
 #     contents:
 #       - 10-zenodo
-
-
-
-
-
-
-

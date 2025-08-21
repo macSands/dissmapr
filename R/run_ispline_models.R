@@ -1,13 +1,13 @@
 #' Run multiple Zeta.msgdm ispline models and return both models and combined ispline table
 #'
 #' @description
-#' Fits \code{Zeta.msgdm} models of type \dQuote{ispline} for a series of zeta‐orders,
+#' Fits \code{Zeta.msgdm} models of type \dQuote{ispline} for a series of zeta-orders,
 #' extracts the raw environmental covariates (plus distance) and their ispline bases,
 #' and returns both the list of fitted models and one tidy data frame combining all orders.
 #'
 #' @param spp_df        A data frame or matrix of species incidence/abundance.
 #' @param env_df        A data frame of environmental covariates.
-#' @param xy_df         A two‐column data frame or matrix of site coordinates.
+#' @param xy_df         A two-column data frame or matrix of site coordinates.
 #' @param orders        Integer vector of zeta orders to fit (e.g. 2:6).
 #' @param sam           Integer; number of random samples per order (passed to \code{Zeta.msgdm}).
 #' @param distance.type Character; distance metric for \code{Zeta.msgdm} (default \dQuote{Euclidean}).
