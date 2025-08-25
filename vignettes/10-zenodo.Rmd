@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
   warning = FALSE
 )
 
-has_zen4r <- requireNamespace("zen4R", quietly = TRUE)
+has_zen4r = requireNamespace("zen4R", quietly = TRUE)
 knitr::opts_chunk$set(eval = has_zen4r)
 if (!has_zen4r) message("zen4R not installed - zenodo-related chunks are skipped during build/check.")
 ```

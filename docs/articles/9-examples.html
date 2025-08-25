@@ -131,11 +131,11 @@ species richness across specified orders.</p>
 <span>  order <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 1.47 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 19.42 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 52.37 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 28.18 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 1 minutes and 28.19 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 1: 0 minutes and 1.36 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 5.16 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 25.93 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 0 minutes and 49.11 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 0 minutes and 49.12 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rich_o1234</span><span class="op">)</span></span>
@@ -155,7 +155,7 @@ species richness across specified orders.</p>
 <span>        horizontal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>        outline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>        main <span class="op">=</span> <span class="st">'Distribution of √Species Richness by Order'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/9-richness-boxplot-1.png" width="100%"></p>
+<p><img src="figures/9-richness-boxplot-1.png" alt="Distribution of √Species Richness by Order" width="100%"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Link centroid coordinates back to `rich_o1234` data.frame for plotting</span></span>
@@ -190,7 +190,7 @@ species richness across specified orders.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span>, fill <span class="op">=</span> <span class="st">"√Species Richness"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span>,panel.border <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="figures/9-richness-plot-1.png" width="100%"></p>
+<p><img src="figures/9-richness-plot-1.png" alt="√Species Richness" width="100%"></p>
 <p>Plot order-wise richness (orders 2:5) calculated using
 <code>compute_orderwise(..., func = richness, ...)</code> to visualise
 spatial patterns of richness across different orders. Results highlight
@@ -208,7 +208,7 @@ regions of high or low richness compared across orders.</p>
 <span>    y <span class="op">=</span> <span class="st">"Latitude"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">order</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/9-richness-plot-orders2345-1.png" width="100%"></p>
+<p><img src="figures/9-richness-plot-orders2345-1.png" alt="Mean √Richness by Order" width="100%"></p>
 <hr>
 </div>
 <div class="section level4">
@@ -237,11 +237,11 @@ a table summarizing species turnover across the specified orders.</p>
 <span>  order <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 10.90 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 3: 1 minutes and 5.17 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 59.92 seconds</span></span>
-<span><span class="co">#&gt; Time elapsed for order 5: 2 minutes and 53.17 seconds</span></span>
-<span><span class="co">#&gt; Total computation time: 2 minutes and 53.19 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 2: 0 minutes and 6.86 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 3: 0 minutes and 35.17 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 4: 1 minutes and 9.06 seconds</span></span>
+<span><span class="co">#&gt; Time elapsed for order 5: 1 minutes and 50.79 seconds</span></span>
+<span><span class="co">#&gt; Total computation time: 1 minutes and 50.80 seconds</span></span>
 <span></span>
 <span><span class="co"># Check results</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">turn_o2345</span><span class="op">)</span></span>
@@ -283,7 +283,7 @@ This prepares the dataset for spatial plotting.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span>, fill <span class="op">=</span> <span class="st">"Beta Diversity"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span>,panel.border <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="figures/9-turnover-plot-order2-1.png" width="100%"></p>
+<p><img src="figures/9-turnover-plot-order2-1.png" alt="Beta Diversity" width="100%"></p>
 <p>Plot order-wise turnover (orders 2:5) calculated using
 <code>compute_orderwise(..., func = turnover, ...)</code> to visualise
 spatial patterns of turnover across different orders. Results highlight
@@ -302,7 +302,7 @@ providing insights into spatial biodiversity dynamics.</p>
 <span>    y <span class="op">=</span> <span class="st">"Latitude"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">order</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/9-turnover-plot-orders2345-1.png" width="100%"></p>
+<p><img src="figures/9-turnover-plot-orders2345-1.png" alt="Mean Turnover by Order" width="100%"></p>
 <hr>
 </div>
 </div>

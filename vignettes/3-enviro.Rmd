@@ -104,7 +104,7 @@ dim(env_df); head(env_df)
   
 Fuse the √-scaled sampling‐effort (`obs_sum`) and richness (`spp_rich`) layers with the 19 `bioclim` rasters into a single, co-registered `SpatRast.` A unified stack ensures that all predictors share the same grid, streamlining downstream map algebra, multivariate modelling, and spatial cross-validation.
 
-```{r ras}
+```{r ras, fig.alt="Environmental Covariates"}
 # Resample climate stack to the 0.5 ° grid and concatenate
 env_effRich_r = c(
   effRich_r,                               # effort + richness
@@ -139,7 +139,7 @@ par(old_par)
 
 Environmental data were linked to grid centroids using `get_enviro_data()`, now visualise the spatial variation in selected climate variables to check results.
 
-```{r env-df}
+```{r env-df, fig.alt="Grid-cell mean annual temperature (√-scaled)"}
 # Make column headers explicit
 # names(env_df)[1:5] = c("grid_id","centroid_lon","centroid_lat","obs_sum","spp_rich")
 
@@ -228,7 +228,7 @@ Highly inter-correlated predictors inflate variance, bias coefficient estimates,
 
 The result is a reduced predictor set that retains maximal information while minimising multicollinearity.
 
-```{r var-vif, message = FALSE}
+```{r var-vif, message = FALSE, fig.alt="Environmental pairwise correlations"}
 # (Optional) Rename BIO
 names(env_df) = c("grid_id", "centroid_lon", "centroid_lat", names_env, "obs_sum", "spp_rich")
   

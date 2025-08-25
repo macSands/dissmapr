@@ -1,23 +1,29 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# **`dissmapr`**<a href="https://b-cubed-eu.github.io/dissmapr/"><img src="man/figures/logo.png" align="right" height="139" alt="dissmapr website" /></a>
-
-## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
-
 <!-- badges: start -->
 
-[![repo status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![repo
+status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Release](https://img.shields.io/github/release/b-cubed-eu/dissmapr.svg)](https://github.com/b-cubed-eu/dissmapr/releases)
 [![dissmapr status
 badge](https://b-cubed-eu.r-universe.dev/dissmapr/badges/version)](https://b-cubed-eu.r-universe.dev/dissmapr)
-[![CRAN status](https://www.r-pkg.org/badges/version/dissmapr)](https://cran.r-project.org//package=dissmapr)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/dissmapr)](https://cran.r-project.org//package=dissmapr)
 [![R-CMD-check](https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/b-cubed-eu/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/dissmapr)
+[![Codecov test
+coverage](https://codecov.io/gh/b-cubed-eu/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/dissmapr)
 [![DOI](https://img.shields.io/badge/DOI-awaiting_upload_to_zenodo-orange)](https://zenodo.org)
-[![name status badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
+[![name status
+badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
 [![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
 <!-- badges: end -->
+
+------------------------------------------------------------------------
+
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 ------------------------------------------------------------------------
 
@@ -131,6 +137,7 @@ currently supported include:
 - **Local** databases or `.csv` files
 - **URLs** or `.zip` files from the Global Biodiversity Information
   Facility (GBIF)
+  e.g. `https://api.gbif.org/v1/occurrence/download/request/0006880-241024112534372.zip`
 - Future inclusion of **GBIF species occurrence cubes**. Read the
   [species occurrence cubes in
   GBIF](https://www.gbif.org/occurrence-cubes) documentation for full
@@ -145,11 +152,19 @@ matrices that summarise species co-occurrence records with latitude and
 longitude coordinates.
 
 ``` r
+
+load(system.file("extdata", "gbif_butterflies_csv.RData", package = "dissmapr"), envir = knitr::knit_global())
+
 bfly_data = get_occurrence_data(
-  data        = system.file("extdata", "gbif_butterflies.csv", package = "dissmapr"),
-  source_type = 'local_csv',
-  sep         = '\t'
+  data        = gbif_butterflies_csv,
+  source_type = 'data_frame'
 )
+
+# bfly_data = get_occurrence_data(
+#   data        = system.file("extdata", "gbif_butterflies.csv", package = "dissmapr"),
+#   source_type = 'local_csv',
+#   sep         = '\t'
+# )
 
 # Check results but only a subset of columns to fit in console
 dim(bfly_data)
@@ -166,27 +181,20 @@ str(bfly_data[,c(51,52,22,23,1,14,16,17,30)])
 #>  $ locality              : chr  "Hermanus" "Polkadraai Road" "Signal Hill" "Hermanus" ...
 #>  $ eventDate             : chr  "2012-10-13T00:00" "2012-11-01T00:00" "2012-10-31T00:00" "2012-10-13T00:00" ...
 head(bfly_data[,c(51,52,22,23,1,14,16,17,30)])
-#>   site_id pa         y        x    gbifID             verbatimScientificName
-#> 1       1  1 -34.42086 19.24410 923051749                   Pieris brassicae
-#> 2       2  1 -33.96044 18.75564 922985630                   Pieris brassicae
-#> 3       3  1 -33.91651 18.40321 922619348 Papilio demodocus subsp. demodocus
-#> 4       1  1 -34.42086 19.24410 922426210 Mylothris agathina subsp. agathina
-#> 5       4  1 -34.35024 18.47488 921650584                  Eutricha capensis
-#> 6       5  1 -33.58570 25.65097 921485695            Drepanogynis bifasciata
-#>   countryCode                                          locality
-#> 1          ZA                                          Hermanus
-#> 2          ZA                                   Polkadraai Road
-#> 3          ZA                                       Signal Hill
-#> 4          ZA                                          Hermanus
-#> 5          ZA Cape of Good Hope / Cape Point Area, South Africa
-#> 6          ZA                             Kudu Ridge Game Lodge
-#>          eventDate
-#> 1 2012-10-13T00:00
-#> 2 2012-11-01T00:00
-#> 3 2012-10-31T00:00
-#> 4 2012-10-13T00:00
-#> 5 2012-10-30T00:00
-#> 6 2012-10-23T00:00
+#>   site_id pa         y        x    gbifID             verbatimScientificName countryCode
+#> 1       1  1 -34.42086 19.24410 923051749                   Pieris brassicae          ZA
+#> 2       2  1 -33.96044 18.75564 922985630                   Pieris brassicae          ZA
+#> 3       3  1 -33.91651 18.40321 922619348 Papilio demodocus subsp. demodocus          ZA
+#> 4       1  1 -34.42086 19.24410 922426210 Mylothris agathina subsp. agathina          ZA
+#> 5       4  1 -34.35024 18.47488 921650584                  Eutricha capensis          ZA
+#> 6       5  1 -33.58570 25.65097 921485695            Drepanogynis bifasciata          ZA
+#>                                            locality        eventDate
+#> 1                                          Hermanus 2012-10-13T00:00
+#> 2                                   Polkadraai Road 2012-11-01T00:00
+#> 3                                       Signal Hill 2012-10-31T00:00
+#> 4                                          Hermanus 2012-10-13T00:00
+#> 5 Cape of Good Hope / Cape Point Area, South Africa 2012-10-30T00:00
+#> 6                             Kudu Ridge Game Lodge 2012-10-23T00:00
 ```
 
 ------------------------------------------------------------------------
@@ -244,15 +252,14 @@ dim(site_spp)
 #> [1] 56090  2871
 head(site_spp[,1:6])
 #> # A tibble: 6 × 6
-#>   site_id     x     y `Mylothris agathina subsp. agathina` `Pieris brassicae`
-#>     <int> <dbl> <dbl>                                <dbl>              <dbl>
-#> 1       1  19.2 -34.4                                    1                  1
-#> 2       2  18.8 -34.0                                    0                  1
-#> 3       3  18.4 -33.9                                    0                  0
-#> 4       4  18.5 -34.4                                    0                  0
-#> 5       5  25.7 -33.6                                    0                  0
-#> 6       6  22.2 -33.6                                    0                  0
-#> # ℹ 1 more variable: `Tarucus thespis` <dbl>
+#>   site_id     x     y `Mylothris agathina subsp. agathina` `Pieris brassicae` `Tarucus thespis`
+#>     <int> <dbl> <dbl>                                <dbl>              <dbl>             <dbl>
+#> 1       1  19.2 -34.4                                    1                  1                 1
+#> 2       2  18.8 -34.0                                    0                  1                 0
+#> 3       3  18.4 -33.9                                    0                  0                 0
+#> 4       4  18.5 -34.4                                    0                  0                 0
+#> 5       5  25.7 -33.6                                    0                  0                 0
+#> 6       6  22.2 -33.6                                    0                  0                 0
 
 #### Get parameters from processed data to use later
 # Number of species
@@ -262,11 +269,10 @@ head(site_spp[,1:6])
 # Species names
 sp_cols = names(site_spp)[-c(1:3)]
 sp_cols[1:10]
-#>  [1] "Mylothris agathina subsp. agathina" "Pieris brassicae"                  
-#>  [3] "Tarucus thespis"                    "Acraea horta"                      
-#>  [5] "Danaus chrysippus"                  "Papilio demodocus subsp. demodocus"
-#>  [7] "Eutricha capensis"                  "Mesocelis monticola"               
-#>  [9] "Vanessa cardui"                     "Cuneisigna obstans"
+#>  [1] "Mylothris agathina subsp. agathina" "Pieris brassicae"                   "Tarucus thespis"                   
+#>  [4] "Acraea horta"                       "Danaus chrysippus"                  "Papilio demodocus subsp. demodocus"
+#>  [7] "Eutricha capensis"                  "Mesocelis monticola"                "Vanessa cardui"                    
+#> [10] "Cuneisigna obstans"
 ```
 
 ------------------------------------------------------------------------
@@ -295,9 +301,7 @@ carried out within a consistent spatial framework. In this vignette we:
 # 1. Load the national boundary 
 # The shapefile is shipped with the package for full reproducibility.
 rsa = sf::st_read(system.file("extdata", "rsa.shp", package = "dissmapr"))
-#> Reading layer `rsa' from data source 
-#>   `D:\Methods\R\myR_Packages\myCompletePks\dissmapr\inst\extdata\rsa.shp' 
-#>   using driver `ESRI Shapefile'
+#> Reading layer `rsa' from data source `D:\Methods\R\myR_Packages\b-cubed-versions\dissmapr\inst\extdata\rsa.shp' using driver `ESRI Shapefile'
 #> Simple feature collection with 1 feature and 1 field
 #> Geometry type: POLYGON
 #> Dimension:     XY
@@ -610,17 +614,16 @@ env_r
 dim(env_df); head(env_df)
 #> [1] 415  24
 #> # A tibble: 6 × 24
-#>   grid_id centroid_lon centroid_lat bio01 bio02 bio03 bio04 bio05 bio06 bio07
-#>   <chr>          <dbl>        <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#> 1 1026            28.8        -22.3  21.9  14.5  55.8  425.  32.5  6.44  26.1
-#> 2 1027            29.2        -22.3  21.8  14.5  55.1  430.  32.6  6.30  26.3
-#> 3 1028            29.7        -22.3  22.0  14.2  56.3  396.  32.3  7.15  25.2
-#> 4 1029            30.3        -22.3  22.8  13.9  58.0  359.  32.7  8.79  23.9
-#> 5 1030            30.8        -22.3  23.3  13.9  60.0  332.  33.2  9.97  23.2
-#> 6 1031            31.3        -22.3  24.2  14.2  61.3  326.  34.2 10.9   23.2
-#> # ℹ 14 more variables: bio08 <dbl>, bio09 <dbl>, bio10 <dbl>, bio11 <dbl>,
-#> #   bio12 <dbl>, bio13 <dbl>, bio14 <dbl>, bio15 <dbl>, bio16 <dbl>,
-#> #   bio17 <dbl>, bio18 <dbl>, bio19 <dbl>, obs_sum <dbl>, spp_rich <dbl>
+#>   grid_id centroid_lon centroid_lat bio01 bio02 bio03 bio04 bio05 bio06 bio07 bio08 bio09 bio10 bio11 bio12
+#>   <chr>          <dbl>        <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+#> 1 1026            28.8        -22.3  21.9  14.5  55.8  425.  32.5  6.44  26.1  26.1  16.1  26.1  16.1  341.
+#> 2 1027            29.2        -22.3  21.8  14.5  55.1  430.  32.6  6.30  26.3  26.2  15.9  26.2  15.9  358.
+#> 3 1028            29.7        -22.3  22.0  14.2  56.3  396.  32.3  7.15  25.2  26.1  16.6  26.1  16.6  398.
+#> 4 1029            30.3        -22.3  22.8  13.9  58.0  359.  32.7  8.79  23.9  26.5  17.8  26.5  17.8  451.
+#> 5 1030            30.8        -22.3  23.3  13.9  60.0  332.  33.2  9.97  23.2  26.6  18.7  26.6  18.7  481.
+#> 6 1031            31.3        -22.3  24.2  14.2  61.3  326.  34.2 10.9   23.2  27.5  19.7  27.5  19.7  467.
+#> # ℹ 9 more variables: bio13 <dbl>, bio14 <dbl>, bio15 <dbl>, bio16 <dbl>, bio17 <dbl>, bio18 <dbl>,
+#> #   bio19 <dbl>, obs_sum <dbl>, spp_rich <dbl>
 ```
 
 `get_enviro_data()` *buffered the grid centroids by 10 km, fetched the
@@ -742,18 +745,16 @@ str(grid_env, max.level = 1)
 #> tibble [415 × 24] (S3: tbl_df/tbl/data.frame)
 head(grid_env)
 #> # A tibble: 6 × 24
-#>   grid_id centroid_lon centroid_lat obs_sum spp_rich bio01 bio02 bio03 bio04
-#>   <chr>          <dbl>        <dbl>   <dbl>    <dbl> <dbl> <dbl> <dbl> <dbl>
-#> 1 1026            28.8        -22.3       3        2  21.9  14.5  55.8  425.
-#> 2 1027            29.2        -22.3      41       31  21.8  14.5  55.1  430.
-#> 3 1028            29.7        -22.3      10       10  22.0  14.2  56.3  396.
-#> 4 1029            30.3        -22.3       7        7  22.8  13.9  58.0  359.
-#> 5 1030            30.8        -22.3       6        6  23.3  13.9  60.0  332.
-#> 6 1031            31.3        -22.3     107       76  24.2  14.2  61.3  326.
-#> # ℹ 15 more variables: bio05 <dbl>, bio06 <dbl>, bio07 <dbl>, bio08 <dbl>,
-#> #   bio09 <dbl>, bio10 <dbl>, bio11 <dbl>, bio12 <dbl>, bio13 <dbl>,
-#> #   bio14 <dbl>, bio15 <dbl>, bio16 <dbl>, bio17 <dbl>, bio18 <dbl>,
-#> #   bio19 <dbl>
+#>   grid_id centroid_lon centroid_lat obs_sum spp_rich bio01 bio02 bio03 bio04 bio05 bio06 bio07 bio08 bio09 bio10
+#>   <chr>          <dbl>        <dbl>   <dbl>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+#> 1 1026            28.8        -22.3       3        2  21.9  14.5  55.8  425.  32.5  6.44  26.1  26.1  16.1  26.1
+#> 2 1027            29.2        -22.3      41       31  21.8  14.5  55.1  430.  32.6  6.30  26.3  26.2  15.9  26.2
+#> 3 1028            29.7        -22.3      10       10  22.0  14.2  56.3  396.  32.3  7.15  25.2  26.1  16.6  26.1
+#> 4 1029            30.3        -22.3       7        7  22.8  13.9  58.0  359.  32.7  8.79  23.9  26.5  17.8  26.5
+#> 5 1030            30.8        -22.3       6        6  23.3  13.9  60.0  332.  33.2  9.97  23.2  26.6  18.7  26.6
+#> 6 1031            31.3        -22.3     107       76  24.2  14.2  61.3  326.  34.2 10.9   23.2  27.5  19.7  27.5
+#> # ℹ 9 more variables: bio11 <dbl>, bio12 <dbl>, bio13 <dbl>, bio14 <dbl>, bio15 <dbl>, bio16 <dbl>,
+#> #   bio17 <dbl>, bio18 <dbl>, bio19 <dbl>
 ```
 
 ------------------------------------------------------------------------
@@ -784,12 +785,10 @@ grid_env = cbind(
     setNames(c("x_aea", "y_aea"))   # rename within the pipeline
 )
 names(grid_env)
-#>  [1] "grid_id"      "centroid_lon" "centroid_lat" "obs_sum"      "spp_rich"    
-#>  [6] "bio01"        "bio02"        "bio03"        "bio04"        "bio05"       
-#> [11] "bio06"        "bio07"        "bio08"        "bio09"        "bio10"       
-#> [16] "bio11"        "bio12"        "bio13"        "bio14"        "bio15"       
-#> [21] "bio16"        "bio17"        "bio18"        "bio19"        "x_aea"       
-#> [26] "y_aea"
+#>  [1] "grid_id"      "centroid_lon" "centroid_lat" "obs_sum"      "spp_rich"     "bio01"        "bio02"       
+#>  [8] "bio03"        "bio04"        "bio05"        "bio06"        "bio07"        "bio08"        "bio09"       
+#> [15] "bio10"        "bio11"        "bio12"        "bio13"        "bio14"        "bio15"        "bio16"       
+#> [22] "bio17"        "bio18"        "bio19"        "x_aea"        "y_aea"
 head(grid_env[, c("grid_id","centroid_lon","centroid_lat","x_aea","y_aea")])
 #>   grid_id centroid_lon centroid_lat   x_aea    y_aea
 #> 1    1026        28.75    -22.25004 6392274 -6836200
@@ -843,13 +842,11 @@ env_vars_reduced = rm_correlated(
 <img src="man/figures/README-var-vif-1.png" width="100%" />
 
     #> Variables removed due to high correlation:
-    #>  [1] "temp_range" "mdr"        "temp_sea"   "temp_max"   "rain_mean" 
-    #>  [6] "rain_dryQ"  "temp_warmQ" "temp_min"   "temp_coldQ" "rain_coldQ"
-    #> [11] "rain_wetQ"  "rain_wet"   "rain_sea"  
+    #>  [1] "temp_range" "mdr"        "temp_sea"   "temp_max"   "rain_mean"  "rain_dryQ"  "temp_warmQ" "temp_min"  
+    #>  [9] "temp_coldQ" "rain_coldQ" "rain_wetQ"  "rain_wet"   "rain_sea"  
     #> 
     #> Variables retained:
-    #> [1] "temp_mean"  "iso"        "temp_wetQ"  "temp_dryQ"  "rain_dry"  
-    #> [6] "rain_warmQ" "obs_sum"
+    #> [1] "temp_mean"  "iso"        "temp_wetQ"  "temp_dryQ"  "rain_dry"   "rain_warmQ" "obs_sum"
 
     # Before vs after
     c(original = ncol(env_df[, c(4, 6:24)]),
@@ -1444,27 +1441,20 @@ str(ispline_gdm_tab, max.level=1)
 
 ispline_tabs_all = ispline_gdm_tab$ispline_table
 head(ispline_tabs_all)
-#>     temp_mean        iso  temp_wetQ   temp_dryQ    rain_dry  rain_warmQ obs_sum
-#> 1 0.000000000 0.00000000 0.00000000 0.000000000 0.000000000 0.000000000       0
-#> 2 0.007228375 0.06709322 0.01941640 0.009263111 0.002562338 0.004589507       0
-#> 3 0.094074777 0.07481225 0.03968812 0.024493796 0.012988982 0.005220299       0
-#> 4 0.164589610 0.08141449 0.06781475 0.045757693 0.013835167 0.008904397       0
-#> 5 0.207855825 0.11314906 0.07539076 0.072819805 0.015023675 0.009974474       0
-#> 6 0.216768580 0.12561452 0.09582285 0.073039544 0.015023675 0.011407648       0
-#>     distance temp_mean_is     iso_is temp_wetQ_is temp_dryQ_is rain_dry_is
-#> 1 0.02992069 0.000000e+00 0.00000000 0.000000e+00 0.000000e+00 0.000000000
-#> 2 0.02992076 2.606628e-05 0.02151319 2.988341e-05 7.596014e-05 0.001896652
-#> 3 0.02992079 4.415137e-03 0.02378903 1.248573e-04 5.311096e-04 0.009563608
-#> 4 0.02992085 1.351458e-02 0.02570297 3.645367e-04 1.853533e-03 0.010182243
-#> 5 0.04231437 2.155372e-02 0.03448283 4.505356e-04 4.694302e-03 0.011050239
-#> 6 0.04231444 2.344177e-02 0.03774149 7.278318e-04 4.722675e-03 0.011050239
-#>   rain_warmQ_is obs_sum_is distance_is zOrder
-#> 1    0.00000000          0  0.06333395 Order2
-#> 2    0.01096718          0  0.06333410 Order2
-#> 3    0.01246634          0  0.06333415 Order2
-#> 4    0.02118262          0  0.06333428 Order2
-#> 5    0.02370168          0  0.08833203 Order2
-#> 6    0.02706660          0  0.08833217 Order2
+#>     temp_mean        iso  temp_wetQ   temp_dryQ    rain_dry  rain_warmQ obs_sum   distance temp_mean_is
+#> 1 0.000000000 0.00000000 0.00000000 0.000000000 0.000000000 0.000000000       0 0.02992069 0.000000e+00
+#> 2 0.007228375 0.06709322 0.01941640 0.009263111 0.002562338 0.004589507       0 0.02992076 2.606628e-05
+#> 3 0.094074777 0.07481225 0.03968812 0.024493796 0.012988982 0.005220299       0 0.02992079 4.415137e-03
+#> 4 0.164589610 0.08141449 0.06781475 0.045757693 0.013835167 0.008904397       0 0.02992085 1.351458e-02
+#> 5 0.207855825 0.11314906 0.07539076 0.072819805 0.015023675 0.009974474       0 0.04231437 2.155372e-02
+#> 6 0.216768580 0.12561452 0.09582285 0.073039544 0.015023675 0.011407648       0 0.04231444 2.344177e-02
+#>       iso_is temp_wetQ_is temp_dryQ_is rain_dry_is rain_warmQ_is obs_sum_is distance_is zOrder
+#> 1 0.00000000 0.000000e+00 0.000000e+00 0.000000000    0.00000000          0  0.06333395 Order2
+#> 2 0.02151319 2.988341e-05 7.596014e-05 0.001896652    0.01096718          0  0.06333410 Order2
+#> 3 0.02378903 1.248573e-04 5.311096e-04 0.009563608    0.01246634          0  0.06333415 Order2
+#> 4 0.02570297 3.645367e-04 1.853533e-03 0.010182243    0.02118262          0  0.06333428 Order2
+#> 5 0.03448283 4.505356e-04 4.694302e-03 0.011050239    0.02370168          0  0.08833203 Order2
+#> 6 0.03774149 7.278318e-04 4.722675e-03 0.011050239    0.02706660          0  0.08833217 Order2
 ```
 
 ------------------------------------------------------------------------
@@ -1668,10 +1658,9 @@ predictors_df   = predict_dissim(
 dim(predictors_df)
 #> [1] 415  14
 names(predictors_df)
-#>  [1] "temp_mean"        "iso"              "temp_wetQ"        "temp_dryQ"       
-#>  [5] "rain_dry"         "rain_warmQ"       "obs_sum"          "distance"        
-#>  [9] "richness"         "pred_zeta"        "pred_zetaExp"     "log_pred_zetaExp"
-#> [13] "centroid_lon"     "centroid_lat"
+#>  [1] "temp_mean"        "iso"              "temp_wetQ"        "temp_dryQ"        "rain_dry"        
+#>  [6] "rain_warmQ"       "obs_sum"          "distance"         "richness"         "pred_zeta"       
+#> [11] "pred_zetaExp"     "log_pred_zetaExp" "centroid_lon"     "centroid_lat"
 head(predictors_df[,5:11])
 #>    rain_dry  rain_warmQ    obs_sum distance richness  pred_zeta pred_zetaExp
 #> 1 -1.227648 -0.17604221 -0.2926985 903.0437        2 0.01930100    0.5048251
@@ -1771,27 +1760,20 @@ all_preds <- bind_rows(scenario_dfs) |>
                            levels = names(env_scenarios)))  # "current", "2030", …
 # by(all_preds, all_preds$scenario, summary)
 summary(all_preds)
-#>    temp_mean            iso            temp_wetQ          temp_dryQ      
-#>  Min.   :-3.3102   Min.   :-2.7172   Min.   :-2.83980   Min.   :-2.0108  
-#>  1st Qu.: 0.2998   1st Qu.:-0.5280   1st Qu.: 0.03097   1st Qu.:-0.1527  
-#>  Median : 1.2700   Median : 0.1940   Median : 0.88709   Median : 0.6070  
-#>  Mean   : 1.2854   Mean   : 0.2395   Mean   : 0.76814   Mean   : 0.7004  
-#>  3rd Qu.: 2.2569   3rd Qu.: 1.0005   3rd Qu.: 1.58190   3rd Qu.: 1.4677  
-#>  Max.   : 5.3799   Max.   : 3.4535   Max.   : 3.30251   Max.   : 3.7162  
-#>     rain_dry         rain_warmQ         obs_sum            distance    
-#>  Min.   :-1.3115   Min.   :-1.6465   Min.   :-0.29579   Min.   :513.2  
-#>  1st Qu.:-0.8556   1st Qu.:-1.0366   1st Qu.:-0.22016   1st Qu.:594.8  
-#>  Median :-0.4122   Median :-0.2986   Median :-0.22016   Median :675.9  
-#>  Mean   :-0.2019   Mean   :-0.2561   Mean   : 0.14440   Mean   :690.0  
-#>  3rd Qu.: 0.1728   3rd Qu.: 0.4349   3rd Qu.:-0.03281   3rd Qu.:771.2  
-#>  Max.   : 4.0169   Max.   : 2.4507   Max.   :12.04905   Max.   :996.8  
-#>     richness        pred_zeta         pred_zetaExp    log_pred_zetaExp 
-#>  Min.   :  1.00   Min.   :0.001154   Min.   :0.5003   Min.   :-0.6926  
-#>  1st Qu.:  4.00   1st Qu.:0.014822   1st Qu.:0.5037   1st Qu.:-0.6858  
-#>  Median : 15.00   Median :0.027757   Median :0.5069   Median :-0.6794  
-#>  Mean   : 57.58   Mean   :0.027634   Mean   :0.5069   Mean   :-0.6795  
-#>  3rd Qu.: 76.00   3rd Qu.:0.040202   3rd Qu.:0.5100   3rd Qu.:-0.6732  
-#>  Max.   :853.00   Max.   :0.070791   Max.   :0.5177   Max.   :-0.6584  
+#>    temp_mean            iso            temp_wetQ          temp_dryQ          rain_dry         rain_warmQ     
+#>  Min.   :-3.3102   Min.   :-2.7172   Min.   :-2.83980   Min.   :-2.0108   Min.   :-1.3115   Min.   :-1.6465  
+#>  1st Qu.: 0.2998   1st Qu.:-0.5280   1st Qu.: 0.03097   1st Qu.:-0.1527   1st Qu.:-0.8556   1st Qu.:-1.0366  
+#>  Median : 1.2700   Median : 0.1940   Median : 0.88709   Median : 0.6070   Median :-0.4122   Median :-0.2986  
+#>  Mean   : 1.2854   Mean   : 0.2395   Mean   : 0.76814   Mean   : 0.7004   Mean   :-0.2019   Mean   :-0.2561  
+#>  3rd Qu.: 2.2569   3rd Qu.: 1.0005   3rd Qu.: 1.58190   3rd Qu.: 1.4677   3rd Qu.: 0.1728   3rd Qu.: 0.4349  
+#>  Max.   : 5.3799   Max.   : 3.4535   Max.   : 3.30251   Max.   : 3.7162   Max.   : 4.0169   Max.   : 2.4507  
+#>     obs_sum            distance        richness        pred_zeta         pred_zetaExp    log_pred_zetaExp 
+#>  Min.   :-0.29579   Min.   :513.2   Min.   :  1.00   Min.   :0.001154   Min.   :0.5003   Min.   :-0.6926  
+#>  1st Qu.:-0.22016   1st Qu.:594.8   1st Qu.:  4.00   1st Qu.:0.014822   1st Qu.:0.5037   1st Qu.:-0.6858  
+#>  Median :-0.22016   Median :675.9   Median : 15.00   Median :0.027757   Median :0.5069   Median :-0.6794  
+#>  Mean   : 0.14440   Mean   :690.0   Mean   : 57.58   Mean   :0.027634   Mean   :0.5069   Mean   :-0.6795  
+#>  3rd Qu.:-0.03281   3rd Qu.:771.2   3rd Qu.: 76.00   3rd Qu.:0.040202   3rd Qu.:0.5100   3rd Qu.:-0.6732  
+#>  Max.   :12.04905   Max.   :996.8   Max.   :853.00   Max.   :0.070791   Max.   :0.5177   Max.   :-0.6584  
 #>   centroid_lon    centroid_lat       scenario  
 #>  Min.   :16.75   Min.   :-34.75   current:415  
 #>  1st Qu.:22.25   1st Qu.:-31.75   2030   :415  
@@ -1887,6 +1869,8 @@ bioreg_current = map_bioreg(
   crs = "EPSG:4326",
   plot = TRUE,
   bndy_fc = rsa)
+#> fitting ...
+#>   |                                                                                                              |                                                                                                      |   0%  |                                                                                                              |=======                                                                                               |   7%  |                                                                                                              |==============                                                                                        |  13%  |                                                                                                              |====================                                                                                  |  20%  |                                                                                                              |===========================                                                                           |  27%  |                                                                                                              |==================================                                                                    |  33%  |                                                                                                              |=========================================                                                             |  40%  |                                                                                                              |================================================                                                      |  47%  |                                                                                                              |======================================================                                                |  53%  |                                                                                                              |=============================================================                                         |  60%  |                                                                                                              |====================================================================                                  |  67%  |                                                                                                              |===========================================================================                           |  73%  |                                                                                                              |==================================================================================                    |  80%  |                                                                                                              |========================================================================================              |  87%  |                                                                                                              |===============================================================================================       |  93%  |                                                                                                              |======================================================================================================| 100%
 ```
 
 <img src="man/figures/README-zeta-cluster-1.png" width="100%" />
@@ -1935,6 +1919,8 @@ bioreg_future = map_bioreg(
   crs = "EPSG:4326",
   plot = TRUE,
   bndy_fc = rsa)
+#> fitting ...
+#>   |                                                                                                              |                                                                                                      |   0%  |                                                                                                              |=======                                                                                               |   7%  |                                                                                                              |==============                                                                                        |  13%  |                                                                                                              |====================                                                                                  |  20%  |                                                                                                              |===========================                                                                           |  27%  |                                                                                                              |==================================                                                                    |  33%  |                                                                                                              |=========================================                                                             |  40%  |                                                                                                              |================================================                                                      |  47%  |                                                                                                              |======================================================                                                |  53%  |                                                                                                              |=============================================================                                         |  60%  |                                                                                                              |====================================================================                                  |  67%  |                                                                                                              |===========================================================================                           |  73%  |                                                                                                              |==================================================================================                    |  80%  |                                                                                                              |========================================================================================              |  87%  |                                                                                                              |===============================================================================================       |  93%  |                                                                                                              |======================================================================================================| 100%
 ```
 
 <img src="man/figures/README-future-cluster-1.png" width="100%" />
@@ -2061,8 +2047,7 @@ current_nn = c(bioreg_current$nn$current$kmeans_algn_current,
              bioreg_current$nn$current$hclust_algn_current,
              bioreg_current$nn$current$gmm_algn_current)
 names(current_nn)
-#> [1] "kmeans_algn_current" "pam_algn_current"    "hclust_algn_current"
-#> [4] "gmm_algn_current"
+#> [1] "kmeans_algn_current" "pam_algn_current"    "hclust_algn_current" "gmm_algn_current"
 
 # Run `map_bioregDiff`
 # 'approach', specifies which metric to compute:

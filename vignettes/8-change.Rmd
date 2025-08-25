@@ -53,7 +53,7 @@ In the sections below we use `map_bioregDiff()` to assess how much our four clus
 - **all** (default): returns a five-layer `SpatRaster` containing every metric.   
 
 
-```{r bioreg-Diff}
+```{r bioreg-Diff, fig.alt="Bioregion sensitivity to method"}
 # Get current nn rasters
 # current_nn = c(bioreg_current$nn$current$kmeans_algn_current,
 #              bioreg_current$nn$current$pam_algn_current,
@@ -101,7 +101,7 @@ par(old_par)
 
 Here we use `map_bioregDiff()` to track how the hierarchical‐cluster map itself changes under three future climate scenarios. Focusing solely on the hierarchical solution we map bioregion change across time. First we stack the hierarchical clusters for today, 2030, 2040 and 2050, run `map_bioregDiff()` on that series, and highlight how bioregions shift under these future climate projections. In this way we isolate climate-driven reorganization in the hierarchical map itself.
 
-```{r bioreg-diff-futures, message=FALSE}
+```{r bioreg-diff-futures, message=FALSE, fig.alt="Bioregion sensitivity to change"}
 # 1. Build a multi‐layer SpatRaster of hierarchical clusters for each scenario
 # Create SpatRast
 # future_hclt = c(bioreg_future$nn$current$hclust_current,

@@ -42,7 +42,7 @@ In this step we use our fitted order-2 GDM (`zeta2`) to generate a spatial map o
 
 We set a random seed for reproducibility (so Monte Carlo sampling inside `predict_dissim()` yields the same results each time), pull out just the species columns once, then inspect the returned `predictors_df` to confirm its dimensions, column names, and a quick peek at the key model outputs.
 
-```{r predict-zeta2}
+```{r predict-zeta2, fig.alt="Predicted pairwise compositional turnover"}
 # Predict current zeta diversity using `predict_dissim` with sampling effort, geographic distance and environmental variables
 # Only non-colinear environmental variables used in `zeta2` model
 set.seed(123) # set.seed to generate exactly the same random results i.e. sam=100
@@ -160,7 +160,7 @@ head(all_preds)
 
 We can then quickly compare the spatial ζ₂ surfaces under each future:
 
-```{r predict-future-plot, message=FALSE}
+```{r predict-future-plot, message=FALSE, fig.alt="Predicted pairwise compositional turnover with climate change"}
 ggplot(all_preds,
        aes(centroid_lon, centroid_lat, fill = pred_zetaExp)) +
   geom_tile() +

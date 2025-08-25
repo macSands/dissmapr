@@ -87,7 +87,7 @@ Here we produce a unified, multi‐panel display of each predictor’s I‐splin
 
 We then loop over all raw covariates (those ending in `_is`), generate a separate plot per variable, and assemble them into a cohesive multi‐panel layout using the `patchwork` package. This makes it possible to compare turnover responses across the full suite of environmental drivers.
 
-```{r plot-isp-lines, warning=FALSE, message=FALSE, fig.width=10, fig.height=12}
+```{r plot-isp-lines, warning=FALSE, message=FALSE, fig.width=10, fig.height=12, fig.alt="Multi-Panel I-Spline Curves Across Covariates"}
 # 1. Identify all raw covariates with a spline term
 raw_vars = sub("_is$", "",
                 grep("_is$", names(ispline_tabs_all), value = TRUE))
@@ -137,7 +137,7 @@ Which predictors drive turnover shifts with the number of sites:
 
 Finally, we summarize the distribution of every _is basis across orders using `plot_ispline_boxplots()`. Each spline term is facetted with free scales, and fills are mapped to zOrder via a color-blind–friendly Viridis palette.
 
-```{r plot-isp-box, warning=FALSE, message=FALSE, fig.width=10, fig.height=12}
+```{r plot-isp-box, warning=FALSE, message=FALSE, fig.width=10, fig.height=12, fig.alt="Distribution of iSplines by Order"}
 # Facetted boxplots of all *_is columns
 dissmapr::plot_ispline_boxplots(
   ispline_data   = ispline_tabs_all,

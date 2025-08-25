@@ -94,11 +94,18 @@ This section demonstrates how to automate the retrieval and pre-processing of bi
 `get_occurrence_data()` then organises the records by the chosen taxonomic scope and region, returning presence–absence and/or abundance matrices that summarise species co-occurrence records with latitude and longitude coordinates.
 
 ```{r get-occurrence}
+load(system.file("extdata", "gbif_butterflies_csv.RData", package = "dissmapr"), envir = knitr::knit_global())
+
 bfly_data = get_occurrence_data(
-  data        = system.file("extdata", "gbif_butterflies.csv", package = "dissmapr"),
-  source_type = 'local_csv',
-  sep         = '\t'
+  data        = gbif_butterflies_csv,
+  source_type = 'data_frame'
 )
+
+# bfly_data = get_occurrence_data(
+#   data        = system.file("extdata", "gbif_butterflies.csv", package = "dissmapr"),
+#   source_type = 'local_csv',
+#   sep         = '\t'
+# )
 
 # Check results but only a subset of columns to fit in console
 dim(bfly_data)

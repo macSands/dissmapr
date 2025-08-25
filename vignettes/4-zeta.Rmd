@@ -59,7 +59,7 @@ The next sections offer a simple, step-by-step guide to spot where shared biodiv
 
 `Zeta.decline.ex()` calculates the theoretical number of species that should be shared by 1, 2, … k sites (orders 1–15 here) using a closed-form formula based solely on each species’ occupancy frequency. Because no resampling is involved, the output is an exact expectation of how ζ-diversity ought to fall as more sites are considered, assuming site identity plays no role. The function also fits exponential and power-law models to the expected curve, yielding parameters and fit statistics that provide a baseline against which observed or Monte-Carlo ζ-decline patterns can be evaluated.
 
-```{r zeta-decline-ex, fig.width=7, fig.height=5}
+```{r zeta-decline-ex, fig.width=7, fig.height=5, fig.alt="Zeta decline EX"}
 op = par(no.readonly = TRUE)
 on.exit(par(op), add = TRUE)
 par(mfrow = c(1,1), mar = c(4,4,1,1), oma = c(0,0,0,0))
@@ -83,7 +83,7 @@ zetadiv::Plot.zeta.decline(zeta_decline_ex, sd.plot = TRUE)
 
 `Zeta.decline.mc()` estimates how the number of species shared by 1, 2, … k sites drops when exhaustive combinations are impractical. It repeatedly draws random sets of sites (Monte-Carlo sampling), averages the shared-species count for each order, and reports both the mean and its variability. The resulting curve is then fitted with exponential and power-law models, providing parameter estimates and confidence bands that capture real-world turnover while accounting for sampling uncertainty. In other words, a **sharp drop** in the curve means **species change quickly from place to place (communities are unique)**, while a **gentle drop** means **many species are found in most places (communities are similar)**.
 
-```{r zeta-decline-mc}
+```{r zeta-decline-mc, fig.alt="Zeta decline MC"}
 set.seed(123)
 zeta_mc_utm = Zeta.decline.mc(grid_spp_pa[,-(1:7)], # Different way to get only species columns
                               # grid_env[, c("centroid_lon", "centroid_lat")], # WGS84 - decimal degrees
@@ -106,7 +106,7 @@ zeta_mc_utm = Zeta.decline.mc(grid_spp_pa[,-(1:7)], # Different way to get only 
 
 `Zeta.ddecays() `measures the **drop in shared species as geographic distance increases**. In this example it evaluates **orders 2 through 8** by first binning site pairs (or groups) into many distance classes, then computing the average number of species they share in each class, and finally fitting an **exponential distance-decay model** via a generalized linear regression. The function returns the slope and intercept of each fitted curve, goodness-of-fit statistics, and diagnostic plots that together show **how quickly multisite similarity breaks down with space at different zeta orders**.
 
-```{r zeta-decays}
+```{r zeta-decays, fig.alt="Zeta decays"}
 # Calculate Zeta.ddecays
 set.seed(123)
 zeta_decays = Zeta.ddecays(#grid_env[, c("centroid_lon", "centroid_lat")],  # WGS84 - decimal degrees
@@ -147,7 +147,7 @@ zeta_decays = Zeta.ddecays(#grid_env[, c("centroid_lon", "centroid_lat")],  # WG
 
 The fitted model (`zeta2`) contains partial I-splines for every predictor (note: higher splines imply stronger turnover per unit change).
 
-```{r zeta-msgdm}
+```{r zeta-msgdm, fig.alt="Zeta iSplines"}
 set.seed(246)
 # Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set
 zeta2 = Zeta.msgdm(
@@ -206,7 +206,7 @@ summary(zeta2$model)
 
 **With sampling effort** (`obs_sum`) included, all sites with lots of records suddenly look far more alike than poorly sampled ones, and the climate curves flatten, and distance drops too.
 
-```{r zeta-msgdm-noeff}
+```{r zeta-msgdm-noeff, fig.alt="Zeta iSplines with no effort index"}
 # Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set
 set.seed(123) # set.seed to generate exactly the same random results i.e. sam=100
 zeta2_noEff = Zeta.msgdm(

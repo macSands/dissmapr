@@ -137,7 +137,7 @@ With the grid summaries in hand we can now **map the spatial distribution of obs
 
 A perceptually uniform `Viridis` palette (`option = "turbo"`) supports colour‑blind accessibility, while `theme_minimal()` removes visual clutter so the data can speak for themselves.
 
-```{r map-aoi}
+```{r map-aoi, fig.alt="Observation density across South Africa (0.5° grid)"}
 ggplot() +
   # 1. grid polygons as subtle backdrop 
   geom_sf(data = grid_sf, fill = NA, colour = "darkgrey", linewidth = 0.2, alpha = 0.5) +
@@ -176,7 +176,7 @@ ggplot() +
 
 The chunk below extracts those two layers, applies a square-root stretch (to dampen the influence of very large counts), and renders them side-by-side with a perceptually uniform turbo palette.
 
-```{r eff-rich}
+```{r eff-rich, fig.alt="Sampling effort (√obs count) and Species richness (√unique count)"}
 # 1. Extract & stretch the layers 
 effRich_r = sqrt(grid_list$grid_r[[c("obs_sum", "spp_rich")]])
 

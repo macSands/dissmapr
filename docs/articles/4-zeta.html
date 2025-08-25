@@ -212,7 +212,7 @@ observed or Monte-Carlo ζ-decline patterns can be evaluated.</p>
 <span><span class="va">zeta_decline_ex</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.decline.ex.html" class="external-link">Zeta.decline.ex</a></span><span class="op">(</span><span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="fl">7</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">grid_spp_pa</span><span class="op">)</span><span class="op">]</span>, <span class="co"># Only species columns</span></span>
 <span>                                  orders <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span>, plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu">zetadiv</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Plot.zeta.decline.html" class="external-link">Plot.zeta.decline</a></span><span class="op">(</span><span class="va">zeta_decline_ex</span>, sd.plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/4-zeta-decline-ex-1.png" width="100%"></p>
+<p><img src="figures/4-zeta-decline-ex-1.png" alt="Zeta decline EX" width="100%"></p>
 <blockquote>
 <ul>
 <li>
@@ -277,7 +277,7 @@ similar)</strong>.</p>
 <span>                              sam <span class="op">=</span> <span class="fl">100</span>, <span class="co"># Sample size</span></span>
 <span>                              NON <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                              normalize <span class="op">=</span> <span class="st">"Jaccard"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/4-zeta-decline-mc-1.png" width="100%"></p>
+<p><img src="figures/4-zeta-decline-mc-1.png" alt="Zeta decline MC" width="100%"></p>
 <blockquote>
 <ul>
 <li>
@@ -342,7 +342,7 @@ space at different zeta orders</strong>.</p>
 <span><span class="co">#&gt; [1] 6</span></span>
 <span><span class="co">#&gt; [1] 7</span></span>
 <span><span class="co">#&gt; [1] 8</span></span></code></pre></div>
-<p><img src="figures/4-zeta-decays-1.png" width="100%"></p>
+<p><img src="figures/4-zeta-decays-1.png" alt="Zeta decays" width="100%"></p>
 <blockquote>
 <p>This plot shows how zeta diversity (remember, it’s a metric that
 captures shared species composition among multiple sites) changes with
@@ -432,7 +432,7 @@ change).</p>
 <span><span class="co"># splines = Return.ispline(zeta2, env_vars_reduced[,-7], distance = TRUE) # Without sampling effort</span></span>
 <span><span class="va">splines</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Return.ispline.html" class="external-link">Return.ispline</a></span><span class="op">(</span><span class="va">zeta2</span>, <span class="va">env_vars_reduced</span>, distance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Plot.ispline.html" class="external-link">Plot.ispline</a></span><span class="op">(</span><span class="va">splines</span>, distance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/4-zeta-msgdm-1.png" width="100%"></p>
+<p><img src="figures/4-zeta-msgdm-1.png" alt="Zeta iSplines" width="100%"></p>
 <p><strong>General Interpretation</strong>:</p>
 <ul>
 <li>
@@ -581,7 +581,7 @@ drops too.</p>
 <span><span class="co"># Extract and plot the fitted I-splines</span></span>
 <span><span class="va">splines_noEff</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Return.ispline.html" class="external-link">Return.ispline</a></span><span class="op">(</span><span class="va">zeta2_noEff</span>, <span class="va">env_vars_reduced</span><span class="op">[</span>,<span class="op">-</span><span class="fl">7</span><span class="op">]</span>, distance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Without sampling effort</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Plot.ispline.html" class="external-link">Plot.ispline</a></span><span class="op">(</span><span class="va">splines_noEff</span>, distance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/4-zeta-msgdm-noeff-1.png" width="100%"></p>
+<p><img src="figures/4-zeta-msgdm-noeff-1.png" alt="Zeta iSplines with no effort index" width="100%"></p>
 <p><strong>Without sampling effort</strong> (<code>obs_sum</code>)
 temperature and rainfall curves climb high and fast: climate looks like
 the main reason sites stop sharing species. Distance (blue line) still

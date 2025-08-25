@@ -57,7 +57,7 @@ rich_o1234 = dissmapr::compute_orderwise(
 head(rich_o1234)
 ```
 
-```{r richness-boxplot}
+```{r richness-boxplot, fig.alt="Distribution of √Species Richness by Order"}
 # Plot species richness distribution by order
 boxplot(sqrt(value) ~ order,
         data = rich_o1234,
@@ -79,7 +79,7 @@ mean_rich_o1234 = rich_o1234 %>%
 head(mean_rich_o1234)
 ```
 
-```{r richness-plot}
+```{r richness-plot, fig.alt="√Species Richness"}
 # Plot Richness calculated using `compute_orderwise(..., func = richness, ...)`
 ggplot() +
   geom_tile(data = mean_rich_o1234[mean_rich_o1234$order==1,],
@@ -94,7 +94,7 @@ ggplot() +
 
 Plot order-wise richness (orders 2:5) calculated using `compute_orderwise(..., func = richness, ...)` to visualise spatial patterns of richness across different orders. Results highlight regions of high or low richness compared across orders.
 
-```{r richness-plot-orders2345}
+```{r richness-plot-orders2345, fig.alt="Mean √Richness by Order"}
 # Plot order-wise richness (orders 2:5) calculated using `compute_orderwise(..., func = richness, ...)`
 ggplot() +
   geom_tile(data = mean_rich_o1234, aes(x = centroid_lon, y = centroid_lat, fill = sqrt(value))) +
@@ -134,7 +134,7 @@ head(turn_o2345)
 To visualize the spatial patterns of turnover across sites, geographic coordinates are added back to the results. This allows spatial exploration of turnover patterns across different orders, highlighting regions of high or low turnover and enabling comparisons across orders. These visualizations provide valuable insights into spatial biodiversity dynamics.
 Below we assign the geographic coordinates (x and y) from the block_sp dataset to the turn_o2345 results. Using match, it aligns the coordinates to the site_from column in turn_o2345 based on the corresponding grid_id values in block_sp. This prepares the dataset for spatial plotting.
 
-```{r turnover-plot-order2}
+```{r turnover-plot-order2, fig.alt="Beta Diversity"}
 # Add coordinates back to 'turn_o2345' for plotting
 turn_o2345$centroid_lon = grid_spp$centroid_lon[match(turn_o2345$site_from, grid_spp$grid_id)]
 turn_o2345$centroid_lat = grid_spp$centroid_lat[match(turn_o2345$site_from, grid_spp$grid_id)]
@@ -158,7 +158,7 @@ ggplot() +
 
 Plot order-wise turnover (orders 2:5) calculated using `compute_orderwise(..., func = turnover, ...)` to visualise spatial patterns of turnover across different orders. Results highlight regions of high or low turnover and facilitate comparison across orders, providing insights into spatial biodiversity dynamics.
 
-```{r turnover-plot-orders2345}
+```{r turnover-plot-orders2345, fig.alt="Mean Turnover by Order"}
 # Plot order-wise turnover (orders 2:5) calculated using `compute_orderwise(..., func = turnover, ...)`
 ggplot() +
   geom_tile(data = mean_turn_o2345, aes(x = centroid_lon, y = centroid_lat, fill = value)) +

@@ -183,11 +183,18 @@ chosen taxonomic scope and region, returning presence–absence and/or
 abundance matrices that summarise species co-occurrence records with
 latitude and longitude coordinates.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bfly_data</span> <span class="op">=</span> <span class="fu"><a href="../reference/get_occurrence_data.html">get_occurrence_data</a></span><span class="op">(</span></span>
-<span>  data        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"gbif_butterflies.csv"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span>,</span>
-<span>  source_type <span class="op">=</span> <span class="st">'local_csv'</span>,</span>
-<span>  sep         <span class="op">=</span> <span class="st">'\t'</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"gbif_butterflies_csv.RData"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span>, envir <span class="op">=</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit_global.html" class="external-link">knit_global</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">bfly_data</span> <span class="op">=</span> <span class="fu"><a href="../reference/get_occurrence_data.html">get_occurrence_data</a></span><span class="op">(</span></span>
+<span>  data        <span class="op">=</span> <span class="va">gbif_butterflies_csv</span>,</span>
+<span>  source_type <span class="op">=</span> <span class="st">'data_frame'</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># bfly_data = get_occurrence_data(</span></span>
+<span><span class="co">#   data        = system.file("extdata", "gbif_butterflies.csv", package = "dissmapr"),</span></span>
+<span><span class="co">#   source_type = 'local_csv',</span></span>
+<span><span class="co">#   sep         = '\t'</span></span>
+<span><span class="co"># )</span></span>
 <span></span>
 <span><span class="co"># Check results but only a subset of columns to fit in console</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">bfly_data</span><span class="op">)</span></span>
