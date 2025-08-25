@@ -45,8 +45,7 @@ Imports:
     vegan,
     viridis,
     zoo,
-    zetadiv,
-    zen4R
+    zetadiv
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

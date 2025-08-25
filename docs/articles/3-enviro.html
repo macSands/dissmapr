@@ -52,7 +52,6 @@
     <li><a class="dropdown-item" href="../articles/7-bioregion.html">Map bioregions</a></li>
     <li><a class="dropdown-item" href="../articles/8-change.html">Map bioregion change</a></li>
     <li><a class="dropdown-item" href="../articles/9-examples.html">Compute orderwise examples</a></li>
-    <li><a class="dropdown-item" href="../articles/10-zenodo.html">Zenodo basics</a></li>
   </ul>
 </li>
       </ul>
@@ -242,7 +241,7 @@ map algebra, multivariate modelling, and spatial cross-validation.</p>
 <span>       cex.main <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>                        <span class="co"># smaller title</span></span>
 <span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="figures/3-ras-1.png" width="100%"></p>
+<p><img src="figures/3-ras-1.png" alt="Environmental Covariates" width="100%"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">old_par</span><span class="op">)</span> </span></code></pre></div>
@@ -287,7 +286,7 @@ selected climate variables to check results.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Grid-cell mean annual temperature (√-scaled)"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/3-env-df-1.png" width="100%"></p>
+<p><img src="figures/3-env-df-1.png" alt="Grid-cell mean annual temperature (√-scaled)" width="100%"></p>
 <p><em>Goal of this plot is to quickly check that the environmental
 predictors (e.g. <code>bio01</code> &gt;&gt; mean annual temperature)
 line up with the 0.5° grid.</em></p>
@@ -412,7 +411,7 @@ information while minimising multicollinearity.</p>
 <span>  threshold  <span class="op">=</span> <span class="fl">0.70</span>,</span>
 <span>  plot       <span class="op">=</span> <span class="cn">TRUE</span>                   <span class="co"># show heat-map of retained vars</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/3-var-vif-1.png" width="100%"></p>
+<p><img src="figures/3-var-vif-1.png" alt="Environmental pairwise correlations" width="100%"></p>
 <pre><code><span><span class="co">#&gt; Variables removed due to high correlation:</span></span>
 <span><span class="co">#&gt;  [1] "temp_range" "temp_sea"   "temp_max"   "rain_mean"  "rain_dryQ" </span></span>
 <span><span class="co">#&gt;  [6] "temp_min"   "temp_warmQ" "temp_coldQ" "rain_wetQ"  "rain_wet"  </span></span>
