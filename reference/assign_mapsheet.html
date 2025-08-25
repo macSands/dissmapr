@@ -9,7 +9,7 @@ appends:
 the nearest mapsheet code (format "E|WDDDN|SDDBB"), and
 the center longitude/latitude of that mapsheet.
 
-'><meta property="og:image" content="https://macsands.github.io/dissmapr/logo.png"></head><body>
+'><meta property="og:image" content="https://b-cubed-eu.github.io/dissmapr/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -29,13 +29,23 @@ the center longitude/latitude of that mapsheet.
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">getting-started</a></li>
-    <li><a class="dropdown-item" href="../articles/tutorial_1.html">tutorial-1</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Articles</h6></li>
+    <li><a class="dropdown-item" href="../articles/1-setup.html">Getting started</a></li>
+    <li><a class="dropdown-item" href="../articles/2-grid.html">User-defined grid</a></li>
+    <li><a class="dropdown-item" href="../articles/3-enviro.html">Environmental data for sites</a></li>
+    <li><a class="dropdown-item" href="../articles/4-zeta.html">Zeta diversity</a></li>
+    <li><a class="dropdown-item" href="../articles/5-zeta-workflow.html">Zeta-MSGDM with dissmapr</a></li>
+    <li><a class="dropdown-item" href="../articles/6-predict.html">Predict community turnover</a></li>
+    <li><a class="dropdown-item" href="../articles/7-bioregion.html">Map bioregions</a></li>
+    <li><a class="dropdown-item" href="../articles/8-change.html">Map bioregion change</a></li>
+    <li><a class="dropdown-item" href="../articles/9-examples.html">Compute orderwise examples</a></li>
+    <li><a class="dropdown-item" href="../articles/10-zenodo.html">Zenodo basics</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://b-cubed.eu/" aria-label="B-Cubed website"><span class="fa fa-cube"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/macSands/dissmapr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/b-cubed-eu/dissmapr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -44,7 +54,7 @@ the center longitude/latitude of that mapsheet.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add Nearest Mapsheet Code and Center Coordinates</h1>
-      <small class="dont-index">Source: <a href="https://github.com/macSands/dissmapr/blob/master/R/assign_mapsheet.R" class="external-link"><code>R/assign_mapsheet.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/master/R/assign_mapsheet.R" class="external-link"><code>R/assign_mapsheet.R</code></a></small>
       <div class="d-none name"><code>assign_mapsheet.Rd</code></div>
     </div>
 
@@ -82,7 +92,7 @@ appends:</p><ol><li><p>the nearest mapsheet code (format "E|WDDDN|SDDBB"), and</
 
 
 <dt id="arg-cell-size">cell_size<a class="anchor" aria-label="anchor" href="#arg-cell-size"></a></dt>
-<dd><p>Numeric. Cell size: e.g. 1 for 1° cells, 15 for 15′ cells.</p></dd>
+<dd><p>Numeric. Cell size: e.g. 1 for 1deg cells, 15 for 15' cells.</p></dd>
 
 
 <dt id="arg-unit">unit<a class="anchor" aria-label="anchor" href="#arg-unit"></a></dt>
@@ -121,7 +131,7 @@ sheet code based on the cell centre.</p>
 <span class="r-in"><span>  day <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">4</span>, <span class="fl">3</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">21</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># For 1° mapsheet cells:</span></span></span>
+<span class="r-in"><span><span class="co"># For 1deg mapsheet cells:</span></span></span>
 <span class="r-in"><span><span class="va">bird_obs2</span> <span class="op">=</span> <span class="fu">assign_mapsheet</span><span class="op">(</span><span class="va">bird_obs</span>, cell_size <span class="op">=</span> <span class="fl">1</span>, unit <span class="op">=</span> <span class="st">"deg"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bird_obs2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   site_id        x         y                    species value year month day</span>
