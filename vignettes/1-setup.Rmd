@@ -158,4 +158,23 @@ sp_cols = names(site_spp)[-c(1:3)]
 sp_cols[1:10]
 ```
 
-------------------------------------------------------------------------
+---
+
+```{r save-state, include=FALSE}
+## Save state for downstream vignettes
+# Each vignette runs in a clean R session. We therefore **persist state explicitly**.
+dir.create("_data", showWarnings = FALSE, recursive = TRUE)
+
+saveRDS(
+  list(
+    bfly_data = bfly_data,
+    site_obs = site_obs,
+    site_spp = site_spp,
+    n_sp = n_sp,
+    sp_cols = sp_cols
+  ),
+  file = "_data/1_setup.rds",
+  compress = "xz"
+)
+
+```

@@ -43,7 +43,7 @@ badge](https://b-cubed-eu.r-universe.dev/dissmapr/badges/version)](https://b-cub
 
 ------------------------------------------------------------------------
 
-# `dissmapr`
+# **`dissmapr`**
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 

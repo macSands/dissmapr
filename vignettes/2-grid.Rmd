@@ -7,9 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r child-2, child = "_common.Rmd"}
-```
-
 
 ```{r setup-2, include=FALSE}
 knitr::opts_chunk$set(
@@ -21,6 +18,17 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE
 )
+```
+
+```{r read_files, include=FALSE}
+# At the start of the next vignette, explicitly load files from previous vignette:
+inputs = readRDS("_data/1_setup.rds")
+
+bfly_data = inputs$bfly_data
+site_obs = inputs$site_obs
+site_spp = inputs$site_spp
+n_sp = inputs$n_sp
+sp_cols = inputs$sp_cols
 ```
 
 ------------------------------------------------------------------------
@@ -113,6 +121,7 @@ grid_list = dissmapr::generate_grid(
 str(grid_list, max.level = 1)
 
 # (Optional) Promote list items to named objects 
+grid_r = grid_list$grid_r   # raster summary
 grid_sf = grid_list$grid_sf   # polygons for mapping or joins
 grid_spp = grid_list$grid_spp # tabular summary per cell
 grid_spp_pa = grid_list$grid_spp_pa # presence/absence summary
@@ -178,7 +187,7 @@ The chunk below extracts those two layers, applies a square-root stretch (to dam
 
 ```{r eff-rich, fig.alt="Sampling effort (√obs count) and Species richness (√unique count)"}
 # 1. Extract & stretch the layers 
-effRich_r = sqrt(grid_list$grid_r[[c("obs_sum", "spp_rich")]])
+effRich_r = sqrt(grid_r[[c("obs_sum", "spp_rich")]])
 
 # 2. Open a 1×2 layout and plot each layer + outline 
 old_par = par(mfrow = c(1, 2), # multi‐figure by row: 1 row and 2 columns 
@@ -200,4 +209,24 @@ par(old_par)  # reset plotting parameters
 
 These maps quickly reveal where sampling effort is concentrated and how species richness varies across the landscape—useful diagnostics before any downstream modelling.
 
-------------------------------------------------------------------------
+---
+
+```{r save-state, include=FALSE}
+## Save state for downstream vignettes
+# Each vignette runs in a clean R session. We therefore **persist state explicitly**.
+dir.create("_data", showWarnings = FALSE, recursive = TRUE)
+
+saveRDS(
+  list(
+    rsa=rsa,
+    grid_sf=grid_sf,
+    grid_spp=grid_spp,
+    effRich_r=effRich_r,
+    grid_spp_pa=grid_spp_pa,
+    sp_cols=sp_cols
+  ),
+  file = "_data/2_setup.rds",
+  compress = "xz"
+)
+
+```

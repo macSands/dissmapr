@@ -7,9 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r child-3, child = "_common.Rmd"}
-```
-
 
 ```{r setup-3, include=FALSE}
 knitr::opts_chunk$set(
@@ -24,9 +21,16 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r load-env-rasters, include = FALSE}
-grid_masked = terra::rast(system.file("extdata", "grid_masked.tif", package = "dissmapr"))
-effRich_r = terra::rast(system.file("extdata", "effRich_r.tif", package = "dissmapr"))
+```{r read_files, include=FALSE}
+# At the start of the next vignette, explicitly load files from previous vignette:
+inputs = readRDS("_data/2_setup.rds")
+
+rsa = inputs$rsa
+grid_sf = inputs$grid_sf
+grid_spp = inputs$grid_spp
+effRich_r = inputs$effRich_r
+grid_spp_pa = inputs$grid_spp_pa
+sp_cols = inputs$sp_cols
 ```
 
 
@@ -248,4 +252,22 @@ c(original = ncol(env_df[, c(4, 6:24)]),
 
 *`env_vars_reduced` now contains a decorrelated subset of climate predictors suitable for stable GLMs, GAMs, machine-learning, or ordination workflows.*
 
-------------------------------------------------------------------------
+---
+
+```{r save-state, include=FALSE}
+## Save state for downstream vignettes
+# Each vignette runs in a clean R session. We therefore **persist state explicitly**.
+dir.create("_data", showWarnings = FALSE, recursive = TRUE)
+
+saveRDS(
+  list(
+    grid_env = grid_env,
+    env_vars_reduced = env_vars_reduced,
+    grid_spp_pa = grid_spp_pa,
+    sp_cols = sp_cols
+  ),
+  file = "_data/3_setup.rds",
+  compress = "xz"
+)
+
+```

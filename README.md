@@ -25,13 +25,7 @@ badge](https://b-cubed-eu.r-universe.dev/dissmapr/badges/version)](https://b-cub
 
 Quantifying **dissimilarity** is central to ecology and biodiversity science. Whether comparing communities across landscapes, examining functional distances between species, or assessing environmental contrasts, dissimilarity metrics underpin analyses of diversity, turnover, and ecological change. However, these metrics are often scattered across packages, calculated inconsistently, or tailored to a single data type (e.g., species composition only).
 
-**`dissmapr`** provides a unified, transparent, and reproducible framework for calculating and analysing dissimilarities across **communities**, **traits**, and **environments**. By bringing these components together, the package helps ecologists explore how biodiversity varies in space and time, and how functional and environmental contexts shape these patterns.
-
-The package goes beyond simple pairwise distances, offering tools to:
-
-* Partition dissimilarity into interpretable components such as **turnover** and **nestedness**.
-* Directly map dissimilarity values to geographic or environmental space, enabling spatially explicit analyses.
-* Compare metrics across data types, fostering integrated biodiversity assessments.
+**`dissmapr`** provides a unified, transparent, and reproducible workflow for calculating and analysing dissimilarities in biodiversity composition. The package supports **data acquisition**, **environmental linking**, **computation of order-wise dissimilarity**, and **mapping of bioregional patterns**, leveraging tools like `zetadiv` (for multi-site generalized dissimilarity modelling, MS-GDM), `terra`, `sf`, and `ggplot2`.
 
 By combining flexible metric choice with consistent data handling and mapping functions, `dissmapr` is designed to streamline biodiversity workflows, support cross-study comparability, and provide decision-relevant outputs for conservation and global change research.
 
@@ -39,36 +33,47 @@ By combining flexible metric choice with consistent data handling and mapping fu
 
 ## Core Concepts
 
-* **Community dissimilarity** - quantifies differences in species composition across sites (e.g., Jaccard, Sørensen).
-* **Functional dissimilarity** - measures divergence in trait space, capturing ecological strategies and redundancy.
-* **Environmental dissimilarity** - evaluates contrasts in abiotic conditions such as climate, soils, or land cover.
-* **Partitioning** - decomposes total dissimilarity into turnover (species replacement) vs. nestedness (species loss/gain).
-* **Mapping** - links dissimilarity values back to geographic or environmental gradients for spatial interpretation.
+* **Occurrence data** – harmonising raw biodiversity records and linking them to spatial grids.
+* **Environmental data** – retrieving, processing, and attaching environmental predictors to sites.
+* **Order-wise dissimilarity** – extending beyond pairwise turnover to higher-order zeta diversity metrics.
+* **Predictive modelling** – using MS-GDM to model compositional turnover across spatial and environmental gradients.
+* **Bioregional mapping** – clustering and interpolating sites to delineate bioregions and track changes.
 
-Together, these concepts provide a flexible toolkit for exploring biodiversity structure across ecological, functional, and environmental dimensions.
+Together, these concepts provide a workflow for exploring biodiversity structure across ecological, functional, and environmental dimensions.
 
 ---
 
 ## Main Functions
 
-The package is structured around modular steps, so users can build end-to-end workflows or extract individual components:
+The package is structured around modular steps, so users can build end-to-end workflows or extract individual components.
 
 ### **Data Handling**
+* `get_occurrence_data()` – Import and harmonise biodiversity-occurrence data.  
+* `generate_grid()` – Generate spatial grids and gridded summaries.  
+* `assign_mapsheet()` – Add nearest mapsheet codes and centre coordinates.  
+* `get_enviro_data()` – Retrieve, crop, resample, and link environmental rasters to sites.  
+* `format_df()` – Format biodiversity records to long/wide forms for analysis.  
 
-* `standardise_traits()` - Clean and harmonise trait datasets for consistent use across analyses.
-* `compute_distance_matrix()` - Generate dissimilarity matrices from traits, environment, or community composition data.
+### **Dissimilarity & Metrics**
+* `compute_orderwise()` – Compute order-wise metrics, including zeta diversity and dissimilarities.  
+* `rm_correlated()` – Remove highly correlated predictors to avoid redundancy.  
+* Helper metrics available via `helper_indices`, e.g.:  
+  - `geodist_helper()` – Geographic distance (Haversine).  
+  - `richness()` – Species richness.  
+  - `turnover()` – Species turnover/beta diversity.  
+  - `diss_bcurt()` – Bray–Curtis dissimilarity.  
+  - `orderwise_diss_gower()` – Gower dissimilarity.  
 
-### **Dissimilarity Metrics**
+### **Prediction & Mapping**
+* `predict_dissim()` – Predict pairwise compositional turnover (zeta-dissimilarity) with richness.  
+* `map_bioreg()` – Raster-based clustering and interpolation of bioregional data.  
+* `map_bioregDiff()` – Map bioregional change metrics between categorical raster layers.  
 
-* `beta_diversity()` - Partition dissimilarity into turnover and nestedness components, enabling mechanistic interpretation.
-* `functional_dissimilarity()` - Calculate distances among species or communities in trait space.
-* `environmental_dissimilarity()` - Quantify abiotic contrasts between sites based on environmental variables.
-
-### **Mapping and Analysis**
-
-* `map_dissimilarity()` - Visualise dissimilarity patterns in geographic space, creating reproducible biodiversity maps.
-* `summarise_dissimilarity()` - Collapse pairwise dissimilarities into site- or region-level summaries.
-* `compare_dissimilarity()` - Evaluate agreement or divergence among alternative dissimilarity metrics.
+### **ζ-MSGDM Workflow**
+Functions to automate multi-site GDM workflows:
+* `run_ispline_models()` – Fit multiple `zetadiv::Zeta.msgdm` I-spline models.  
+* `plot_ispline_lines()` – Plot I-spline partial effects.  
+* `plot_ispline_boxplots()` – Plot facetted boxplots for I-spline basis functions.  
 
 ---
 
@@ -76,31 +81,60 @@ The package is structured around modular steps, so users can build end-to-end wo
 
 `dissmapr` is designed for use across a wide range of biodiversity research and conservation contexts, including:
 
-* **Community ecology** - comparing species composition across landscapes, ecoregions, or time periods.
-* **Functional ecology** - linking species trait divergence to ecological strategies, redundancy, and resilience.
-* **Environmental filtering** - quantifying how abiotic differences shape community assembly.
-* **Macroecology** - exploring spatial patterns of turnover and nestedness at regional to global scales.
-* **Conservation planning** - generating reproducible dissimilarity maps to identify biodiversity hotspots, refugia, or vulnerable sites.
+* **Community ecology** – comparing species composition across landscapes, ecoregions, or time periods.  
+* **Macroecology** – exploring turnover and nestedness at regional to global scales.  
+* **Environmental filtering** – quantifying how abiotic differences shape community assembly.  
+* **Conservation planning** – mapping bioregions and their shifts to identify hotspots, refugia, or vulnerable sites.  
 
 ---
 
 ## Why Use `dissmapr`?
 
-* **Unified framework** - integrates community, trait, and environmental dissimilarities in a consistent manner.
-* **Transparent & reproducible** - modular design supports repeatable workflows across datasets and studies.
-* **Interpretable outputs** - provides partitioned metrics and mapping tools for actionable ecological insights.
-* **Flexible & extensible** - works with standard R data structures, making it easy to integrate into existing pipelines.
+* **Unified workflow** – integrates occurrence, environment, dissimilarity, and mapping in a consistent manner.  
+* **Transparent & reproducible** – modular design supports repeatable workflows across datasets and studies.  
+* **Interpretable outputs** – order-wise dissimilarities, predictive models, and mapped bioregions.  
+* **Flexible & extensible** – built on standard R data structures and interoperable with packages like `zetadiv`, `terra`, `sf`, and `ggplot2`.  
 
 ---
 
 ## Installation
 
-The package can be installed from GitHub using:
+Install from GitHub using:
 
-```r
+```{r}
 # install.packages("remotes")
 remotes::install_github("b-cubed-eu/dissmapr")
 ```
+
+---
+
+## Minimal Example
+
+Below is a short workflow showing how to move from **occurrence data** to **order-wise dissimilarity** and **bioregional mapping**.
+
+```{r}
+library(dissmapr)
+
+# 1. Import or simulate occurrence data (here using built-in example dataset)
+occ = get_occurrence_data(example = TRUE)
+
+# 2. Generate a grid for spatial aggregation
+grid = generate_grid(occ, res = 0.5)
+
+# 3. Format the data for analysis
+df = format_df(occ, grid)
+
+# 4. Compute order-wise dissimilarities (zeta diversity, turnover, etc.)
+diss = compute_orderwise(df, func = richness)
+
+# 5. Map bioregions using clustering and interpolation
+bio_map = map_bioreg(diss, grid)
+
+# 6. Plot the resulting bioregionalisation
+plot(bio_map)
+```
+
+This workflow illustrates the package’s modular design: each function can be run independently or chained together for end-to-end biodiversity workflows.
 
 ---
 

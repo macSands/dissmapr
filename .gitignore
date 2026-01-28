@@ -51,3 +51,7 @@ rsconnect/
 
 # Large .csv file
 *.csv
+
+# Mac OS
+.DS_Store
+

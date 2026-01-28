@@ -7,10 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r child-7, child = "_common.Rmd"}
-```
-
-
 ```{r setup-7, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -24,8 +20,17 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r load-change-rasters, include = FALSE}
-grid_masked = terra::rast(system.file("extdata", "grid_masked.tif", package = "dissmapr"))
+```{r read_files, include=FALSE}
+# At the start of the next vignette, explicitly load files from previous vignette:
+inputs = readRDS("_data/6_setup.rds")
+
+predictors_df = inputs$predictors_df
+all_preds = inputs$all_preds
+grid_masked = inputs$grid_masked
+rsa = inputs$rsa
+grid_spp = inputs$grid_spp
+sp_cols = inputs$sp_cols
+
 future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
 ```
 
@@ -157,4 +162,26 @@ par(old_par)
 
 This end-to-end workflow shows how predicted turnover patterns and resulting bioregions might shift as climate warms and rainfall changes, highlighting potential future reorganization of biodiversity hotspots.
 
-------------------------------------------------------------------------
+---
+
+```{r save-state, include=FALSE}
+## Save state for downstream vignettes
+# Each vignette runs in a clean R session. We therefore **persist state explicitly**.
+dir.create("_data", showWarnings = FALSE, recursive = TRUE)
+
+saveRDS(
+  list(
+    predictors_df = predictors_df,
+    all_preds = all_preds,
+    grid_masked = grid_masked,
+    future_nn = future_nn,
+    rsa = rsa,
+    grid_spp,
+    sp_cols = sp_cols
+    
+  ),
+  file = "_data/7_setup.rds",
+  compress = "xz"
+)
+
+```

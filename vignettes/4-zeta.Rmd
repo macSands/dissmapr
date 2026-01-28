@@ -7,10 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r child-4, child = "_common.Rmd"}
-```
-
-
 ```{r setup-4, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -21,6 +17,16 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE
 )
+```
+
+```{r read_files, include=FALSE}
+# At the start of the next vignette, explicitly load files from previous vignette:
+inputs = readRDS("_data/3_setup.rds")
+
+grid_env = inputs$grid_env
+env_vars_reduced = inputs$env_vars_reduced
+grid_spp_pa = inputs$grid_spp_pa
+sp_cols = inputssp_cols
 ```
 
 ------------------------------------------------------------------------
@@ -245,4 +251,22 @@ With sampling effort removed the model explains only ≈ 8% of the deviance, com
 
 **Key point**: *Uneven sampling can hide the real drivers of biodiversity. Without accounting for effort, the model attributes most turnover to climate. Adding effort shows that well-surveyed sites appear more similar simply because thorough searches record more species, while lightly sampled sites miss many and seem distinct. Correcting for effort is essential; only then can we see how climate and distance truly shape species turnover.*
 
-------------------------------------------------------------------------
+---
+
+```{r save-state, include=FALSE}
+## Save state for downstream vignettes
+# Each vignette runs in a clean R session. We therefore **persist state explicitly**.
+dir.create("_data", showWarnings = FALSE, recursive = TRUE)
+
+saveRDS(
+  list(
+    grid_spp_pa = grid_spp_pa,
+    env_vars_reduced = env_vars_reduced,
+    grid_env = grid_env,
+    sp_cols = sp_cols
+  ),
+  file = "_data/4_setup.rds",
+  compress = "xz"
+)
+
+```

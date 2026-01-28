@@ -7,10 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r child-6, child = "_common.Rmd"}
-```
-
-
 ```{r setup-6, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -21,6 +17,20 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE
 )
+```
+
+```{r read_files, include=FALSE}
+# At the start of the next vignette, explicitly load files from previous vignette:
+inputs = readRDS("_data/5_setup.rds")
+
+grid_spp_pa = inputs$grid_spp_pa
+env_vars_reduced = inputs$env_vars_reduced
+grid_env = inputs$grid_env
+sp_cols = inputs$sp_cols
+zeta2 = inputs$zeta2
+ispline_gdm_tab = inputs$ispline_gdm_tab
+grid_spp = inputs$grid_spp
+rsa = inputs$rsa
 ```
 
 ------------------------------------------------------------------------
@@ -175,4 +185,26 @@ ggplot(all_preds,
         panel.grid = element_blank())
 ```
 
-------------------------------------------------------------------------
+---
+
+```{r save-state, include=FALSE}
+## Save state for downstream vignettes
+# Each vignette runs in a clean R session. We therefore **persist state explicitly**.
+dir.create("_data", showWarnings = FALSE, recursive = TRUE)
+
+saveRDS(
+  list(
+    predictors_df = predictors_df,
+    all_preds = all_preds,
+    grid_masked = grid_masked,
+    spp_cols = spp_cols,
+    rsa = rsa,
+    grid_spp = grid_spp,
+    sp_cols = sp_cols
+    
+  ),
+  file = "_data/6_setup.rds",
+  compress = "xz"
+)
+
+```

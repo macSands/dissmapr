@@ -7,10 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r child-9, child = "_common.Rmd"}
-```
-
-
 ```{r setup-9, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -21,6 +17,16 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE
 )
+```
+
+
+```{r read_files, include=FALSE}
+# At the start of the next vignette, explicitly load files from previous vignette:
+inputs = readRDS("_data/8_setup.rds")
+
+grid_spp = inputs$grid_spp
+sp_cols = inputs$sp_cols
+rsa = inputs$rsa
 ```
 
 ------------------------------------------------------------------------

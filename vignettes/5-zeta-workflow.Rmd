@@ -7,9 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r child-5, child = "_common.Rmd"}
-```
-
 
 ```{r setup-5, include=FALSE}
 knitr::opts_chunk$set(
@@ -21,6 +18,16 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE
 )
+```
+
+```{r read_files, include=FALSE}
+# At the start of the next vignette, explicitly load files from previous vignette:
+inputs = readRDS("_data/4_setup.rds")
+
+grid_spp_pa = inputs$grid_spp_pa
+env_vars_reduced = inputs$env_vars_reduced
+grid_env = inputs$grid_env
+sp_cols = inputs$sp_cols
 ```
 
 ------------------------------------------------------------------------
@@ -163,4 +170,27 @@ Which factors matter depends on how many sites you compare at once:
 - Breaking up habitat makes it even harder for species to move, while hotter, drier conditions shrink the range where they can survive—driving faster loss of biodiversity.   
 - Protecting connected corridors and a variety of microclimates helps species disperse and find refuge, slowing turnover and preserving the common “backbone” species that keep ecosystems stable and healthy.  
 
-------------------------------------------------------------------------
+---
+
+```{r save-state, include=FALSE}
+## Save state for downstream vignettes
+# Each vignette runs in a clean R session. We therefore **persist state explicitly**.
+dir.create("_data", showWarnings = FALSE, recursive = TRUE)
+
+saveRDS(
+  list(
+    grid_spp_pa = grid_spp_pa,
+    env_vars_reduced = env_vars_reduced,
+    grid_env = grid_env,
+    sp_cols = sp_cols,
+    zeta2 = zeta2,
+    ispline_gdm_tab = ispline_gdm_tab,
+    grid_spp = grid_spp,
+    rsa = rsa
+    
+  ),
+  file = "_data/5_setup.rds",
+  compress = "xz"
+)
+
+```
