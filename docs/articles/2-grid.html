@@ -247,6 +247,7 @@ area.</p>
 <span><span class="co">#&gt;  $ grid_spp_pa: tibble [415 × 2,874] (S3: tbl_df/tbl/data.frame)</span></span>
 <span></span>
 <span><span class="co"># (Optional) Promote list items to named objects </span></span>
+<span><span class="va">grid_r</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_r</span>   <span class="co"># raster summary</span></span>
 <span><span class="va">grid_sf</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_sf</span>   <span class="co"># polygons for mapping or joins</span></span>
 <span><span class="va">grid_spp</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_spp</span> <span class="co"># tabular summary per cell</span></span>
 <span><span class="va">grid_spp_pa</span> <span class="op">=</span> <span class="va">grid_list</span><span class="op">$</span><span class="va">grid_spp_pa</span> <span class="co"># presence/absence summary</span></span>
@@ -336,7 +337,7 @@ solid black to anchor the map in a familiar outline.</li>
 while <code><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal()</a></code> removes visual clutter so the data
 can speak for themselves.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co"># 1. grid polygons as subtle backdrop </span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">grid_sf</span>, fill <span class="op">=</span> <span class="cn">NA</span>, colour <span class="op">=</span> <span class="st">"darkgrey"</span>, linewidth <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  </span>
@@ -382,27 +383,33 @@ in the cell (units = unique species count)</li>
 stretch (to dampen the influence of very large counts), and renders them
 side-by-side with a perceptually uniform turbo palette.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># 1. Extract &amp; stretch the layers </span></span>
-<span><span class="va">effRich_r</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">grid_list</span><span class="op">$</span><span class="va">grid_r</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"obs_sum"</span>, <span class="st">"spp_rich"</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># 1. Extract &amp; transform layers (use terra method explicitly)</span></span>
+<span><span class="va">effRich_r</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">grid_r</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"obs_sum"</span>, <span class="st">"spp_rich"</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 2. Open a 1×2 layout and plot each layer + outline </span></span>
-<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="co"># multi‐figure by row: 1 row and 2 columns </span></span>
-<span>              mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>  <span class="co"># margins sizes: bottom (1 lines)|left (1)|top (1)|right (2)</span></span>
+<span><span class="co"># 2. Save and reset graphics state safely</span></span>
+<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>no.readonly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">old_par</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">titles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Sampling effort (√obs count)"</span>,</span>
+<span>  <span class="st">"Species richness (√unique count)"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">effRich_r</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>       col   <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
-<span>       colNA <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>       axes  <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>       main  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sampling effort (√obs count)"</span>,</span>
-<span>                 <span class="st">"Species richness (√unique count)"</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
-<span>       cex.main <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>          <span class="co"># ← smaller title)</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>    <span class="va">effRich_r</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    col    <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
+<span>    breaks <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>    colNA  <span class="op">=</span> <span class="cn">NA_character_</span>,</span>
+<span>    axes   <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    main   <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
+<span>    cex.main <span class="op">=</span> <span class="fl">0.8</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p><img src="figures/2-eff-rich-1.png" alt="Sampling effort (√obs count) and Species richness (√unique count)" width="100%"></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">old_par</span><span class="op">)</span>  <span class="co"># reset plotting parameters</span></span></code></pre></div>
 <p>These maps quickly reveal where sampling effort is concentrated and
 how species richness varies across the landscape—useful diagnostics
 before any downstream modelling.</p>

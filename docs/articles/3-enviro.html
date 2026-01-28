@@ -217,34 +217,48 @@ into a single, co-registered <code>SpatRast.</code> A unified stack
 ensures that all predictors share the same grid, streamlining downstream
 map algebra, multivariate modelling, and spatial cross-validation.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Resample climate stack to the 0.5 ° grid and concatenate</span></span>
-<span><span class="va">env_effRich_r</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="va">effRich_r</span>,                               <span class="co"># effort + richness</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">env_r</span>, <span class="va">effRich_r</span><span class="op">)</span>          <span class="co"># aligns 19 climate layers</span></span>
+<code class="sourceCode R"><span><span class="co"># --- Rebuild rasters inside the vignette ---</span></span>
+<span><span class="va">effRich_r</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span></span>
+<span>  <span class="va">grid_r</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"obs_sum"</span>, <span class="st">"spp_rich"</span><span class="op">)</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 2. Open a 2×2 layout and plot each layer + outline</span></span>
-<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, <span class="co"># multi‐figure by row: 1 row and 2 columns </span></span>
-<span>              mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>  <span class="co"># margins sizes: bottom (1 lines)|left (1)|top (1)|right (2)</span></span>
+<span><span class="co"># Use first layer as template explicitly</span></span>
+<span><span class="va">template</span> <span class="op">=</span> <span class="va">effRich_r</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">titles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sampling effort (√obs count)"</span>,</span>
-<span>            <span class="st">"Species richness (√unique count)"</span>,</span>
-<span>            <span class="st">"BIO1: Annual Mean Temperature"</span>, </span>
-<span>            <span class="st">"BIO2: Mean Diurnal Temperature Range"</span><span class="op">)</span></span>
+<span><span class="va">env_resampled</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span></span>
+<span>  <span class="va">env_r</span>,</span>
+<span>  <span class="va">template</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"bilinear"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">env_effRich_r</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">effRich_r</span>, <span class="va">env_resampled</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># --- Safe plotting ---</span></span>
+<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>no.readonly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">old_par</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">titles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Sampling effort (√obs count)"</span>,</span>
+<span>  <span class="st">"Species richness (√unique count)"</span>,</span>
+<span>  <span class="st">"BIO1: Annual Mean Temperature"</span>,</span>
+<span>  <span class="st">"BIO2: Mean Diurnal Temperature Range"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">env_effRich_r</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>       col      <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
-<span>       colNA    <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>       axes     <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>       main     <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
-<span>       cex.main <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>                        <span class="co"># smaller title</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>    <span class="va">env_effRich_r</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    col    <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
+<span>    breaks <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>    colNA  <span class="op">=</span> <span class="cn">NA_character_</span>,</span>
+<span>    axes   <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    main   <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
+<span>    cex.main <span class="op">=</span> <span class="fl">0.8</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p><img src="figures/3-ras-1.png" alt="Environmental Covariates" width="100%"></p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">old_par</span><span class="op">)</span> </span></code></pre></div>
 <hr>
 </div>
 <div class="section level4">
@@ -253,7 +267,7 @@ map algebra, multivariate modelling, and spatial cross-validation.</p>
 <p>Environmental data were linked to grid centroids using
 <code><a href="../reference/get_enviro_data.html">get_enviro_data()</a></code>, now visualise the spatial variation in
 selected climate variables to check results.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make column headers explicit</span></span>
 <span><span class="co"># names(env_df)[1:5] = c("grid_id","centroid_lon","centroid_lat","obs_sum","spp_rich")</span></span>
 <span></span>
@@ -301,7 +315,7 @@ containing centroid coordinates, √-scaled sampling effort, species
 richness, and the 19 <code>bioclim</code> predictors. The resulting
 matrix is immediately usable for GLMs, GAMs, machine-learning,
 ordination, and β-diversity analyses.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Build the final site × environment table</span></span>
 <span><span class="va">grid_env</span> <span class="op">=</span> <span class="va">env_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">grid_id</span>, <span class="va">centroid_lon</span>, <span class="va">centroid_lat</span>,</span>
@@ -333,7 +347,7 @@ ordination, and β-diversity analyses.</p>
 require coordinates in metres rather than degrees. The snippet below
 converts the centroid layer to an <code>Albers Equal-Area</code>
 projection.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert the centroid columns to an sf object</span></span>
 <span><span class="va">centroids_sf</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span></span>
 <span>  <span class="va">grid_env</span>,</span>
@@ -399,7 +413,7 @@ heat-map</strong> for visual QC.</li>
 </ol>
 <p>The result is a reduced predictor set that retains maximal
 information while minimising multicollinearity.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># (Optional) Rename BIO</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">env_df</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grid_id"</span>, <span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span>, <span class="va">names_env</span>, <span class="st">"obs_sum"</span>, <span class="st">"spp_rich"</span><span class="op">)</span></span>
 <span>  </span>

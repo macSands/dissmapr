@@ -45,7 +45,7 @@ Install and load the `dissmapr` package from GitHub, ensuring all functions are 
 ```{r install, eval=FALSE, include=TRUE}
 # install remotes if needed
 # install.packages("remotes")
-remotes::install_github("macSands/dissmapr")
+# remotes::install_github("macSands/dissmapr")
 ```
 
 ```{r load-dissmapr, include=TRUE}
@@ -53,7 +53,7 @@ remotes::install_github("macSands/dissmapr")
 library(dissmapr)
 
 # Make sure all the functions are loaded
-devtools::load_all()
+# devtools::load_all()
 ```
 
 ---
@@ -167,7 +167,6 @@ dir.create("_data", showWarnings = FALSE, recursive = TRUE)
 
 saveRDS(
   list(
-    bfly_data = bfly_data,
     site_obs = site_obs,
     site_spp = site_spp,
     n_sp = n_sp,

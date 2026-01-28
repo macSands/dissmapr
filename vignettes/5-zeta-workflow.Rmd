@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r read_files, include=FALSE}
+library(patchwork)
 # At the start of the next vignette, explicitly load files from previous vignette:
 inputs = readRDS("_data/4_setup.rds")
 
@@ -95,6 +96,7 @@ Here we produce a unified, multi‐panel display of each predictor’s I‐splin
 We then loop over all raw covariates (those ending in `_is`), generate a separate plot per variable, and assemble them into a cohesive multi‐panel layout using the `patchwork` package. This makes it possible to compare turnover responses across the full suite of environmental drivers.
 
 ```{r plot-isp-lines, warning=FALSE, message=FALSE, fig.width=10, fig.height=12, fig.alt="Multi-Panel I-Spline Curves Across Covariates"}
+
 # 1. Identify all raw covariates with a spline term
 raw_vars = sub("_is$", "",
                 grep("_is$", names(ispline_tabs_all), value = TRUE))
@@ -108,14 +110,14 @@ plots = lapply(raw_vars, function(var) {
     cols         = c('green','cyan','purple','blue','black'),
     shapes       = c(15,16,17,18,19)
   ) +
-  ggtitle(paste("I-Spline Partial Effect of", var))
+  ggplot2::ggtitle(paste("I-Spline Partial Effect of", var))
 })
 
 # 3. Combine into a grid (2 columns here; adjust ncol as needed)
-wrap_plots(plots, ncol = 2) +
-  plot_annotation(
+patchwork::wrap_plots(plots, ncol = 2) +
+  patchwork::plot_annotation(
     title = "Multi-Panel I-Spline Curves Across Covariates",
-    theme = theme(plot.title = element_text(size = 16, face = "bold"))
+    theme = patchwork::theme(plot.title = element_text(size = 16, face = "bold"))
   )
 
 # # Simle single covariate line plot for "dist"

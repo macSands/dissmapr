@@ -20,13 +20,16 @@ knitr::opts_chunk$set(
 ```
 
 ```{r read_files, include=FALSE}
+# Load libraries
+library(zetadiv)
+
 # At the start of the next vignette, explicitly load files from previous vignette:
 inputs = readRDS("_data/3_setup.rds")
 
 grid_env = inputs$grid_env
 env_vars_reduced = inputs$env_vars_reduced
 grid_spp_pa = inputs$grid_spp_pa
-sp_cols = inputssp_cols
+sp_cols = inputs$sp_cols
 ```
 
 ------------------------------------------------------------------------
@@ -71,7 +74,7 @@ on.exit(par(op), add = TRUE)
 par(mfrow = c(1,1), mar = c(4,4,1,1), oma = c(0,0,0,0))
 
 set.seed(123)
-zeta_decline_ex = Zeta.decline.ex(grid_spp_pa[,7:ncol(grid_spp_pa)], # Only species columns
+zeta_decline_ex = zetadiv::Zeta.decline.ex(grid_spp_pa[,7:ncol(grid_spp_pa)], # Only species columns
                                   orders = 1:15, plot = FALSE)
 zetadiv::Plot.zeta.decline(zeta_decline_ex, sd.plot = TRUE)
 ```
@@ -91,7 +94,7 @@ zetadiv::Plot.zeta.decline(zeta_decline_ex, sd.plot = TRUE)
 
 ```{r zeta-decline-mc, fig.alt="Zeta decline MC"}
 set.seed(123)
-zeta_mc_utm = Zeta.decline.mc(grid_spp_pa[,-(1:7)], # Different way to get only species columns
+zeta_mc_utm = zetadiv::Zeta.decline.mc(grid_spp_pa[,-(1:7)], # Different way to get only species columns
                               # grid_env[, c("centroid_lon", "centroid_lat")], # WGS84 - decimal degrees
                               grid_env[, c("x_aea", "y_aea")], # AEA - meters
                               orders = 1:15,
@@ -115,7 +118,7 @@ zeta_mc_utm = Zeta.decline.mc(grid_spp_pa[,-(1:7)], # Different way to get only 
 ```{r zeta-decays, fig.alt="Zeta decays"}
 # Calculate Zeta.ddecays
 set.seed(123)
-zeta_decays = Zeta.ddecays(#grid_env[, c("centroid_lon", "centroid_lat")],  # WGS84 - decimal degrees
+zeta_decays = zetadiv::Zeta.ddecays(#grid_env[, c("centroid_lon", "centroid_lat")],  # WGS84 - decimal degrees
                            grid_env[, c("x_aea", "y_aea")], # AEA - meters
                            grid_spp_pa[,-(1:7)],
                            sam = 1000, # Sample size
@@ -156,7 +159,7 @@ The fitted model (`zeta2`) contains partial I-splines for every predictor (note:
 ```{r zeta-msgdm, fig.alt="Zeta iSplines"}
 set.seed(246)
 # Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set
-zeta2 = Zeta.msgdm(
+zeta2 = zetadiv::Zeta.msgdm(
   grid_spp_pa[,-(1:7)],                            # species matrix (rows = sites, cols = spp)
   env_vars_reduced,                                # decorrelated environmental variables
   # env_vars_reduced[,-7],                         # without sampling effort included
@@ -215,7 +218,7 @@ summary(zeta2$model)
 ```{r zeta-msgdm-noeff, fig.alt="Zeta iSplines with no effort index"}
 # Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set
 set.seed(123) # set.seed to generate exactly the same random results i.e. sam=100
-zeta2_noEff = Zeta.msgdm(
+zeta2_noEff = zetadiv::Zeta.msgdm(
   grid_spp_pa[,-(1:7)],                            # species matrix (rows = sites, cols = spp)
   # env_vars_reduced,                              # decorrelated environmental variables
   env_vars_reduced[,-7],                           # without sampling effort included

@@ -22,6 +22,10 @@ knitr::opts_chunk$set(
 
 
 ```{r read_files, include=FALSE}
+# Load libraries
+library(ggplot2)
+library(dplyr)
+
 # At the start of the next vignette, explicitly load files from previous vignette:
 inputs = readRDS("_data/2_setup.rds")
 
@@ -31,6 +35,7 @@ grid_spp = inputs$grid_spp
 effRich_r = inputs$effRich_r
 grid_spp_pa = inputs$grid_spp_pa
 sp_cols = inputs$sp_cols
+grid_r = terra::rast('D:/Methods/R/myR_Packages/b-cubed-versions/dissmapr/inst/extdata/grid_r.tif')
 ```
 
 
@@ -109,32 +114,47 @@ dim(env_df); head(env_df)
 Fuse the √-scaled sampling‐effort (`obs_sum`) and richness (`spp_rich`) layers with the 19 `bioclim` rasters into a single, co-registered `SpatRast.` A unified stack ensures that all predictors share the same grid, streamlining downstream map algebra, multivariate modelling, and spatial cross-validation.
 
 ```{r ras, fig.alt="Environmental Covariates"}
-# Resample climate stack to the 0.5 ° grid and concatenate
-env_effRich_r = c(
-  effRich_r,                               # effort + richness
-  resample(env_r, effRich_r)          # aligns 19 climate layers
+# --- Rebuild rasters inside the vignette ---
+effRich_r = sqrt(
+  grid_r[[c("obs_sum", "spp_rich")]]
 )
 
-# 2. Open a 2×2 layout and plot each layer + outline
-old_par = par(mfrow = c(2, 2), # multi‐figure by row: 1 row and 2 columns 
-              mar = c(1, 1, 1, 2))  # margins sizes: bottom (1 lines)|left (1)|top (1)|right (2)
+# Use first layer as template explicitly
+template = effRich_r[[1]]
 
-titles = c("Sampling effort (√obs count)",
-            "Species richness (√unique count)",
-            "BIO1: Annual Mean Temperature", 
-            "BIO2: Mean Diurnal Temperature Range")
+env_resampled = terra::resample(
+  env_r,
+  template,
+  method = "bilinear"
+)
+
+env_effRich_r = c(effRich_r, env_resampled)
+
+# --- Safe plotting ---
+old_par = par(no.readonly = TRUE)
+on.exit(par(old_par), add = TRUE)
+
+layout(matrix(1:4, nrow = 2))
+
+titles = c(
+  "Sampling effort (√obs count)",
+  "Species richness (√unique count)",
+  "BIO1: Annual Mean Temperature",
+  "BIO2: Mean Diurnal Temperature Range"
+)
 
 for (i in 1:4) {
-  plot(env_effRich_r[[i]],
-       col      = viridisLite::turbo(100),
-       colNA    = NA,
-       axes     = FALSE,
-       main     = titles[i],
-       cex.main = 0.8)                        # smaller title
-  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+  terra::plot(
+    env_effRich_r[[i]],
+    col    = viridisLite::turbo(100),
+    breaks = 100,
+    colNA  = NA_character_,
+    axes   = FALSE,
+    main   = titles[i],
+    cex.main = 0.8
+  )
+  terra::plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
 }
-
-par(old_par) 
 ```
 
 ---

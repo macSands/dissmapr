@@ -21,10 +21,12 @@ knitr::opts_chunk$set(
 ```
 
 ```{r read_files, include=FALSE}
+# Load libraries
+library(ggplot2)
+
 # At the start of the next vignette, explicitly load files from previous vignette:
 inputs = readRDS("_data/1_setup.rds")
 
-bfly_data = inputs$bfly_data
 site_obs = inputs$site_obs
 site_spp = inputs$site_spp
 n_sp = inputs$n_sp
@@ -147,7 +149,7 @@ With the grid summaries in hand we can now **map the spatial distribution of obs
 A perceptually uniform `Viridis` palette (`option = "turbo"`) supports colour‑blind accessibility, while `theme_minimal()` removes visual clutter so the data can speak for themselves.
 
 ```{r map-aoi, fig.alt="Observation density across South Africa (0.5° grid)"}
-ggplot() +
+ggplot2::ggplot() +
   # 1. grid polygons as subtle backdrop 
   geom_sf(data = grid_sf, fill = NA, colour = "darkgrey", linewidth = 0.2, alpha = 0.5) +
   
@@ -186,25 +188,32 @@ ggplot() +
 The chunk below extracts those two layers, applies a square-root stretch (to dampen the influence of very large counts), and renders them side-by-side with a perceptually uniform turbo palette.
 
 ```{r eff-rich, fig.alt="Sampling effort (√obs count) and Species richness (√unique count)"}
-# 1. Extract & stretch the layers 
+# 1. Extract & transform layers (use terra method explicitly)
 effRich_r = sqrt(grid_r[[c("obs_sum", "spp_rich")]])
 
-# 2. Open a 1×2 layout and plot each layer + outline 
-old_par = par(mfrow = c(1, 2), # multi‐figure by row: 1 row and 2 columns 
-              mar = c(1, 1, 1, 2))  # margins sizes: bottom (1 lines)|left (1)|top (1)|right (2)
+# 2. Save and reset graphics state safely
+old_par = par(no.readonly = TRUE)
+on.exit(par(old_par), add = TRUE)
+
+layout(matrix(1:2, nrow = 1))
+
+titles = c(
+  "Sampling effort (√obs count)",
+  "Species richness (√unique count)"
+)
 
 for (i in 1:2) {
-  plot(effRich_r[[i]],
-       col   = viridisLite::turbo(100),
-       colNA = NA,
-       axes  = FALSE,
-       main  = c("Sampling effort (√obs count)",
-                 "Species richness (√unique count)")[i],
-       cex.main = 0.8)          # ← smaller title)
-  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+  terra::plot(
+    effRich_r[[i]],
+    col    = viridisLite::turbo(100),
+    breaks = 100,
+    colNA  = NA_character_,
+    axes   = FALSE,
+    main   = titles[i],
+    cex.main = 0.8
+  )
+  terra::plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
 }
-
-par(old_par)  # reset plotting parameters
 ```
 
 These maps quickly reveal where sampling effort is concentrated and how species richness varies across the landscape—useful diagnostics before any downstream modelling.
@@ -218,12 +227,12 @@ dir.create("_data", showWarnings = FALSE, recursive = TRUE)
 
 saveRDS(
   list(
-    rsa=rsa,
-    grid_sf=grid_sf,
-    grid_spp=grid_spp,
-    effRich_r=effRich_r,
-    grid_spp_pa=grid_spp_pa,
-    sp_cols=sp_cols
+    rsa = rsa,
+    grid_sf =grid_sf,
+    grid_spp= grid_spp,
+    effRich_r = effRich_r,
+    grid_spp_pa = grid_spp_pa,
+    sp_cols = sp_cols
   ),
   file = "_data/2_setup.rds",
   compress = "xz"
