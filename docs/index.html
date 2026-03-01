@@ -234,45 +234,31 @@
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install from GitHub using:</p>
-<p><code>{r} # install.packages("remotes") remotes::install_github("b-cubed-eu/dissmapr")</code></p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install remotes if needed</span></span>
+<span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="co"># remotes::install_github("b-cubed-eu/dissmapr")</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
 <h2 id="minimal-example">Minimal Example<a class="anchor" aria-label="anchor" href="#minimal-example"></a>
 </h2>
 <p>Below is a short workflow showing how to move from <strong>occurrence data</strong> to <strong>order-wise dissimilarity</strong> and <strong>bioregional mapping</strong>.</p>
-<p>```{r} library(dissmapr)</p>
-</div>
-</div>
-<div class="section level1">
-<h1 id="id_1-import-or-simulate-occurrence-data-here-using-built-in-example-dataset">1. Import or simulate occurrence data (here using built-in example dataset)<a class="anchor" aria-label="anchor" href="#id_1-import-or-simulate-occurrence-data-here-using-built-in-example-dataset"></a>
-</h1>
-<p>occ = get_occurrence_data(example = TRUE)</p>
-</div>
-<div class="section level1">
-<h1 id="id_2-generate-a-grid-for-spatial-aggregation">2. Generate a grid for spatial aggregation<a class="anchor" aria-label="anchor" href="#id_2-generate-a-grid-for-spatial-aggregation"></a>
-</h1>
-<p>grid = generate_grid(occ, res = 0.5)</p>
-</div>
-<div class="section level1">
-<h1 id="id_3-format-the-data-for-analysis">3. Format the data for analysis<a class="anchor" aria-label="anchor" href="#id_3-format-the-data-for-analysis"></a>
-</h1>
-<p>df = format_df(occ, grid)</p>
-</div>
-<div class="section level1">
-<h1 id="id_4-compute-order-wise-dissimilarities-zeta-diversity-turnover-etc">4. Compute order-wise dissimilarities (zeta diversity, turnover, etc.)<a class="anchor" aria-label="anchor" href="#id_4-compute-order-wise-dissimilarities-zeta-diversity-turnover-etc"></a>
-</h1>
-<p>diss = compute_orderwise(df, func = richness)</p>
-</div>
-<div class="section level1">
-<h1 id="id_5-map-bioregions-using-clustering-and-interpolation">5. Map bioregions using clustering and interpolation<a class="anchor" aria-label="anchor" href="#id_5-map-bioregions-using-clustering-and-interpolation"></a>
-</h1>
-<p>bio_map = map_bioreg(diss, grid)</p>
-</div>
-<div class="section level1">
-<h1 id="id_6-plot-the-resulting-bioregionalisation">6. Plot the resulting bioregionalisation<a class="anchor" aria-label="anchor" href="#id_6-plot-the-resulting-bioregionalisation"></a>
-</h1>
-<p>plot(bio_map) ```</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">library(dissmapr)</span></span>
+<span><span class="co"># 1. Import or simulate occurrence data (here using built-in example dataset)</span></span>
+<span><span class="co">occ = get_occurrence_data(example = TRUE)</span></span>
+<span><span class="co"># 2. Generate a grid for spatial aggregation</span></span>
+<span><span class="co">grid = generate_grid(occ, res = 0.5)</span></span>
+<span><span class="co"># 3. Format the data for analysis</span></span>
+<span><span class="co">df = format_df(occ, grid)</span></span>
+<span><span class="co"># 4. Compute order-wise dissimilarities (zeta diversity, turnover, etc.)</span></span>
+<span><span class="co">diss = compute_orderwise(df, func = richness)</span></span>
+<span><span class="co"># 5. Map bioregions using clustering and interpolation</span></span>
+<span><span class="co">bio_map = map_bioreg(diss, grid)</span></span>
+<span><span class="co"># 6. Plot the resulting bioregionalisation</span></span>
+<span><span class="co">plot(bio_map)</span></span>
+</code></pre></div>
 <p>This workflow illustrates the package’s modular design: each function can be run independently or chained together for end-to-end biodiversity workflows.</p>
 <hr>
 <div class="section level2">
