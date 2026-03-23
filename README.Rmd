@@ -1,15 +1,5 @@
 ---
-output:
-  github_document:
-    toc: true
-    toc_depth: 2
-  html_document:
-    toc: true
-    theme: cerulean     # or bootstrap, etc.
-    mathjax: default
-editor_options: 
-  markdown: 
-    wrap: sentence
+output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
