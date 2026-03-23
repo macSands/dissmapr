@@ -66,11 +66,7 @@ remotes::install_github("b-cubed-eu/dissmapr")
 ```
 
 ```{r load-dissmapr, include=TRUE}
-# Ensure the package is loaded when knitting
 library(dissmapr)
-
-# Make sure all the functions are loaded
-devtools::load_all()
 ```
 
 ### 1.2. Load other R libraries
