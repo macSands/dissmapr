@@ -19,7 +19,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 ```{r read_files, include=FALSE}
 # At the start of the next vignette, explicitly load files from previous vignette:
 inputs = readRDS("_data/6_setup.rds")
@@ -34,13 +33,9 @@ sp_cols = inputs$sp_cols
 future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
 ```
 
-------------------------------------------------------------------------
-
 # `dissmapr`
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
-
-------------------------------------------------------------------------
 
 ### 1. Run clustering analyses using `map_bioreg()` to map bioregions
 
@@ -78,13 +73,10 @@ bioreg_current = dissmapr::map_bioreg(
 str(bioreg_current, max.level=1)
 ```
 
----
-
 ### 2. Map future bioregions using `map_bioreg()`
 
 Below we expand our workflow to map the forecasted ζ₂  bioregions under three extreme climate futures (2030, 2040, 2050) alongside the current scenario.
 To see how the bioregional partitions shift, we split `all_preds` by scenario and apply `map_bioreg()` (k-means + hierarchical, both NN and TPS interpolation). We then extract the hierarchical cluster layers, mask them to our study area, and plot all four maps in a 2×2 layout:
-
 
 ```{r future-cluster, fig.alt="Future bioregion clusters"}
 # Split your combined predictions by scenario into a named list
@@ -161,8 +153,6 @@ par(old_par)
 ```
 
 This end-to-end workflow shows how predicted turnover patterns and resulting bioregions might shift as climate warms and rainfall changes, highlighting potential future reorganization of biodiversity hotspots.
-
----
 
 ```{r save-state, include=FALSE}
 ## Save state for downstream vignettes

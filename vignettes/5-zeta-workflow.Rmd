@@ -7,7 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
 ```{r setup-5, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -31,13 +30,9 @@ grid_env = inputs$grid_env
 sp_cols = inputs$sp_cols
 ```
 
-------------------------------------------------------------------------
-
 # `dissmapr`
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
-
-------------------------------------------------------------------------
 
 ### 1. Automated Ispline Modeling & Visualization
 
@@ -57,8 +52,6 @@ To streamline the exploration of multi‐site turnover drivers, we now introduce
    * Applies a color-blind–safe Viridis palette with independent scales per facet
 
 By packaging these steps into self-documented functions, we embed ispline modeling and visualization into our RMarkdown workflow with a single, transparent call. The parameters (orders, covariate name, colors, shapes, etc.) are fully customizable, while sensible defaults minimize boilerplate, ensuring reproducibility, readability and ease of maintenance in automated biodiversity turnover analyses.
-
----
 
 ### 2. Fit and combine ispline models
 
@@ -81,8 +74,6 @@ str(ispline_gdm_tab, max.level=1)
 ispline_tabs_all = ispline_gdm_tab$ispline_table
 head(ispline_tabs_all)
 ```
-
----
 
 ### 3. Plot Partial‐Dependence Curves for All Covariates
 
@@ -140,8 +131,6 @@ Which predictors drive turnover shifts with the number of sites:
 
 **Key point**: At the smallest scale, dispersal barriers (distance) set the stage for which species can overlap. As you expand to three, four or more sites, environmental filters—first thermal, then hydric—sequentially take over. This scale‐dependent shift reveals that different ecological processes dominate community assembly at different spatial extents, with direct implications for how we design surveys and target conservation under changing climates.
 
----
-
 ### 4. Facetted boxplots of all spline terms
 
 Finally, we summarize the distribution of every _is basis across orders using `plot_ispline_boxplots()`. Each spline term is facetted with free scales, and fills are mapped to zOrder via a color-blind–friendly Viridis palette.
@@ -171,8 +160,6 @@ Which factors matter depends on how many sites you compare at once:
 - At **medium scales** (three to five sites), local climate steps in: only species that can tolerate the same temperature and moisture levels hang on across multiple sites.   
 - Breaking up habitat makes it even harder for species to move, while hotter, drier conditions shrink the range where they can survive—driving faster loss of biodiversity.   
 - Protecting connected corridors and a variety of microclimates helps species disperse and find refuge, slowing turnover and preserving the common “backbone” species that keep ecosystems stable and healthy.  
-
----
 
 ```{r save-state, include=FALSE}
 ## Save state for downstream vignettes
