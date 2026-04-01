@@ -33,13 +33,9 @@ grid_spp = inputs$grid_spp
 rsa = inputs$rsa
 ```
 
-------------------------------------------------------------------------
-
 # `dissmapr`
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
-
-------------------------------------------------------------------------
 
 ### 1. Predict current Zeta Diversity (zeta2) using `predict_dissim()`
 
@@ -76,14 +72,11 @@ names(predictors_df)
 head(predictors_df[,5:11])
 ```
 
----
-
 ### 2. Predict future Zeta Diversity using `predict_dissim()`
 
 Below we expand our workflow to forecast how ζ₂ respond to three extreme climate futures (2030, 2040, 2050) alongside the current scenario.
 
 First, we define and center-scale each future by adding large temperature increments and rainfall multipliers, then bundle them into a named list of four environmental data frames:
-
    
 ```{r sim-future, message=FALSE}
 # 1. Identify species & env columns
@@ -184,8 +177,6 @@ ggplot(all_preds,
   theme(strip.text = element_text(face = "bold"),
         panel.grid = element_blank())
 ```
-
----
 
 ```{r save-state, include=FALSE}
 ## Save state for downstream vignettes

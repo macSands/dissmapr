@@ -19,7 +19,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 ```{r read_files, include=FALSE}
 # At the start of the next vignette, explicitly load files from previous vignette:
 inputs = readRDS("_data/8_setup.rds")
@@ -29,19 +28,13 @@ sp_cols = inputs$sp_cols
 rsa = inputs$rsa
 ```
 
-------------------------------------------------------------------------
-
 # `dissmapr`
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
-------------------------------------------------------------------------
-
 ## Analysis of Species Richness and Community Turnover
 
 Below we demonstrate how to quantify biodiversity patterns using two common ecological metrics: species richness and community turnover (beta diversity). Both analyses utilize the `compute_orderwise()` function from the `dissmapr` package, applying the metric functions `richness()` and `turnover()` respectively, to spatial biodiversity data organised in the `grid_spp` dataset.
-
----
 
 ### Example 1 - Species Richness using `richness`()`
 
@@ -115,8 +108,6 @@ ggplot() +
   facet_wrap(~ order, ncol = 2)
 ```
 
----
-
 ### Example 2 - Community Turnover using `turnover()`
 
 Here we calculate species turnover (beta diversity) across sites in the `block_sp` dataset using the `compute_orderwise()` function again. The `turnover()` metric function is applied to the `grid_id` column for site identification, with species data specified by `sp_cols`. Order = 1 is not an option because turnover requires a comparison between sites. For orders 2 to 5, it computes turnover for pairwise and higher-order site combinations, representing the proportion of species not shared between sites. A subset of 1000 samples is used for higher-order comparisons. Parallel processing with 4 worker threads improves efficiency, and the output is a table summarizing species turnover across the specified orders.
@@ -178,5 +169,3 @@ ggplot() +
   ) +
   facet_wrap(~ order, ncol = 2)
 ```
-
-------------------------------------------------------------------------

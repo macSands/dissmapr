@@ -33,13 +33,9 @@ n_sp = inputs$n_sp
 sp_cols = inputs$sp_cols
 ```
 
-------------------------------------------------------------------------
-
 # `dissmapr`
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
-
-------------------------------------------------------------------------
 
 ### 1. User-defined area of interest and grid resolution
 
@@ -84,8 +80,6 @@ terra::values(grid) = 1
 grid_masked = terra::mask(grid, rsa_vect)
 # grid_masked is now a 0.5° lattice clipped to South Africa and will serve as the common spatial denominator for all downstream summaries.
 ```
-
----
 
 ### 2. Summarise records by grid centroid using `generate_grid()`
 
@@ -135,8 +129,6 @@ dim(grid_spp_pa); head(grid_spp_pa[, 1:8])
 ```
 
 `grid_spp` now serves as the **site‑level backbone** for modelling (e.g. spatial GLMs) or visualisation (e.g. dot plots), whereas `grid_spp_pa` slots directly into Jaccard- or Sørensen-based beta-diversity workflows. `site_spp` retains the raw observation detail for drill‑down analyses.
-
----
 
 ### 3. Visualise observation density across South Africa
 
@@ -217,8 +209,6 @@ for (i in 1:2) {
 ```
 
 These maps quickly reveal where sampling effort is concentrated and how species richness varies across the landscape—useful diagnostics before any downstream modelling.
-
----
 
 ```{r save-state, include=FALSE}
 ## Save state for downstream vignettes

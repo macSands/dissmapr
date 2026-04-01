@@ -20,7 +20,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 ```{r read_files, include=FALSE}
 # Load libraries
 library(ggplot2)
@@ -38,14 +37,9 @@ sp_cols = inputs$sp_cols
 grid_r = terra::rast('D:/Methods/R/myR_Packages/b-cubed-versions/dissmapr/inst/extdata/grid_r.tif')
 ```
 
-
-------------------------------------------------------------------------
-
 # `dissmapr`
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
-
-------------------------------------------------------------------------
 
 ### 1. Generate site by environment matrix using `get_enviro_data()`
 
@@ -65,8 +59,6 @@ The subsections below implement this workflow:
 3. **Inspect the extracted covariates**: produces a quick map (e.g. mean annual temperature) and previews the data to verify alignment and plausibility.
 4. **Assemble a modelling matrix**: consolidates coordinates, effort, richness, and all climate predictors into a tidy data frame (`grid_env`) ready for statistical modelling.
 5. *Optional >>* **Reproject centroids for metric-space analyses**: converts centroid coordinates from `WGS-84` ([EPSG:4326](https://epsg.io/4326)) to a `Albers Equal-Area` projection ([EPSG:9822](https://epsg.io/9822)) when analyses require distances in metres.
-
----
 
 **Download and sample 19 WorldClim bioclim variables**   
 Fetch the 5-arc-min (~10 km) bioclim stack via `geodata` package and attach values to every centroid.
@@ -106,8 +98,6 @@ dim(env_df); head(env_df)
 ```
 
 *`get_enviro_data()` buffered the grid centroids by 10 km, fetched the requested rasters, cropped them, extracted values at each centroid, filled isolated NAs, and merged the results with `obs_sum` and `spp_rich`.*
-
----
 
 ### 2. Bind climate, effort, and richness into one raster stack
   
@@ -157,8 +147,6 @@ for (i in 1:4) {
 }
 ```
 
----
-
 ### 3. Inspect the extracted covariates
 
 Environmental data were linked to grid centroids using `get_enviro_data()`, now visualise the spatial variation in selected climate variables to check results.
@@ -190,8 +178,6 @@ ggplot() +
 
 *Goal of this plot is to quickly check that the environmental predictors (e.g. `bio01` >> mean annual temperature) line up with the 0.5° grid.*
 
----
-
 ### 4. Assemble the modelling matrix `grid_env`
 
 Compile a *site × environment* data frame (`grid_env`) in which each 0.5° cell contributes one row containing centroid coordinates, √-scaled sampling effort, species richness, and the 19 `bioclim` predictors. The resulting matrix is immediately usable for GLMs, GAMs, machine-learning, ordination, and β-diversity analyses.
@@ -205,8 +191,6 @@ grid_env = env_df %>%
 str(grid_env, max.level = 1)
 head(grid_env)
 ```
-
----
 
 ### 5. Reproject centroids for metric-space analyses** using `sf::st_transform()`[OPTIONAL]
 
@@ -237,8 +221,6 @@ head(grid_env[, c("grid_id","centroid_lon","centroid_lat","x_aea","y_aea")])
 ```
 
 *At this point every grid cell has species metrics, climate predictors, and is optionally projected into metre coordinates, all in a single tidy object.*
-
----
 
 ### 6. Diagnose and mitigate collinearity with `rm_correlated()`
 
@@ -271,8 +253,6 @@ c(original = ncol(env_df[, c(4, 6:24)]),
 ```
 
 *`env_vars_reduced` now contains a decorrelated subset of climate predictors suitable for stable GLMs, GAMs, machine-learning, or ordination workflows.*
-
----
 
 ```{r save-state, include=FALSE}
 ## Save state for downstream vignettes

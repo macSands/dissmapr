@@ -19,7 +19,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 ```{r read_files, include=FALSE}
 # At the start of the next vignette, explicitly load files from previous vignette:
 inputs = readRDS("_data/7_setup.rds")
@@ -34,13 +33,9 @@ current_nn = terra::rast(system.file("extdata", "current_nn.tif", package = "dis
 future_hclt = terra::rast(system.file("extdata", "future_hclt.tif", package = "dissmapr"))
 ```
 
-------------------------------------------------------------------------
-
 # `dissmapr`
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
-
-------------------------------------------------------------------------
 
 ### 1. Map sensitivity of bioregion delineation to clustering method using `map_bioregDiff()`
 
@@ -98,8 +93,6 @@ par(old_par)
 
 ```
 
----
-
 ### 2. Map bioregion sensitivity to future change using `map_bioregDiff()`
 
 Here we use `map_bioregDiff()` to track how the hierarchical‐cluster map itself changes under three future climate scenarios. Focusing solely on the hierarchical solution we map bioregion change across time. First we stack the hierarchical clusters for today, 2030, 2040 and 2050, run `map_bioregDiff()` on that series, and highlight how bioregions shift under these future climate projections. In this way we isolate climate-driven reorganization in the hierarchical map itself.
@@ -146,8 +139,6 @@ for (i in seq_along(titles)) {
 par(old_par)
 
 ```
-
----
 
 ```{r save-state, include=FALSE}
 ## Save state for downstream vignettes

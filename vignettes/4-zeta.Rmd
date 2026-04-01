@@ -32,13 +32,9 @@ grid_spp_pa = inputs$grid_spp_pa
 sp_cols = inputs$sp_cols
 ```
 
-------------------------------------------------------------------------
-
 # `dissmapr`
 
 ## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
-
-------------------------------------------------------------------------
 
 ### 1. Zeta diversity in **`dissmapr`**: a multi-site view of compositional change  
 
@@ -62,8 +58,6 @@ In summary, **ζ-diversity counts the species that an entire network of sites sh
 
 The next sections offer a simple, step-by-step guide to spot where shared biodiversity is weakest and direct protection where it’s needed most.
 
----
-
 ### 2. Expectation curve for ζ-diversity decline using `zetadiv::Zeta.decline.ex()`
 
 `Zeta.decline.ex()` calculates the theoretical number of species that should be shared by 1, 2, … k sites (orders 1–15 here) using a closed-form formula based solely on each species’ occupancy frequency. Because no resampling is involved, the output is an exact expectation of how ζ-diversity ought to fall as more sites are considered, assuming site identity plays no role. The function also fits exponential and power-law models to the expected curve, yielding parameters and fit statistics that provide a baseline against which observed or Monte-Carlo ζ-decline patterns can be evaluated.
@@ -86,8 +80,6 @@ zetadiv::Plot.zeta.decline(zeta_decline_ex, sd.plot = TRUE)
 >
 > **Interpretation**: *The near‐perfect straight line in the exponential panel (high R²) indicates that an exponential model provides the most parsimonious description of how species shared across sites decline as you add more sites—consistent with a stochastic, memory-less decline in common species. A power law will also fit in broad strokes, but deviates at high orders, suggesting exponential decay is the better choice for these data.*
 
----
-
 ### 3. Empirical ζ-diversity decline via Monte-Carlo using `zetadiv::Zeta.decline.mc()`
 
 `Zeta.decline.mc()` estimates how the number of species shared by 1, 2, … k sites drops when exhaustive combinations are impractical. It repeatedly draws random sets of sites (Monte-Carlo sampling), averages the shared-species count for each order, and reports both the mean and its variability. The resulting curve is then fitted with exponential and power-law models, providing parameter estimates and confidence bands that capture real-world turnover while accounting for sampling uncertainty. In other words, a **sharp drop** in the curve means **species change quickly from place to place (communities are unique)**, while a **gentle drop** means **many species are found in most places (communities are similar)**.
@@ -108,8 +100,6 @@ zeta_mc_utm = zetadiv::Zeta.decline.mc(grid_spp_pa[,-(1:7)], # Different way to 
 > -   **Panel 3 & 4 (Exponential and Power law regressions)**: Both remain linear, clearly indicating the zeta diversity declines consistently following a predictable spatial pattern. However, the exact pattern remains similar to previous cases, highlighting that despite spatial constraints, common species become rare quickly as more sites are considered.\
 >
 > **Interpretation**: *This result demonstrates clear spatial structuring of biodiversity i.e. species are locally clustered, not randomly distributed across the landscape. Spatial proximity influences which species co-occur more frequently. In practice `Zeta.decline.mc()` is used for real‐world biodiversity data—both because it scales and because the Monte Carlo envelope is invaluable when ζₖ gets noisier at higher orders.*
-
----
 
 ### 4. ζ-diversity distance-decay (orders 2–8) using `zetadiv::Zeta.ddecays()`
 
@@ -137,8 +127,6 @@ zeta_decays = zetadiv::Zeta.ddecays(#grid_env[, c("centroid_lon", "centroid_lat"
 > -   A **slope near zero** means **distance doesn't strongly affect how many species are shared among sites**.
 >
 > **Interpretation**: *When you look at just two or three sites, distance really matters because sites far apart share far fewer species, so the decay curve is steep. Once you include four or more sites, that curve flattens out: most widespread species still overlap no matter the distance, so spatial separation has little effect. The tighter confidence bands at higher orders show these broader‐scale patterns are more reliable because they average over many sites. In plain terms, rare or localized species drive strong turnover at small scales, but a core of common species holds communities together across larger regions.*
-
----
 
 ### 5. Model drivers of compositional turnover with `zetadiv::Zeta.msgdm()`
 
@@ -209,8 +197,6 @@ with(summary(zeta2$model), 1 - deviance/null.deviance)
 summary(zeta2$model)
 ```
 
----
-
 ### 6. Uneven sampling can disguise the true drivers of biodiversity
 
 **With sampling effort** (`obs_sum`) included, all sites with lots of records suddenly look far more alike than poorly sampled ones, and the climate curves flatten, and distance drops too.
@@ -253,8 +239,6 @@ summary(zeta2_noEff$model)
 With sampling effort removed the model explains only ≈ 8% of the deviance, compared to 37%. In other words, after discounting chance, less than one-tenth of the variation in shared-species counts is captured by climate and distance alone, confirming that survey effort had been the primary driver of the much higher explanatory power in the full model.
 
 **Key point**: *Uneven sampling can hide the real drivers of biodiversity. Without accounting for effort, the model attributes most turnover to climate. Adding effort shows that well-surveyed sites appear more similar simply because thorough searches record more species, while lightly sampled sites miss many and seem distinct. Correcting for effort is essential; only then can we see how climate and distance truly shape species turnover.*
-
----
 
 ```{r save-state, include=FALSE}
 ## Save state for downstream vignettes
