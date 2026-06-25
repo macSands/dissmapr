@@ -28,7 +28,7 @@ abstract: >
   Core features include occurrence data retrieval, environmental data extraction,
   flexible grid generation, order-wise dissimilarity computations, and intuitive bioregional mapping.
 identifiers:
+  - type: doi
+    value: 10.5281/zenodo.20842434
   - type: url
     value: https://github.com/b-cubed-eu/dissmapr/
-  - type: doi
-    value: 10.xxxx/dissmapr
