@@ -7,15 +7,14 @@
 <!-- badges: start -->
 
 [![repo status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Release](https://img.shields.io/github/release/b-cubed-eu/dissmapr.svg)](https://github.com/b-cubed-eu/dissmapr/releases)
-[![dissmapr status
-badge](https://b-cubed-eu.r-universe.dev/dissmapr/badges/version)](https://b-cubed-eu.r-universe.dev/dissmapr)
-[![CRAN status](https://www.r-pkg.org/badges/version/dissmapr)](https://cran.r-project.org//package=dissmapr)
+[![Release](https://img.shields.io/github/v/release/b-cubed-eu/dissmapr?display_name=tag)](https://github.com/b-cubed-eu/dissmapr/releases)
+[![R-universe version](https://b-cubed-eu.r-universe.dev/dissmapr/badges/version)](https://b-cubed-eu.r-universe.dev/dissmapr)
+[![CRAN status](https://www.r-pkg.org/badges/version/dissmapr)](https://CRAN.R-project.org/package=dissmapr)
 [![R-CMD-check](https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/b-cubed-eu/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/dissmapr)
-[![DOI](https://img.shields.io/badge/DOI-awaiting_upload_to_zenodo-orange)](https://zenodo.org)
-[![name status badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
-[![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20842434.svg)](https://doi.org/10.5281/zenodo.20842434)
+[![R-universe](https://img.shields.io/badge/R--universe-b--cubed--eu-6CDDB4)](https://b-cubed-eu.r-universe.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
 <!-- badges: end -->
 
