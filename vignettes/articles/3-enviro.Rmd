@@ -26,7 +26,7 @@ library(ggplot2)
 library(dplyr)
 
 # Load the objects this article needs from the single bundled snapshot.
-inputs = readRDS("_data/dissmapr_vignettes.rds")
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
 rsa = inputs$rsa
 grid_sf = inputs$grid_sf

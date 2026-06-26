@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 library(ggplot2)
 
 # Load the objects this article needs from the single bundled snapshot.
-inputs = readRDS("_data/dissmapr_vignettes.rds")
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
 site_obs = inputs$site_obs
 site_spp = inputs$site_spp

@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 # Load the objects this article needs from the single bundled snapshot.
 library(terra)
 library(RColorBrewer)
-inputs = readRDS("_data/dissmapr_vignettes.rds")
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
 predictors_df = inputs$predictors_df
 all_preds = inputs$all_preds

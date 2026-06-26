@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 # Load the objects this article needs from the single bundled snapshot.
 library(viridis)
 library(terra)
-inputs = readRDS("_data/dissmapr_vignettes.rds")
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
 grid_masked = terra::mask(terra::setValues(terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]], 1), terra::vect(inputs$rsa))
 future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))

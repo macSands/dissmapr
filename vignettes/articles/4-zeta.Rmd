@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 library(zetadiv)
 
 # Load the objects this article needs from the single bundled snapshot.
-inputs = readRDS("_data/dissmapr_vignettes.rds")
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
 grid_env = inputs$grid_env
 env_vars_reduced = inputs$env_vars_reduced

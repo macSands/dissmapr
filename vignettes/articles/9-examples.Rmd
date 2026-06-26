@@ -25,7 +25,7 @@ library(ggplot2)
 library(dplyr)
 library(viridis)
 library(dissmapr)
-inputs = readRDS("_data/dissmapr_vignettes.rds")
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
 grid_spp = inputs$grid_spp
 sp_cols = inputs$sp_cols
