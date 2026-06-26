@@ -16,7 +16,7 @@
 #'      any extra metadata supplied via `extra_cols`.
 #'
 #' @param data            Data frame of points with x-y coordinates.
-#' @param x_col, y_col    Column names for longitude and latitude.
+#' @param x_col,y_col    Column names for longitude and latitude.
 #' @param grid_size       Cell size (degrees or metres, depending on CRS).
 #' @param sum_cols        Character or numeric vector of columns to aggregate. Note: Numeric indices are converted to names internally.
 #' @param extra_cols      Additional columns to keep (optional).
@@ -29,7 +29,6 @@
 #'   - `grid_spp`    - abundance summary (*data.frame*)
 #'   - `grid_spp_pa` - presence/absence summary (*data.frame*)
 #'
-#' @import sf terra dplyr
 #' @export
 #'
 #' @examples

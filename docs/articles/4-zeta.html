@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -27,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dissmapr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/dissmapr.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
 <li class="active nav-item dropdown">
@@ -76,13 +77,12 @@
       <img src="../logo.png" class="logo" alt=""><h1>Zeta diversity</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/HEAD/vignettes/4-zeta.Rmd" class="external-link"><code>vignettes/4-zeta.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/HEAD/vignettes/articles/4-zeta.Rmd" class="external-link"><code>vignettes/articles/4-zeta.Rmd</code></a></small>
       <div class="d-none name"><code>4-zeta.Rmd</code></div>
     </div>
 
     
     
-<hr>
 <div class="section level2">
 <h2 id="dissmapr">
 <code>dissmapr</code><a class="anchor" aria-label="anchor" href="#dissmapr"></a>
@@ -91,7 +91,6 @@
 <h3 id="a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis">A Novel Framework for Automated Compositional Dissimilarity and
 Biodiversity Turnover Analysis<a class="anchor" aria-label="anchor" href="#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis"></a>
 </h3>
-<hr>
 <div class="section level4">
 <h4 id="zeta-diversity-in-dissmapr-a-multi-site-view-of-compositional-change">1. Zeta diversity in <strong><code>dissmapr</code></strong>: a
 multi-site view of compositional change<a class="anchor" aria-label="anchor" href="#zeta-diversity-in-dissmapr-a-multi-site-view-of-compositional-change"></a>
@@ -187,7 +186,6 @@ Viewing many sites at once exposes conservation gaps that simple
 <p>The next sections offer a simple, step-by-step guide to spot where
 shared biodiversity is weakest and direct protection where it’s needed
 most.</p>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="expectation-curve-for-ζ-diversity-decline-using-zetadivzeta-decline-ex">2. Expectation curve for ζ-diversity decline using
@@ -211,7 +209,7 @@ observed or Monte-Carlo ζ-decline patterns can be evaluated.</p>
 <span><span class="va">zeta_decline_ex</span> <span class="op">=</span> <span class="fu">zetadiv</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.decline.ex.html" class="external-link">Zeta.decline.ex</a></span><span class="op">(</span><span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="fl">7</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">grid_spp_pa</span><span class="op">)</span><span class="op">]</span>, <span class="co"># Only species columns</span></span>
 <span>                                  orders <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span>, plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu">zetadiv</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Plot.zeta.decline.html" class="external-link">Plot.zeta.decline</a></span><span class="op">(</span><span class="va">zeta_decline_ex</span>, sd.plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/4-zeta-decline-ex-1.png" alt="Zeta decline EX" width="100%"></p>
+<p><img src="figures/4-zeta-decline-ex-1.png" class="r-plt" alt="Zeta decline EX" width="100%"></p>
 <blockquote>
 <ul>
 <li>
@@ -249,7 +247,6 @@ memory-less decline in common species. A power law will also fit in
 broad strokes, but deviates at high orders, suggesting exponential decay
 is the better choice for these data.</em></p>
 </blockquote>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="empirical-ζ-diversity-decline-via-monte-carlo-using-zetadivzeta-decline-mc">3. Empirical ζ-diversity decline via Monte-Carlo using
@@ -269,14 +266,14 @@ means <strong>many species are found in most places (communities are
 similar)</strong>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
-<span><span class="va">zeta_mc_utm</span> <span class="op">=</span> <span class="fu">zetadiv</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.decline.mc.html" class="external-link">Zeta.decline.mc</a></span><span class="op">(</span><span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">]</span>, <span class="co"># Different way to get only species columns</span></span>
+<span><span class="va">zeta_mc_utm</span> <span class="op">=</span> <span class="fu">zetadiv</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.decline.mc.html" class="external-link">Zeta.decline.mc</a></span><span class="op">(</span><span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span>, <span class="co"># Different way to get only species columns</span></span>
 <span>                              <span class="co"># grid_env[, c("centroid_lon", "centroid_lat")], # WGS84 - decimal degrees</span></span>
 <span>                              <span class="va">grid_env</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_aea"</span>, <span class="st">"y_aea"</span><span class="op">)</span><span class="op">]</span>, <span class="co"># AEA - meters</span></span>
 <span>                              orders <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span>,</span>
 <span>                              sam <span class="op">=</span> <span class="fl">100</span>, <span class="co"># Sample size</span></span>
 <span>                              NON <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                              normalize <span class="op">=</span> <span class="st">"Jaccard"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/4-zeta-decline-mc-1.png" alt="Zeta decline MC" width="100%"></p>
+<p><img src="figures/4-zeta-decline-mc-1.png" class="r-plt" alt="Zeta decline MC" width="100%"></p>
 <blockquote>
 <ul>
 <li>
@@ -307,7 +304,6 @@ influences which species co-occur more frequently. In practice
 data—both because it scales and because the Monte Carlo envelope is
 invaluable when ζₖ gets noisier at higher orders.</em></p>
 </blockquote>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="ζ-diversity-distance-decay-orders-28-using-zetadivzeta-ddecays">4. ζ-diversity distance-decay (orders 2–8) using
@@ -328,7 +324,7 @@ space at different zeta orders</strong>.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">zeta_decays</span> <span class="op">=</span> <span class="fu">zetadiv</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.ddecays.html" class="external-link">Zeta.ddecays</a></span><span class="op">(</span><span class="co">#grid_env[, c("centroid_lon", "centroid_lat")],  # WGS84 - decimal degrees</span></span>
 <span>                           <span class="va">grid_env</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_aea"</span>, <span class="st">"y_aea"</span><span class="op">)</span><span class="op">]</span>, <span class="co"># AEA - meters</span></span>
-<span>                           <span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                           <span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>                           sam <span class="op">=</span> <span class="fl">1000</span>, <span class="co"># Sample size</span></span>
 <span>                           orders <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">8</span>,</span>
 <span>                           plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -341,7 +337,7 @@ space at different zeta orders</strong>.</p>
 <span><span class="co">#&gt; [1] 6</span></span>
 <span><span class="co">#&gt; [1] 7</span></span>
 <span><span class="co">#&gt; [1] 8</span></span></code></pre></div>
-<p><img src="figures/4-zeta-decays-1.png" alt="Zeta decays" width="100%"></p>
+<p><img src="figures/4-zeta-decays-1.png" class="r-plt" alt="Zeta decays" width="100%"></p>
 <blockquote>
 <p>This plot shows how zeta diversity (remember, it’s a metric that
 captures shared species composition among multiple sites) changes with
@@ -372,7 +368,6 @@ plain terms, rare or localized species drive strong turnover at small
 scales, but a core of common species holds communities together across
 larger regions.</em></p>
 </blockquote>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="model-drivers-of-compositional-turnover-with-zetadivzeta-msgdm">5. Model drivers of compositional turnover with
@@ -415,7 +410,7 @@ change).</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">246</span><span class="op">)</span></span>
 <span><span class="co"># Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set</span></span>
 <span><span class="va">zeta2</span> <span class="op">=</span> <span class="fu">zetadiv</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.msgdm.html" class="external-link">Zeta.msgdm</a></span><span class="op">(</span></span>
-<span>  <span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">]</span>,                            <span class="co"># species matrix (rows = sites, cols = spp)</span></span>
+<span>  <span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span>,                            <span class="co"># species matrix (rows = sites, cols = spp)</span></span>
 <span>  <span class="va">env_vars_reduced</span>,                                <span class="co"># decorrelated environmental variables</span></span>
 <span>  <span class="co"># env_vars_reduced[,-7],                         # without sampling effort included</span></span>
 <span>  <span class="va">grid_env</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span><span class="op">]</span>,   <span class="co"># longitude &amp; latitude (°)</span></span>
@@ -431,7 +426,7 @@ change).</p>
 <span><span class="co"># splines = Return.ispline(zeta2, env_vars_reduced[,-7], distance = TRUE) # Without sampling effort</span></span>
 <span><span class="va">splines</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Return.ispline.html" class="external-link">Return.ispline</a></span><span class="op">(</span><span class="va">zeta2</span>, <span class="va">env_vars_reduced</span>, distance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Plot.ispline.html" class="external-link">Plot.ispline</a></span><span class="op">(</span><span class="va">splines</span>, distance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/4-zeta-msgdm-1.png" alt="Zeta iSplines" width="100%"></p>
+<p><img src="figures/4-zeta-msgdm-1.png" class="r-plt" alt="Zeta iSplines" width="100%"></p>
 <p><strong>General Interpretation</strong>:</p>
 <ul>
 <li>
@@ -500,7 +495,7 @@ this landscape.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Deviance explained summary results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">zeta2</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">deviance</span><span class="op">/</span><span class="va">null.deviance</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; [1] 0.3265141</span></span>
+<span><span class="co">#&gt; [1] 0.3265057</span></span>
 <span><span class="co"># [1] 0.3733073</span></span>
 <span><span class="co"># 0.3733073 means that approximately 37% of the variability in the response</span></span>
 <span><span class="co"># variable is explained by your model. This is relatively low, suggesting that the</span></span>
@@ -516,42 +511,41 @@ this landscape.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; (Intercept) -2.16958    0.59937  -3.620 0.000295 ***</span></span>
-<span><span class="co">#&gt; temp_mean1   0.00000    4.21536   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; temp_mean2   0.00000    1.32557   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; temp_mean3   0.00000    1.70926   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; iso1        -0.66109    1.51474  -0.436 0.662519    </span></span>
-<span><span class="co">#&gt; iso2        -0.23028    0.88344  -0.261 0.794355    </span></span>
-<span><span class="co">#&gt; iso3        -0.09113    1.47084  -0.062 0.950595    </span></span>
-<span><span class="co">#&gt; temp_wetQ1   0.00000    1.15497   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; temp_wetQ2  -0.50920    0.93822  -0.543 0.587319    </span></span>
-<span><span class="co">#&gt; temp_wetQ3   0.00000    1.44448   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; temp_dryQ1  -0.25557    3.76824  -0.068 0.945927    </span></span>
-<span><span class="co">#&gt; temp_dryQ2   0.00000    1.17901   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; temp_dryQ3   0.00000    1.19972   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; rain_dry1   -0.51695    0.77002  -0.671 0.502002    </span></span>
-<span><span class="co">#&gt; rain_dry2    0.00000    0.85155   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; rain_dry3    0.00000    1.09208   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; rain_warmQ1  0.00000    0.88631   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; rain_warmQ2 -0.16301    1.06002  -0.154 0.877782    </span></span>
+<span><span class="co">#&gt; (Intercept) -2.16968    0.59939  -3.620 0.000295 ***</span></span>
+<span><span class="co">#&gt; temp_mean1   0.00000    4.21534   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_mean2   0.00000    1.32559   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_mean3   0.00000    1.70928   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; iso1        -0.66083    1.51472  -0.436 0.662639    </span></span>
+<span><span class="co">#&gt; iso2        -0.23047    0.88345  -0.261 0.794186    </span></span>
+<span><span class="co">#&gt; iso3        -0.09082    1.47082  -0.062 0.950764    </span></span>
+<span><span class="co">#&gt; temp_wetQ1   0.00000    1.15499   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_wetQ2  -0.50916    0.93824  -0.543 0.587353    </span></span>
+<span><span class="co">#&gt; temp_wetQ3   0.00000    1.44449   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_dryQ1  -0.25546    3.76827  -0.068 0.945951    </span></span>
+<span><span class="co">#&gt; temp_dryQ2   0.00000    1.17904   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; temp_dryQ3   0.00000    1.19974   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_dry1   -0.51688    0.77003  -0.671 0.502061    </span></span>
+<span><span class="co">#&gt; rain_dry2    0.00000    0.85157   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_dry3    0.00000    1.09211   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_warmQ1  0.00000    0.88632   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; rain_warmQ2 -0.16285    1.06003  -0.154 0.877907    </span></span>
 <span><span class="co">#&gt; rain_warmQ3  0.00000    1.71132   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; obs_sum1    -2.36501    0.52951  -4.466 7.95e-06 ***</span></span>
-<span><span class="co">#&gt; obs_sum2     0.00000    1.32131   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; obs_sum3     0.00000    1.88056   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; distance1    0.00000    0.92265   0.000 1.000000    </span></span>
-<span><span class="co">#&gt; distance2   -0.68238    1.27319  -0.536 0.591989    </span></span>
-<span><span class="co">#&gt; distance3   -0.15202    2.11478  -0.072 0.942694    </span></span>
+<span><span class="co">#&gt; obs_sum1    -2.36497    0.52951  -4.466 7.96e-06 ***</span></span>
+<span><span class="co">#&gt; obs_sum2     0.00000    1.32135   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; obs_sum3     0.00000    1.88062   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; distance1    0.00000    0.92268   0.000 1.000000    </span></span>
+<span><span class="co">#&gt; distance2   -0.68238    1.27321  -0.536 0.591992    </span></span>
+<span><span class="co">#&gt; distance3   -0.15209    2.11481  -0.072 0.942668    </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Null deviance: 125.425  on 1999  degrees of freedom</span></span>
-<span><span class="co">#&gt; Residual deviance:  84.472  on 1975  degrees of freedom</span></span>
+<span><span class="co">#&gt;     Null deviance: 125.418  on 1999  degrees of freedom</span></span>
+<span><span class="co">#&gt; Residual deviance:  84.468  on 1975  degrees of freedom</span></span>
 <span><span class="co">#&gt; AIC: 137.85</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Number of Fisher Scoring iterations: 7</span></span></code></pre></div>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="uneven-sampling-can-disguise-the-true-drivers-of-biodiversity">6. Uneven sampling can disguise the true drivers of
@@ -565,7 +559,7 @@ drops too.</p>
 <code class="sourceCode R"><span><span class="co"># Fit order-2 MSGDM on the presence–absence matrix and reduced covariate set</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span> <span class="co"># set.seed to generate exactly the same random results i.e. sam=100</span></span>
 <span><span class="va">zeta2_noEff</span> <span class="op">=</span> <span class="fu">zetadiv</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.msgdm.html" class="external-link">Zeta.msgdm</a></span><span class="op">(</span></span>
-<span>  <span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">]</span>,                            <span class="co"># species matrix (rows = sites, cols = spp)</span></span>
+<span>  <span class="va">grid_spp_pa</span><span class="op">[</span>,<span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span>,                            <span class="co"># species matrix (rows = sites, cols = spp)</span></span>
 <span>  <span class="co"># env_vars_reduced,                              # decorrelated environmental variables</span></span>
 <span>  <span class="va">env_vars_reduced</span><span class="op">[</span>,<span class="op">-</span><span class="fl">7</span><span class="op">]</span>,                           <span class="co"># without sampling effort included</span></span>
 <span>  <span class="va">grid_env</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid_lon"</span>, <span class="st">"centroid_lat"</span><span class="op">)</span><span class="op">]</span>,   <span class="co"># longitude &amp; latitude (°)</span></span>
@@ -580,7 +574,7 @@ drops too.</p>
 <span><span class="co"># Extract and plot the fitted I-splines</span></span>
 <span><span class="va">splines_noEff</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Return.ispline.html" class="external-link">Return.ispline</a></span><span class="op">(</span><span class="va">zeta2_noEff</span>, <span class="va">env_vars_reduced</span><span class="op">[</span>,<span class="op">-</span><span class="fl">7</span><span class="op">]</span>, distance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Without sampling effort</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/zetadiv/man/Plot.ispline.html" class="external-link">Plot.ispline</a></span><span class="op">(</span><span class="va">splines_noEff</span>, distance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/4-zeta-msgdm-noeff-1.png" alt="Zeta iSplines with no effort index" width="100%"></p>
+<p><img src="figures/4-zeta-msgdm-noeff-1.png" class="r-plt" alt="Zeta iSplines with no effort index" width="100%"></p>
 <p><strong>Without sampling effort</strong> (<code>obs_sum</code>)
 temperature and rainfall curves climb high and fast: climate looks like
 the main reason sites stop sharing species. Distance (blue line) still
@@ -588,7 +582,7 @@ matters, but less than several climate variables.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Deviance explained summary results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">zeta2_noEff</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">deviance</span><span class="op">/</span><span class="va">null.deviance</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; [1] 0.08242748</span></span>
+<span><span class="co">#&gt; [1] 0.08242887</span></span>
 <span><span class="co"># [1] 0.09495599</span></span>
 <span><span class="co"># 0.09495599 means that approximately 1% of the variability in the response</span></span>
 <span><span class="co"># variable is explained by your model. This is relatively low, suggesting that the</span></span>
@@ -604,28 +598,28 @@ matters, but less than several climate variables.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)   </span></span>
-<span><span class="co">#&gt; (Intercept) -2.305658   0.721582  -3.195   0.0014 **</span></span>
-<span><span class="co">#&gt; temp_mean1   0.000000   5.272991   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_mean2  -0.007174   1.832546  -0.004   0.9969   </span></span>
-<span><span class="co">#&gt; temp_mean3   0.000000   2.455489   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso1        -0.725370   1.979859  -0.366   0.7141   </span></span>
-<span><span class="co">#&gt; iso2         0.000000   1.361778   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; iso3         0.000000   1.855347   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ1   0.000000   1.590495   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_wetQ2  -0.171049   1.323547  -0.129   0.8972   </span></span>
-<span><span class="co">#&gt; temp_wetQ3  -0.245476   2.004934  -0.122   0.9026   </span></span>
-<span><span class="co">#&gt; temp_dryQ1   0.000000   4.616249   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; temp_dryQ2  -0.383202   1.607839  -0.238   0.8116   </span></span>
-<span><span class="co">#&gt; temp_dryQ3   0.000000   1.705136   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_dry1   -0.393967   1.102892  -0.357   0.7209   </span></span>
-<span><span class="co">#&gt; rain_dry2   -0.100666   1.235870  -0.081   0.9351   </span></span>
-<span><span class="co">#&gt; rain_dry3    0.000000   1.648879   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; rain_warmQ1 -0.305181   1.152039  -0.265   0.7911   </span></span>
-<span><span class="co">#&gt; rain_warmQ2 -0.282461   1.498674  -0.188   0.8505   </span></span>
-<span><span class="co">#&gt; rain_warmQ3  0.000000   2.172390   0.000   1.0000   </span></span>
-<span><span class="co">#&gt; distance1   -0.566322   1.239954  -0.457   0.6479   </span></span>
-<span><span class="co">#&gt; distance2   -0.245610   1.595757  -0.154   0.8777   </span></span>
-<span><span class="co">#&gt; distance3    0.000000   2.453390   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; (Intercept) -2.305665   0.721583  -3.195   0.0014 **</span></span>
+<span><span class="co">#&gt; temp_mean1   0.000000   5.272996   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; temp_mean2  -0.007144   1.832550  -0.004   0.9969   </span></span>
+<span><span class="co">#&gt; temp_mean3   0.000000   2.455501   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; iso1        -0.725358   1.979856  -0.366   0.7141   </span></span>
+<span><span class="co">#&gt; iso2         0.000000   1.361781   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; iso3         0.000000   1.855354   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; temp_wetQ1   0.000000   1.590499   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; temp_wetQ2  -0.171044   1.323550  -0.129   0.8972   </span></span>
+<span><span class="co">#&gt; temp_wetQ3  -0.245516   2.004941  -0.122   0.9025   </span></span>
+<span><span class="co">#&gt; temp_dryQ1   0.000000   4.616254   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; temp_dryQ2  -0.383231   1.607844  -0.238   0.8116   </span></span>
+<span><span class="co">#&gt; temp_dryQ3   0.000000   1.705142   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; rain_dry1   -0.393946   1.102893  -0.357   0.7209   </span></span>
+<span><span class="co">#&gt; rain_dry2   -0.100671   1.235874  -0.081   0.9351   </span></span>
+<span><span class="co">#&gt; rain_dry3    0.000000   1.648886   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; rain_warmQ1 -0.305178   1.152042  -0.265   0.7911   </span></span>
+<span><span class="co">#&gt; rain_warmQ2 -0.282474   1.498679  -0.188   0.8505   </span></span>
+<span><span class="co">#&gt; rain_warmQ3  0.000000   2.172401   0.000   1.0000   </span></span>
+<span><span class="co">#&gt; distance1   -0.566301   1.239956  -0.457   0.6479   </span></span>
+<span><span class="co">#&gt; distance2   -0.245639   1.595763  -0.154   0.8777   </span></span>
+<span><span class="co">#&gt; distance3    0.000000   2.453409   0.000   1.0000   </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -649,7 +643,71 @@ well-surveyed sites appear more similar simply because thorough searches
 record more species, while lightly sampled sites miss many and seem
 distinct. Correcting for effort is essential; only then can we see how
 climate and distance truly shape species turnover.</em></p>
-<hr>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.5.2 (2025-10-31 ucrt)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-w64-mingw32/x64</span></span>
+<span><span class="co">#&gt; Running under: Windows 11 x64 (build 26200)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt;   LAPACK version 3.12.1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt; [1] LC_COLLATE=English_South Africa.utf8  LC_CTYPE=English_South Africa.utf8   </span></span>
+<span><span class="co">#&gt; [3] LC_MONETARY=English_South Africa.utf8 LC_NUMERIC=C                         </span></span>
+<span><span class="co">#&gt; [5] LC_TIME=English_South Africa.utf8    </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: Africa/Johannesburg</span></span>
+<span><span class="co">#&gt; tzcode source: internal</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices datasets  utils     methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt; [1] zetadiv_1.3.0 scam_1.2-22  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;   [1] DBI_1.3.0            pbapply_1.7-4        geodata_0.6-9       </span></span>
+<span><span class="co">#&gt;   [4] pROC_1.19.0.1        glm2_1.2.1           permute_0.9-10      </span></span>
+<span><span class="co">#&gt;   [7] rlang_1.2.0          magrittr_2.0.5       otel_0.2.0          </span></span>
+<span><span class="co">#&gt;  [10] e1071_1.7-17         compiler_4.5.2       mgcv_1.9-4          </span></span>
+<span><span class="co">#&gt;  [13] systemfonts_1.3.2    vctrs_0.7.3          maps_3.4.3          </span></span>
+<span><span class="co">#&gt;  [16] reshape2_1.4.5       stringr_1.6.0        pkgconfig_2.0.3     </span></span>
+<span><span class="co">#&gt;  [19] fastmap_1.2.0        rmarkdown_2.31       prodlim_2026.03.11  </span></span>
+<span><span class="co">#&gt;  [22] dissmapr_0.2.0       ragg_1.5.2           purrr_1.2.2         </span></span>
+<span><span class="co">#&gt;  [25] xfun_0.59            cachem_1.1.0         jsonlite_2.0.0      </span></span>
+<span><span class="co">#&gt;  [28] recipes_1.3.3        terra_1.9-34         parallel_4.5.2      </span></span>
+<span><span class="co">#&gt;  [31] cluster_2.1.8.2      R6_2.6.1             bslib_0.11.0        </span></span>
+<span><span class="co">#&gt;  [34] stringi_1.8.7        RColorBrewer_1.1-3   parallelly_1.47.0   </span></span>
+<span><span class="co">#&gt;  [37] rpart_4.1.27         lubridate_1.9.5      jquerylib_0.1.4     </span></span>
+<span><span class="co">#&gt;  [40] estimability_1.5.1   Rcpp_1.1.1-1.1       iterators_1.0.14    </span></span>
+<span><span class="co">#&gt;  [43] knitr_1.51           future.apply_1.20.2  fields_17.3         </span></span>
+<span><span class="co">#&gt;  [46] zoo_1.8-15           nnls_1.6             Matrix_1.7-5        </span></span>
+<span><span class="co">#&gt;  [49] splines_4.5.2        nnet_7.3-20          timechange_0.4.0    </span></span>
+<span><span class="co">#&gt;  [52] tidyselect_1.2.1     rstudioapi_0.19.0    yaml_2.3.12         </span></span>
+<span><span class="co">#&gt;  [55] vegan_2.7-5          timeDate_4052.112    codetools_0.2-20    </span></span>
+<span><span class="co">#&gt;  [58] listenv_1.0.0        lattice_0.22-9       tibble_3.3.1        </span></span>
+<span><span class="co">#&gt;  [61] plyr_1.8.9           withr_3.0.3          S7_0.2.2            </span></span>
+<span><span class="co">#&gt;  [64] geosphere_1.6-8      evaluate_1.0.5       sf_1.1-1            </span></span>
+<span><span class="co">#&gt;  [67] future_1.70.0        desc_1.4.3           survival_3.8-6      </span></span>
+<span><span class="co">#&gt;  [70] units_1.0-1          proxy_0.4-29         mclust_6.1.2        </span></span>
+<span><span class="co">#&gt;  [73] pillar_1.11.1        KernSmooth_2.23-26   corrplot_0.95       </span></span>
+<span><span class="co">#&gt;  [76] renv_1.1.4           foreach_1.5.2        stats4_4.5.2        </span></span>
+<span><span class="co">#&gt;  [79] generics_0.1.4       ggplot2_4.0.3        scales_1.4.0        </span></span>
+<span><span class="co">#&gt;  [82] globals_0.19.1       xtable_1.8-8         class_7.3-23        </span></span>
+<span><span class="co">#&gt;  [85] glue_1.8.1           clValid_0.7          emmeans_2.0.3       </span></span>
+<span><span class="co">#&gt;  [88] tools_4.5.2          data.table_1.18.4    ModelMetrics_1.2.2.2</span></span>
+<span><span class="co">#&gt;  [91] gower_1.0.2          fs_2.1.0             mvtnorm_1.4-1       </span></span>
+<span><span class="co">#&gt;  [94] dotCall64_1.2        grid_4.5.2           tidyr_1.3.2         </span></span>
+<span><span class="co">#&gt;  [97] ipred_0.9-15         patchwork_1.3.2      nlme_3.1-169        </span></span>
+<span><span class="co">#&gt; [100] cli_3.6.6            rappdirs_0.3.4       textshaping_1.0.5   </span></span>
+<span><span class="co">#&gt; [103] NbClust_3.0.1        spam_2.11-4          viridisLite_0.4.3   </span></span>
+<span><span class="co">#&gt; [106] lava_1.9.1           dplyr_1.2.1          gtable_0.3.6        </span></span>
+<span><span class="co">#&gt; [109] sass_0.4.10          digest_0.6.39        classInt_0.4-11     </span></span>
+<span><span class="co">#&gt; [112] caret_7.0-1          ggrepel_0.9.8        htmlwidgets_1.6.4   </span></span>
+<span><span class="co">#&gt; [115] farver_2.1.2         entropy_1.3.2        htmltools_0.5.9     </span></span>
+<span><span class="co">#&gt; [118] pkgdown_2.2.0        lifecycle_1.0.5      factoextra_2.0.0    </span></span>
+<span><span class="co">#&gt; [121] httr_1.4.8           hardhat_1.4.3        MASS_7.3-65</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -660,11 +718,11 @@ climate and distance truly shape species turnover.</em></p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Sandra MacFadyen.</p>
+  <p>Developed by Sandra MacFadyen, <a href="https://doi.org/10.3030/101059592" class="external-link"><img src="https://raw.githubusercontent.com/b-cubed-eu/dubicube/main/man/figures/eu-funded-en.png" height="35" alt="Funded by the European Union"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

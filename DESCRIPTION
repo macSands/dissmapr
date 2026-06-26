@@ -1,10 +1,21 @@
 Type: Package
 Package: dissmapr
 Title: Workflow for Compositional Dissimilarity and Biodiversity Turnover Analysis
-Version: 0.1.0
-Authors@R: 
-  person("Sandra", "MacFadyen", email = "macfadyen@sun.ac.za", role = c("aut", "cre"))
-Description: Tools to compute and map biodiversity turnover at the macroscale.
+Version: 0.2.0
+Authors@R: c(
+    person("Sandra", "MacFadyen", email = "macfadyen@sun.ac.za",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-5316-440X")),
+    person("Stellenbosch University", role = "cph"),
+    person("European Union", role = "fnd",
+           comment = "Horizon Europe grant agreement ID 101059592 (B-Cubed)"))
+Description: Tools to compute and map biodiversity turnover at the
+    macroscale. 'dissmapr' provides a reproducible, end-to-end workflow
+    for computing and mapping compositional dissimilarity and biodiversity
+    turnover across large spatial scales, including occurrence-data
+    retrieval, environmental-data extraction, flexible grid generation,
+    order-wise dissimilarity computation (zeta diversity and multi-site
+    generalised dissimilarity modelling) and bioregional mapping.
 License: MIT + file LICENSE
 URL: https://github.com/b-cubed-eu/dissmapr, https://b-cubed-eu.github.io/dissmapr/
 BugReports: https://github.com/b-cubed-eu/dissmapr/issues
@@ -12,10 +23,14 @@ Suggests:
     devtools,
     knitr,
     pkgdown,
+    rcmdcheck,
     remotes,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tidyterra,
+    viridis
 Imports:
+    RColorBrewer,
     caret,
     cluster,
     clValid,
@@ -35,23 +50,22 @@ Imports:
     patchwork,
     pbapply,
     purrr,
-    rcmdcheck,
     rlang,
     reshape2,
+    scales,
     sf,
     terra,
+    tibble,
     tidyr,
-    tidyterra,
     vegan,
-    viridis,
     zoo,
     zetadiv
-VignetteBuilder: 
+VignetteBuilder:
     knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: false
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
-Depends: 
-    R (>= 3.5)
+Depends:
+    R (>= 4.1.0)
+Config/roxygen2/version: 8.0.0

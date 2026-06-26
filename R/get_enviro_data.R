@@ -23,9 +23,9 @@
 #'                  cropped raster is resampled before extraction. If `NULL`, no
 #'                  resampling is performed.
 #' @param path      Cache folder for downloaded rasters (created if absent).
-#' @param year, model, ssp, time  Optional arguments for time-stamped products
+#' @param year,model,ssp,time  Optional arguments for time-stamped products
 #'                  (human footprint, population, CMIP6, etc.).
-#' @param depth, stat  Arguments passed to `geodata::soil_world()`.
+#' @param depth,stat  Arguments passed to `geodata::soil_world()`.
 #' @param sp_cols   **Columns to drop** from the final table (e.g. a large
 #'                  species matrix). Accepts names or numeric indices *relative
 #'                  to `data`*.
@@ -37,7 +37,25 @@
 #' * `env_df`    Tibble with site ID, coordinates, every raster variable,
 #'               plus any columns requested in `ext_cols`
 #'
-#' @import sf terra dplyr geodata zoo
+#' @examples
+#' \dontrun{
+#' # Example sites with longitude/latitude columns
+#' sites <- data.frame(
+#'   site_id = 1:3,
+#'   x = c(18.5, 19.0, 19.5),
+#'   y = c(-33.9, -33.5, -34.1)
+#' )
+#'
+#' # Download WorldClim bioclimatic variables and link them to the sites
+#' enviro <- get_enviro_data(
+#'   data   = sites,
+#'   source = "geodata",
+#'   var    = "bio",
+#'   res    = 5
+#' )
+#' head(enviro$env_df)
+#' }
+#'
 #' @export
 get_enviro_data = function(data,
                            buffer_km = 10,
@@ -101,7 +119,7 @@ get_enviro_data = function(data,
 
   if (inherits(env_rast, "SpatRasterDataset")) {
     message("  - Merging ", length(env_rast), " raster files")
-    env_rast = do.call(terra::c, lapply(env_rast, terra::rast))
+    env_rast = do.call(c, lapply(env_rast, terra::rast))
   }
 
   message("  - Total layers: ", terra::nlyr(env_rast))

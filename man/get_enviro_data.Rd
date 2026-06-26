@@ -42,10 +42,10 @@ resampling is performed.}
 
 \item{path}{Cache folder for downloaded rasters (created if absent).}
 
-\item{year, }{model, ssp, time  Optional arguments for time-stamped products
+\item{year, model, ssp, time}{Optional arguments for time-stamped products
 (human footprint, population, CMIP6, etc.).}
 
-\item{depth, }{stat  Arguments passed to \code{geodata::soil_world()}.}
+\item{depth, stat}{Arguments passed to \code{geodata::soil_world()}.}
 
 \item{sp_cols}{\strong{Columns to drop} from the final table (e.g. a large
 species matrix). Accepts names or numeric indices \emph{relative
@@ -75,4 +75,24 @@ linearly interpolates isolated NAs.
 \item \strong{Assembly} - returns a tidy \emph{site x environment} table plus the cropped
 (and resampled) raster and an \code{sf} layer of sites.
 }
+}
+\examples{
+\dontrun{
+# Example sites with longitude/latitude columns
+sites <- data.frame(
+  site_id = 1:3,
+  x = c(18.5, 19.0, 19.5),
+  y = c(-33.9, -33.5, -34.1)
+)
+
+# Download WorldClim bioclimatic variables and link them to the sites
+enviro <- get_enviro_data(
+  data   = sites,
+  source = "geodata",
+  var    = "bio",
+  res    = 5
+)
+head(enviro$env_df)
+}
+
 }

@@ -1,29 +1,35 @@
-cff-version: 0.1.0
+cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
 title: "dissmapr: A Novel Framework for Compositional Dissimilarity and Biodiversity Turnover Analysis"
-version: 0.1.0
+version: 0.2.0
+doi: 10.5281/zenodo.20842434
+date-released: "2026-06-25"
 authors:
   - given-names: Sandra
     family-names: MacFadyen
     affiliation: Stellenbosch University
-    # orcid: 0000-0002-5316-440X
+    orcid: "https://orcid.org/0000-0002-5316-440X"
 keywords:
   - dissimilarity
   - biodiversity turnover
   - compositional analysis
+  - zeta diversity
+  - bioregionalisation
   - spatiotemporal statistics
+  - occurrence cube
   - B-Cubed
   - R
 contact:
   - given-names: Sandra
     family-names: MacFadyen
     affiliation: Stellenbosch University
-    # orcid: 0000-0002-5316-440X
+    orcid: "https://orcid.org/0000-0002-5316-440X"
 license: MIT
-repository-code: https://github.com/b-cubed-eu/dissmapr/
+repository-code: "https://github.com/b-cubed-eu/dissmapr/"
+url: "https://b-cubed-eu.github.io/dissmapr/"
 type: software
 abstract: >
-  `dissmapr` provides a reproducible, end-to-end workflow for computing and mapping
+  dissmapr provides a reproducible, end-to-end workflow for computing and mapping
   compositional dissimilarity and biodiversity turnover across large spatial scales.
   Core features include occurrence data retrieval, environmental data extraction,
   flexible grid generation, order-wise dissimilarity computations, and intuitive bioregional mapping.
@@ -31,4 +37,14 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.20842434
   - type: url
-    value: https://github.com/b-cubed-eu/dissmapr/
+    value: "https://github.com/b-cubed-eu/dissmapr/"
+references:
+  - type: software
+    title: "b3verse: A collection of R packages to work with occurrence cubes"
+    authors:
+      - family-names: Langeraert
+        given-names: Ward
+    url: "https://docs.b-cubed.eu/guides/b3verse/"
+  - type: generic
+    title: "B-Cubed: Biodiversity Building Blocks for policy - project documentation"
+    url: "https://docs.b-cubed.eu/"

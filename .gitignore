@@ -51,6 +51,11 @@ rsconnect/
 
 # Large .csv file
 *.csv
+# ...but keep the packaged data dictionary (must ship with the package)
+!inst/extdata/data_dictionary.csv
+
+# Local development scratch (drafts, figures, helper scripts) — not pushed
+dev/
 
 # Mac OS
 .DS_Store

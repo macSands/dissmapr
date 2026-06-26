@@ -60,15 +60,12 @@
 #'}
 #'
 #'rich_o12 = compute_orderwise(
-#'  df = block_sp,
+#'  df = data,
 #'  func = richness,
-#'  site_col = 'grid_id',
-#'  sp_cols = sp_cols,
-#'  # sample_no = 1000,
-#'  # sample_portion = 0.5,  # Default is 1 (100%)
-#'  order = 1:2,  # Compute for pairwise and higher-order comparisons
-#'  parallel = TRUE,
-#'  n_workers = 4
+#'  site_col = 'site',
+#'  sp_cols = c('sp1', 'sp2'),
+#'  order = 1:2,      # Compute for pairwise and higher-order comparisons
+#'  parallel = FALSE  # keep the example single-threaded
 #')
 #'head(rich_o12)
 #'
@@ -83,19 +80,11 @@ compute_orderwise = function(df,# Optimized Compute_Orderwise Function
                               parallel = TRUE,
                               n_workers = parallel::detectCores() - 1) {
 
-  # Load required packages
-  required_packages = c("pbapply", "data.table", "future.apply")
+  # Check required packages are installed (all are declared in Imports and
+  # called via their namespace, so no library() attachment is needed).
+  required_packages = c("pbapply", "data.table", "cluster", "dplyr")
   lapply(required_packages, function(pkg) {
     if (!requireNamespace(pkg, quietly = TRUE)) stop("Package '", pkg, "' is required but not installed.")
-  })
-
-  # Load Required Libraries
-  suppressPackageStartupMessages({
-    library(pbapply)       # For progress bar
-    library(data.table)    # For data manipulation
-    library(cluster)       # For dissimilarity calculations
-    library(future.apply)  # For parallel processing
-    library(dplyr)         # For data manipulation
   })
 
   # Convert to data.table for efficiency
@@ -283,7 +272,7 @@ compute_orderwise = function(df,# Optimized Compute_Orderwise Function
     elapsed_time_ord = difftime(end_time_ord, start_time, units = "secs")
     elapsed_minutes_ord = floor(as.numeric(elapsed_time_ord) / 60)
     elapsed_seconds_ord = as.numeric(elapsed_time_ord) %% 60
-    cat(sprintf("Time elapsed for order %d: %d minutes and %.2f seconds\n", ord, elapsed_minutes_ord, elapsed_seconds_ord))
+    message(sprintf("Time elapsed for order %d: %d minutes and %.2f seconds", ord, elapsed_minutes_ord, elapsed_seconds_ord))
   }
 
   # Combine all results into a single data.table
@@ -294,7 +283,7 @@ compute_orderwise = function(df,# Optimized Compute_Orderwise Function
   total_elapsed = difftime(end_time, start_time, units = "secs")
   total_minutes = floor(as.numeric(total_elapsed) / 60)
   total_seconds = as.numeric(total_elapsed) %% 60
-  cat(sprintf("Total computation time: %d minutes and %.2f seconds\n", total_minutes, total_seconds))
+  message(sprintf("Total computation time: %d minutes and %.2f seconds", total_minutes, total_seconds))
 
   return(final_results)
 }

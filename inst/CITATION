@@ -1,10 +1,12 @@
 citHeader("To cite dissmapr in publications use:")
 
-citEntry(
-  entry    = "manual",
-  title    = "dissmapr: A framework for Compositional Dissimilarity and Biodiversity Turnover Analysis",
-  author   = person("Sandra", "MacFadyen"),
-  year     = "2025",
-  note     = "R package version 0.1.0",
+bibentry(
+  bibtype  = "Manual",
+  title    = "dissmapr: A Novel Framework for Compositional Dissimilarity and Biodiversity Turnover Analysis",
+  author   = person("Sandra", "MacFadyen",
+                    comment = c(ORCID = "0000-0002-5316-440X")),
+  year     = "2026",
+  note     = "R package version 0.2.0",
+  doi      = "10.5281/zenodo.20842434",
   url      = "https://github.com/b-cubed-eu/dissmapr"
 )

@@ -18,7 +18,7 @@ generate_grid(
 \arguments{
 \item{data}{Data frame of points with x-y coordinates.}
 
-\item{x_col, }{y_col    Column names for longitude and latitude.}
+\item{x_col, y_col}{Column names for longitude and latitude.}
 
 \item{grid_size}{Cell size (degrees or metres, depending on CRS).}
 

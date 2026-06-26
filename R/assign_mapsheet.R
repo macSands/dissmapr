@@ -13,7 +13,7 @@
 #'
 #' This function takes an existing data frame with coordinate columns and
 #' appends:
-#'  1. the nearest mapsheet code (format "[E|W]DDD[N|S]DDBB"), and
+#'  1. the nearest mapsheet code (format `"[E|W]DDD[N|S]DDBB"`), and
 #'  2. the center longitude/latitude of that mapsheet.
 #'
 #' It divides the world into regular grid cells (in degrees, minutes, seconds,

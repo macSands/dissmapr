@@ -9,7 +9,6 @@
 #' @keywords internal
 #' @importFrom data.table as.data.table rbindlist
 #' @importFrom geosphere distHaversine
-#' @import vegan
 #' @importFrom cluster daisy
 #' @importFrom reshape2 melt
 #' @importFrom entropy mi.plugin
@@ -87,7 +86,6 @@ geodist_helper <- function(vec_from, vec_to = NULL, coord_cols = c("centroid_lon
 #' @keywords internal
 #'
 distance <- function(df, site_col, vec_from, vec_to = NULL, coord_cols = c("x", "y")) {
-  library(geosphere)
 
   # Subset 'from' data
   site_from_data <- df[df[[site_col]] == vec_from, coord_cols, drop = FALSE]
@@ -129,12 +127,22 @@ distance <- function(df, site_col, vec_from, vec_to = NULL, coord_cols = c("x", 
 #'
 #' @examples
 #' # default usage when your coords are in columns "x" and "y"
+#' my_sites_df <- data.frame(
+#'   grid_id = 1:4,
+#'   x = c(18.4, 18.6, 19.0, 19.2),
+#'   y = c(-33.9, -34.0, -33.7, -33.5)
+#' )
 #' dist_df_default <- calculate_pairwise_distances_matrix(data = my_sites_df)
 #' head(dist_df_default)
 #'
 #' # specify custom column names for longitude and latitude
+#' sites_custom <- data.frame(
+#'   grid_id = 1:4,
+#'   centroid_lon = c(18.4, 18.6, 19.0, 19.2),
+#'   centroid_lat = c(-33.9, -34.0, -33.7, -33.5)
+#' )
 #' dist_df <- calculate_pairwise_distances_matrix(
-#'   data  = my_sites_df,
+#'   data  = sites_custom,
 #'   x_col = "centroid_lon",
 #'   y_col = "centroid_lat"
 #' )
@@ -509,7 +517,6 @@ calculate_pairwise_gower_dist_matrix <- function(df, sp_cols) {
 # @keywords internal
 #'
 mutual_info <- function(vec_from, vec_to) {
-  library(entropy)
   if (length(vec_from) > 1 && length(vec_to) > 1) {
     joint_dist <- table(vec_from, vec_to)
     mi <- mi.plugin(joint_dist)

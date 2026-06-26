@@ -54,8 +54,6 @@
 #'
 #' @export
 rm_correlated <- function(data, cols = NULL, threshold = 0.7, plot = TRUE) {
-  library(caret)
-  library(corrplot)
 
   # Select only specified columns or default to all columns in the data
   if (is.null(cols)) {
@@ -80,11 +78,11 @@ rm_correlated <- function(data, cols = NULL, threshold = 0.7, plot = TRUE) {
   vars_reduced <- vars[, !names(vars) %in% highlyCorrelated]
 
   # Output the results
-  cat("Variables removed due to high correlation:\n")
-  print(highlyCorrelated)
+  message("Variables removed due to high correlation:")
+  message(paste(highlyCorrelated, collapse = ", "))
 
-  cat("\nVariables retained:\n")
-  print(names(vars_reduced))
+  message("Variables retained:")
+  message(paste(names(vars_reduced), collapse = ", "))
 
   # Return the reduced dataset
   return(vars_reduced)

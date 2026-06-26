@@ -1,0 +1,147 @@
+---
+title: "Map bioregion change"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Map bioregion change}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup-8, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "figures/8-",
+  out.width = "100%",
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+```{r read_files, include=FALSE}
+# Load the objects this article needs from the single bundled snapshot.
+library(viridis)
+library(terra)
+inputs = readRDS("_data/dissmapr_vignettes.rds")
+
+grid_masked = terra::mask(terra::setValues(terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]], 1), terra::vect(inputs$rsa))
+future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
+rsa = inputs$rsa
+grid_spp = inputs$grid_spp
+sp_cols = inputs$sp_cols
+
+current_nn = terra::rast(system.file("extdata", "current_nn.tif", package = "dissmapr"))
+future_hclt = terra::rast(system.file("extdata", "future_hclt.tif", package = "dissmapr"))
+```
+
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+
+### 1. Map sensitivity of bioregion delineation to clustering method using `map_bioregDiff()`
+
+In the sections below we use `map_bioregDiff()` to assess how much our four clustering algorithms disagree (a sensitivity check). Here we treat the various cluster maps generated with `map_bioreg()` (k-means, PAM, hierarchical and GMM) as a sensitivity analysis. By feeding all four algorithm outputs into `map_bioregDiff()`, we quantify where and how much those methods disagree. This shows which areas are robust to algorithm choice and which are method‐dependent.
+
+**Change-metric options in `map_bioregDiff()` include** (`approach` argument):   
+
+- **difference_count**: counts how many times a cell’s label deviates from the first layer.   
+- **shannon_entropy**: Shannon entropy of the label sequence, a measure of within-cell diversity.   
+- **stability**: proportion of layers in which the label is unchanged (1 = always stable, 0 = always different).   
+- **transition_frequency**: total number of label flips between consecutive layers, showing how often change occurs.   
+- **weighted_change_index**: cumulative change weighted by a dissimilarity matrix so rare or large transitions score higher.   
+- **all** (default): returns a five-layer `SpatRaster` containing every metric.   
+
+
+```{r bioreg-Diff, fig.alt="Bioregion sensitivity to method"}
+# Get current nn rasters
+# current_nn = c(bioreg_current$nn$current$kmeans_algn_current,
+#              bioreg_current$nn$current$pam_algn_current,
+#              bioreg_current$nn$current$hclust_algn_current,
+#              bioreg_current$nn$current$gmm_algn_current)
+names(current_nn)
+
+# Run `map_bioregDiff`
+# 'approach', specifies which metric to compute:
+sens_bioregDiff = dissmapr::map_bioregDiff(
+  current_nn,
+  approach = "all"
+)
+
+# Inspect the output layers
+sens_bioregDiff
+
+# Crop to our study area and prepare for plotting
+mask_sens_bioregDiff = terra::mask(
+  terra::resample(sens_bioregDiff, grid_masked, method = "near"),
+  grid_masked
+)
+
+# Quick visual QC in a 3×2 layout
+old_par = par(mfrow = c(3, 2), mar = c(1, 1, 1, 5))
+titles = c("Difference count", "Shannon entropy", "Stability",
+           "Transition frequency", "Weighted change index")
+
+for (i in seq_along(titles)) {
+  plot(mask_sens_bioregDiff[[i]],
+       col      = viridis(100, direction = -1),
+       colNA    = NA,
+       axes     = FALSE,
+       main     = titles[i],
+       cex.main = 0.8)
+  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+}
+par(old_par)
+
+```
+
+### 2. Map bioregion sensitivity to future change using `map_bioregDiff()`
+
+Here we use `map_bioregDiff()` to track how the hierarchical‐cluster map itself changes under three future climate scenarios. Focusing solely on the hierarchical solution we map bioregion change across time. First we stack the hierarchical clusters for today, 2030, 2040 and 2050, run `map_bioregDiff()` on that series, and highlight how bioregions shift under these future climate projections. In this way we isolate climate-driven reorganization in the hierarchical map itself.
+
+```{r bioreg-diff-futures, message=FALSE, fig.alt="Bioregion sensitivity to change"}
+# 1. Build a multi‐layer SpatRaster of hierarchical clusters for each scenario
+# Create SpatRast
+# future_hclt = c(bioreg_future$nn$current$hclust_current,
+#              bioreg_future$nn$`2030`$hclust_2030,
+#              bioreg_future$nn$`2040`$hclust_2040,
+#              bioreg_future$nn$`2050`$hclust_2050)
+names(future_hclt)
+
+# 2. Compute change metrics across those four layers
+future_bioregDiff = dissmapr::map_bioregDiff(future_hclt, approach = "all")
+
+# 3. Mask to your RSA boundary (assuming 'grid_masked' is your template)
+mask_future_bioregDiff = terra::mask(
+  terra::resample(future_bioregDiff, grid_masked, method = "near"),
+  grid_masked
+)
+
+# 4. Plot all five metrics in a 3×2 panel
+old_par = par(mfrow = c(3, 2), mar = c(1, 1, 1, 5))
+titles = c(
+  "Difference count",
+  "Shannon entropy",
+  "Stability",
+  "Transition frequency",
+  "Weighted change index"
+)
+for (i in seq_along(titles)) {
+  plot(
+    mask_future_bioregDiff[[i]],
+    # col      = viridisLite::turbo(100),
+    col      = viridis(100, direction = -1),
+    colNA    = NA,
+    axes     = FALSE,
+    main     = titles[i],
+    cex.main = 0.8
+  )
+  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+}
+par(old_par)
+
+```
+
+```{r session-info}
+sessionInfo()
+```

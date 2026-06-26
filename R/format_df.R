@@ -44,8 +44,7 @@
 #'
 #' @seealso \code{\link[dplyr]{group_by}}, \code{\link[tidyr]{pivot_wider}}
 #'
-#' @importFrom dplyr group_by across mutate rename select summarise filter any_of
-#'   cur_group_id ungroup
+#' @importFrom dplyr group_by across mutate rename select summarise filter any_of cur_group_id ungroup
 #' @importFrom tidyr pivot_wider
 #' @importFrom rlang sym
 #'
@@ -166,7 +165,8 @@ format_df <- function(data,
         names_from  = species,
         values_from = value,
         values_fill = 0
-      )
+      ) %>%
+      as.data.frame()
 
     # Make unique row names
     row.names(site_spp) <- make.unique(as.character(site_spp$site_id))
