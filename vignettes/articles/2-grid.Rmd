@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r read_files, include=FALSE}
+```{r read_files}
 # Load libraries
 library(ggplot2)
 
