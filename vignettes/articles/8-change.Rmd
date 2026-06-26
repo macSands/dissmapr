@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 
 ```{r read_files}
 # Load the objects this article needs from the single bundled snapshot.
+library(dissmapr)
 library(viridis)
 library(terra)
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))

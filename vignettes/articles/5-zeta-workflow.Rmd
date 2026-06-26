@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r read_files}
+library(dissmapr)
 library(patchwork)
 # Load the single bundled snapshot of all vignette state.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))

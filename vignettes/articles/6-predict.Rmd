@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 
 ```{r read_files}
 # Load the objects this article needs from the single bundled snapshot.
+library(dissmapr)
 library(ggplot2)
 library(dplyr)
 library(purrr)
