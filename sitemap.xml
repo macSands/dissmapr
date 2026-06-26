@@ -4,9 +4,7 @@
 <url><loc>https://b-cubed-eu.github.io/dissmapr/CONTRIBUTING.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/LICENSE-text.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/LICENSE.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/_dev_README.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/1-setup.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/articles/10-zenodo.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/2-grid.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/3-enviro.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/4-zeta.html</loc></url>
@@ -15,6 +13,7 @@
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/7-bioregion.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/8-change.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/9-examples.html</loc></url>
+<url><loc>https://b-cubed-eu.github.io/dissmapr/articles/dissmapr.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/index.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/authors.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/index.html</loc></url>
@@ -27,7 +26,7 @@
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/cor_pears.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/cor_spear.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/diss_bcurt.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/reference/dissmapr.html</loc></url>
+<url><loc>https://b-cubed-eu.github.io/dissmapr/reference/dissmapr-package.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/distance.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/format_df.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/generate_grid.html</loc></url>
@@ -35,12 +34,10 @@
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/get_enviro_data.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/get_occurrence_data.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/gower_dissimilarity.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/reference/hello.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/index.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/map_bioreg.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/map_bioregDiff.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/mutual_info.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/reference/optimized_compute_orderwise.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/orderwise_diss_gower.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/phi_coef.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/plot_ispline_boxplots.html</loc></url>

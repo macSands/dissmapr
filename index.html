@@ -12,14 +12,14 @@
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/PT_Sans-0.4.10/font.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/PT_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Workflow for Compositional Dissimilarity and Biodiversity Turnover Analysis">
-<meta name="description" content="Tools to compute and map biodiversity turnover at the macroscale.">
-<meta property="og:description" content="Tools to compute and map biodiversity turnover at the macroscale.">
+<meta name="description" content="Tools to compute and map biodiversity turnover at the macroscale. dissmapr provides a reproducible, end-to-end workflow for computing and mapping compositional dissimilarity and biodiversity turnover across large spatial scales, including occurrence-data retrieval, environmental-data extraction, flexible grid generation, order-wise dissimilarity computation (zeta diversity and multi-site generalised dissimilarity modelling) and bioregional mapping.">
+<meta property="og:description" content="Tools to compute and map biodiversity turnover at the macroscale. dissmapr provides a reproducible, end-to-end workflow for computing and mapping compositional dissimilarity and biodiversity turnover across large spatial scales, including occurrence-data retrieval, environmental-data extraction, flexible grid generation, order-wise dissimilarity computation (zeta diversity and multi-site generalised dissimilarity modelling) and bioregional mapping.">
 <meta property="og:image" content="https://b-cubed-eu.github.io/dissmapr/logo.png">
 </head>
 <body>
@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="index.html">dissmapr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/dissmapr.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
 <li class="nav-item dropdown">
@@ -55,7 +56,6 @@
     <li><a class="dropdown-item" href="articles/7-bioregion.html">Map bioregions</a></li>
     <li><a class="dropdown-item" href="articles/8-change.html">Map bioregion change</a></li>
     <li><a class="dropdown-item" href="articles/9-examples.html">Compute orderwise examples</a></li>
-    <li><a class="dropdown-item" href="articles/10-zenodo.html">Zenodo basics</a></li>
   </ul>
 </li>
       </ul>
@@ -72,145 +72,195 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level1">
+  <main id="main" class="col-md-9">
+<!-- badges: end -->
+<div class="section level1">
 <div class="page-header">
-<img src="logo.png" class="logo" alt=""><h1 id="dissmapr">
-<strong><code>dissmapr</code></strong>
-<a class="anchor" aria-label="anchor" href="#dissmapr"></a>
+<img src="logo.png" class="logo" alt=""><h1 id="dissmapr-">dissmapr 
+<a class="anchor" aria-label="anchor" href="#dissmapr-"></a>
 </h1>
 </div>
 <div class="section level2">
-<h2 id="a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis">A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis<a class="anchor" aria-label="anchor" href="#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis"></a>
+<h2 id="a-workflow-for-compositional-dissimilarity-and-biodiversity-turnover-analysis">A Workflow for Compositional Dissimilarity and Biodiversity Turnover Analysis<a class="anchor" aria-label="anchor" href="#a-workflow-for-compositional-dissimilarity-and-biodiversity-turnover-analysis"></a>
 </h2>
-<!-- badges: start -->
-
-<!-- badges: end -->
-<hr>
+<p><code>dissmapr</code> is an open-source R package that provides a complete, reproducible workflow for analysing how biological communities change across space and time. Rather than focusing on the predicted occurrence of individual species, it quantifies variation in <strong>assemblage composition</strong> — a <em>community-level</em> perspective on biodiversity change. It is designed to work with standardised species-occurrence records from biodiversity data infrastructures such as <a href="https://www.gbif.org/" class="external-link">GBIF</a>, and can be applied to any taxon, region, or time period where sufficient occurrence data are available.</p>
+<p>The framework combines occurrence records with environmental covariates to compute <strong>multi-site compositional turnover</strong> using order-wise metrics such as <strong>zeta diversity</strong>. These dissimilarities are linked to environmental and geographic drivers through predictive models, allowing users to generate <strong>turnover surfaces</strong>, delineate <strong>bioregions</strong>, and assess how community structure may <strong>reorganise under future conditions</strong> — all fully scripted, from raw data to final mapped outputs.</p>
+<p>The result is the <strong>Dissimilarity Cube</strong>: one of the <a href="https://b-cubed.eu/" class="external-link">B-Cubed</a> family of biodiversity data products (alongside Suitability and Invasibility Cubes) that turns biodiversity records into mappable signals of community change, helping to identify stable regions, shifting assemblages, and areas at risk of ecological reorganisation.</p>
 </div>
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="why-community-level-analysis">Why community-level analysis?<a class="anchor" aria-label="anchor" href="#why-community-level-analysis"></a>
 </h2>
-<p>Quantifying <strong>dissimilarity</strong> is central to ecology and biodiversity science. Whether comparing communities across landscapes, examining functional distances between species, or assessing environmental contrasts, dissimilarity metrics underpin analyses of diversity, turnover, and ecological change. However, these metrics are often scattered across packages, calculated inconsistently, or tailored to a single data type (e.g., species composition only).</p>
-<p><strong><code>dissmapr</code></strong> provides a unified, transparent, and reproducible framework for calculating and analysing dissimilarities across <strong>communities</strong>, <strong>traits</strong>, and <strong>environments</strong>. By bringing these components together, the package helps ecologists explore how biodiversity varies in space and time, and how functional and environmental contexts shape these patterns.</p>
-<p>The package goes beyond simple pairwise distances, offering tools to:</p>
-<ul>
-<li>Partition dissimilarity into interpretable components such as <strong>turnover</strong> and <strong>nestedness</strong>.</li>
-<li>Directly map dissimilarity values to geographic or environmental space, enabling spatially explicit analyses.</li>
-<li>Compare metrics across data types, fostering integrated biodiversity assessments.</li>
-</ul>
-<p>By combining flexible metric choice with consistent data handling and mapping functions, <code>dissmapr</code> is designed to streamline biodiversity workflows, support cross-study comparability, and provide decision-relevant outputs for conservation and global change research.</p>
-<hr>
+<p>Single-species models are powerful for targeted assessments, but they cannot reveal the <em>emergent</em> properties of assemblages — the coherence of species pools, the integrity of functional groups, or the degree to which novel community combinations are forming. Traditional <strong>beta diversity</strong> captures differences between two assemblages, yet ecological processes operate simultaneously across <strong>many</strong> sites. <code>dissmapr</code> formalises <strong>multi-site</strong> dissimilarity, enabling consistent quantification and modelling of compositional change across spatial and temporal scales.</p>
+<p>This matters for policy. Frameworks such as the <strong>Kunming-Montreal Global Biodiversity Framework</strong> and the <strong>EU Biodiversity Strategy for 2030</strong> increasingly require indicators that reflect the state and trajectory of ecosystems <em>as a whole</em>, not merely the status of individual species. By linking compositional turnover to environmental drivers, <code>dissmapr</code> also enables <strong>scenario-based</strong> assessment that informs proactive — rather than reactive — management.</p>
 </div>
 <div class="section level2">
-<h2 id="core-concepts">Core Concepts<a class="anchor" aria-label="anchor" href="#core-concepts"></a>
+<h2 id="zeta-diversity-beyond-pairwise-comparisons">Zeta diversity: beyond pairwise comparisons<a class="anchor" aria-label="anchor" href="#zeta-diversity-beyond-pairwise-comparisons"></a>
 </h2>
-<ul>
-<li>
-<strong>Community dissimilarity</strong> - quantifies differences in species composition across sites (e.g., Jaccard, Sørensen).</li>
-<li>
-<strong>Functional dissimilarity</strong> - measures divergence in trait space, capturing ecological strategies and redundancy.</li>
-<li>
-<strong>Environmental dissimilarity</strong> - evaluates contrasts in abiotic conditions such as climate, soils, or land cover.</li>
-<li>
-<strong>Partitioning</strong> - decomposes total dissimilarity into turnover (species replacement) vs. nestedness (species loss/gain).</li>
-<li>
-<strong>Mapping</strong> - links dissimilarity values back to geographic or environmental gradients for spatial interpretation.</li>
-</ul>
-<p>Together, these concepts provide a flexible toolkit for exploring biodiversity structure across ecological, functional, and environmental dimensions.</p>
-<hr>
+<p><strong>Zeta diversity</strong> (ζ) generalises beta diversity by quantifying the number of species shared across <em>i</em> sites, extending analysis beyond pairwise comparisons. Lower orders (ζ₂, ζ₃) represent turnover among <strong>rare or localised</strong> species, whereas higher orders capture turnover in <strong>widespread, common</strong> species. The rate of <strong>zeta decline</strong> with increasing order quantifies the overall rate of compositional turnover: steep declines indicate high turnover (few species in common among sites), while shallow declines suggest more homogeneous assemblages.</p>
+<div align="center">
+<p><img src="reference/figures/zeta-diversity.png" width="55%" alt="Conceptual Venn diagram of zeta diversity"></p>
+</div>
+<p><em>Conceptual Venn diagram of zeta diversity, showing species shared across increasing numbers of sites (zeta-orders). At ζ₁ (a single site) zeta equals local species richness; at ζ₂ it counts species shared between pairs of sites; at higher orders progressively fewer species are held in common.</em></p>
 </div>
 <div class="section level2">
-<h2 id="main-functions">Main Functions<a class="anchor" aria-label="anchor" href="#main-functions"></a>
+<h2 id="the-dissmapr-workflow">The dissmapr workflow<a class="anchor" aria-label="anchor" href="#the-dissmapr-workflow"></a>
 </h2>
-<p>The package is structured around modular steps, so users can build end-to-end workflows or extract individual components:</p>
+<p>The workflow is modular and fully scripted, so each stage is transparent and repeatable. It is organised in three phases:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Inputs &amp; setup</strong> — define the study region and spatial resolution, acquire species-occurrence data (e.g. from GBIF via <code>rgbif</code>), assemble environmental predictor layers, and harmonise everything onto a common grid as site-by-species and site-by-environment matrices.</li>
+<li>
+<strong>From data to dissimilarity</strong> — compute order-wise <strong>zeta</strong> diversity (via the <a href="https://cran.r-project.org/package=zetadiv" class="external-link"><code>zetadiv</code></a> package) and relate it to environmental and geographic predictors using <strong>Multi-Site Generalised Dissimilarity Modelling (MS-GDM)</strong> with monotonic i-splines.</li>
+<li>
+<strong>Prediction, mapping &amp; scenarios</strong> — predict continuous turnover surfaces, cluster them into <strong>bioregions</strong>, and propagate the fitted models to alternative (e.g. future-climate) scenarios to forecast shifting community boundaries.</li>
+</ol>
+<div align="center">
+<p><img src="reference/figures/dissmapr_workflow.png" width="80%" alt="The dissmapr workflow, from occurrence and environmental data to dissimilarity, bioregions and scenarios"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>Install from GitHub using:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"b-cubed-eu/dissmapr"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="a-minimal-reproducible-example">A minimal, reproducible example<a class="anchor" aria-label="anchor" href="#a-minimal-reproducible-example"></a>
+</h2>
+<p>The example below runs end-to-end on the GBIF butterfly dataset for South Africa that ships with the package, moving from <strong>occurrence records</strong> to a gridded <strong>species-richness</strong> map. Every input is loaded with <code><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file()</a></code>, so the example is fully self-contained and reproducible.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/dissmapr" class="external-link">dissmapr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1. Load the example occurrence dataset shipped with the package</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"gbif_butterflies_csv.RData"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. Import and harmonise the occurrence records</span></span>
+<span><span class="va">occ</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_occurrence_data.html">get_occurrence_data</a></span><span class="op">(</span></span>
+<span>  data        <span class="op">=</span> <span class="va">gbif_butterflies_csv</span>,</span>
+<span>  source_type <span class="op">=</span> <span class="st">"data_frame"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3. Reshape into long (site_obs) and wide (site_spp) tables</span></span>
+<span><span class="va">fmt</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/format_df.html">format_df</a></span><span class="op">(</span></span>
+<span>  data        <span class="op">=</span> <span class="va">occ</span>,</span>
+<span>  species_col <span class="op">=</span> <span class="st">"verbatimScientificName"</span>,</span>
+<span>  value_col   <span class="op">=</span> <span class="st">"pa"</span>,</span>
+<span>  format      <span class="op">=</span> <span class="st">"long"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">site_spp</span> <span class="op">&lt;-</span> <span class="va">fmt</span><span class="op">$</span><span class="va">site_spp</span></span>
+<span></span>
+<span><span class="co"># 4. Summarise records onto a 0.5-degree grid</span></span>
+<span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/generate_grid.html">generate_grid</a></span><span class="op">(</span></span>
+<span>  data      <span class="op">=</span> <span class="va">site_spp</span>,</span>
+<span>  x_col     <span class="op">=</span> <span class="st">"x"</span>,</span>
+<span>  y_col     <span class="op">=</span> <span class="st">"y"</span>,</span>
+<span>  grid_size <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  sum_cols  <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">site_spp</span><span class="op">)</span>,</span>
+<span>  crs_epsg  <span class="op">=</span> <span class="fl">4326</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 5. Map gridded species richness</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">grid</span><span class="op">$</span><span class="va">grid_r</span><span class="op">[[</span><span class="st">"spp_rich"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>            main <span class="op">=</span> <span class="st">"Butterfly species richness (0.5° grid)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-minimal-example-1.png" alt="" width="75%" style="display: block; margin: auto;"></p>
+<p>The full, step-by-step tutorials — from data acquisition through MS-GDM, prediction, and bioregionalisation — are available under <a href="https://b-cubed-eu.github.io/dissmapr/articles/">Articles</a> on the package website.</p>
+</div>
+<div class="section level2">
+<h2 id="from-turnover-to-bioregions">From turnover to bioregions<a class="anchor" aria-label="anchor" href="#from-turnover-to-bioregions"></a>
+</h2>
+<p>The complete workflow turns occurrence records into interpretable, mapped products. The MS-GDM engine (<code><a href="reference/run_ispline_models.html">run_ispline_models()</a></code>) fits monotonic <strong>i-spline</strong> curves that quantify how compositional turnover responds to each environmental gradient:</p>
+<div align="center">
+<p><img src="reference/figures/msgdm-isplines.png" width="78%" alt="MS-GDM i-spline partial-dependence curves"></p>
+</div>
+<p><em>I-spline partial-dependence curves from the MS-GDM. Steeper slopes mark environmental ranges where small changes drive large shifts in community composition; flat regions indicate relative compositional stability.</em></p>
+<p>Predicted turnover surfaces are then clustered into <strong>data-driven bioregions</strong> (<code><a href="reference/map_bioreg.html">map_bioreg()</a></code>) — ecologically coherent units defined by species co-occurrence rather than administrative boundaries:</p>
+<div align="center">
+<p><img src="reference/figures/bioregions.png" width="80%" alt="Bioregional partitions of South Africa from butterfly assemblage turnover"></p>
+</div>
+<p><em>Bioregional partitions of South Africa derived from butterfly assemblage turnover (ζ₂), shown for several clustering algorithms. Areas of consistent classification mark core bioregions; divergent areas mark transition zones.</em></p>
+<p>Finally, <code><a href="reference/map_bioregDiff.html">map_bioregDiff()</a></code> compares baseline and scenario-projected bioregions to highlight where communities are expected to <strong>reorganise</strong> under environmental change:</p>
+<div align="center">
+<p><img src="reference/figures/bioregion-change.png" width="65%" alt="Areas of expected community reorganisation under alternative environmental futures"></p>
+</div>
+<p><em>Areas of expected community reorganisation under alternative environmental futures — flagging priority areas for monitoring and adaptive management.</em></p>
+</div>
+<div class="section level2">
+<h2 id="package-functions">Package functions<a class="anchor" aria-label="anchor" href="#package-functions"></a>
+</h2>
+<p>The package consists of <strong>10 core functions</strong> spanning the full pipeline, three <strong>ζ-MSGDM</strong> workflow helpers, and a suite of <strong>order-wise metrics</strong>.</p>
 <div class="section level3">
-<h3 id="data-handling">
-<strong>Data Handling</strong><a class="anchor" aria-label="anchor" href="#data-handling"></a>
+<h3 id="core-functions">Core functions<a class="anchor" aria-label="anchor" href="#core-functions"></a>
 </h3>
 <ul>
 <li>
-<code>standardise_traits()</code> - Clean and harmonise trait datasets for consistent use across analyses.</li>
+<code><a href="reference/get_occurrence_data.html">get_occurrence_data()</a></code> – Import and harmonise biodiversity-occurrence data.</li>
 <li>
-<code>compute_distance_matrix()</code> - Generate dissimilarity matrices from traits, environment, or community composition data.</li>
+<code><a href="reference/generate_grid.html">generate_grid()</a></code> – Generate spatial grids and gridded summaries.</li>
+<li>
+<code><a href="reference/assign_mapsheet.html">assign_mapsheet()</a></code> – Add nearest mapsheet codes and centre coordinates.</li>
+<li>
+<code><a href="reference/get_enviro_data.html">get_enviro_data()</a></code> – Retrieve, crop, resample, and link environmental rasters to sites.</li>
+<li>
+<code><a href="reference/format_df.html">format_df()</a></code> – Format biodiversity records to long/wide forms for analysis.</li>
+<li>
+<code><a href="reference/compute_orderwise.html">compute_orderwise()</a></code> – Compute order-wise metrics, including zeta diversity and dissimilarities.</li>
+<li>
+<code><a href="reference/rm_correlated.html">rm_correlated()</a></code> – Remove highly correlated predictors to avoid redundancy.</li>
+<li>
+<code><a href="reference/predict_dissim.html">predict_dissim()</a></code> – Predict pairwise compositional turnover (zeta-dissimilarity) with richness.</li>
+<li>
+<code><a href="reference/map_bioreg.html">map_bioreg()</a></code> – Raster-based clustering and interpolation of bioregional data.</li>
+<li>
+<code><a href="reference/map_bioregDiff.html">map_bioregDiff()</a></code> – Map bioregional change metrics between categorical raster layers.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="dissimilarity-metrics">
-<strong>Dissimilarity Metrics</strong><a class="anchor" aria-label="anchor" href="#dissimilarity-metrics"></a>
+<h3 id="ζ-msgdm-workflow">ζ-MSGDM workflow<a class="anchor" aria-label="anchor" href="#%CE%B6-msgdm-workflow"></a>
 </h3>
 <ul>
 <li>
-<code>beta_diversity()</code> - Partition dissimilarity into turnover and nestedness components, enabling mechanistic interpretation.</li>
+<code><a href="reference/run_ispline_models.html">run_ispline_models()</a></code> – Fit multiple <code><a href="https://rdrr.io/pkg/zetadiv/man/Zeta.msgdm.html" class="external-link">zetadiv::Zeta.msgdm</a></code> i-spline models and return the models plus a combined i-spline table.</li>
 <li>
-<code>functional_dissimilarity()</code> - Calculate distances among species or communities in trait space.</li>
+<code><a href="reference/plot_ispline_lines.html">plot_ispline_lines()</a></code> – Plot i-spline partial effects with quantile and start-point markers.</li>
 <li>
-<code>environmental_dissimilarity()</code> - Quantify abiotic contrasts between sites based on environmental variables.</li>
+<code><a href="reference/plot_ispline_boxplots.html">plot_ispline_boxplots()</a></code> – Plot facetted boxplots for all i-spline basis functions.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="mapping-and-analysis">
-<strong>Mapping and Analysis</strong><a class="anchor" aria-label="anchor" href="#mapping-and-analysis"></a>
+<h3 id="available-metrics">Available metrics<a class="anchor" aria-label="anchor" href="#available-metrics"></a>
 </h3>
-<ul>
-<li>
-<code>map_dissimilarity()</code> - Visualise dissimilarity patterns in geographic space, creating reproducible biodiversity maps.</li>
-<li>
-<code>summarise_dissimilarity()</code> - Collapse pairwise dissimilarities into site- or region-level summaries.</li>
-<li>
-<code>compare_dissimilarity()</code> - Evaluate agreement or divergence among alternative dissimilarity metrics.</li>
-</ul>
-<hr>
+<p>Use <code>helper_indices</code> to choose a metric for the <code>func</code> argument of <code><a href="reference/compute_orderwise.html">compute_orderwise()</a></code>: <code><a href="reference/richness.html">richness()</a></code>, <code><a href="reference/turnover.html">turnover()</a></code>, <code><a href="reference/abund.html">abund()</a></code>, <code><a href="reference/phi_coef.html">phi_coef()</a></code>, <code><a href="reference/cor_spear.html">cor_spear()</a></code>, <code><a href="reference/cor_pears.html">cor_pears()</a></code>, <code><a href="reference/diss_bcurt.html">diss_bcurt()</a></code> (Bray–Curtis), <code><a href="reference/orderwise_diss_gower.html">orderwise_diss_gower()</a></code> (Gower), <code><a href="reference/mutual_info.html">mutual_info()</a></code>, and <code><a href="reference/geodist_helper.html">geodist_helper()</a></code> (Haversine geographic distance).</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="applications">Applications<a class="anchor" aria-label="anchor" href="#applications"></a>
 </h2>
-<p><code>dissmapr</code> is designed for use across a wide range of biodiversity research and conservation contexts, including:</p>
 <ul>
 <li>
-<strong>Community ecology</strong> - comparing species composition across landscapes, ecoregions, or time periods.</li>
+<strong>Researchers</strong> – a standardised, reproducible platform for investigating the drivers and spatial patterns of community turnover; supports comparative studies across taxa, temporal change analyses, and methodological experiments.</li>
 <li>
-<strong>Functional ecology</strong> - linking species trait divergence to ecological strategies, redundancy, and resilience.</li>
+<strong>Conservation planners</strong> – a data-driven foundation for spatial prioritisation and network design: bioregional maps identify management units, turnover surfaces highlight transition zones, and change maps pinpoint areas of anticipated reorganisation.</li>
 <li>
-<strong>Environmental filtering</strong> - quantifying how abiotic differences shape community assembly.</li>
-<li>
-<strong>Macroecology</strong> - exploring spatial patterns of turnover and nestedness at regional to global scales.</li>
-<li>
-<strong>Conservation planning</strong> - generating reproducible dissimilarity maps to identify biodiversity hotspots, refugia, or vulnerable sites.</li>
+<strong>Policy</strong> – community-level indicators (rate of community change, stability of bioregional boundaries, emergence of novel assemblages) that complement species-level indicators required by the Kunming-Montreal Global Biodiversity Framework and the EU Biodiversity Strategy for 2030.</li>
 </ul>
-<hr>
-</div>
-<div class="section level2">
-<h2 id="why-use-dissmapr">Why Use <code>dissmapr</code>?<a class="anchor" aria-label="anchor" href="#why-use-dissmapr"></a>
-</h2>
-<ul>
-<li>
-<strong>Unified framework</strong> - integrates community, trait, and environmental dissimilarities in a consistent manner.</li>
-<li>
-<strong>Transparent &amp; reproducible</strong> - modular design supports repeatable workflows across datasets and studies.</li>
-<li>
-<strong>Interpretable outputs</strong> - provides partitioned metrics and mapping tools for actionable ecological insights.</li>
-<li>
-<strong>Flexible &amp; extensible</strong> - works with standard R data structures, making it easy to integrate into existing pipelines.</li>
-</ul>
-<hr>
-</div>
-<div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<p>The package can be installed from GitHub using:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"b-cubed-eu/dissmapr"</span><span class="op">)</span></span></code></pre></div>
-<hr>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<p>If you use <strong><code>dissmapr</code></strong>, please cite the package and associated methods. See <code>citation("dissmapr")</code> and the repository’s CITATION files.</p>
+<p>When using <code>dissmapr</code>, please cite the package — run <code>citation("dissmapr")</code> for the current entry — together with the methods it builds on:</p>
+<ul>
+<li>Hui, C. &amp; McGeoch, M.A. (2014). Zeta diversity as a concept and metric that unifies incidence-based biodiversity patterns. <em>The American Naturalist</em>, 184, 684–694.</li>
+<li>Latombe, G., Hui, C. &amp; McGeoch, M.A. (2017). Multi-site generalised dissimilarity modelling: using zeta diversity to differentiate drivers of turnover in rare and widespread species. <em>Methods in Ecology and Evolution</em>, 8, 431–442.</li>
+<li>McGeoch, M.A., Latombe, G., Andrew, N.R., <em>et al.</em> (2019). Measuring continuous compositional change using decline and decay in zeta diversity. <em>Ecology</em>, 100, e02832.</li>
+<li>Ferrier, S., Manion, G., Elith, J. &amp; Richardson, K. (2007). Using generalised dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. <em>Diversity and Distributions</em>, 13, 252–264.</li>
+</ul>
 <hr>
+<p><code>dissmapr</code> was developed within the <a href="https://b-cubed.eu/" class="external-link">B-Cubed</a> project (Biodiversity Building Blocks for policy), funded by the European Union’s Horizon Europe Research and Innovation Programme (<a href="https://doi.org/10.3030/101059592" class="external-link">grant 101059592</a>).</p>
 </div>
 </div>
+
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
@@ -245,7 +295,10 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Sandra MacFadyen <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Sandra MacFadyen <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-5316-440X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>
+<a href="https://doi.org/10.3030/101059592" class="external-link"><img src="https://raw.githubusercontent.com/b-cubed-eu/dubicube/main/man/figures/eu-funded-en.png" height="35" alt="Funded by the European Union"></a> <br><small class="roles"> Funder </small>   </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
@@ -253,14 +306,14 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="repo status"></a></li>
-<li><a href="https://github.com/b-cubed-eu/dissmapr/releases" class="external-link"><img src="https://img.shields.io/github/release/b-cubed-eu/dissmapr.svg" alt="Release"></a></li>
-<li><a href="https://b-cubed-eu.r-universe.dev/dissmapr" class="external-link"><img src="https://b-cubed-eu.r-universe.dev/dissmapr/badges/version" alt="dissmapr status badge"></a></li>
-<li><a href="https://cran.r-project.org//package=dissmapr" class="external-link"><img src="https://www.r-pkg.org/badges/version/dissmapr" alt="CRAN status"></a></li>
+<li><a href="https://github.com/b-cubed-eu/dissmapr/releases" class="external-link"><img src="https://img.shields.io/github/v/release/b-cubed-eu/dissmapr?display_name=tag" alt="Release"></a></li>
+<li><a href="https://b-cubed-eu.r-universe.dev/dissmapr" class="external-link"><img src="https://b-cubed-eu.r-universe.dev/dissmapr/badges/version" alt="R-universe version"></a></li>
 <li><a href="https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/b-cubed-eu/dissmapr" class="external-link"><img src="https://codecov.io/gh/b-cubed-eu/dissmapr/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://zenodo.org" class="external-link"><img src="https://img.shields.io/badge/DOI-awaiting_upload_to_zenodo-orange" alt="DOI"></a></li>
-<li><a href="https://b-cubed-eu.r-universe.dev/" class="external-link"><img src="https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4" alt="name status badge"></a></li>
-<li><a href="LICENSE.html"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT"></a></li>
+<li><a href="https://doi.org/10.5281/zenodo.20842434" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20842434.svg" alt="DOI"></a></li>
+<li><a href="https://b-cubed-eu.r-universe.dev/" class="external-link"><img src="https://img.shields.io/badge/R--universe-b--cubed--eu-6CDDB4" alt="R-universe"></a></li>
+<li><a href="LICENSE.html"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></li>
+<li><a href="https://doi.org/10.3030/101059592" class="external-link"><img src="https://badgen.net/static/funder/European%20Union/f2a" alt="funder"></a></li>
 </ul>
 </div>
 
@@ -269,11 +322,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Sandra MacFadyen.</p>
+  <p>Developed by Sandra MacFadyen, <a href="https://doi.org/10.3030/101059592" class="external-link"><img src="https://raw.githubusercontent.com/b-cubed-eu/dubicube/main/man/figures/eu-funded-en.png" height="35" alt="Funded by the European Union"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

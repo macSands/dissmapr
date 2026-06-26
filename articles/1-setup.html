@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -27,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dissmapr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/dissmapr.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
 <li class="active nav-item dropdown">
@@ -52,7 +53,6 @@
     <li><a class="dropdown-item" href="../articles/7-bioregion.html">Map bioregions</a></li>
     <li><a class="dropdown-item" href="../articles/8-change.html">Map bioregion change</a></li>
     <li><a class="dropdown-item" href="../articles/9-examples.html">Compute orderwise examples</a></li>
-    <li><a class="dropdown-item" href="../articles/10-zenodo.html">Zenodo basics</a></li>
   </ul>
 </li>
       </ul>
@@ -77,13 +77,12 @@
       <img src="../logo.png" class="logo" alt=""><h1>Getting started</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/master/vignettes/1-setup.Rmd" class="external-link"><code>vignettes/1-setup.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/master/vignettes/articles/1-setup.Rmd" class="external-link"><code>vignettes/articles/1-setup.Rmd</code></a></small>
       <div class="d-none name"><code>1-setup.Rmd</code></div>
     </div>
 
     
     
-<hr>
 <div class="section level2">
 <h2 id="dissmapr">
 <code>dissmapr</code><a class="anchor" aria-label="anchor" href="#dissmapr"></a>
@@ -92,7 +91,6 @@
 <h3 id="a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis">A Novel Framework for Automated Compositional Dissimilarity and
 Biodiversity Turnover Analysis<a class="anchor" aria-label="anchor" href="#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis"></a>
 </h3>
-<hr>
 </div>
 <div class="section level3">
 <h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
@@ -120,14 +118,13 @@ ensuring all functions are available for use in the workflow.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install remotes if needed</span></span>
 <span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"macSands/dissmapr"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># remotes::install_github("macSands/dissmapr")</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Ensure the package is loaded when knitting</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/dissmapr" class="external-link">dissmapr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make sure all the functions are loaded</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<hr>
+<span><span class="co"># devtools::load_all()</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="load-other-r-libraries">2. Load other R libraries<a class="anchor" aria-label="anchor" href="#load-other-r-libraries"></a>
@@ -138,7 +135,7 @@ pipeline.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load necessary libraries</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://httr.r-lib.org/" class="external-link">httr</a></span><span class="op">)</span>       <span class="co"># HTTP client  </span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">geodata</span><span class="op">)</span>    <span class="co"># Download geographic data  </span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.github.io/geodata/" class="external-link">geodata</a></span><span class="op">)</span>    <span class="co"># Download geographic data  </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span> <span class="co"># Fast large-table operations  </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>      <span class="co"># Data manipulation verbs  </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span>      <span class="co"># Tidy data reshaping  </span></span>
@@ -151,7 +148,6 @@ pipeline.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span>    <span class="co"># Perceptual color scales  </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span>  <span class="co"># Sequentially build up plots on one page</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mclust-org.github.io/mclust/" class="external-link">mclust</a></span><span class="op">)</span>     <span class="co"># Clustering, Classification, and Density Estimation</span></span></code></pre></div>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="get-species-occurrence-records-using-get_occurrence_data">3. Get species occurrence records using
@@ -232,7 +228,6 @@ latitude and longitude coordinates.</p>
 <span><span class="co">#&gt; 4 2012-10-13T00:00</span></span>
 <span><span class="co">#&gt; 5 2012-10-30T00:00</span></span>
 <span><span class="co">#&gt; 6 2012-10-23T00:00</span></span></code></pre></div>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="format-data-using-format_df">4. Format data using <code>format_df()</code><a class="anchor" aria-label="anchor" href="#format-data-using-format_df"></a>
@@ -271,7 +266,7 @@ assessments (wide format).</li>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">bfly_result</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
 <span><span class="co">#&gt;  $ site_obs:'data.frame':    79953 obs. of  5 variables:</span></span>
-<span><span class="co">#&gt;  $ site_spp: tibble [56,090 × 2,871] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;  $ site_spp:'data.frame':    56090 obs. of  2871 variables:</span></span>
 <span></span>
 <span><span class="co"># Optional: Create new objects from list items</span></span>
 <span><span class="va">site_obs</span> <span class="op">=</span> <span class="va">bfly_result</span><span class="op">$</span><span class="va">site_obs</span></span>
@@ -292,16 +287,20 @@ assessments (wide format).</li>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">site_spp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 56090  2871</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">site_spp</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 6</span></span></span>
-<span><span class="co">#&gt;   site_id     x     y `Mylothris agathina subsp. agathina` `Pieris brassicae`</span></span>
-<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>       1  19.2 -<span style="color: #BB0000;">34.4</span>                                    1                  1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>       2  18.8 -<span style="color: #BB0000;">34.0</span>                                    0                  1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>       3  18.4 -<span style="color: #BB0000;">33.9</span>                                    0                  0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>       4  18.5 -<span style="color: #BB0000;">34.4</span>                                    0                  0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>       5  25.7 -<span style="color: #BB0000;">33.6</span>                                    0                  0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>       6  22.2 -<span style="color: #BB0000;">33.6</span>                                    0                  0</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: `Tarucus thespis` &lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;   site_id        x         y Mylothris agathina subsp. agathina</span></span>
+<span><span class="co">#&gt; 1       1 19.24410 -34.42086                                  1</span></span>
+<span><span class="co">#&gt; 2       2 18.75564 -33.96044                                  0</span></span>
+<span><span class="co">#&gt; 3       3 18.40321 -33.91651                                  0</span></span>
+<span><span class="co">#&gt; 4       4 18.47488 -34.35024                                  0</span></span>
+<span><span class="co">#&gt; 5       5 25.65097 -33.58570                                  0</span></span>
+<span><span class="co">#&gt; 6       6 22.20197 -33.59240                                  0</span></span>
+<span><span class="co">#&gt;   Pieris brassicae Tarucus thespis</span></span>
+<span><span class="co">#&gt; 1                1               1</span></span>
+<span><span class="co">#&gt; 2                1               0</span></span>
+<span><span class="co">#&gt; 3                0               0</span></span>
+<span><span class="co">#&gt; 4                0               0</span></span>
+<span><span class="co">#&gt; 5                0               0</span></span>
+<span><span class="co">#&gt; 6                0               0</span></span>
 <span></span>
 <span><span class="co">#### Get parameters from processed data to use later</span></span>
 <span><span class="co"># Number of species</span></span>
@@ -316,7 +315,75 @@ assessments (wide format).</li>
 <span><span class="co">#&gt;  [5] "Danaus chrysippus"                  "Papilio demodocus subsp. demodocus"</span></span>
 <span><span class="co">#&gt;  [7] "Eutricha capensis"                  "Mesocelis monticola"               </span></span>
 <span><span class="co">#&gt;  [9] "Vanessa cardui"                     "Cuneisigna obstans"</span></span></code></pre></div>
-<hr>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Each article in this series is self-contained: it loads the objects it needs</span></span>
+<span><span class="co"># from the single bundled snapshot `_data/dissmapr_vignettes.rds`, so the</span></span>
+<span><span class="co"># articles no longer have to be knitted in sequence.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
+<span><span class="co">#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span></span>
+<span><span class="co">#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span></span>
+<span><span class="co">#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: UTC</span></span>
+<span><span class="co">#&gt; tzcode source: system (glibc)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices datasets  utils     methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt;  [1] mclust_6.1.2      patchwork_1.3.2   viridis_0.6.5     viridisLite_0.4.3</span></span>
+<span><span class="co">#&gt;  [5] ggplot2_4.0.3     zetadiv_1.3.0     scam_1.2-22       tidyterra_1.2.0  </span></span>
+<span><span class="co">#&gt;  [9] sf_1.1-1          zoo_1.8-15        tidyr_1.3.2       dplyr_1.2.1      </span></span>
+<span><span class="co">#&gt; [13] data.table_1.18.4 geodata_0.6-9     terra_1.9-34      httr_1.4.8       </span></span>
+<span><span class="co">#&gt; [17] dissmapr_0.2.0   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;   [1] DBI_1.3.0            pbapply_1.7-4        pROC_1.19.0.1       </span></span>
+<span><span class="co">#&gt;   [4] gridExtra_2.3.1      permute_0.9-10       rlang_1.2.0         </span></span>
+<span><span class="co">#&gt;   [7] magrittr_2.0.5       otel_0.2.0           e1071_1.7-17        </span></span>
+<span><span class="co">#&gt;  [10] compiler_4.6.1       mgcv_1.9-4           systemfonts_1.3.2   </span></span>
+<span><span class="co">#&gt;  [13] vctrs_0.7.3          maps_3.4.3           reshape2_1.4.5      </span></span>
+<span><span class="co">#&gt;  [16] stringr_1.6.0        pkgconfig_2.0.3      fastmap_1.2.0       </span></span>
+<span><span class="co">#&gt;  [19] rmarkdown_2.31       prodlim_2026.03.11   ragg_1.5.2          </span></span>
+<span><span class="co">#&gt;  [22] purrr_1.2.2          xfun_0.59            cachem_1.1.0        </span></span>
+<span><span class="co">#&gt;  [25] jsonlite_2.0.0       recipes_1.3.3        parallel_4.6.1      </span></span>
+<span><span class="co">#&gt;  [28] cluster_2.1.8.2      R6_2.6.1             bslib_0.11.0        </span></span>
+<span><span class="co">#&gt;  [31] stringi_1.8.7        RColorBrewer_1.1-3   parallelly_1.47.0   </span></span>
+<span><span class="co">#&gt;  [34] rpart_4.1.27         estimability_1.5.1   lubridate_1.9.5     </span></span>
+<span><span class="co">#&gt;  [37] jquerylib_0.1.4      Rcpp_1.1.1-1.1       iterators_1.0.14    </span></span>
+<span><span class="co">#&gt;  [40] knitr_1.51           future.apply_1.20.2  fields_17.3         </span></span>
+<span><span class="co">#&gt;  [43] Matrix_1.7-5         splines_4.6.1        nnet_7.3-20         </span></span>
+<span><span class="co">#&gt;  [46] timechange_0.4.0     tidyselect_1.2.1     yaml_2.3.12         </span></span>
+<span><span class="co">#&gt;  [49] vegan_2.7-5          timeDate_4052.112    codetools_0.2-20    </span></span>
+<span><span class="co">#&gt;  [52] listenv_1.0.0        lattice_0.22-9       tibble_3.3.1        </span></span>
+<span><span class="co">#&gt;  [55] plyr_1.8.9           withr_3.0.3          S7_0.2.2            </span></span>
+<span><span class="co">#&gt;  [58] geosphere_1.6-8      evaluate_1.0.5       future_1.70.0       </span></span>
+<span><span class="co">#&gt;  [61] desc_1.4.3           survival_3.8-6       units_1.0-1         </span></span>
+<span><span class="co">#&gt;  [64] proxy_0.4-29         pillar_1.11.1        KernSmooth_2.23-26  </span></span>
+<span><span class="co">#&gt;  [67] corrplot_0.95        renv_1.1.4           foreach_1.5.2       </span></span>
+<span><span class="co">#&gt;  [70] stats4_4.6.1         generics_0.1.4       scales_1.4.0        </span></span>
+<span><span class="co">#&gt;  [73] xtable_1.8-8         globals_0.19.1       class_7.3-23        </span></span>
+<span><span class="co">#&gt;  [76] glue_1.8.1           clValid_0.7          emmeans_2.0.3       </span></span>
+<span><span class="co">#&gt;  [79] tools_4.6.1          ModelMetrics_1.2.2.2 gower_1.0.2         </span></span>
+<span><span class="co">#&gt;  [82] mvtnorm_1.4-1        fs_2.1.0             dotCall64_1.2       </span></span>
+<span><span class="co">#&gt;  [85] grid_4.6.1           ipred_0.9-15         nlme_3.1-169        </span></span>
+<span><span class="co">#&gt;  [88] cli_3.6.6            rappdirs_0.3.4       textshaping_1.0.5   </span></span>
+<span><span class="co">#&gt;  [91] NbClust_3.0.1        spam_2.11-4          lava_1.9.1          </span></span>
+<span><span class="co">#&gt;  [94] gtable_0.3.6         sass_0.4.10          digest_0.6.39       </span></span>
+<span><span class="co">#&gt;  [97] classInt_0.4-11      caret_7.0-1          ggrepel_0.9.8       </span></span>
+<span><span class="co">#&gt; [100] htmlwidgets_1.6.4    farver_2.1.2         entropy_1.3.2       </span></span>
+<span><span class="co">#&gt; [103] htmltools_0.5.9      pkgdown_2.2.0        lifecycle_1.0.5     </span></span>
+<span><span class="co">#&gt; [106] factoextra_2.0.0     hardhat_1.4.3        MASS_7.3-65</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -327,11 +394,11 @@ assessments (wide format).</li>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Sandra MacFadyen.</p>
+  <p>Developed by Sandra MacFadyen, <a href="https://doi.org/10.3030/101059592" class="external-link"><img src="https://raw.githubusercontent.com/b-cubed-eu/dubicube/main/man/figures/eu-funded-en.png" height="35" alt="Funded by the European Union"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
