@@ -1,34 +1,104 @@
-
 {
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
-  "name": "<PACKAGE NAME>",
-  "version": "0.1.0",
-  "description": "Short description of the package.",
-  "programmingLanguage": "R",
-  "codeRepository": "https://github.com/<org>/<repo>",
-  "issueTracker": "https://github.com/<org>/<repo>/issues",
-  "license": "https://opensource.org/licenses/MIT",
+  "identifier": "dissmapr",
+  "name": "dissmapr: Workflow for Compositional Dissimilarity and Biodiversity Turnover Analysis",
+  "version": "0.2.0",
+  "description": "Tools to compute and map biodiversity turnover at the macroscale. dissmapr provides a reproducible, end-to-end workflow for computing and mapping compositional dissimilarity and biodiversity turnover across large spatial scales.",
+  "applicationCategory": "Biodiversity informatics",
+  "releaseNotes": "https://github.com/b-cubed-eu/dissmapr/blob/master/NEWS.md",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R",
   "author": [
     {
       "@type": "Person",
-      "givenName": "<Given>",
-      "familyName": "<Family>",
-      "email": "name@example.org",
-      "@id": "https://orcid.org/0000-0000-0000-0000"
+      "givenName": "Sandra",
+      "familyName": "MacFadyen",
+      "email": "macfadyen@sun.ac.za",
+      "@id": "https://orcid.org/0000-0002-5316-440X",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "Stellenbosch University"
+      }
     }
   ],
   "maintainer": [
     {
       "@type": "Person",
-      "givenName": "<Given>",
-      "familyName": "<Family>",
-      "email": "name@example.org"
+      "givenName": "Sandra",
+      "familyName": "MacFadyen",
+      "email": "macfadyen@sun.ac.za",
+      "@id": "https://orcid.org/0000-0002-5316-440X"
     }
   ],
+  "copyrightHolder": [
+    {
+      "@type": "Organization",
+      "name": "Stellenbosch University"
+    }
+  ],
+  "funder": {
+    "@type": "Organization",
+    "name": "European Union Horizon Europe Research and Innovation Programme (B-Cubed, grant ID 101059592)"
+  },
+  "license": "https://spdx.org/licenses/MIT.html",
+  "codeRepository": "https://github.com/b-cubed-eu/dissmapr",
+  "issueTracker": "https://github.com/b-cubed-eu/dissmapr/issues",
+  "url": "https://b-cubed-eu.github.io/dissmapr/",
+  "identifier_doi": "https://doi.org/10.5281/zenodo.20842434",
+  "relatedLink": [
+    "https://b-cubed-eu.github.io/dissmapr/",
+    "https://doi.org/10.5281/zenodo.20842434",
+    "https://docs.b-cubed.eu/",
+    "https://docs.b-cubed.eu/guides/b3verse/"
+  ],
+  "dateModified": "2026-06-25",
   "keywords": [
+    "dissimilarity",
+    "biodiversity turnover",
+    "compositional analysis",
+    "zeta diversity",
+    "bioregionalisation",
+    "spatiotemporal statistics",
+    "occurrence cube",
     "B-Cubed",
-    "biodiversity",
     "R"
+  ],
+  "softwareRequirements": [
+    "R (>= 3.5)",
+    "caret",
+    "cluster",
+    "clValid",
+    "corrplot",
+    "data.table",
+    "dplyr",
+    "entropy",
+    "factoextra",
+    "fields",
+    "future",
+    "geodata",
+    "geosphere",
+    "ggplot2",
+    "httr",
+    "mclust",
+    "NbClust",
+    "patchwork",
+    "pbapply",
+    "purrr",
+    "rcmdcheck",
+    "rlang",
+    "reshape2",
+    "sf",
+    "terra",
+    "tidyr",
+    "tidyterra",
+    "vegan",
+    "viridis",
+    "zoo",
+    "zetadiv"
   ]
 }

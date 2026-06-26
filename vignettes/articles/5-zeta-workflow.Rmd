@@ -1,0 +1,170 @@
+---
+title: "Zeta-MSGDM with dissmapr"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Zeta-MSGDM with dissmapr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup-5, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "figures/5-",
+  out.width = "100%",
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+```{r read_files}
+library(dissmapr)
+library(patchwork)
+# Load the single bundled snapshot of all vignette state.
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
+
+grid_spp_pa = inputs$grid_spp_pa
+env_vars_reduced = inputs$env_vars_reduced
+grid_env = inputs$grid_env
+sp_cols = inputs$sp_cols
+```
+
+# `dissmapr`
+
+## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+
+### 1. Automated Ispline Modeling & Visualization
+
+To streamline the exploration of multi‐site turnover drivers, we now introduce an **automated sub-workflow** that fits, extracts and visualizes I-spline models for any set of zeta orders in just three function calls. Rather than manually looping over orders, binding tables, and crafting bespoke plots, you can:
+
+1. **Run and combine** all ispline GLMs via `run_ispline_models()`, which:>
+   * Calls `Zeta.msgdm()` for each order of interest (e.g. ζ₂…ζ₆)
+   * Extracts both the raw covariates (including geographic distance) and their spline bases
+   * Returns one tidy tibble tagged by `zOrder`, ready for plotting or further analysis
+2. **Inspect partial-dependence curves** with `plot_ispline_lines()`, which:>
+   * Automatically locates the spline column matching any chosen covariate (e.g. “dist” → `dist_is`)
+   * Draws each zeta-order’s I-spline curve with thin lines
+   * Overlays small markers at user-specified quantiles of the raw predictor and a larger symbol at each curve’s minimum
+3. **Summarize overall variation** using `plot_ispline_boxplots()`, which:
+   * Detects every `_is` spline column in your data
+   * Pivots to long format and produces facetted boxplots for each term
+   * Applies a color-blind–safe Viridis palette with independent scales per facet
+
+By packaging these steps into self-documented functions, we embed ispline modeling and visualization into our RMarkdown workflow with a single, transparent call. The parameters (orders, covariate name, colors, shapes, etc.) are fully customizable, while sensible defaults minimize boilerplate, ensuring reproducibility, readability and ease of maintenance in automated biodiversity turnover analyses.
+
+### 2. Fit and combine ispline models
+
+The following chunk uses our `run_ispline_models()` helper to fit `Zeta.msgdm(reg.type = “ispline”)` for orders 2–6, extract both raw covariates (including distance) and their spline bases, and bind everything into one tidy table tagged by `zOrder`.
+
+```{r run-ispline}
+# Fit & gather ispline outputs for orders 2:6
+set.seed(123) # set.seed to generate exactly the same random results i.e. sam=100
+ispline_gdm_tab = dissmapr::run_ispline_models(
+  spp_df    = grid_spp_pa[,-(1:6)],
+  env_df    = env_vars_reduced,
+  xy_df     = grid_env[, c("centroid_lon", "centroid_lat")],
+  orders    = 2:6,
+  sam       = 100, # Set really low to run fast
+  normalize = "Jaccard",
+  reg_type  = "ispline"
+)
+```
+
+```{r show-ispline}
+str(ispline_gdm_tab, max.level=1)
+
+ispline_tabs_all = ispline_gdm_tab$ispline_table
+head(ispline_tabs_all)
+```
+
+### 3. Plot Partial‐Dependence Curves for All Covariates
+
+Here we produce a unified, multi‐panel display of each predictor’s I‐spline partial‐dependence curve using our `plot_ispline_lines()` helper. That function will:
+
+* Auto‐detect the spline column for each covariate (e.g. “dist” → `dist_is`).
+* Draw a thin line for each zeta‐order.
+* Mark selected quantiles along the raw covariate with small symbols.
+* Highlight each curve’s minimum value with a larger marker.
+
+We then loop over all raw covariates (those ending in `_is`), generate a separate plot per variable, and assemble them into a cohesive multi‐panel layout using the `patchwork` package. This makes it possible to compare turnover responses across the full suite of environmental drivers.
+
+```{r plot-isp-lines, warning=FALSE, message=FALSE, fig.width=10, fig.height=12, fig.alt="Multi-Panel I-Spline Curves Across Covariates"}
+
+# 1. Identify all raw covariates with a spline term
+raw_vars = sub("_is$", "",
+                grep("_is$", names(ispline_tabs_all), value = TRUE))
+
+# 2. Generate one plot per covariate
+plots = lapply(raw_vars, function(var) {
+  dissmapr::plot_ispline_lines(
+    ispline_data = ispline_tabs_all,
+    x_var        = var,
+    orders       = paste("Order", 2:6),
+    cols         = c('green','cyan','purple','blue','black'),
+    shapes       = c(15,16,17,18,19)
+  ) +
+  ggplot2::ggtitle(paste("I-Spline Partial Effect of", var))
+})
+
+# 3. Combine into a grid (2 columns here; adjust ncol as needed)
+patchwork::wrap_plots(plots, ncol = 2) +
+  patchwork::plot_annotation(
+    title = "Multi-Panel I-Spline Curves Across Covariates",
+    theme = ggplot2::theme(plot.title = ggplot2::element_text(size = 16, face = "bold"))
+  )
+
+# # Simle single covariate line plot for "dist"
+# plot_ispline_lines(
+#   ispline_data = ispline_tabs_all,
+#   x_var        = "dist",  
+#   orders       = paste("Order", 2:6),
+#   cols         = c('green','cyan','purple','blue','black'),
+#   shapes       = c(15,16,17,18,19)
+# )
+```
+
+**Ecological Interpretation and Conservation Implications**   
+Which predictors drive turnover shifts with the number of sites:   
+* **Two‐sites**: Distance dominates. Shared species drop off steeply as sites become farther apart.   
+* **Three‐sites**: Isothermality (stable day–night vs. seasonal temperature swings) is most important, suggesting communities in areas with steady daily temperatures stay more similar.   
+* **Four‐sites**: Mean temperature and wet‐quarter temperature have the strongest effects, indicating thermal limits filter species across moderate clusters of sites.   
+* **Five‐sites**: Sampling effort peaks in influence, warning that uneven survey intensity can masquerade as real ecological turnover at this scale.   
+* **Six‐sites**: Rainfall variables—especially warm‐quarter and dry‐season rainfall—become the key filters, showing that moisture availability during extreme seasons governs species overlap in larger site groups.
+
+**Key point**: At the smallest scale, dispersal barriers (distance) set the stage for which species can overlap. As you expand to three, four or more sites, environmental filters—first thermal, then hydric—sequentially take over. This scale‐dependent shift reveals that different ecological processes dominate community assembly at different spatial extents, with direct implications for how we design surveys and target conservation under changing climates.
+
+### 4. Facetted boxplots of all spline terms
+
+Finally, we summarize the distribution of every _is basis across orders using `plot_ispline_boxplots()`. Each spline term is facetted with free scales, and fills are mapped to zOrder via a color-blind–friendly Viridis palette.
+
+```{r plot-isp-box, warning=FALSE, message=FALSE, fig.width=10, fig.height=12, fig.alt="Distribution of iSplines by Order"}
+# Facetted boxplots of all *_is columns
+dissmapr::plot_ispline_boxplots(
+  ispline_data   = ispline_tabs_all,
+  ispline_suffix = "_is",
+  order_col      = "zOrder",
+  palette        = "viridis",
+  direction      = -1,
+  ncol           = 3
+)
+```
+
+**Ecological Interpretation and Conservation Implications**
+Which factors matter depends on how many sites you compare at once:   
+- **Two sites:** Geographic distance dominates. Nearby sites share many species, distant sites very few.  
+- **Three sites:** Isothermality (day–night versus seasonal swings) has its strongest effect, suggesting that stable daily temperatures support more consistent communities.  
+- **Four sites:** Temperature (mean and seasonal highs) becomes the key driver, indicating that thermal limits filter which species can persist across moderate clusters.  
+- **Five sites:** Dry-season rainfall peaks in importance, showing that moisture availability determines whether species can survive across larger groups.  
+- **Four sites (again):** Sampling effort bias is highest, meaning uneven survey intensity can look like an ecological signal at this scale.
+
+**Key points**:   
+- At **small scales** (two sites), where species must actually move between locations, distance is the main barrier to sharing species.   
+- At **medium scales** (three to five sites), local climate steps in: only species that can tolerate the same temperature and moisture levels hang on across multiple sites.   
+- Breaking up habitat makes it even harder for species to move, while hotter, drier conditions shrink the range where they can survive—driving faster loss of biodiversity.   
+- Protecting connected corridors and a variety of microclimates helps species disperse and find refuge, slowing turnover and preserving the common “backbone” species that keep ecosystems stable and healthy.  
+
+```{r session-info}
+sessionInfo()
+```

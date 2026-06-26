@@ -91,15 +91,12 @@ richness = function(vec_from, vec_to = NULL) {
 }
 
 rich_o12 = compute_orderwise(
- df = block_sp,
+ df = data,
  func = richness,
- site_col = 'grid_id',
- sp_cols = sp_cols,
- # sample_no = 1000,
- # sample_portion = 0.5,  # Default is 1 (100\%)
- order = 1:2,  # Compute for pairwise and higher-order comparisons
- parallel = TRUE,
- n_workers = 4
+ site_col = 'site',
+ sp_cols = c('sp1', 'sp2'),
+ order = 1:2,      # Compute for pairwise and higher-order comparisons
+ parallel = FALSE  # keep the example single-threaded
 )
 head(rich_o12)
 

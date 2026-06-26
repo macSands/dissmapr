@@ -38,8 +38,6 @@
 #'
 #' @seealso \code{\link[terra]{app}}, \code{\link[terra]{rast}}
 #'
-#' @import terra
-#' @import purrr
 #' @importFrom stats dist
 #'
 #' @examples
@@ -52,8 +50,8 @@
 #'
 #'   r1 <- terra::rast(nrows = 40, ncols = 40,
 #'                     vals  = sample(1:4, 40 * 40, TRUE))
-#'   r2 <- terra::rast(r1, vals = sample(1:4, ncell(r1), TRUE))
-#'   r3 <- terra::rast(r1, vals = sample(1:4, ncell(r1), TRUE))
+#'   r2 <- terra::rast(r1, vals = sample(1:4, terra::ncell(r1), TRUE))
+#'   r3 <- terra::rast(r1, vals = sample(1:4, terra::ncell(r1), TRUE))
 #'
 #'   r_stack <- terra::rast(list(r1, r2, r3))
 #'   names(r_stack) <- paste0("t", 1:3)
@@ -70,9 +68,6 @@
 #' @aliases map_bioregDiff
 #' @export
 map_bioregDiff <- function(raster_input, approach = "all") {
-  library(terra)
-  library(viridis)
-  library(purrr)
   ## if it's a plain list, assume it's a list of SpatRasters and catenate them
   if (is.list(raster_input)) {
     raster_input <- rast(raster_input)

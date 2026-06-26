@@ -82,45 +82,54 @@ name + value columns are present; or
 }
 
 \examples{
-# 1. Local CSV example -----------------------------------------------
+# 1. Long-format data read from a local CSV file ---------------------------
 tmp <- tempfile(fileext = ".csv")
 df_local <- data.frame(
-  site_id = 1:10,
-  x = runif(10), y = runif(10),
-  sp_name = c("plant1", "plant2","plant3", "plant4","plant5", "plant1", "plant2","plant3", "plant4","plant5"),
-  abun = sample(0:20, size = 10, replace = TRUE)
+  site_id = rep(1:5, each = 2),
+  x = runif(10, 18, 20), y = runif(10, -34, -33),
+  sp_name = rep(c("sp_a", "sp_b"), times = 5),
+  abund = sample(0:20, size = 10, replace = TRUE)
 )
 write.csv(df_local, tmp, row.names = FALSE)
-local_test = get_occurrence_data(data = tmp, source_type = "local_csv", sep = ",")
+local_test <- get_occurrence_data(data = tmp, source_type = "local_csv")
+head(local_test)
 
-# 2. Existing wide-format data.frame -----------------------------------------------
-df_wide <- df_local \%>\%
-  pivot_wider(
-    names_from  = sp_name,   # these become column names
-    values_from = abun,  # fill these cell values
-    values_fn   = sum,       # sum duplicates
-    values_fill = 0          # fill missing with 0
-  )
-wide_test = get_occurrence_data(data = df_wide, source_type = "data_frame", species_cols = 4:11)
+# 2. Wide-format data.frame (species as columns) ---------------------------
+df_wide <- data.frame(
+  site_id = 1:5,
+  x = runif(5, 18, 20), y = runif(5, -34, -33),
+  sp_a = sample(0:5, 5, replace = TRUE),
+  sp_b = sample(0:5, 5, replace = TRUE),
+  sp_c = sample(0:5, 5, replace = TRUE)
+)
+wide_test <- get_occurrence_data(
+  data = df_wide, source_type = "data_frame", species_cols = 4:6
+)
 
-# 3. Custom names ----------------------------------------------------------
-names(sim_dat)[1:5] <- c("plot_id", "lon", "lat", "taxon", "presence")
+# 3. Custom column names ---------------------------------------------------
+sim_dat <- data.frame(
+  plot_id  = 1:6,
+  lon      = runif(6, 18, 20),
+  lat      = runif(6, -34, -33),
+  taxon    = rep(c("sp_a", "sp_b"), 3),
+  presence = 1
+)
 occ_long2 <- get_occurrence_data(
-  data           = sim_dat,
-  source_type    = "data_frame",
-  site_id_col    = "plot_id",
-  x_col          = "lon",
-  y_col          = "lat",
-  sp_name_col    = "taxon",
-  pa_col         = "presence"
+  data        = sim_dat,
+  source_type = "data_frame",
+  site_id_col = "plot_id",
+  x_col       = "lon",
+  y_col       = "lat",
+  sp_name_col = "taxon",
+  pa_col      = "presence"
 )
 head(occ_long2)
 
-# 4. GBIF download (requires internet) -----------------------------------------------
+# 4. GBIF download (requires internet) -------------------------------------
 \dontrun{
-gbif_test = get_occurrence_data(
-  source_type   = "gbif",
-  gbif_zip_url  = "https://api.gbif.org/v1/occurrence/download/request/0038969-240906103802322.zip"
+gbif_test <- get_occurrence_data(
+  source_type  = "gbif",
+  gbif_zip_url = "https://api.gbif.org/v1/occurrence/download/request/0038969-240906103802322.zip"
 )
 }
 }

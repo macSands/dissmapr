@@ -28,12 +28,22 @@ Calculate Pairwise Distance Matrix
 }
 \examples{
 # default usage when your coords are in columns "x" and "y"
+my_sites_df <- data.frame(
+  grid_id = 1:4,
+  x = c(18.4, 18.6, 19.0, 19.2),
+  y = c(-33.9, -34.0, -33.7, -33.5)
+)
 dist_df_default <- calculate_pairwise_distances_matrix(data = my_sites_df)
 head(dist_df_default)
 
 # specify custom column names for longitude and latitude
+sites_custom <- data.frame(
+  grid_id = 1:4,
+  centroid_lon = c(18.4, 18.6, 19.0, 19.2),
+  centroid_lat = c(-33.9, -34.0, -33.7, -33.5)
+)
 dist_df <- calculate_pairwise_distances_matrix(
-  data  = my_sites_df,
+  data  = sites_custom,
   x_col = "centroid_lon",
   y_col = "centroid_lat"
 )

@@ -1,0 +1,13 @@
+object,column,description,standard_or_vocabulary
+occurrence_data,site_id,Unique site or sample identifier,package-defined
+occurrence_data,x,Longitude coordinate in decimal degrees (WGS84),Darwin Core decimalLongitude
+occurrence_data,y,Latitude coordinate in decimal degrees (WGS84),Darwin Core decimalLatitude
+occurrence_data,sp_name,Scientific species name,Darwin Core scientificName
+occurrence_data,pa,Presence (1) or absence (0) of the species at the site,package-defined
+occurrence_data,abund,Number of recorded individuals (abundance),Darwin Core individualCount
+occurrence_data,year,Year of observation,Darwin Core year
+grid_data,grid_id,Unique grid-cell identifier,package-defined
+grid_data,obs_sum,Total number of observations aggregated within a grid cell,package-defined
+grid_data,spp_rich,Species richness (count of species) within a grid cell,package-defined
+environment_data,variable,Environmental predictor extracted to grid centroids (e.g. WorldClim bioclimatic variable),WorldClim / package-defined
+bioregion_data,cluster,Bioregion cluster membership of a grid cell,package-defined

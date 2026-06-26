@@ -1,0 +1,51 @@
+{
+  "upload_type": "software",
+  "title": "dissmapr: A Novel Framework for Compositional Dissimilarity and Biodiversity Turnover Analysis",
+  "description": "dissmapr provides a reproducible, end-to-end workflow for computing and mapping compositional dissimilarity and biodiversity turnover across large spatial scales. Core features include occurrence-data retrieval, environmental-data extraction, flexible grid generation, order-wise dissimilarity computation (zeta diversity and multi-site generalised dissimilarity modelling) and bioregional mapping.",
+  "license": "MIT",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "MacFadyen, Sandra",
+      "affiliation": "Stellenbosch University",
+      "orcid": "0000-0002-5316-440X"
+    }
+  ],
+  "keywords": [
+    "dissimilarity",
+    "biodiversity turnover",
+    "compositional analysis",
+    "zeta diversity",
+    "bioregionalisation",
+    "occurrence cube",
+    "B-Cubed",
+    "R"
+  ],
+  "communities": [
+    {
+      "identifier": "b3"
+    }
+  ],
+  "grants": [
+    {
+      "id": "101059592"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "https://github.com/b-cubed-eu/dissmapr",
+      "resource_type": "software"
+    },
+    {
+      "relation": "isDocumentedBy",
+      "identifier": "https://b-cubed-eu.github.io/dissmapr/",
+      "resource_type": "publication-softwaredocumentation"
+    },
+    {
+      "relation": "isPartOf",
+      "identifier": "https://docs.b-cubed.eu/",
+      "resource_type": "publication-softwaredocumentation"
+    }
+  ]
+}

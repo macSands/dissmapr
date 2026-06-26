@@ -1,4 +1,12 @@
 url: https://b-cubed-eu.github.io/dissmapr/
+
+authors:
+  European Union:
+    href: "https://doi.org/10.3030/101059592"
+    html: "<img src='https://raw.githubusercontent.com/b-cubed-eu/dubicube/main/man/figures/eu-funded-en.png' height='35' alt='Funded by the European Union'>"
+  Stellenbosch University:
+    href: "https://www.sun.ac.za/"
+
 template:
   bootstrap: 5
   bslib:
@@ -76,45 +84,4 @@ articles:
   - title: "All tutorials"
     navbar: "Articles"
     contents:
-      - 1-setup
-      - 2-grid
-      - 3-enviro
-      - 4-zeta
-      - 5-zeta-workflow
-      - 6-predict
-      - 7-bioregion
-      - 8-change
-      - 9-examples
-
-# # Controls the “Articles” page order & display names
-# articles:
-#   - title: "Getting started"
-#     contents:
-#       - 1-setup              # 1-setup.Rmd   (or .qmd / .md)
-#   - title: "User-defined grid"
-#     contents:
-#       - 2-grid
-#   - title: "Get environmental data"
-#     contents:
-#       - 3-enviro
-#   - title: "Zeta diversity"
-#     contents:
-#       - 4-zeta
-#   - title: "Zeta-MSGDM workflow"
-#     contents:
-#       - 5-zeta-workflow
-#   - title: "Predict community turnover"
-#     contents:
-#       - 6-predict
-#   - title: "Map bioregions"
-#     contents:
-#       - 7-bioregion
-#   - title: "Map bioregion change"
-#     contents:
-#       - 8-change
-#   - title: "Compute orderwise examples"
-#     contents:
-#       - 9-examples
-#   - title: "Zenodo basics"
-#     contents:
-#       - 10-zenodo
+      - starts_with("articles/")

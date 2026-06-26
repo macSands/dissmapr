@@ -55,9 +55,12 @@ run_ispline_models <- function(
     normalize      = "Jaccard",
     reg_type       = "ispline"
 ) {
-  # 1. Fit one Zeta.msgdm model per order
+  # 1. Fit one Zeta.msgdm model per order.
+  #    We use a patched copy of zetadiv::Zeta.msgdm() that fixes an upstream
+  #    failure for order >= 3 under R (>= 4.5); see `.patch_zeta_msgdm()`.
+  zeta_msgdm <- .patch_zeta_msgdm()
   zeta_gdm_list <- purrr::map(orders, function(ord) {
-    zetadiv::Zeta.msgdm(
+    zeta_msgdm(
       spp_df,
       env_df,
       xy_df,
@@ -88,4 +91,48 @@ run_ispline_models <- function(
     zeta_gdm_list = zeta_gdm_list,
     ispline_table = ispline_table
   )
+}
+
+
+# Build a patched copy of zetadiv::Zeta.msgdm() ----------------------------
+#
+# For order >= 3 with more than one numeric predictor, zetadiv::Zeta.msgdm()
+# aggregates the pairwise environmental distances with
+#
+#     apply(apply(toto, 2, stats::dist), 2, get(method))
+#
+# The inner apply() builds a matrix of classed "dist" objects, which base R's
+# apply()/array() rejects under R (>= 4.5) with
+# "length of 'dimnames' [1] not equal to array extent" (order 2 returns a
+# single distance per column, so it is unaffected). This replaces that
+# expression with a single apply() whose function returns a scalar -- the
+# `method` (e.g. mean) of the per-predictor pairwise distances -- which is
+# mathematically identical but avoids the broken matrix simplification.
+#
+# The patch is applied to the *installed* zetadiv function at run time and the
+# result keeps zetadiv's namespace as its environment, so all of zetadiv's
+# unexported internals (Ii, gdist_matrix, glm.cons, vif, ...) still resolve and
+# no zetadiv (GPL) source is copied into this package. If a future zetadiv no
+# longer contains the broken expression, the unpatched function is returned
+# unchanged.
+#
+# @keywords internal
+# @noRd
+.patch_zeta_msgdm <- function() {
+  zm  <- zetadiv::Zeta.msgdm
+  src <- deparse(zm, width.cutoff = 500L)
+
+  broken <- "apply(apply(toto, 2, stats::dist), 2, get(method))"
+  fixed  <- "apply(toto, 2, function(.col) get(method)(as.numeric(stats::dist(.col))))"
+
+  hit <- grepl(broken, src, fixed = TRUE)
+  if (!any(hit)) {
+    # zetadiv internals have changed; fall back to the unpatched function.
+    return(zm)
+  }
+
+  src[hit] <- gsub(broken, fixed, src[hit], fixed = TRUE)
+  patched  <- eval(parse(text = src))
+  environment(patched) <- environment(zm)  # keep zetadiv's namespace
+  patched
 }

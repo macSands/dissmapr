@@ -41,7 +41,7 @@ The input \code{data} with three new columns:
 This function takes an existing data frame with coordinate columns and
 appends:
 \enumerate{
-\item the nearest mapsheet code (format "\link{E|W}DDD\link{N|S}DDBB"), and
+\item the nearest mapsheet code (format \code{"[E|W]DDD[N|S]DDBB"}), and
 \item the center longitude/latitude of that mapsheet.
 }
 }

@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -27,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dissmapr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/dissmapr.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
 <li class="active nav-item dropdown">
@@ -76,13 +77,12 @@
       <img src="../logo.png" class="logo" alt=""><h1>Environmental data for sites</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/HEAD/vignettes/3-enviro.Rmd" class="external-link"><code>vignettes/3-enviro.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/dissmapr/blob/HEAD/vignettes/articles/3-enviro.Rmd" class="external-link"><code>vignettes/articles/3-enviro.Rmd</code></a></small>
       <div class="d-none name"><code>3-enviro.Rmd</code></div>
     </div>
 
     
     
-<hr>
 <div class="section level2">
 <h2 id="dissmapr">
 <code>dissmapr</code><a class="anchor" aria-label="anchor" href="#dissmapr"></a>
@@ -91,7 +91,6 @@
 <h3 id="a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis">A Novel Framework for Automated Compositional Dissimilarity and
 Biodiversity Turnover Analysis<a class="anchor" aria-label="anchor" href="#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis"></a>
 </h3>
-<hr>
 <div class="section level4">
 <h4 id="generate-site-by-environment-matrix-using-get_enviro_data">1. Generate site by environment matrix using
 <code>get_enviro_data()</code><a class="anchor" aria-label="anchor" href="#generate-site-by-environment-matrix-using-get_enviro_data"></a>
@@ -136,7 +135,6 @@ metric-space analyses</strong>: converts centroid coordinates from
 <code>Albers Equal-Area</code> projection (<a href="https://epsg.io/9822" class="external-link">EPSG:9822</a>) when analyses require
 distances in metres.</li>
 </ol>
-<hr>
 <p><strong>Download and sample 19 WorldClim bioclim
 variables</strong><br>
 Fetch the 5-arc-min (~10 km) bioclim stack via <code>geodata</code>
@@ -179,15 +177,15 @@ package and attach values to every centroid.</p>
 <span></span>
 <span><span class="co"># Quick checks </span></span>
 <span><span class="va">env_r</span></span>
-<span><span class="co">#&gt; class       : SpatRaster </span></span>
+<span><span class="co">#&gt; class       : SpatRaster</span></span>
 <span><span class="co">#&gt; size        : 154, 195, 19  (nrow, ncol, nlyr)</span></span>
 <span><span class="co">#&gt; resolution  : 0.08333333, 0.08333333  (x, y)</span></span>
 <span><span class="co">#&gt; extent      : 16.66667, 32.91667, -34.91667, -22.08333  (xmin, xmax, ymin, ymax)</span></span>
-<span><span class="co">#&gt; coord. ref. : lon/lat WGS 84 (EPSG:4326) </span></span>
+<span><span class="co">#&gt; coord. ref. : lon/lat WGS 84 (EPSG:4326)</span></span>
 <span><span class="co">#&gt; source(s)   : memory</span></span>
-<span><span class="co">#&gt; names       : temp_mean,       mdr,      iso, temp_sea, temp_max, temp_min, ... </span></span>
-<span><span class="co">#&gt; min values  :  5.158916,  5.891667, 45.32084, 143.0743,   14.832,   -6.284, ... </span></span>
-<span><span class="co">#&gt; max values  : 24.796417, 18.659584, 67.09737, 701.3335,   38.518,   13.800, ...</span></span>
+<span><span class="co">#&gt; names       : temp_mean,       mdr,       iso,   temp_sea,  temp_max, temp_min, ...</span></span>
+<span><span class="co">#&gt; min values  :  5.158916,  5.891667, 45.320835,  143.07431,    14.832,   -6.284, ...</span></span>
+<span><span class="co">#&gt; max values  : 24.796417, 18.659584, 67.097374, 701.333496, 38.518002,     13.8, ...</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">env_df</span><span class="op">)</span>; <span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">env_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 415  24</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 24</span></span></span>
@@ -206,7 +204,6 @@ package and attach values to every centroid.</p>
 km, fetched the requested rasters, cropped them, extracted values at
 each centroid, filled isolated NAs, and merged the results with
 <code>obs_sum</code> and <code>spp_rich</code>.</em></p>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="bind-climate-effort-and-richness-into-one-raster-stack">2. Bind climate, effort, and richness into one raster stack<a class="anchor" aria-label="anchor" href="#bind-climate-effort-and-richness-into-one-raster-stack"></a>
@@ -258,8 +255,7 @@ map algebra, multivariate modelling, and spatial cross-validation.</p>
 <span>  <span class="op">)</span></span>
 <span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="figures/3-ras-1.png" alt="Environmental Covariates" width="100%"></p>
-<hr>
+<p><img src="figures/3-ras-1.png" class="r-plt" alt="Environmental Covariates" width="100%"></p>
 </div>
 <div class="section level4">
 <h4 id="inspect-the-extracted-covariates">3. Inspect the extracted covariates<a class="anchor" aria-label="anchor" href="#inspect-the-extracted-covariates"></a>
@@ -300,11 +296,10 @@ selected climate variables to check results.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Grid-cell mean annual temperature (√-scaled)"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/3-env-df-1.png" alt="Grid-cell mean annual temperature (√-scaled)" width="100%"></p>
+<p><img src="figures/3-env-df-1.png" class="r-plt" alt="Grid-cell mean annual temperature (√-scaled)" width="100%"></p>
 <p><em>Goal of this plot is to quickly check that the environmental
 predictors (e.g. <code>bio01</code> &gt;&gt; mean annual temperature)
 line up with the 0.5° grid.</em></p>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="assemble-the-modelling-matrix-grid_env">4. Assemble the modelling matrix <code>grid_env</code><a class="anchor" aria-label="anchor" href="#assemble-the-modelling-matrix-grid_env"></a>
@@ -337,7 +332,6 @@ ordination, and β-diversity analyses.</p>
 <span><span class="co">#&gt; <span style="color: #949494;">#   bio09 &lt;dbl&gt;, bio10 &lt;dbl&gt;, bio11 &lt;dbl&gt;, bio12 &lt;dbl&gt;, bio13 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   bio14 &lt;dbl&gt;, bio15 &lt;dbl&gt;, bio16 &lt;dbl&gt;, bio17 &lt;dbl&gt;, bio18 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   bio19 &lt;dbl&gt;</span></span></span></code></pre></div>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="reproject-centroids-for-metric-space-analyses-using-sfst_transformoptional">5. Reproject centroids for metric-space analyses** using
@@ -384,7 +378,6 @@ projection.</p>
 <p><em>At this point every grid cell has species metrics, climate
 predictors, and is optionally projected into metre coordinates, all in a
 single tidy object.</em></p>
-<hr>
 </div>
 <div class="section level4">
 <h4 id="diagnose-and-mitigate-collinearity-with-rm_correlated">6. Diagnose and mitigate collinearity with
@@ -425,25 +418,83 @@ information while minimising multicollinearity.</p>
 <span>  threshold  <span class="op">=</span> <span class="fl">0.70</span>,</span>
 <span>  plot       <span class="op">=</span> <span class="cn">TRUE</span>                   <span class="co"># show heat-map of retained vars</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/3-var-vif-1.png" alt="Environmental pairwise correlations" width="100%"></p>
-<pre><code><span><span class="co">#&gt; Variables removed due to high correlation:</span></span>
-<span><span class="co">#&gt;  [1] "temp_range" "temp_sea"   "temp_max"   "rain_mean"  "rain_dryQ" </span></span>
-<span><span class="co">#&gt;  [6] "temp_min"   "temp_warmQ" "temp_coldQ" "rain_wetQ"  "rain_wet"  </span></span>
-<span><span class="co">#&gt; [11] "rain_coldQ" "rain_sea"   "spp_rich"  </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Variables retained:</span></span>
-<span><span class="co">#&gt; [1] "temp_mean"  "iso"        "temp_wetQ"  "temp_dryQ"  "rain_dry"  </span></span>
-<span><span class="co">#&gt; [6] "rain_warmQ" "obs_sum"</span></span>
-<span></span>
+<p><img src="figures/3-var-vif-1.png" class="r-plt" alt="Environmental pairwise correlations" width="100%"></p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># Before vs after</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>original <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">env_df</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span><span class="op">:</span><span class="fl">24</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>  reduced  <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">env_vars_reduced</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; original  reduced </span></span>
-<span><span class="co">#&gt;       20        7</span></span></code></pre>
+<span><span class="co">#&gt;       20        7</span></span></code></pre></div>
 <p><em><code>env_vars_reduced</code> now contains a decorrelated subset
 of climate predictors suitable for stable GLMs, GAMs, machine-learning,
 or ordination workflows.</em></p>
-<hr>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.5.2 (2025-10-31 ucrt)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-w64-mingw32/x64</span></span>
+<span><span class="co">#&gt; Running under: Windows 11 x64 (build 26200)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt;   LAPACK version 3.12.1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt; [1] LC_COLLATE=English_South Africa.utf8  LC_CTYPE=English_South Africa.utf8   </span></span>
+<span><span class="co">#&gt; [3] LC_MONETARY=English_South Africa.utf8 LC_NUMERIC=C                         </span></span>
+<span><span class="co">#&gt; [5] LC_TIME=English_South Africa.utf8    </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: Africa/Johannesburg</span></span>
+<span><span class="co">#&gt; tzcode source: internal</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices datasets  utils     methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt; [1] dplyr_1.2.1   ggplot2_4.0.3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;   [1] DBI_1.3.0            pbapply_1.7-4        geodata_0.6-9       </span></span>
+<span><span class="co">#&gt;   [4] pROC_1.19.0.1        s2_1.1.11            permute_0.9-10      </span></span>
+<span><span class="co">#&gt;   [7] rlang_1.2.0          magrittr_2.0.5       otel_0.2.0          </span></span>
+<span><span class="co">#&gt;  [10] e1071_1.7-17         compiler_4.5.2       mgcv_1.9-4          </span></span>
+<span><span class="co">#&gt;  [13] systemfonts_1.3.2    vctrs_0.7.3          maps_3.4.3          </span></span>
+<span><span class="co">#&gt;  [16] reshape2_1.4.5       stringr_1.6.0        wk_0.9.5            </span></span>
+<span><span class="co">#&gt;  [19] pkgconfig_2.0.3      fastmap_1.2.0        labeling_0.4.3      </span></span>
+<span><span class="co">#&gt;  [22] utf8_1.2.6           rmarkdown_2.31       prodlim_2026.03.11  </span></span>
+<span><span class="co">#&gt;  [25] dissmapr_0.2.0       ragg_1.5.2           purrr_1.2.2         </span></span>
+<span><span class="co">#&gt;  [28] xfun_0.59            cachem_1.1.0         jsonlite_2.0.0      </span></span>
+<span><span class="co">#&gt;  [31] recipes_1.3.3        terra_1.9-34         parallel_4.5.2      </span></span>
+<span><span class="co">#&gt;  [34] cluster_2.1.8.2      R6_2.6.1             bslib_0.11.0        </span></span>
+<span><span class="co">#&gt;  [37] stringi_1.8.7        RColorBrewer_1.1-3   parallelly_1.47.0   </span></span>
+<span><span class="co">#&gt;  [40] rpart_4.1.27         lubridate_1.9.5      jquerylib_0.1.4     </span></span>
+<span><span class="co">#&gt;  [43] estimability_1.5.1   Rcpp_1.1.1-1.1       iterators_1.0.14    </span></span>
+<span><span class="co">#&gt;  [46] knitr_1.51           future.apply_1.20.2  fields_17.3         </span></span>
+<span><span class="co">#&gt;  [49] zoo_1.8-15           Matrix_1.7-5         splines_4.5.2       </span></span>
+<span><span class="co">#&gt;  [52] nnet_7.3-20          timechange_0.4.0     tidyselect_1.2.1    </span></span>
+<span><span class="co">#&gt;  [55] rstudioapi_0.19.0    yaml_2.3.12          vegan_2.7-5         </span></span>
+<span><span class="co">#&gt;  [58] timeDate_4052.112    codetools_0.2-20     listenv_1.0.0       </span></span>
+<span><span class="co">#&gt;  [61] lattice_0.22-9       tibble_3.3.1         plyr_1.8.9          </span></span>
+<span><span class="co">#&gt;  [64] withr_3.0.3          S7_0.2.2             geosphere_1.6-8     </span></span>
+<span><span class="co">#&gt;  [67] evaluate_1.0.5       sf_1.1-1             future_1.70.0       </span></span>
+<span><span class="co">#&gt;  [70] desc_1.4.3           survival_3.8-6       units_1.0-1         </span></span>
+<span><span class="co">#&gt;  [73] proxy_0.4-29         mclust_6.1.2         pillar_1.11.1       </span></span>
+<span><span class="co">#&gt;  [76] KernSmooth_2.23-26   corrplot_0.95        renv_1.1.4          </span></span>
+<span><span class="co">#&gt;  [79] foreach_1.5.2        stats4_4.5.2         generics_0.1.4      </span></span>
+<span><span class="co">#&gt;  [82] zetadiv_1.3.0        scales_1.4.0         globals_0.19.1      </span></span>
+<span><span class="co">#&gt;  [85] xtable_1.8-8         class_7.3-23         glue_1.8.1          </span></span>
+<span><span class="co">#&gt;  [88] clValid_0.7          emmeans_2.0.3        tools_4.5.2         </span></span>
+<span><span class="co">#&gt;  [91] data.table_1.18.4    ModelMetrics_1.2.2.2 gower_1.0.2         </span></span>
+<span><span class="co">#&gt;  [94] fs_2.1.0             mvtnorm_1.4-1        dotCall64_1.2       </span></span>
+<span><span class="co">#&gt;  [97] grid_4.5.2           tidyr_1.3.2          ipred_0.9-15        </span></span>
+<span><span class="co">#&gt; [100] patchwork_1.3.2      nlme_3.1-169         cli_3.6.6           </span></span>
+<span><span class="co">#&gt; [103] rappdirs_0.3.4       textshaping_1.0.5    NbClust_3.0.1       </span></span>
+<span><span class="co">#&gt; [106] spam_2.11-4          viridisLite_0.4.3    lava_1.9.1          </span></span>
+<span><span class="co">#&gt; [109] scam_1.2-22          gtable_0.3.6         sass_0.4.10         </span></span>
+<span><span class="co">#&gt; [112] digest_0.6.39        classInt_0.4-11      caret_7.0-1         </span></span>
+<span><span class="co">#&gt; [115] ggrepel_0.9.8        htmlwidgets_1.6.4    farver_2.1.2        </span></span>
+<span><span class="co">#&gt; [118] entropy_1.3.2        htmltools_0.5.9      pkgdown_2.2.0       </span></span>
+<span><span class="co">#&gt; [121] lifecycle_1.0.5      factoextra_2.0.0     httr_1.4.8          </span></span>
+<span><span class="co">#&gt; [124] hardhat_1.4.3        MASS_7.3-65</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -454,11 +505,11 @@ or ordination workflows.</em></p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Sandra MacFadyen.</p>
+  <p>Developed by Sandra MacFadyen, <a href="https://doi.org/10.3030/101059592" class="external-link"><img src="https://raw.githubusercontent.com/b-cubed-eu/dubicube/main/man/figures/eu-funded-en.png" height="35" alt="Funded by the European Union"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

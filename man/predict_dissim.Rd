@@ -40,6 +40,10 @@ rows must align with \code{grid_spp}).}
 \item{y_col}{Name of the y (latitude) column.}
 
 \item{show_plot}{Logical; if TRUE (default), print the turnover heatmap.}
+
+\item{skip_scale}{Logical; if TRUE, skip internal scaling/standardisation of
+the environmental predictors (use when \code{env_vars} are
+already scaled). Default FALSE.}
 }
 \value{
 A data frame with one row per site, containing:

@@ -11,14 +11,13 @@
 
 #' @keywords internal
 #' @importFrom grDevices colorRampPalette
-#' @importFrom stats cor kmeans dist aggregate
+#' @importFrom stats cor kmeans dist aggregate quantile na.omit
 #' @importFrom utils combn read.csv unzip
 #' @importFrom geosphere distHaversine distm distGeo
 #' @importFrom caret findCorrelation
 #' @importFrom data.table := rbindlist as.data.table
-#' @importFrom dplyr rename mutate select across group_by summarize ungroup
-#'             filter relocate bind_cols left_join slice any_of all_of
-#'             row_number cur_group_id intersect union
+#' @importFrom dplyr %>%
+#' @importFrom dplyr rename mutate select across group_by summarize ungroup filter relocate bind_cols left_join slice any_of all_of row_number cur_group_id where
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @importFrom pbapply pblapply
 #' @importFrom future plan
@@ -26,16 +25,11 @@
 #' @importFrom NbClust NbClust
 #' @importFrom clValid clValid
 #' @importFrom factoextra hcut
-#' @importFrom mclust Mclust
+#' @importFrom mclust Mclust mclustBIC
 #' @importFrom fields Tps
-#' @importFrom ggplot2 ggplot geom_tile geom_text scale_fill_gradientn labs
-#'             theme_minimal theme element_blank
-#' @importFrom sf st_as_sf st_as_sfc st_bbox st_make_grid st_set_geometry
-#'             st_centroid st_coordinates st_union st_convex_hull st_buffer
-#'             st_join st_within
-#' @importFrom terra rast vect ext classify interpolate crds rasterize area
-#'             describe intersect union
-#' @import     geodata
+#' @importFrom ggplot2 ggplot geom_tile geom_text scale_fill_gradientn labs theme_minimal theme element_blank geom_sf
+#' @importFrom sf st_as_sf st_as_sfc st_bbox st_make_grid st_set_geometry st_centroid st_coordinates st_union st_convex_hull st_buffer st_join st_within
+#' @importFrom terra rast vect ext classify interpolate crds rasterize area describe crs resample app nlyr values as.int setValues
 #' @importFrom geodata worldclim_global
 #' @importFrom purrr reduce
 #' @importFrom zoo na.approx time<-
@@ -43,6 +37,7 @@
 #' @importFrom vegan vegdist
 #' @importFrom entropy mi.plugin
 #' @importFrom reshape2 melt
+#' @importFrom rlang .data
 NULL
 
 # Silence R CMD check "no visible binding ..." --------------------------
@@ -57,7 +52,10 @@ utils::globalVariables(c(
   # temporary or generated column names
   "site_from", "site_to", "pred_zetaExp", "obs_sum",
   "coord_cols", "sp_cols", "orig_x", "orig_y",
-  "geometry", "grid_id",
+  "geometry", "grid_id", "scenario", "zOrder",
+
+  # data.table `..` (dot-dot) variable references
+  "..sp_cols",
 
   # mapsheet helpers
   "centroid", "centroid_lat", "centroid_lon",

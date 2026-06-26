@@ -9,4 +9,13 @@
 ^_oldREADME\.md$
 ^\.github$
 ^\_helper_pkgSetup\.R$
-
+^vignettes/articles$
+^docs$
+^CITATION\.cff$
+^codemeta\.json$
+^\.zenodo\.json$
+^LICENSE\.md$
+^runtime\.txt$
+^codecov\.yml$
+^\.git$
+^dev$

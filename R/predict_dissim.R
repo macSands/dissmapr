@@ -20,6 +20,9 @@
 #' @param x_col        Name of the x (longitude) column in \code{grid_spp}/\code{grid_xy}.
 #' @param y_col        Name of the y (latitude) column.
 #' @param show_plot    Logical; if TRUE (default), print the turnover heatmap.
+#' @param skip_scale   Logical; if TRUE, skip internal scaling/standardisation of
+#'                     the environmental predictors (use when `env_vars` are
+#'                     already scaled). Default FALSE.
 #'
 #' @return
 #' A data frame with one row per site, containing:
@@ -60,7 +63,6 @@ predict_dissim <- function(
     show_plot = TRUE,
     skip_scale = FALSE
 ) {
-  library(dplyr); library(geosphere); library(zetadiv); library(ggplot2)
 
   # 1) sanity
   req_meta <- c(x_col, y_col)

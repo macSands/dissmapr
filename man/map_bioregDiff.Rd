@@ -58,8 +58,8 @@ if (requireNamespace("terra", quietly = TRUE)) {
 
   r1 <- terra::rast(nrows = 40, ncols = 40,
                     vals  = sample(1:4, 40 * 40, TRUE))
-  r2 <- terra::rast(r1, vals = sample(1:4, ncell(r1), TRUE))
-  r3 <- terra::rast(r1, vals = sample(1:4, ncell(r1), TRUE))
+  r2 <- terra::rast(r1, vals = sample(1:4, terra::ncell(r1), TRUE))
+  r3 <- terra::rast(r1, vals = sample(1:4, terra::ncell(r1), TRUE))
 
   r_stack <- terra::rast(list(r1, r2, r3))
   names(r_stack) <- paste0("t", 1:3)
