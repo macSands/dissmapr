@@ -1,7 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/404.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/1-setup.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/articles/10-zenodo.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/2-grid.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/3-enviro.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/4-zeta.html</loc></url>
@@ -11,9 +10,7 @@
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/8-change.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/9-examples.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/dissmapr.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/articles/getting-started.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/articles/index.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/articles/tutorial_1.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/authors.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/CODE_OF_CONDUCT.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/CONTRIBUTING.html</loc></url>
@@ -37,12 +34,10 @@
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/get_enviro_data.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/get_occurrence_data.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/gower_dissimilarity.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/reference/hello.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/index.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/map_bioreg.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/map_bioregDiff.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/mutual_info.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/reference/optimized_compute_orderwise.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/orderwise_diss_gower.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/phi_coef.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/plot_ispline_boxplots.html</loc></url>
@@ -53,6 +48,5 @@
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/rm_correlated.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/run_ispline_models.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/dissmapr/reference/turnover.html</loc></url>
-<url><loc>https://b-cubed-eu.github.io/dissmapr/_front_README.html</loc></url>
 </urlset>
 

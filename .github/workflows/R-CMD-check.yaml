@@ -44,8 +44,6 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
-      - name: Install zen4R
-        run: Rscript -e 'install.packages("zen4R")'
 
       - uses: r-lib/actions/check-r-package@v2
         with:

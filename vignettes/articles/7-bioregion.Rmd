@@ -81,7 +81,7 @@ str(bioreg_current, max.level=1)
 Below we expand our workflow to map the forecasted ζ₂  bioregions under three extreme climate futures (2030, 2040, 2050) alongside the current scenario.
 To see how the bioregional partitions shift, we split `all_preds` by scenario and apply `map_bioreg()` (k-means + hierarchical, both NN and TPS interpolation). We then extract the hierarchical cluster layers, mask them to our study area, and plot all four maps in a 2×2 layout:
 
-```{r future-cluster, fig.alt="Future bioregion clusters"}
+```{r future-cluster, fig.width=9, fig.height=8, fig.alt="Future bioregion clusters"}
 # Split your combined predictions by scenario into a named list
 by_scn = split(all_preds, all_preds$scenario)
 
@@ -96,16 +96,40 @@ bioreg_future = dissmapr::map_bioreg(
   y_col ='centroid_lat',
   res = 0.5, 
   crs = "EPSG:4326",
-  plot = TRUE,
+  plot = FALSE,
   bndy_fc = rsa)
 
 # Check results
 str(bioreg_future, max.level=1)
+
+# Plot the consensus bioregion clusters per scenario with a single, compact
+# shared legend. Bioregions are categorical, so we keep a discrete key (Set3)
+# rather than a continuous colour bar.
+library(ggplot2)
+
+clust_tbl = bioreg_future$table
+
+# Order scenarios with "current" first, if present
+scn_lev = unique(clust_tbl$scenario)
+scn_lev = c(intersect("current", scn_lev), setdiff(scn_lev, "current"))
+clust_tbl$scenario = factor(clust_tbl$scenario, levels = scn_lev)
+
+ggplot() +
+  geom_tile(data = clust_tbl,
+            aes(x = centroid_lon, y = centroid_lat,
+                fill = factor(cluster_mode))) +
+  geom_sf(data = rsa, fill = NA, colour = "black", linewidth = 0.3) +
+  facet_wrap(~ scenario) +
+  scale_fill_brewer(palette = "Set3", name = "Bioregion", drop = FALSE) +
+  theme_minimal(base_size = 9) +
+  theme(legend.position = "bottom") +
+  guides(fill = guide_legend(nrow = 1)) +
+  labs(x = "Longitude", y = "Latitude")
 ```
 
 Below we visualise the nearest-neighbour interpolated future‐scenario cluster outputs. First, we list the structure of the `bioreg_future` result to confirm available components. We then combine the k-means nearest-neighbour rasters for “current” and each future year into a single `SpatRaster` stack (`future_nn`), and resample, then mask it to the RSA boundary (`mask_future_nn`). Finally, we lay out a 2×2 plot grid, compute a discrete colour palette for each layer based on its unique classes, and render each masked layer with its boundary overlay for a quick inspection of bioregion changes across time.
 
-```{r future-plots, fig.alt="Smoothed future bioregion clusters"}
+```{r future-plots, fig.width=9, fig.height=6.5, fig.alt="Smoothed future bioregion clusters"}
 # Check results
 str(bioreg_future, max.level=1)
 

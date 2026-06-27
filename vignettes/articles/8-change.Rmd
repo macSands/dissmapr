@@ -54,7 +54,7 @@ In the sections below we use `map_bioregDiff()` to assess how much our four clus
 - **all** (default): returns a five-layer `SpatRaster` containing every metric.   
 
 
-```{r bioreg-Diff, fig.alt="Bioregion sensitivity to method"}
+```{r bioreg-Diff, fig.width=12, fig.height=6.5, fig.alt="Bioregion sensitivity to method"}
 # Get current nn rasters
 # current_nn = c(bioreg_current$nn$current$kmeans_algn_current,
 #              bioreg_current$nn$current$pam_algn_current,
@@ -78,8 +78,8 @@ mask_sens_bioregDiff = terra::mask(
   grid_masked
 )
 
-# Quick visual QC in a 3×2 layout
-old_par = par(mfrow = c(3, 2), mar = c(1, 1, 1, 5))
+# Quick visual QC in a 2-row x 3-column layout
+old_par = par(mfrow = c(2, 3), mar = c(1, 1, 1, 5))
 titles = c("Difference count", "Shannon entropy", "Stability",
            "Transition frequency", "Weighted change index")
 
@@ -100,7 +100,7 @@ par(old_par)
 
 Here we use `map_bioregDiff()` to track how the hierarchical‐cluster map itself changes under three future climate scenarios. Focusing solely on the hierarchical solution we map bioregion change across time. First we stack the hierarchical clusters for today, 2030, 2040 and 2050, run `map_bioregDiff()` on that series, and highlight how bioregions shift under these future climate projections. In this way we isolate climate-driven reorganization in the hierarchical map itself.
 
-```{r bioreg-diff-futures, message=FALSE, fig.alt="Bioregion sensitivity to change"}
+```{r bioreg-diff-futures, message=FALSE, fig.width=12, fig.height=6.5, fig.alt="Bioregion sensitivity to change"}
 # 1. Build a multi‐layer SpatRaster of hierarchical clusters for each scenario
 # Create SpatRast
 # future_hclt = c(bioreg_future$nn$current$hclust_current,
@@ -118,8 +118,8 @@ mask_future_bioregDiff = terra::mask(
   grid_masked
 )
 
-# 4. Plot all five metrics in a 3×2 panel
-old_par = par(mfrow = c(3, 2), mar = c(1, 1, 1, 5))
+# 4. Plot all five metrics in a 2-row x 3-column panel
+old_par = par(mfrow = c(2, 3), mar = c(1, 1, 1, 5))
 titles = c(
   "Difference count",
   "Shannon entropy",

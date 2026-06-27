@@ -1,5 +1,18 @@
 # Compute orderwise examples
 
+``` r
+# Load the objects this article needs from the single bundled snapshot.
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(dissmapr)
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
+
+grid_spp = inputs$grid_spp
+sp_cols = inputs$sp_cols
+rsa = inputs$rsa
+```
+
 ## `dissmapr`
 
 ### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
