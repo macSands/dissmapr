@@ -19,26 +19,44 @@ knitr::opts_chunk$set(
 )
 ```
 
+# `dissmapr`
+
+## Delineating Bioregions from Predicted Community Composition
+
+This vignette shows how predicted compositional patterns can be translated into biodiversity regions. By grouping areas with similar predicted communities, the workflow supports spatial interpretation of turnover patterns and highlights broad biogeographic structure.
+
+To keep the example reproducible and quick to run, we use a small set of example objects bundled with `dissmapr`. The setup chunk below loads the required packages, reads the bundled data snapshot, and unpacks the rasters, boundary data, and species information needed for the bioregionalisation examples.
+
 ```{r read_files}
-# Load the objects this article needs from the single bundled snapshot.
+# Load the packages used in this vignette.
 library(dissmapr)
 library(terra)
 library(RColorBrewer)
+
+# Load the bundled example data snapshot.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-predictors_df = inputs$predictors_df
-all_preds = inputs$all_preds
-grid_masked = terra::mask(terra::setValues(terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]], 1), terra::vect(inputs$rsa))
-rsa = inputs$rsa
-grid_spp = inputs$grid_spp
-sp_cols = inputs$sp_cols
+# Unpack the example objects used below.
+predictors_df = inputs$predictors_df       # Environmental predictor values
+all_preds = inputs$all_preds               # Model prediction outputs
+rsa = inputs$rsa                           # South Africa boundary
+grid_spp = inputs$grid_spp                 # Grid-level species data
+sp_cols = inputs$sp_cols                   # Species column names
 
-future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
+# Recreate the masked raster grid and load the future nearest-neighbour raster.
+grid_masked = terra::mask(
+  terra::setValues(
+    terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]],
+    1
+  ),
+  terra::vect(rsa)
+)
+
+future_nn = terra::rast(
+  system.file("extdata", "future_nn.tif", package = "dissmapr")
+)
 ```
 
-# `dissmapr`
-
-## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 ### 1. Run clustering analyses using `map_bioreg()` to map bioregions
 
@@ -81,7 +99,7 @@ str(bioreg_current, max.level=1)
 Below we expand our workflow to map the forecasted ζ₂  bioregions under three extreme climate futures (2030, 2040, 2050) alongside the current scenario.
 To see how the bioregional partitions shift, we split `all_preds` by scenario and apply `map_bioreg()` (k-means + hierarchical, both NN and TPS interpolation). We then extract the hierarchical cluster layers, mask them to our study area, and plot all four maps in a 2×2 layout:
 
-```{r future-cluster, fig.alt="Future bioregion clusters"}
+```{r future-cluster, fig.width=9, fig.height=8, fig.alt="Future bioregion clusters"}
 # Split your combined predictions by scenario into a named list
 by_scn = split(all_preds, all_preds$scenario)
 
@@ -96,16 +114,40 @@ bioreg_future = dissmapr::map_bioreg(
   y_col ='centroid_lat',
   res = 0.5, 
   crs = "EPSG:4326",
-  plot = TRUE,
+  plot = FALSE,
   bndy_fc = rsa)
 
 # Check results
 str(bioreg_future, max.level=1)
+
+# Plot the consensus bioregion clusters per scenario with a single, compact
+# shared legend. Bioregions are categorical, so we keep a discrete key (Set3)
+# rather than a continuous colour bar.
+library(ggplot2)
+
+clust_tbl = bioreg_future$table
+
+# Order scenarios with "current" first, if present
+scn_lev = unique(clust_tbl$scenario)
+scn_lev = c(intersect("current", scn_lev), setdiff(scn_lev, "current"))
+clust_tbl$scenario = factor(clust_tbl$scenario, levels = scn_lev)
+
+ggplot() +
+  geom_tile(data = clust_tbl,
+            aes(x = centroid_lon, y = centroid_lat,
+                fill = factor(cluster_mode))) +
+  geom_sf(data = rsa, fill = NA, colour = "black", linewidth = 0.3) +
+  facet_wrap(~ scenario) +
+  scale_fill_brewer(palette = "Set3", name = "Bioregion", drop = FALSE) +
+  theme_minimal(base_size = 9) +
+  theme(legend.position = "bottom") +
+  guides(fill = guide_legend(nrow = 1)) +
+  labs(x = "Longitude", y = "Latitude")
 ```
 
 Below we visualise the nearest-neighbour interpolated future‐scenario cluster outputs. First, we list the structure of the `bioreg_future` result to confirm available components. We then combine the k-means nearest-neighbour rasters for “current” and each future year into a single `SpatRaster` stack (`future_nn`), and resample, then mask it to the RSA boundary (`mask_future_nn`). Finally, we lay out a 2×2 plot grid, compute a discrete colour palette for each layer based on its unique classes, and render each masked layer with its boundary overlay for a quick inspection of bioregion changes across time.
 
-```{r future-plots, fig.alt="Smoothed future bioregion clusters"}
+```{r future-plots, fig.width=9, fig.height=6.5, fig.alt="Smoothed future bioregion clusters"}
 # Check results
 str(bioreg_future, max.level=1)
 

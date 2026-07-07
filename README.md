@@ -10,8 +10,7 @@ version](https://b-cubed-eu.r-universe.dev/dissmapr/badges/version)](https://b-c
 [![R-CMD-check](https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/b-cubed-eu/dissmapr/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/b-cubed-eu/dissmapr/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/dissmapr)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20842434.svg)](https://doi.org/10.5281/zenodo.20842434)
-[![R-universe](https://img.shields.io/badge/R--universe-b--cubed--eu-6CDDB4)](https://b-cubed-eu.r-universe.dev/)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20842434-blue.svg)](https://doi.org/10.5281/zenodo.20842434)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 [![funder](https://badgen.net/static/funder/European%20Union/f2a)](https://doi.org/10.3030/101059592)
@@ -309,6 +308,4 @@ it builds on:
 ------------------------------------------------------------------------
 
 `dissmapr` was developed within the [B-Cubed](https://b-cubed.eu/)
-project (Biodiversity Building Blocks for policy), funded by the
-European Union’s Horizon Europe Research and Innovation Programme
-([grant 101059592](https://doi.org/10.3030/101059592)).
+project (Biodiversity Building Blocks for policy), funded by

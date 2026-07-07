@@ -3026,9 +3026,9 @@
     },
     "gridExtra": {
       "Package": "gridExtra",
-      "Version": "2.3",
+      "Version": "2.3.1",
       "Source": "Repository",
-      "Authors@R": "c(person(\"Baptiste\", \"Auguie\", email = \"baptiste.auguie@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Anton\", \"Antonov\", email = \"tonytonov@gmail.com\", role = c(\"ctb\")))",
+      "Authors@R": "c(person(\"Baptiste\", \"Auguie\", email = \"baptiste.auguie@vuw.ac.nz\", role = c(\"aut\", \"cre\")), person(\"Anton\", \"Antonov\", email = \"tonytonov@gmail.com\", role = c(\"ctb\")))",
       "License": "GPL (>= 2)",
       "Title": "Miscellaneous Functions for \"Grid\" Graphics",
       "Type": "Package",
@@ -3051,8 +3051,8 @@
       "RoxygenNote": "6.0.1",
       "NeedsCompilation": "no",
       "Author": "Baptiste Auguie [aut, cre], Anton Antonov [ctb]",
-      "Maintainer": "Baptiste Auguie <baptiste.auguie@gmail.com>",
-      "Repository": "CRAN",
+      "Maintainer": "Baptiste Auguie <baptiste.auguie@vuw.ac.nz>",
+      "Repository": "RSPM",
       "Encoding": "UTF-8"
     },
     "gtable": {

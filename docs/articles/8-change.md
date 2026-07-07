@@ -2,7 +2,46 @@
 
 ## `dissmapr`
 
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+### Assessing Current-to-Future Biodiversity Change
+
+This vignette compares current and future spatial patterns in
+biodiversity composition. It illustrates how `dissmapr` outputs can be
+used to explore potential compositional change, including shifts in
+predicted community similarity and bioregional structure.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and loads the
+current and future raster layers needed for the change-analysis
+examples.
+
+``` r
+# Load the packages used in this vignette.
+library(dissmapr)
+library(viridis)
+library(terra)
+
+# Load the bundled example data snapshot.
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
+
+# Unpack the example objects used below.
+rsa = inputs$rsa             # South Africa boundary
+grid_spp = inputs$grid_spp   # Grid-level species data
+sp_cols = inputs$sp_cols     # Species column names
+
+# Recreate/load the raster layers used in the spatial comparisons.
+grid_masked = terra::mask(
+  terra::setValues(
+    terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]],
+    1
+  ),
+  terra::vect(rsa)
+)
+
+future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
+current_nn = terra::rast(system.file("extdata", "current_nn.tif", package = "dissmapr"))
+future_hclt = terra::rast(system.file("extdata", "future_hclt.tif", package = "dissmapr"))
+```
 
 #### 1. Map sensitivity of bioregion delineation to clustering method using `map_bioregDiff()`
 
@@ -75,8 +114,8 @@ mask_sens_bioregDiff = terra::mask(
   grid_masked
 )
 
-# Quick visual QC in a 3×2 layout
-old_par = par(mfrow = c(3, 2), mar = c(1, 1, 1, 5))
+# Quick visual QC in a 2-row x 3-column layout
+old_par = par(mfrow = c(2, 3), mar = c(1, 1, 1, 5))
 titles = c("Difference count", "Shannon entropy", "Stability",
            "Transition frequency", "Weighted change index")
 
@@ -126,8 +165,8 @@ mask_future_bioregDiff = terra::mask(
   grid_masked
 )
 
-# 4. Plot all five metrics in a 3×2 panel
-old_par = par(mfrow = c(3, 2), mar = c(1, 1, 1, 5))
+# 4. Plot all five metrics in a 2-row x 3-column panel
+old_par = par(mfrow = c(2, 3), mar = c(1, 1, 1, 5))
 titles = c(
   "Difference count",
   "Shannon entropy",
@@ -173,48 +212,48 @@ sessionInfo()
 #> [1] stats     graphics  grDevices datasets  utils     methods   base     
 #> 
 #> other attached packages:
-#> [1] terra_1.9-34      viridis_0.6.5     viridisLite_0.4.3
+#> [1] terra_1.9-34      viridis_0.6.5     viridisLite_0.4.3 dissmapr_0.2.0   
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0            pbapply_1.7-4        geodata_0.6-9       
-#>   [4] pROC_1.19.0.1        gridExtra_2.3        permute_0.9-10      
+#>   [4] pROC_1.19.0.1        gridExtra_2.3.1      permute_0.9-10      
 #>   [7] rlang_1.2.0          magrittr_2.0.5       otel_0.2.0          
 #>  [10] e1071_1.7-17         compiler_4.5.2       mgcv_1.9-4          
 #>  [13] systemfonts_1.3.2    vctrs_0.7.3          maps_3.4.3          
 #>  [16] reshape2_1.4.5       stringr_1.6.0        pkgconfig_2.0.3     
 #>  [19] fastmap_1.2.0        rmarkdown_2.31       prodlim_2026.03.11  
-#>  [22] dissmapr_0.2.0       ragg_1.5.2           purrr_1.2.2         
-#>  [25] xfun_0.59            cachem_1.1.0         jsonlite_2.0.0      
-#>  [28] recipes_1.3.3        parallel_4.5.2       cluster_2.1.8.2     
-#>  [31] R6_2.6.1             bslib_0.11.0         stringi_1.8.7       
-#>  [34] RColorBrewer_1.1-3   parallelly_1.47.0    rpart_4.1.27        
-#>  [37] lubridate_1.9.5      jquerylib_0.1.4      estimability_1.5.1  
-#>  [40] Rcpp_1.1.1-1.1       iterators_1.0.14     knitr_1.51          
-#>  [43] future.apply_1.20.2  fields_17.3          zoo_1.8-15          
-#>  [46] Matrix_1.7-5         splines_4.5.2        nnet_7.3-20         
-#>  [49] timechange_0.4.0     tidyselect_1.2.1     rstudioapi_0.19.0   
-#>  [52] yaml_2.3.12          vegan_2.7-5          timeDate_4052.112   
-#>  [55] codetools_0.2-20     listenv_1.0.0        lattice_0.22-9      
-#>  [58] tibble_3.3.1         plyr_1.8.9           withr_3.0.3         
-#>  [61] S7_0.2.2             geosphere_1.6-8      evaluate_1.0.5      
-#>  [64] sf_1.1-1             future_1.70.0        desc_1.4.3          
-#>  [67] survival_3.8-6       units_1.0-1          proxy_0.4-29        
-#>  [70] mclust_6.1.2         pillar_1.11.1        KernSmooth_2.23-26  
-#>  [73] corrplot_0.95        renv_1.1.4           foreach_1.5.2       
-#>  [76] stats4_4.5.2         generics_0.1.4       zetadiv_1.3.0       
-#>  [79] ggplot2_4.0.3        scales_1.4.0         globals_0.19.1      
-#>  [82] xtable_1.8-8         class_7.3-23         glue_1.8.1          
-#>  [85] clValid_0.7          emmeans_2.0.3        tools_4.5.2         
-#>  [88] data.table_1.18.4    ModelMetrics_1.2.2.2 gower_1.0.2         
-#>  [91] fs_2.1.0             mvtnorm_1.4-1        dotCall64_1.2       
-#>  [94] grid_4.5.2           tidyr_1.3.2          ipred_0.9-15        
-#>  [97] patchwork_1.3.2      nlme_3.1-169         cli_3.6.6           
-#> [100] rappdirs_0.3.4       textshaping_1.0.5    NbClust_3.0.1       
-#> [103] spam_2.11-4          lava_1.9.1           scam_1.2-22         
-#> [106] dplyr_1.2.1          gtable_0.3.6         sass_0.4.10         
-#> [109] digest_0.6.39        classInt_0.4-11      caret_7.0-1         
-#> [112] ggrepel_0.9.8        htmlwidgets_1.6.4    farver_2.1.2        
-#> [115] entropy_1.3.2        htmltools_0.5.9      pkgdown_2.2.0       
-#> [118] lifecycle_1.0.5      factoextra_2.0.0     httr_1.4.8          
-#> [121] hardhat_1.4.3        MASS_7.3-65
+#>  [22] ragg_1.5.2           purrr_1.2.2          xfun_0.59           
+#>  [25] cachem_1.1.0         jsonlite_2.0.0       recipes_1.3.3       
+#>  [28] parallel_4.5.2       cluster_2.1.8.2      R6_2.6.1            
+#>  [31] bslib_0.11.0         stringi_1.8.7        RColorBrewer_1.1-3  
+#>  [34] parallelly_1.47.0    rpart_4.1.27         estimability_1.5.1  
+#>  [37] lubridate_1.9.5      jquerylib_0.1.4      Rcpp_1.1.1-1.1      
+#>  [40] iterators_1.0.14     knitr_1.51           future.apply_1.20.2 
+#>  [43] fields_17.3          zoo_1.8-15           Matrix_1.7-5        
+#>  [46] splines_4.5.2        nnet_7.3-20          timechange_0.4.0    
+#>  [49] tidyselect_1.2.1     rstudioapi_0.19.0    yaml_2.3.12         
+#>  [52] vegan_2.7-5          timeDate_4052.112    codetools_0.2-20    
+#>  [55] listenv_1.0.0        lattice_0.22-9       tibble_3.3.1        
+#>  [58] plyr_1.8.9           withr_3.0.3          S7_0.2.2            
+#>  [61] geosphere_1.6-8      evaluate_1.0.5       sf_1.1-1            
+#>  [64] future_1.70.0        desc_1.4.3           survival_3.8-6      
+#>  [67] units_1.0-1          proxy_0.4-29         mclust_6.1.2        
+#>  [70] pillar_1.11.1        KernSmooth_2.23-26   corrplot_0.95       
+#>  [73] renv_1.1.4           foreach_1.5.2        stats4_4.5.2        
+#>  [76] generics_0.1.4       zetadiv_1.3.0        ggplot2_4.0.3       
+#>  [79] scales_1.4.0         xtable_1.8-8         globals_0.19.1      
+#>  [82] class_7.3-23         glue_1.8.1           clValid_0.7         
+#>  [85] emmeans_2.0.3        tools_4.5.2          data.table_1.18.4   
+#>  [88] ModelMetrics_1.2.2.2 gower_1.0.2          mvtnorm_1.4-1       
+#>  [91] fs_2.1.0             dotCall64_1.2        grid_4.5.2          
+#>  [94] tidyr_1.3.2          ipred_0.9-15         nlme_3.1-169        
+#>  [97] patchwork_1.3.2      cli_3.6.6            rappdirs_0.3.4      
+#> [100] textshaping_1.0.5    NbClust_3.0.1        spam_2.11-4         
+#> [103] scam_1.2-22          lava_1.9.1           dplyr_1.2.1         
+#> [106] gtable_0.3.6         sass_0.4.10          digest_0.6.39       
+#> [109] classInt_0.4-11      caret_7.0-1          ggrepel_0.9.8       
+#> [112] htmlwidgets_1.6.4    farver_2.1.2         entropy_1.3.2       
+#> [115] htmltools_0.5.9      pkgdown_2.2.0        lifecycle_1.0.5     
+#> [118] factoextra_2.0.0     hardhat_1.4.3        httr_1.4.8          
+#> [121] MASS_7.3-65
 ```
