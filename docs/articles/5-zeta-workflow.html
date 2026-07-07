@@ -83,24 +83,35 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/dissmapr" class="external-link">dissmapr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
-<span><span class="co"># Load the single bundled snapshot of all vignette state.</span></span>
-<span><span class="va">inputs</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/serialize.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"dissmapr_vignettes.rds"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">grid_spp_pa</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">grid_spp_pa</span></span>
-<span><span class="va">env_vars_reduced</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">env_vars_reduced</span></span>
-<span><span class="va">grid_env</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">grid_env</span></span>
-<span><span class="va">sp_cols</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">sp_cols</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="dissmapr">
 <code>dissmapr</code><a class="anchor" aria-label="anchor" href="#dissmapr"></a>
 </h2>
 <div class="section level3">
-<h3 id="a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis">A Novel Framework for Automated Compositional Dissimilarity and
-Biodiversity Turnover Analysis<a class="anchor" aria-label="anchor" href="#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis"></a>
+<h3 id="modelling-zeta-diversity-across-environmental-gradients">Modelling Zeta Diversity Across Environmental Gradients<a class="anchor" aria-label="anchor" href="#modelling-zeta-diversity-across-environmental-gradients"></a>
 </h3>
+<p>This vignette demonstrates a more complete zeta-diversity workflow,
+moving from prepared species and environmental data to model fitting and
+interpretation. It is intended to show how the main zeta-based
+components of <code>dissmapr</code> can be combined in practice.</p>
+<p>To keep the example reproducible and quick to run, we use a small set
+of example objects bundled with <code>dissmapr</code>. The setup chunk
+below loads the required packages, reads the bundled data snapshot, and
+unpacks the objects needed for the automated zeta-modelling
+workflow.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load the packages used in this vignette.</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/dissmapr" class="external-link">dissmapr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load the bundled example data snapshot.</span></span>
+<span><span class="va">inputs</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/serialize.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"dissmapr_vignettes.rds"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Unpack the example objects used below.</span></span>
+<span><span class="va">grid_spp_pa</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">grid_spp_pa</span>           <span class="co"># Presence-absence species data</span></span>
+<span><span class="va">env_vars_reduced</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">env_vars_reduced</span> <span class="co"># Selected environmental variables</span></span>
+<span><span class="va">grid_env</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">grid_env</span>                 <span class="co"># Grid-level environmental data</span></span>
+<span><span class="va">sp_cols</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">sp_cols</span>                   <span class="co"># Species column names</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="automated-ispline-modeling-visualization">1. Automated Ispline Modeling &amp; Visualization<a class="anchor" aria-label="anchor" href="#automated-ispline-modeling-visualization"></a>
 </h4>

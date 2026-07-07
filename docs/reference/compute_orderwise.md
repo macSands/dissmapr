@@ -126,7 +126,7 @@ rich_o12 = compute_orderwise(
  order = 1:2,      # Compute for pairwise and higher-order comparisons
  parallel = FALSE  # keep the example single-threaded
 )
-#> Time elapsed for order 1: 0 minutes and 0.00 seconds
+#> Time elapsed for order 1: 0 minutes and 0.01 seconds
 #> Time elapsed for order 2: 0 minutes and 0.01 seconds
 #> Total computation time: 0 minutes and 0.01 seconds
 head(rich_o12)

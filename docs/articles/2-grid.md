@@ -1,5 +1,20 @@
 # User-defined grid
 
+## `dissmapr`
+
+### Building the Spatial Analysis Grid
+
+This vignette introduces the spatial foundation of the `dissmapr`
+workflow: defining an area of interest and creating a consistent
+analysis grid. These steps ensure that later biodiversity,
+environmental, and prediction analyses all use the same spatial extent
+and resolution.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and unpacks the
+objects needed to build and work with the example grid.
+
 ``` r
 # Load libraries
 library(dissmapr)
@@ -8,15 +23,12 @@ library(ggplot2)
 # Load the objects this article needs from the single bundled snapshot.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-site_obs = inputs$site_obs
-site_spp = inputs$site_spp
-n_sp = inputs$n_sp
-sp_cols = inputs$sp_cols
+# Unpack the bundled example data into the objects used below.
+site_obs = inputs$site_obs   # Site-level observation data
+site_spp = inputs$site_spp   # Site-by-species matrix/data frame
+n_sp = inputs$n_sp           # Number of species
+sp_cols = inputs$sp_cols     # Species column names
 ```
-
-## `dissmapr`
-
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 #### 1. User-defined area of interest and grid resolution
 
@@ -41,7 +53,7 @@ carried out within a consistent spatial framework. In this vignette we:
 # The shapefile is shipped with the package for full reproducibility.
 rsa = sf::st_read(system.file("extdata", "rsa.shp", package = "dissmapr"))
 #> Reading layer `rsa' from data source 
-#>   `C:\Users\macfadyen\AppData\Local\R\cache\R\renv\library\dissmapr-ee60f76d\windows\R-4.5\x86_64-w64-mingw32\dissmapr\extdata\rsa.shp' 
+#>   `C:\Users\macfadyen\AppData\Local\Temp\RtmpIxxmH2\temp_libpath4e401626874\dissmapr\extdata\rsa.shp' 
 #>   using driver `ESRI Shapefile'
 #> Simple feature collection with 1 feature and 1 field
 #> Geometry type: POLYGON

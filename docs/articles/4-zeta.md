@@ -1,22 +1,36 @@
 # Zeta diversity
 
+## `dissmapr`
+
+### Measuring Multi-Site Compositional Turnover with Zeta Diversity
+
+This vignette introduces zeta diversity as a multi-site measure of
+compositional change. Instead of considering only pairwise differences
+between sites, zeta diversity describes how species are shared across
+increasing numbers of sites, offering a broader view of biodiversity
+turnover.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and unpacks the
+environmental and presence-absence data needed for the zeta-diversity
+examples.
+
 ``` r
-# Load libraries
+# Load the packages used in this vignette.
 library(dissmapr)
 library(zetadiv)
 
-# Load the objects this article needs from the single bundled snapshot.
+# Load the bundled example data snapshot.
+# This keeps the vignette reproducible and avoids requiring external downloads.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-grid_env = inputs$grid_env
-env_vars_reduced = inputs$env_vars_reduced
-grid_spp_pa = inputs$grid_spp_pa
-sp_cols = inputs$sp_cols
+# Unpack the example objects used below.
+grid_env = inputs$grid_env                 # Grid-level environmental data
+env_vars_reduced = inputs$env_vars_reduced # Selected environmental variables
+grid_spp_pa = inputs$grid_spp_pa           # Presence-absence species data
+sp_cols = inputs$sp_cols                   # Species column names
 ```
-
-## `dissmapr`
-
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 #### 1. Zeta diversity in **`dissmapr`**: a multi-site view of compositional change
 

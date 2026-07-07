@@ -19,21 +19,28 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r read_files}
-library(dissmapr)
-library(patchwork)
-# Load the single bundled snapshot of all vignette state.
-inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
-
-grid_spp_pa = inputs$grid_spp_pa
-env_vars_reduced = inputs$env_vars_reduced
-grid_env = inputs$grid_env
-sp_cols = inputs$sp_cols
-```
-
 # `dissmapr`
 
-## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+## Modelling Zeta Diversity Across Environmental Gradients
+
+This vignette demonstrates a more complete zeta-diversity workflow, moving from prepared species and environmental data to model fitting and interpretation. It is intended to show how the main zeta-based components of `dissmapr` can be combined in practice.
+
+To keep the example reproducible and quick to run, we use a small set of example objects bundled with `dissmapr`. The setup chunk below loads the required packages, reads the bundled data snapshot, and unpacks the objects needed for the automated zeta-modelling workflow.
+
+```{r read_files}
+# Load the packages used in this vignette.
+library(dissmapr)
+library(patchwork)
+
+# Load the bundled example data snapshot.
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
+
+# Unpack the example objects used below.
+grid_spp_pa = inputs$grid_spp_pa           # Presence-absence species data
+env_vars_reduced = inputs$env_vars_reduced # Selected environmental variables
+grid_env = inputs$grid_env                 # Grid-level environmental data
+sp_cols = inputs$sp_cols                   # Species column names
+```
 
 ### 1. Automated Ispline Modeling & Visualization
 

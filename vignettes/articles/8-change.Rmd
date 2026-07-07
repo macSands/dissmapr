@@ -19,26 +19,41 @@ knitr::opts_chunk$set(
 )
 ```
 
+# `dissmapr`
+
+## Assessing Current-to-Future Biodiversity Change
+
+This vignette compares current and future spatial patterns in biodiversity composition. It illustrates how `dissmapr` outputs can be used to explore potential compositional change, including shifts in predicted community similarity and bioregional structure.
+
+To keep the example reproducible and quick to run, we use a small set of example objects bundled with `dissmapr`. The setup chunk below loads the required packages, reads the bundled data snapshot, and loads the current and future raster layers needed for the change-analysis examples.
+
 ```{r read_files}
-# Load the objects this article needs from the single bundled snapshot.
+# Load the packages used in this vignette.
 library(dissmapr)
 library(viridis)
 library(terra)
+
+# Load the bundled example data snapshot.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-grid_masked = terra::mask(terra::setValues(terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]], 1), terra::vect(inputs$rsa))
-future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
-rsa = inputs$rsa
-grid_spp = inputs$grid_spp
-sp_cols = inputs$sp_cols
+# Unpack the example objects used below.
+rsa = inputs$rsa             # South Africa boundary
+grid_spp = inputs$grid_spp   # Grid-level species data
+sp_cols = inputs$sp_cols     # Species column names
 
+# Recreate/load the raster layers used in the spatial comparisons.
+grid_masked = terra::mask(
+  terra::setValues(
+    terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]],
+    1
+  ),
+  terra::vect(rsa)
+)
+
+future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
 current_nn = terra::rast(system.file("extdata", "current_nn.tif", package = "dissmapr"))
 future_hclt = terra::rast(system.file("extdata", "future_hclt.tif", package = "dissmapr"))
 ```
-
-# `dissmapr`
-
-## A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 ### 1. Map sensitivity of bioregion delineation to clustering method using `map_bioregDiff()`
 

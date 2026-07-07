@@ -2,9 +2,9 @@
 
 ## `dissmapr`
 
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+### Framework for Compositional Dissimilarity and Biodiversity Turnover Analysis
 
-### Introduction
+#### Introduction
 
 `dissmapr` is an R package for analysing compositional dissimilarity and
 biodiversity turnover across spatial gradients. It provides scalable,

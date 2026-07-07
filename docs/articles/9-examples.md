@@ -1,21 +1,35 @@
 # Compute orderwise examples
 
+## `dissmapr`
+
+### Additional Mapping and Visualisation Examples
+
+This vignette provides additional examples for visualising and
+interpreting `dissmapr` outputs. It is designed as a practical gallery
+of common plotting and summary tasks that can help users explore
+biodiversity patterns after running the main workflow.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and unpacks the
+species, boundary, and helper objects needed for the visualisation
+examples.
+
 ``` r
-# Load the objects this article needs from the single bundled snapshot.
+# Load the packages used in this vignette.
 library(ggplot2)
 library(dplyr)
 library(viridis)
 library(dissmapr)
+
+# Load the bundled example data snapshot.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-grid_spp = inputs$grid_spp
-sp_cols = inputs$sp_cols
-rsa = inputs$rsa
+# Unpack the example objects used below.
+grid_spp = inputs$grid_spp # Grid-level species data
+sp_cols = inputs$sp_cols   # Species column names
+rsa = inputs$rsa           # South Africa boundary
 ```
-
-## `dissmapr`
-
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 ### Analysis of Species Richness and Community Turnover
 

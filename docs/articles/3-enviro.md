@@ -1,26 +1,40 @@
 # Environmental data for sites
 
+## `dissmapr`
+
+### Extracting Environmental Predictors for Biodiversity Modelling
+
+This vignette shows how to attach environmental predictor data to the
+analysis grid. These predictors provide the environmental context needed
+for modelling spatial patterns in biodiversity, compositional turnover,
+and species richness.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and unpacks the
+spatial, species, and raster objects needed for the environmental-data
+workflow.
+
 ``` r
-# Load libraries
+# Load the packages used in this vignette.
 library(dissmapr)
 library(ggplot2)
 library(dplyr)
 
-# Load the objects this article needs from the single bundled snapshot.
+# Load the bundled example data snapshot.
+# This keeps the vignette reproducible and avoids requiring external downloads.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-rsa = inputs$rsa
-grid_sf = inputs$grid_sf
-grid_spp = inputs$grid_spp
-effRich_r = terra::unwrap(inputs$effRich_r)
-grid_spp_pa = inputs$grid_spp_pa
-sp_cols = inputs$sp_cols
-grid_r = terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))
+# Unpack the example objects used throughout this vignette:
+# Unpack the bundled example data into named objects used below.
+rsa = inputs$rsa                         # South Africa boundary
+grid_sf = inputs$grid_sf                 # Analysis grid as an sf object
+grid_spp = inputs$grid_spp               # Grid-level species data
+effRich_r = terra::unwrap(inputs$effRich_r) # Effective richness raster
+grid_spp_pa = inputs$grid_spp_pa         # Presence-absence species data
+sp_cols = inputs$sp_cols                 # Species column names
+grid_r = terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr")) # Raster template
 ```
-
-## `dissmapr`
-
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 #### 1. Generate site by environment matrix using `get_enviro_data()`
 

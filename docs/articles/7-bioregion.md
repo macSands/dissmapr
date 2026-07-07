@@ -1,25 +1,49 @@
 # Map bioregions
 
+## `dissmapr`
+
+### Delineating Bioregions from Predicted Community Composition
+
+This vignette shows how predicted compositional patterns can be
+translated into biodiversity regions. By grouping areas with similar
+predicted communities, the workflow supports spatial interpretation of
+turnover patterns and highlights broad biogeographic structure.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and unpacks the
+rasters, boundary data, and species information needed for the
+bioregionalisation examples.
+
 ``` r
-# Load the objects this article needs from the single bundled snapshot.
+# Load the packages used in this vignette.
 library(dissmapr)
 library(terra)
 library(RColorBrewer)
+
+# Load the bundled example data snapshot.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-predictors_df = inputs$predictors_df
-all_preds = inputs$all_preds
-grid_masked = terra::mask(terra::setValues(terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]], 1), terra::vect(inputs$rsa))
-rsa = inputs$rsa
-grid_spp = inputs$grid_spp
-sp_cols = inputs$sp_cols
+# Unpack the example objects used below.
+predictors_df = inputs$predictors_df       # Environmental predictor values
+all_preds = inputs$all_preds               # Model prediction outputs
+rsa = inputs$rsa                           # South Africa boundary
+grid_spp = inputs$grid_spp                 # Grid-level species data
+sp_cols = inputs$sp_cols                   # Species column names
 
-future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
+# Recreate the masked raster grid and load the future nearest-neighbour raster.
+grid_masked = terra::mask(
+  terra::setValues(
+    terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]],
+    1
+  ),
+  terra::vect(rsa)
+)
+
+future_nn = terra::rast(
+  system.file("extdata", "future_nn.tif", package = "dissmapr")
+)
 ```
-
-## `dissmapr`
-
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 #### 1. Run clustering analyses using `map_bioreg()` to map bioregions
 

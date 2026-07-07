@@ -1,26 +1,40 @@
 # Predict community turnover
 
+## `dissmapr`
+
+### Predicting Spatial Patterns of Biodiversity Turnover
+
+This vignette focuses on generating spatial predictions from fitted
+biodiversity-turnover models. The goal is to show how model outputs can
+be projected across the analysis grid to create continuous spatial
+layers for mapping and interpretation.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and unpacks the
+prediction outputs, raster template, species data, and boundary objects
+needed for spatial prediction.
+
 ``` r
-# Load the objects this article needs from the single bundled snapshot.
+# Load the packages used in this vignette.
 library(dissmapr)
 library(ggplot2)
 library(dplyr)
 library(purrr)
+
+# Load the bundled example data snapshot.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-grid_spp_pa = inputs$grid_spp_pa
-env_vars_reduced = inputs$env_vars_reduced
-grid_env = inputs$grid_env
-sp_cols = inputs$sp_cols
-zeta2 = inputs$zeta2
-ispline_gdm_tab = inputs$ispline_gdm_tab
-grid_spp = inputs$grid_spp
-rsa = inputs$rsa
+# Unpack the example objects used below.
+grid_spp_pa = inputs$grid_spp_pa           # Presence-absence species data
+env_vars_reduced = inputs$env_vars_reduced # Selected environmental variables
+grid_env = inputs$grid_env                 # Grid-level environmental data
+sp_cols = inputs$sp_cols                   # Species column names
+zeta2 = inputs$zeta2                       # Pairwise zeta-diversity output
+ispline_gdm_tab = inputs$ispline_gdm_tab   # Fitted I-spline/GDM results table
+grid_spp = inputs$grid_spp                 # Grid-level species data
+rsa = inputs$rsa                           # South Africa boundary
 ```
-
-## `dissmapr`
-
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 #### 1. Predict current Zeta Diversity (zeta2) using `predict_dissim()`
 
