@@ -83,25 +83,36 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load the objects this article needs from the single bundled snapshot.</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/dissmapr" class="external-link">dissmapr</a></span><span class="op">)</span></span>
-<span><span class="va">inputs</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/serialize.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"dissmapr_vignettes.rds"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">grid_spp</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">grid_spp</span></span>
-<span><span class="va">sp_cols</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">sp_cols</span></span>
-<span><span class="va">rsa</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">rsa</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="dissmapr">
 <code>dissmapr</code><a class="anchor" aria-label="anchor" href="#dissmapr"></a>
 </h2>
 <div class="section level3">
-<h3 id="a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis">A Novel Framework for Automated Compositional Dissimilarity and
-Biodiversity Turnover Analysis<a class="anchor" aria-label="anchor" href="#a-novel-framework-for-automated-compositional-dissimilarity-and-biodiversity-turnover-analysis"></a>
+<h3 id="additional-mapping-and-visualisation-examples">Additional Mapping and Visualisation Examples<a class="anchor" aria-label="anchor" href="#additional-mapping-and-visualisation-examples"></a>
 </h3>
+<p>This vignette provides additional examples for visualising and
+interpreting <code>dissmapr</code> outputs. It is designed as a
+practical gallery of common plotting and summary tasks that can help
+users explore biodiversity patterns after running the main workflow.</p>
+<p>To keep the example reproducible and quick to run, we use a small set
+of example objects bundled with <code>dissmapr</code>. The setup chunk
+below loads the required packages, reads the bundled data snapshot, and
+unpacks the species, boundary, and helper objects needed for the
+visualisation examples.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load the packages used in this vignette.</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/dissmapr" class="external-link">dissmapr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load the bundled example data snapshot.</span></span>
+<span><span class="va">inputs</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/serialize.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"dissmapr_vignettes.rds"</span>, package <span class="op">=</span> <span class="st">"dissmapr"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Unpack the example objects used below.</span></span>
+<span><span class="va">grid_spp</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">grid_spp</span> <span class="co"># Grid-level species data</span></span>
+<span><span class="va">sp_cols</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">sp_cols</span>   <span class="co"># Species column names</span></span>
+<span><span class="va">rsa</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">rsa</span>           <span class="co"># South Africa boundary</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="analysis-of-species-richness-and-community-turnover">Analysis of Species Richness and Community Turnover<a class="anchor" aria-label="anchor" href="#analysis-of-species-richness-and-community-turnover"></a>

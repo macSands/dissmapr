@@ -1,27 +1,41 @@
 # Predict community turnover
 
+## `dissmapr`
+
+### Predicting Spatial Patterns of Biodiversity Turnover
+
+This vignette focuses on generating spatial predictions from fitted
+biodiversity-turnover models. The goal is to show how model outputs can
+be projected across the analysis grid to create continuous spatial
+layers for mapping and interpretation.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and unpacks the
+prediction outputs, raster template, species data, and boundary objects
+needed for spatial prediction.
+
 ``` r
 
-# Load the objects this article needs from the single bundled snapshot.
+# Load the packages used in this vignette.
 library(dissmapr)
 library(ggplot2)
 library(dplyr)
 library(purrr)
+
+# Load the bundled example data snapshot.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-grid_spp_pa = inputs$grid_spp_pa
-env_vars_reduced = inputs$env_vars_reduced
-grid_env = inputs$grid_env
-sp_cols = inputs$sp_cols
-zeta2 = inputs$zeta2
-ispline_gdm_tab = inputs$ispline_gdm_tab
-grid_spp = inputs$grid_spp
-rsa = inputs$rsa
+# Unpack the example objects used below.
+grid_spp_pa = inputs$grid_spp_pa           # Presence-absence species data
+env_vars_reduced = inputs$env_vars_reduced # Selected environmental variables
+grid_env = inputs$grid_env                 # Grid-level environmental data
+sp_cols = inputs$sp_cols                   # Species column names
+zeta2 = inputs$zeta2                       # Pairwise zeta-diversity output
+ispline_gdm_tab = inputs$ispline_gdm_tab   # Fitted I-spline/GDM results table
+grid_spp = inputs$grid_spp                 # Grid-level species data
+rsa = inputs$rsa                           # South Africa boundary
 ```
-
-## `dissmapr`
-
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 #### 1. Predict current Zeta Diversity (zeta2) using `predict_dissim()`
 
@@ -265,7 +279,7 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0            pbapply_1.7-4        geodata_0.6-9       
-#>   [4] pROC_1.19.0.1        permute_0.9-10       rlang_1.2.0         
+#>   [4] pROC_1.19.0.1        permute_0.9-10       rlang_1.3.0         
 #>   [7] magrittr_2.0.5       otel_0.2.0           e1071_1.7-17        
 #>  [10] compiler_4.6.1       mgcv_1.9-4           systemfonts_1.3.2   
 #>  [13] vctrs_0.7.3          maps_3.4.3           reshape2_1.4.5      
@@ -275,8 +289,8 @@ sessionInfo()
 #>  [25] jsonlite_2.0.0       recipes_1.3.3        terra_1.9-34        
 #>  [28] parallel_4.6.1       cluster_2.1.8.2      R6_2.6.1            
 #>  [31] bslib_0.11.0         stringi_1.8.7        RColorBrewer_1.1-3  
-#>  [34] parallelly_1.47.0    rpart_4.1.27         estimability_1.5.1  
-#>  [37] lubridate_1.9.5      jquerylib_0.1.4      Rcpp_1.1.1-1.1      
+#>  [34] parallelly_1.48.0    rpart_4.1.27         estimability_2.0.0  
+#>  [37] lubridate_1.9.5      jquerylib_0.1.4      Rcpp_1.1.2          
 #>  [40] iterators_1.0.14     knitr_1.51           future.apply_1.20.2 
 #>  [43] fields_17.3          zoo_1.8-15           Matrix_1.7-5        
 #>  [46] splines_4.6.1        nnet_7.3-20          timechange_0.4.0    
@@ -286,7 +300,7 @@ sessionInfo()
 #>  [58] withr_3.0.3          S7_0.2.2             geosphere_1.6-8     
 #>  [61] evaluate_1.0.5       sf_1.1-1             future_1.70.0       
 #>  [64] desc_1.4.3           survival_3.8-6       units_1.0-1         
-#>  [67] proxy_0.4-29         mclust_6.1.2         pillar_1.11.1       
+#>  [67] proxy_0.4-29         mclust_6.1.3         pillar_1.11.1       
 #>  [70] KernSmooth_2.23-26   corrplot_0.95        renv_1.1.4          
 #>  [73] foreach_1.5.2        stats4_4.6.1         generics_0.1.4      
 #>  [76] zetadiv_1.3.0        scales_1.4.0         xtable_1.8-8        
@@ -298,10 +312,10 @@ sessionInfo()
 #>  [94] nlme_3.1-169         patchwork_1.3.2      cli_3.6.6           
 #>  [97] rappdirs_0.3.4       textshaping_1.0.5    NbClust_3.0.1       
 #> [100] spam_2.11-4          viridisLite_0.4.3    scam_1.2-22         
-#> [103] lava_1.9.1           gtable_0.3.6         sass_0.4.10         
+#> [103] lava_1.9.2           gtable_0.3.6         sass_0.4.10         
 #> [106] digest_0.6.39        classInt_0.4-11      caret_7.0-1         
 #> [109] ggrepel_0.9.8        htmlwidgets_1.6.4    farver_2.1.2        
 #> [112] entropy_1.3.2        htmltools_0.5.9      pkgdown_2.2.0       
-#> [115] lifecycle_1.0.5      factoextra_2.0.0     hardhat_1.4.3       
+#> [115] lifecycle_1.0.5      factoextra_2.1.0     hardhat_1.4.3       
 #> [118] httr_1.4.8           MASS_7.3-65
 ```

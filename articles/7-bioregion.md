@@ -1,26 +1,50 @@
 # Map bioregions
 
+## `dissmapr`
+
+### Delineating Bioregions from Predicted Community Composition
+
+This vignette shows how predicted compositional patterns can be
+translated into biodiversity regions. By grouping areas with similar
+predicted communities, the workflow supports spatial interpretation of
+turnover patterns and highlights broad biogeographic structure.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and unpacks the
+rasters, boundary data, and species information needed for the
+bioregionalisation examples.
+
 ``` r
 
-# Load the objects this article needs from the single bundled snapshot.
+# Load the packages used in this vignette.
 library(dissmapr)
 library(terra)
 library(RColorBrewer)
+
+# Load the bundled example data snapshot.
 inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
 
-predictors_df = inputs$predictors_df
-all_preds = inputs$all_preds
-grid_masked = terra::mask(terra::setValues(terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]], 1), terra::vect(inputs$rsa))
-rsa = inputs$rsa
-grid_spp = inputs$grid_spp
-sp_cols = inputs$sp_cols
+# Unpack the example objects used below.
+predictors_df = inputs$predictors_df       # Environmental predictor values
+all_preds = inputs$all_preds               # Model prediction outputs
+rsa = inputs$rsa                           # South Africa boundary
+grid_spp = inputs$grid_spp                 # Grid-level species data
+sp_cols = inputs$sp_cols                   # Species column names
 
-future_nn = terra::rast(system.file("extdata", "future_nn.tif", package = "dissmapr"))
+# Recreate the masked raster grid and load the future nearest-neighbour raster.
+grid_masked = terra::mask(
+  terra::setValues(
+    terra::rast(system.file("extdata", "grid_r.tif", package = "dissmapr"))[[1]],
+    1
+  ),
+  terra::vect(rsa)
+)
+
+future_nn = terra::rast(
+  system.file("extdata", "future_nn.tif", package = "dissmapr")
+)
 ```
-
-## `dissmapr`
-
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
 
 #### 1. Run clustering analyses using `map_bioreg()` to map bioregions
 
@@ -114,14 +138,8 @@ bioreg_future = dissmapr::map_bioreg(
   y_col ='centroid_lat',
   res = 0.5, 
   crs = "EPSG:4326",
-  plot = TRUE,
+  plot = FALSE,
   bndy_fc = rsa)
-```
-
-![Future bioregion clusters](figures/7-future-cluster-1.png)
-
-``` r
-
 
 # Check results
 str(bioreg_future, max.level=1)
@@ -130,9 +148,35 @@ str(bioreg_future, max.level=1)
 #>  $ nn     :List of 4
 #>  $ tps    : NULL
 #>  $ table  :'data.frame': 1660 obs. of  24 variables:
-#>  $ plots  :List of 4
+#>  $ plots  : NULL
 #>  $ methods: chr [1:4] "kmeans" "pam" "hclust" "gmm"
+
+# Plot the consensus bioregion clusters per scenario with a single, compact
+# shared legend. Bioregions are categorical, so we keep a discrete key (Set3)
+# rather than a continuous colour bar.
+library(ggplot2)
+
+clust_tbl = bioreg_future$table
+
+# Order scenarios with "current" first, if present
+scn_lev = unique(clust_tbl$scenario)
+scn_lev = c(intersect("current", scn_lev), setdiff(scn_lev, "current"))
+clust_tbl$scenario = factor(clust_tbl$scenario, levels = scn_lev)
+
+ggplot() +
+  geom_tile(data = clust_tbl,
+            aes(x = centroid_lon, y = centroid_lat,
+                fill = factor(cluster_mode))) +
+  geom_sf(data = rsa, fill = NA, colour = "black", linewidth = 0.3) +
+  facet_wrap(~ scenario) +
+  scale_fill_brewer(palette = "Set3", name = "Bioregion", drop = FALSE) +
+  theme_minimal(base_size = 9) +
+  theme(legend.position = "bottom") +
+  guides(fill = guide_legend(nrow = 1)) +
+  labs(x = "Longitude", y = "Latitude")
 ```
+
+![Future bioregion clusters](figures/7-future-cluster-1.png)
 
 Below we visualise the nearest-neighbour interpolated future‐scenario
 cluster outputs. First, we list the structure of the `bioreg_future`
@@ -153,7 +197,7 @@ str(bioreg_future, max.level=1)
 #>  $ nn     :List of 4
 #>  $ tps    : NULL
 #>  $ table  :'data.frame': 1660 obs. of  24 variables:
-#>  $ plots  :List of 4
+#>  $ plots  : NULL
 #>  $ methods: chr [1:4] "kmeans" "pam" "hclust" "gmm"
 
 # Create SpatRast
@@ -237,11 +281,11 @@ sessionInfo()
 #> [1] stats     graphics  grDevices datasets  utils     methods   base     
 #> 
 #> other attached packages:
-#> [1] RColorBrewer_1.1-3 terra_1.9-34       dissmapr_0.2.0    
+#> [1] ggplot2_4.0.3      RColorBrewer_1.1-3 terra_1.9-34       dissmapr_0.2.0    
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0            pbapply_1.7-4        geodata_0.6-9       
-#>   [4] pROC_1.19.0.1        permute_0.9-10       rlang_1.2.0         
+#>   [4] pROC_1.19.0.1        permute_0.9-10       rlang_1.3.0         
 #>   [7] magrittr_2.0.5       otel_0.2.0           e1071_1.7-17        
 #>  [10] compiler_4.6.1       mgcv_1.9-4           systemfonts_1.3.2   
 #>  [13] vctrs_0.7.3          maps_3.4.3           reshape2_1.4.5      
@@ -250,9 +294,9 @@ sessionInfo()
 #>  [22] purrr_1.2.2          xfun_0.59            cachem_1.1.0        
 #>  [25] jsonlite_2.0.0       recipes_1.3.3        parallel_4.6.1      
 #>  [28] cluster_2.1.8.2      R6_2.6.1             bslib_0.11.0        
-#>  [31] stringi_1.8.7        parallelly_1.47.0    rpart_4.1.27        
-#>  [34] estimability_1.5.1   lubridate_1.9.5      jquerylib_0.1.4     
-#>  [37] Rcpp_1.1.1-1.1       iterators_1.0.14     knitr_1.51          
+#>  [31] stringi_1.8.7        parallelly_1.48.0    rpart_4.1.27        
+#>  [34] estimability_2.0.0   lubridate_1.9.5      jquerylib_0.1.4     
+#>  [37] Rcpp_1.1.2           iterators_1.0.14     knitr_1.51          
 #>  [40] future.apply_1.20.2  fields_17.3          zoo_1.8-15          
 #>  [43] Matrix_1.7-5         splines_4.6.1        nnet_7.3-20         
 #>  [46] timechange_0.4.0     tidyselect_1.2.1     yaml_2.3.12         
@@ -261,23 +305,23 @@ sessionInfo()
 #>  [55] plyr_1.8.9           withr_3.0.3          S7_0.2.2            
 #>  [58] geosphere_1.6-8      evaluate_1.0.5       sf_1.1-1            
 #>  [61] future_1.70.0        desc_1.4.3           survival_3.8-6      
-#>  [64] units_1.0-1          proxy_0.4-29         mclust_6.1.2        
+#>  [64] units_1.0-1          proxy_0.4-29         mclust_6.1.3        
 #>  [67] pillar_1.11.1        KernSmooth_2.23-26   corrplot_0.95       
 #>  [70] renv_1.1.4           foreach_1.5.2        stats4_4.6.1        
-#>  [73] generics_0.1.4       zetadiv_1.3.0        ggplot2_4.0.3       
-#>  [76] scales_1.4.0         xtable_1.8-8         globals_0.19.1      
-#>  [79] class_7.3-23         glue_1.8.1           clValid_0.7         
-#>  [82] emmeans_2.0.3        tools_4.6.1          data.table_1.18.4   
-#>  [85] ModelMetrics_1.2.2.2 gower_1.0.2          mvtnorm_1.4-1       
-#>  [88] fs_2.1.0             dotCall64_1.2        grid_4.6.1          
-#>  [91] tidyr_1.3.2          ipred_0.9-15         nlme_3.1-169        
-#>  [94] patchwork_1.3.2      cli_3.6.6            rappdirs_0.3.4      
-#>  [97] textshaping_1.0.5    NbClust_3.0.1        spam_2.11-4         
-#> [100] viridisLite_0.4.3    scam_1.2-22          lava_1.9.1          
-#> [103] dplyr_1.2.1          gtable_0.3.6         sass_0.4.10         
-#> [106] digest_0.6.39        classInt_0.4-11      caret_7.0-1         
-#> [109] ggrepel_0.9.8        htmlwidgets_1.6.4    farver_2.1.2        
-#> [112] entropy_1.3.2        htmltools_0.5.9      pkgdown_2.2.0       
-#> [115] lifecycle_1.0.5      factoextra_2.0.0     hardhat_1.4.3       
-#> [118] httr_1.4.8           MASS_7.3-65
+#>  [73] generics_0.1.4       zetadiv_1.3.0        scales_1.4.0        
+#>  [76] xtable_1.8-8         globals_0.19.1       class_7.3-23        
+#>  [79] glue_1.8.1           clValid_0.7          emmeans_2.0.3       
+#>  [82] tools_4.6.1          data.table_1.18.4    ModelMetrics_1.2.2.2
+#>  [85] gower_1.0.2          mvtnorm_1.4-1        fs_2.1.0            
+#>  [88] dotCall64_1.2        grid_4.6.1           tidyr_1.3.2         
+#>  [91] ipred_0.9-15         nlme_3.1-169         patchwork_1.3.2     
+#>  [94] cli_3.6.6            rappdirs_0.3.4       textshaping_1.0.5   
+#>  [97] NbClust_3.0.1        spam_2.11-4          viridisLite_0.4.3   
+#> [100] scam_1.2-22          lava_1.9.2           dplyr_1.2.1         
+#> [103] gtable_0.3.6         sass_0.4.10          digest_0.6.39       
+#> [106] classInt_0.4-11      caret_7.0-1          ggrepel_0.9.8       
+#> [109] htmlwidgets_1.6.4    farver_2.1.2         entropy_1.3.2       
+#> [112] htmltools_0.5.9      pkgdown_2.2.0        lifecycle_1.0.5     
+#> [115] factoextra_2.1.0     hardhat_1.4.3        httr_1.4.8          
+#> [118] MASS_7.3-65
 ```

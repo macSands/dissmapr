@@ -1,21 +1,34 @@
 # Zeta-MSGDM with dissmapr
 
-``` r
-
-library(dissmapr)
-library(patchwork)
-# Load the single bundled snapshot of all vignette state.
-inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
-
-grid_spp_pa = inputs$grid_spp_pa
-env_vars_reduced = inputs$env_vars_reduced
-grid_env = inputs$grid_env
-sp_cols = inputs$sp_cols
-```
-
 ## `dissmapr`
 
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+### Modelling Zeta Diversity Across Environmental Gradients
+
+This vignette demonstrates a more complete zeta-diversity workflow,
+moving from prepared species and environmental data to model fitting and
+interpretation. It is intended to show how the main zeta-based
+components of `dissmapr` can be combined in practice.
+
+To keep the example reproducible and quick to run, we use a small set of
+example objects bundled with `dissmapr`. The setup chunk below loads the
+required packages, reads the bundled data snapshot, and unpacks the
+objects needed for the automated zeta-modelling workflow.
+
+``` r
+
+# Load the packages used in this vignette.
+library(dissmapr)
+library(patchwork)
+
+# Load the bundled example data snapshot.
+inputs = readRDS(system.file("extdata", "dissmapr_vignettes.rds", package = "dissmapr"))
+
+# Unpack the example objects used below.
+grid_spp_pa = inputs$grid_spp_pa           # Presence-absence species data
+env_vars_reduced = inputs$env_vars_reduced # Selected environmental variables
+grid_env = inputs$grid_env                 # Grid-level environmental data
+sp_cols = inputs$sp_cols                   # Species column names
+```
 
 #### 1. Automated Ispline Modeling & Visualization
 
@@ -282,7 +295,7 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0            pbapply_1.7-4        geodata_0.6-9       
-#>   [4] pROC_1.19.0.1        permute_0.9-10       rlang_1.2.0         
+#>   [4] pROC_1.19.0.1        permute_0.9-10       rlang_1.3.0         
 #>   [7] magrittr_2.0.5       otel_0.2.0           e1071_1.7-17        
 #>  [10] compiler_4.6.1       mgcv_1.9-4           systemfonts_1.3.2   
 #>  [13] vctrs_0.7.3          maps_3.4.3           reshape2_1.4.5      
@@ -292,9 +305,9 @@ sessionInfo()
 #>  [25] cachem_1.1.0         jsonlite_2.0.0       recipes_1.3.3       
 #>  [28] terra_1.9-34         parallel_4.6.1       cluster_2.1.8.2     
 #>  [31] R6_2.6.1             bslib_0.11.0         stringi_1.8.7       
-#>  [34] RColorBrewer_1.1-3   parallelly_1.47.0    rpart_4.1.27        
-#>  [37] estimability_1.5.1   lubridate_1.9.5      jquerylib_0.1.4     
-#>  [40] Rcpp_1.1.1-1.1       iterators_1.0.14     knitr_1.51          
+#>  [34] RColorBrewer_1.1-3   parallelly_1.48.0    rpart_4.1.27        
+#>  [37] estimability_2.0.0   lubridate_1.9.5      jquerylib_0.1.4     
+#>  [40] Rcpp_1.1.2           iterators_1.0.14     knitr_1.51          
 #>  [43] future.apply_1.20.2  fields_17.3          zoo_1.8-15          
 #>  [46] nnls_1.6             Matrix_1.7-5         splines_4.6.1       
 #>  [49] nnet_7.3-20          timechange_0.4.0     tidyselect_1.2.1    
@@ -304,7 +317,7 @@ sessionInfo()
 #>  [61] S7_0.2.2             geosphere_1.6-8      evaluate_1.0.5      
 #>  [64] sf_1.1-1             future_1.70.0        desc_1.4.3          
 #>  [67] survival_3.8-6       units_1.0-1          proxy_0.4-29        
-#>  [70] mclust_6.1.2         pillar_1.11.1        KernSmooth_2.23-26  
+#>  [70] mclust_6.1.3         pillar_1.11.1        KernSmooth_2.23-26  
 #>  [73] corrplot_0.95        renv_1.1.4           foreach_1.5.2       
 #>  [76] stats4_4.6.1         generics_0.1.4       zetadiv_1.3.0       
 #>  [79] ggplot2_4.0.3        scales_1.4.0         xtable_1.8-8        
@@ -315,11 +328,11 @@ sessionInfo()
 #>  [94] grid_4.6.1           tidyr_1.3.2          ipred_0.9-15        
 #>  [97] nlme_3.1-169         cli_3.6.6            rappdirs_0.3.4      
 #> [100] textshaping_1.0.5    NbClust_3.0.1        spam_2.11-4         
-#> [103] viridisLite_0.4.3    scam_1.2-22          lava_1.9.1          
+#> [103] viridisLite_0.4.3    scam_1.2-22          lava_1.9.2          
 #> [106] dplyr_1.2.1          gtable_0.3.6         sass_0.4.10         
 #> [109] digest_0.6.39        classInt_0.4-11      caret_7.0-1         
 #> [112] ggrepel_0.9.8        htmlwidgets_1.6.4    farver_2.1.2        
 #> [115] entropy_1.3.2        htmltools_0.5.9      pkgdown_2.2.0       
-#> [118] lifecycle_1.0.5      factoextra_2.0.0     hardhat_1.4.3       
+#> [118] lifecycle_1.0.5      factoextra_2.1.0     hardhat_1.4.3       
 #> [121] httr_1.4.8           MASS_7.3-65
 ```

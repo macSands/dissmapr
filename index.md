@@ -297,6 +297,4 @@ it builds on:
 ------------------------------------------------------------------------
 
 `dissmapr` was developed within the [B-Cubed](https://b-cubed.eu/)
-project (Biodiversity Building Blocks for policy), funded by the
-European Union’s Horizon Europe Research and Innovation Programme
-([grant 101059592](https://doi.org/10.3030/101059592)).
+project (Biodiversity Building Blocks for policy), funded by

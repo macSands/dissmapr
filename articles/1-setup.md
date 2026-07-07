@@ -2,9 +2,9 @@
 
 ## `dissmapr`
 
-### A Novel Framework for Automated Compositional Dissimilarity and Biodiversity Turnover Analysis
+### Framework for Compositional Dissimilarity and Biodiversity Turnover Analysis
 
-### Introduction
+#### Introduction
 
 `dissmapr` is an R package for analysing compositional dissimilarity and
 biodiversity turnover across spatial gradients. It provides scalable,
@@ -262,7 +262,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices datasets  utils     methods   base     
 #> 
 #> other attached packages:
-#>  [1] mclust_6.1.2      patchwork_1.3.2   viridis_0.6.5     viridisLite_0.4.3
+#>  [1] mclust_6.1.3      patchwork_1.3.2   viridis_0.6.5     viridisLite_0.4.3
 #>  [5] ggplot2_4.0.3     zetadiv_1.3.0     scam_1.2-22       tidyterra_1.2.0  
 #>  [9] sf_1.1-1          zoo_1.8-15        tidyr_1.3.2       dplyr_1.2.1      
 #> [13] data.table_1.18.4 geodata_0.6-9     terra_1.9-34      httr_1.4.8       
@@ -270,7 +270,7 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0            pbapply_1.7-4        pROC_1.19.0.1       
-#>   [4] gridExtra_2.3.1      permute_0.9-10       rlang_1.2.0         
+#>   [4] gridExtra_2.3.1      permute_0.9-10       rlang_1.3.0         
 #>   [7] magrittr_2.0.5       otel_0.2.0           e1071_1.7-17        
 #>  [10] compiler_4.6.1       mgcv_1.9-4           systemfonts_1.3.2   
 #>  [13] vctrs_0.7.3          maps_3.4.3           reshape2_1.4.5      
@@ -279,9 +279,9 @@ sessionInfo()
 #>  [22] purrr_1.2.2          xfun_0.59            cachem_1.1.0        
 #>  [25] jsonlite_2.0.0       recipes_1.3.3        parallel_4.6.1      
 #>  [28] cluster_2.1.8.2      R6_2.6.1             bslib_0.11.0        
-#>  [31] stringi_1.8.7        RColorBrewer_1.1-3   parallelly_1.47.0   
-#>  [34] rpart_4.1.27         estimability_1.5.1   lubridate_1.9.5     
-#>  [37] jquerylib_0.1.4      Rcpp_1.1.1-1.1       iterators_1.0.14    
+#>  [31] stringi_1.8.7        RColorBrewer_1.1-3   parallelly_1.48.0   
+#>  [34] rpart_4.1.27         estimability_2.0.0   lubridate_1.9.5     
+#>  [37] jquerylib_0.1.4      Rcpp_1.1.2           iterators_1.0.14    
 #>  [40] knitr_1.51           future.apply_1.20.2  fields_17.3         
 #>  [43] Matrix_1.7-5         splines_4.6.1        nnet_7.3-20         
 #>  [46] timechange_0.4.0     tidyselect_1.2.1     yaml_2.3.12         
@@ -299,10 +299,10 @@ sessionInfo()
 #>  [82] mvtnorm_1.4-1        fs_2.1.0             dotCall64_1.2       
 #>  [85] grid_4.6.1           ipred_0.9-15         nlme_3.1-169        
 #>  [88] cli_3.6.6            rappdirs_0.3.4       textshaping_1.0.5   
-#>  [91] NbClust_3.0.1        spam_2.11-4          lava_1.9.1          
+#>  [91] NbClust_3.0.1        spam_2.11-4          lava_1.9.2          
 #>  [94] gtable_0.3.6         sass_0.4.10          digest_0.6.39       
 #>  [97] classInt_0.4-11      caret_7.0-1          ggrepel_0.9.8       
 #> [100] htmlwidgets_1.6.4    farver_2.1.2         entropy_1.3.2       
 #> [103] htmltools_0.5.9      pkgdown_2.2.0        lifecycle_1.0.5     
-#> [106] factoextra_2.0.0     hardhat_1.4.3        MASS_7.3-65
+#> [106] factoextra_2.1.0     hardhat_1.4.3        MASS_7.3-65
 ```
