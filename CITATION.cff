@@ -1,4 +1,4 @@
-cff-version: 1.2.0
+cff-version: 0.2.1
 message: "If you use this software, please cite it using these metadata."
 title: "dissmapr: A Novel Framework for Compositional Dissimilarity and Biodiversity Turnover Analysis"
 version: 0.2.0
