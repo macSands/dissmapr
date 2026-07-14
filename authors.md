@@ -16,7 +16,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/b-cubed-eu/dissmapr/blob/0.2.1/inst/CITATION)
+[`inst/CITATION`](https://github.com/b-cubed-eu/dissmapr/blob/master/inst/CITATION)
 
 MacFadyen S (2026). *dissmapr: A Novel Framework for Compositional
 Dissimilarity and Biodiversity Turnover Analysis*.
