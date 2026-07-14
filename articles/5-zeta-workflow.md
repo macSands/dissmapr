@@ -301,7 +301,7 @@ sessionInfo()
 #>  [13] vctrs_0.7.3          maps_3.4.3           reshape2_1.4.5      
 #>  [16] stringr_1.6.0        pkgconfig_2.0.3      fastmap_1.2.0       
 #>  [19] labeling_0.4.3       rmarkdown_2.31       prodlim_2026.03.11  
-#>  [22] ragg_1.5.2           purrr_1.2.2          xfun_0.59           
+#>  [22] ragg_1.5.2           purrr_1.2.2          xfun_0.60           
 #>  [25] cachem_1.1.0         jsonlite_2.0.0       recipes_1.3.3       
 #>  [28] terra_1.9-34         parallel_4.6.1       cluster_2.1.8.2     
 #>  [31] R6_2.6.1             bslib_0.11.0         stringi_1.8.7       
@@ -324,7 +324,7 @@ sessionInfo()
 #>  [82] globals_0.19.1       class_7.3-23         glue_1.8.1          
 #>  [85] clValid_0.7          emmeans_2.0.3        tools_4.6.1         
 #>  [88] data.table_1.18.4    ModelMetrics_1.2.2.2 gower_1.0.2         
-#>  [91] mvtnorm_1.4-1        fs_2.1.0             dotCall64_1.2       
+#>  [91] mvtnorm_1.4-2        fs_2.1.0             dotCall64_1.2       
 #>  [94] grid_4.6.1           tidyr_1.3.2          ipred_0.9-15        
 #>  [97] nlme_3.1-169         cli_3.6.6            rappdirs_0.3.4      
 #> [100] textshaping_1.0.5    NbClust_3.0.1        spam_2.11-4         
@@ -332,7 +332,7 @@ sessionInfo()
 #> [106] dplyr_1.2.1          gtable_0.3.6         sass_0.4.10         
 #> [109] digest_0.6.39        classInt_0.4-11      caret_7.0-1         
 #> [112] ggrepel_0.9.8        htmlwidgets_1.6.4    farver_2.1.2        
-#> [115] entropy_1.3.2        htmltools_0.5.9      pkgdown_2.2.0       
+#> [115] entropy_1.3.2        htmltools_0.5.9      pkgdown_2.2.1       
 #> [118] lifecycle_1.0.5      factoextra_2.1.0     hardhat_1.4.3       
 #> [121] httr_1.4.8           MASS_7.3-65
 ```

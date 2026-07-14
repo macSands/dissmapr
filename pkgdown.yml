@@ -1,5 +1,5 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   articles/1-setup: 1-setup.html
@@ -12,7 +12,7 @@ articles:
   articles/8-change: 8-change.html
   articles/9-examples: 9-examples.html
   dissmapr: dissmapr.html
-last_built: 2026-07-07T10:23Z
+last_built: 2026-07-14T19:25Z
 urls:
   reference: https://b-cubed-eu.github.io/dissmapr/reference
   article: https://b-cubed-eu.github.io/dissmapr/articles
