@@ -46,6 +46,7 @@ zeta2 = inputs$zeta2                       # Pairwise zeta-diversity output
 ispline_gdm_tab = inputs$ispline_gdm_tab   # Fitted I-spline/GDM results table
 grid_spp = inputs$grid_spp                 # Grid-level species data
 rsa = inputs$rsa                           # South Africa boundary
+all_preds = inputs$all_preds
 ```
 
 ### 1. Predict current Zeta Diversity (zeta2) using `predict_dissim()`
@@ -144,6 +145,61 @@ env_scenarios = c(
 str(env_scenarios, max.level = 1)
 ```
 
+### Or use fixed baseline scaling instead
+
+The future scenarios should be scaled using the current/training means and standard deviations, not their own means and standard deviations. These parameters must match those used when fitting zeta2.
+
+```{r baseline-scaling}
+# # Baseline scaling parameters
+# env_center = vapply(
+#   env_vars_reduced,
+#   mean,
+#   numeric(1),
+#   na.rm = TRUE
+# )
+# 
+# env_scale = vapply(
+#   env_vars_reduced,
+#   sd,
+#   numeric(1),
+#   na.rm = TRUE
+# )
+# 
+# stopifnot(
+#   all(is.finite(env_scale)),
+#   all(env_scale > 0)
+# )
+# 
+# scale_from_baseline = function(df, center, scale) {
+#   x = as.matrix(df)
+# 
+#   x = sweep(
+#     x,
+#     MARGIN = 2,
+#     STATS = center[colnames(x)],
+#     FUN = "-"
+#   )
+# 
+#   x = sweep(
+#     x,
+#     MARGIN = 2,
+#     STATS = scale[colnames(x)],
+#     FUN = "/"
+#   )
+# 
+#   as.data.frame(x, check.names = FALSE)
+# }
+# 
+# env_scenarios_scaled = purrr::map(
+#   env_scenarios,
+#   scale_from_baseline,
+#   center = env_center,
+#   scale = env_scale
+# )
+
+```
+
+
 Next, we loop through each scenario, re-apply the original centering and scaling, and call our `predict_dissim()` helper to compute ζ₂. We tag each result with its scenario name and combine them into one tidy data frame:
 
 ```{r predict-future, message=FALSE}
@@ -166,9 +222,28 @@ scenario_dfs = purrr::imap(env_scenarios, ~ {
 })
 str(scenario_dfs, max.level=1)
 
+# # fixed baseline scaling
+# scenario_dfs = purrr::imap(env_scenarios_scaled, \(scenario_env, scenario_name) {
+#   result = dissmapr::predict_dissim(
+#     grid_spp     = grid_spp,
+#     species_cols = spp_cols,
+#     env_vars     = scenario_env,
+#     zeta_model   = zeta2,
+#     grid_xy      = grid_env,
+#     x_col        = "centroid_lon",
+#     y_col        = "centroid_lat",
+#     skip_scale   = TRUE,
+#     show_plot    = FALSE
+#   )
+# 
+#   result$scenario = scenario_name
+#   result
+# })
+# # str(scenario_dfs, max.level=1)
+
 # all_preds = bind_rows(scenario_dfs) %>%
 #   mutate(scenario = factor(scenario, levels = c("current", names(temp_shifts))))
-all_preds = bind_rows(scenario_dfs) 
+all_preds = dplyr::bind_rows(scenario_dfs)
 head(all_preds)
 ```
 
