@@ -117,7 +117,8 @@ boundary objects needed for spatial prediction.</p>
 <span><span class="va">zeta2</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">zeta2</span>                       <span class="co"># Pairwise zeta-diversity output</span></span>
 <span><span class="va">ispline_gdm_tab</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">ispline_gdm_tab</span>   <span class="co"># Fitted I-spline/GDM results table</span></span>
 <span><span class="va">grid_spp</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">grid_spp</span>                 <span class="co"># Grid-level species data</span></span>
-<span><span class="va">rsa</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">rsa</span>                           <span class="co"># South Africa boundary</span></span></code></pre></div>
+<span><span class="va">rsa</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">rsa</span>                           <span class="co"># South Africa boundary</span></span>
+<span><span class="va">all_preds</span> <span class="op">=</span> <span class="va">inputs</span><span class="op">$</span><span class="va">all_preds</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="predict-current-zeta-diversity-zeta2-using-predict_dissim">1. Predict current Zeta Diversity (zeta2) using
 <code>predict_dissim()</code><a class="anchor" aria-label="anchor" href="#predict-current-zeta-diversity-zeta2-using-predict_dissim"></a>
@@ -247,11 +248,66 @@ named list of four environmental data frames:</p>
 <span><span class="co">#&gt;  $ 2030   : tibble [415 × 7] (S3: tbl_df/tbl/data.frame)</span></span>
 <span><span class="co">#&gt;  $ 2040   : tibble [415 × 7] (S3: tbl_df/tbl/data.frame)</span></span>
 <span><span class="co">#&gt;  $ 2050   : tibble [415 × 7] (S3: tbl_df/tbl/data.frame)</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="or-use-fixed-baseline-scaling-instead">Or use fixed baseline scaling instead<a class="anchor" aria-label="anchor" href="#or-use-fixed-baseline-scaling-instead"></a>
+</h4>
+<p>The future scenarios should be scaled using the current/training
+means and standard deviations, not their own means and standard
+deviations. These parameters must match those used when fitting
+zeta2.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># # Baseline scaling parameters</span></span>
+<span><span class="co"># env_center = vapply(</span></span>
+<span><span class="co">#   env_vars_reduced,</span></span>
+<span><span class="co">#   mean,</span></span>
+<span><span class="co">#   numeric(1),</span></span>
+<span><span class="co">#   na.rm = TRUE</span></span>
+<span><span class="co"># )</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># env_scale = vapply(</span></span>
+<span><span class="co">#   env_vars_reduced,</span></span>
+<span><span class="co">#   sd,</span></span>
+<span><span class="co">#   numeric(1),</span></span>
+<span><span class="co">#   na.rm = TRUE</span></span>
+<span><span class="co"># )</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># stopifnot(</span></span>
+<span><span class="co">#   all(is.finite(env_scale)),</span></span>
+<span><span class="co">#   all(env_scale &gt; 0)</span></span>
+<span><span class="co"># )</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># scale_from_baseline = function(df, center, scale) {</span></span>
+<span><span class="co">#   x = as.matrix(df)</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#   x = sweep(</span></span>
+<span><span class="co">#     x,</span></span>
+<span><span class="co">#     MARGIN = 2,</span></span>
+<span><span class="co">#     STATS = center[colnames(x)],</span></span>
+<span><span class="co">#     FUN = "-"</span></span>
+<span><span class="co">#   )</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#   x = sweep(</span></span>
+<span><span class="co">#     x,</span></span>
+<span><span class="co">#     MARGIN = 2,</span></span>
+<span><span class="co">#     STATS = scale[colnames(x)],</span></span>
+<span><span class="co">#     FUN = "/"</span></span>
+<span><span class="co">#   )</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#   as.data.frame(x, check.names = FALSE)</span></span>
+<span><span class="co"># }</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># env_scenarios_scaled = purrr::map(</span></span>
+<span><span class="co">#   env_scenarios,</span></span>
+<span><span class="co">#   scale_from_baseline,</span></span>
+<span><span class="co">#   center = env_center,</span></span>
+<span><span class="co">#   scale = env_scale</span></span>
+<span><span class="co"># )</span></span></code></pre></div>
 <p>Next, we loop through each scenario, re-apply the original centering
 and scaling, and call our <code><a href="../reference/predict_dissim.html">predict_dissim()</a></code> helper to
 compute ζ₂. We tag each result with its scenario name and combine them
 into one tidy data frame:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">scenario_dfs</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html" class="external-link">imap</a></span><span class="op">(</span><span class="va">env_scenarios</span>, <span class="op">~</span> <span class="op">{</span></span>
@@ -276,9 +332,28 @@ into one tidy data frame:</p>
 <span><span class="co">#&gt;  $ 2040   :'data.frame': 415 obs. of  15 variables:</span></span>
 <span><span class="co">#&gt;  $ 2050   :'data.frame': 415 obs. of  15 variables:</span></span>
 <span></span>
+<span><span class="co"># # fixed baseline scaling</span></span>
+<span><span class="co"># scenario_dfs = purrr::imap(env_scenarios_scaled, \(scenario_env, scenario_name) {</span></span>
+<span><span class="co">#   result = dissmapr::predict_dissim(</span></span>
+<span><span class="co">#     grid_spp     = grid_spp,</span></span>
+<span><span class="co">#     species_cols = spp_cols,</span></span>
+<span><span class="co">#     env_vars     = scenario_env,</span></span>
+<span><span class="co">#     zeta_model   = zeta2,</span></span>
+<span><span class="co">#     grid_xy      = grid_env,</span></span>
+<span><span class="co">#     x_col        = "centroid_lon",</span></span>
+<span><span class="co">#     y_col        = "centroid_lat",</span></span>
+<span><span class="co">#     skip_scale   = TRUE,</span></span>
+<span><span class="co">#     show_plot    = FALSE</span></span>
+<span><span class="co">#   )</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#   result$scenario = scenario_name</span></span>
+<span><span class="co">#   result</span></span>
+<span><span class="co"># })</span></span>
+<span><span class="co"># # str(scenario_dfs, max.level=1)</span></span>
+<span></span>
 <span><span class="co"># all_preds = bind_rows(scenario_dfs) %&gt;%</span></span>
 <span><span class="co">#   mutate(scenario = factor(scenario, levels = c("current", names(temp_shifts))))</span></span>
-<span><span class="va">all_preds</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">scenario_dfs</span><span class="op">)</span> </span>
+<span><span class="va">all_preds</span> <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">scenario_dfs</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_preds</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   temp_mean         iso temp_wetQ temp_dryQ  rain_dry rain_warmQ    obs_sum</span></span>
 <span><span class="co">#&gt; 1  1.730095  0.01726121  1.386855 0.5441361 -1.171906 -0.2222718 -0.2926985</span></span>
@@ -303,7 +378,7 @@ into one tidy data frame:</p>
 <span><span class="co">#&gt; 6    -22.25004  current</span></span></code></pre></div>
 <p>We can then quickly compare the spatial ζ₂ surfaces under each
 future:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">all_preds</span>,</span>
 <span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">centroid_lon</span>, <span class="va">centroid_lat</span>, fill <span class="op">=</span> <span class="va">pred_zetaExp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -317,7 +392,7 @@ future:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>strip.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>,</span>
 <span>        panel.grid <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figures/6-predict-future-plot-1.png" class="r-plt" alt="Predicted pairwise compositional turnover with climate change" width="100%"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
@@ -363,14 +438,14 @@ future:</p>
 <span><span class="co">#&gt;  [52] timeDate_4052.112    codetools_0.2-20     listenv_1.0.0       </span></span>
 <span><span class="co">#&gt;  [55] lattice_0.22-9       tibble_3.3.1         plyr_1.8.9          </span></span>
 <span><span class="co">#&gt;  [58] withr_3.0.3          S7_0.2.2             geosphere_1.6-8     </span></span>
-<span><span class="co">#&gt;  [61] evaluate_1.0.5       sf_1.1-1             future_1.70.0       </span></span>
+<span><span class="co">#&gt;  [61] evaluate_1.0.5       sf_1.1-1             future_1.75.0       </span></span>
 <span><span class="co">#&gt;  [64] desc_1.4.3           survival_3.8-6       units_1.0-1         </span></span>
 <span><span class="co">#&gt;  [67] proxy_0.4-29         mclust_6.1.3         pillar_1.11.1       </span></span>
 <span><span class="co">#&gt;  [70] KernSmooth_2.23-26   corrplot_0.95        renv_1.1.4          </span></span>
 <span><span class="co">#&gt;  [73] foreach_1.5.2        stats4_4.6.1         generics_0.1.4      </span></span>
 <span><span class="co">#&gt;  [76] zetadiv_1.3.0        scales_1.4.0         xtable_1.8-8        </span></span>
 <span><span class="co">#&gt;  [79] globals_0.19.1       class_7.3-23         glue_1.8.1          </span></span>
-<span><span class="co">#&gt;  [82] clValid_0.7          emmeans_2.0.3        tools_4.6.1         </span></span>
+<span><span class="co">#&gt;  [82] clValid_0.7          emmeans_2.0.4        tools_4.6.1         </span></span>
 <span><span class="co">#&gt;  [85] data.table_1.18.4    ModelMetrics_1.2.2.2 gower_1.0.2         </span></span>
 <span><span class="co">#&gt;  [88] mvtnorm_1.4-2        fs_2.1.0             dotCall64_1.2       </span></span>
 <span><span class="co">#&gt;  [91] grid_4.6.1           tidyr_1.3.2          ipred_0.9-15        </span></span>

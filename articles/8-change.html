@@ -166,19 +166,34 @@ higher.<br>
 <code>SpatRaster</code> containing every metric.</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get current nn rasters</span></span>
-<span><span class="co"># current_nn = c(bioreg_current$nn$current$kmeans_algn_current,</span></span>
-<span><span class="co">#              bioreg_current$nn$current$pam_algn_current,</span></span>
-<span><span class="co">#              bioreg_current$nn$current$hclust_algn_current,</span></span>
-<span><span class="co">#              bioreg_current$nn$current$gmm_algn_current)</span></span>
+<code class="sourceCode R"><span><span class="co"># Get current nearest-neighbour rasters</span></span>
+<span><span class="co"># current_nn = c(</span></span>
+<span><span class="co">#   bioreg_current$nn$current$kmeans_algn_current,</span></span>
+<span><span class="co">#   bioreg_current$nn$current$pam_algn_current,</span></span>
+<span><span class="co">#   bioreg_current$nn$current$hclust_algn_current,</span></span>
+<span><span class="co">#   bioreg_current$nn$current$gmm_algn_current</span></span>
+<span><span class="co"># )</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">current_nn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "kmeans_algn_current" "pam_algn_current"    "hclust_algn_current"</span></span>
 <span><span class="co">#&gt; [4] "gmm_algn_current"</span></span>
 <span></span>
-<span><span class="co"># Run `map_bioregDiff`</span></span>
-<span><span class="co"># 'approach', specifies which metric to compute:</span></span>
+<span><span class="co"># map_bioregDiff() operates on the underlying integer cluster IDs.</span></span>
+<span><span class="co"># Remove categorical metadata without altering cell values or layer names.</span></span>
+<span><span class="va">current_nn_ids</span> <span class="op">=</span> <span class="va">current_nn</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/factors.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">current_nn_ids</span><span class="op">)</span> <span class="op">=</span> <span class="cn">NULL</span></span>
+<span></span>
+<span><span class="co"># Confirm that all input layers are now numeric, non-factor rasters</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">current_nn_ids</span><span class="op">)</span> <span class="op">==</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">current_nn</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">current_nn_ids</span><span class="op">)</span>, <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">current_nn</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/is.bool.html" class="external-link">is.factor</a></span><span class="op">(</span><span class="va">current_nn_ids</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run map_bioregDiff</span></span>
+<span><span class="co"># 'approach' specifies which metric(s) to compute</span></span>
 <span><span class="va">sens_bioregDiff</span> <span class="op">=</span> <span class="fu">dissmapr</span><span class="fu">::</span><span class="fu"><a href="../reference/map_bioregDiff.html">map_bioregDiff</a></span><span class="op">(</span></span>
-<span>  <span class="va">current_nn</span>,</span>
+<span>  <span class="va">current_nn_ids</span>,</span>
 <span>  approach <span class="op">=</span> <span class="st">"all"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -199,26 +214,53 @@ higher.<br>
 <span><span class="co">#&gt; min values  :             0,            -0,         0,             0,      0.016949</span></span>
 <span><span class="co">#&gt; max values  :             3,      1.039721,         1,             3,      2.990113</span></span>
 <span></span>
-<span><span class="co"># Crop to our study area and prepare for plotting</span></span>
+<span><span class="co"># Resample and mask to the study area</span></span>
 <span><span class="va">mask_sens_bioregDiff</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span></span>
-<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">sens_bioregDiff</span>, <span class="va">grid_masked</span>, method <span class="op">=</span> <span class="st">"near"</span><span class="op">)</span>,</span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span></span>
+<span>    <span class="va">sens_bioregDiff</span>,</span>
+<span>    <span class="va">grid_masked</span>,</span>
+<span>    method <span class="op">=</span> <span class="st">"near"</span></span>
+<span>  <span class="op">)</span>,</span>
 <span>  <span class="va">grid_masked</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Quick visual QC in a 2-row x 3-column layout</span></span>
-<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">titles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Difference count"</span>, <span class="st">"Shannon entropy"</span>, <span class="st">"Stability"</span>,</span>
-<span>           <span class="st">"Transition frequency"</span>, <span class="st">"Weighted change index"</span><span class="op">)</span></span>
+<span><span class="co"># Plot titles should correspond to the output layer order</span></span>
+<span><span class="va">titles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Difference count"</span>,</span>
+<span>  <span class="st">"Shannon entropy"</span>,</span>
+<span>  <span class="st">"Stability"</span>,</span>
+<span>  <span class="st">"Transition frequency"</span>,</span>
+<span>  <span class="st">"Weighted change index"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">titles</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mask_sens_bioregDiff</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>       col      <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span>       colNA    <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>       axes     <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>       main     <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
-<span>       cex.main <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">mask_sens_bioregDiff</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">titles</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert the boundary once, outside the plotting loop</span></span>
+<span><span class="va">rsa_vect</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Quick visual QC in a 2-row x 3-column layout</span></span>
+<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span></span>
+<span>  mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">mask_sens_bioregDiff</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>    <span class="va">mask_sens_bioregDiff</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    col <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>    colNA <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    axes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    main <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
+<span>    cex.main <span class="op">=</span> <span class="fl">0.8</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">lines</a></span><span class="op">(</span></span>
+<span>    <span class="va">rsa_vect</span>,</span>
+<span>    col <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>    lwd <span class="op">=</span> <span class="fl">0.4</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">old_par</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figures/8-bioreg-Diff-1.png" class="r-plt" alt="Bioregion sensitivity to method" width="100%"></p>
 </div>
@@ -235,26 +277,63 @@ and highlight how bioregions shift under these future climate
 projections. In this way we isolate climate-driven reorganization in the
 hierarchical map itself.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># 1. Build a multi‐layer SpatRaster of hierarchical clusters for each scenario</span></span>
-<span><span class="co"># Create SpatRast</span></span>
-<span><span class="co"># future_hclt = c(bioreg_future$nn$current$hclust_current,</span></span>
-<span><span class="co">#              bioreg_future$nn$`2030`$hclust_2030,</span></span>
-<span><span class="co">#              bioreg_future$nn$`2040`$hclust_2040,</span></span>
-<span><span class="co">#              bioreg_future$nn$`2050`$hclust_2050)</span></span>
+<code class="sourceCode R"><span><span class="co"># 1. Build a multilayer SpatRaster of hierarchical clusters</span></span>
+<span><span class="co"># future_hclt = c(</span></span>
+<span><span class="co">#   bioreg_future$nn$current$hclust_current,</span></span>
+<span><span class="co">#   bioreg_future$nn$`2030`$hclust_2030,</span></span>
+<span><span class="co">#   bioreg_future$nn$`2040`$hclust_2040,</span></span>
+<span><span class="co">#   bioreg_future$nn$`2050`$hclust_2050</span></span>
+<span><span class="co"># )</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">future_hclt</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "hclust_current" "hclust_2030"    "hclust_2040"    "hclust_2050"</span></span>
 <span></span>
-<span><span class="co"># 2. Compute change metrics across those four layers</span></span>
-<span><span class="va">future_bioregDiff</span> <span class="op">=</span> <span class="fu">dissmapr</span><span class="fu">::</span><span class="fu"><a href="../reference/map_bioregDiff.html">map_bioregDiff</a></span><span class="op">(</span><span class="va">future_hclt</span>, approach <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
+<span><span class="co"># map_bioregDiff() requires the underlying numeric cluster IDs.</span></span>
+<span><span class="co"># Arithmetic removes the categorical metadata while preserving cell values.</span></span>
+<span><span class="va">future_hclt_ids</span> <span class="op">=</span> <span class="va">future_hclt</span> <span class="op">+</span> <span class="fl">0</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">future_hclt_ids</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">future_hclt</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 3. Mask to your RSA boundary (assuming 'grid_masked' is your template)</span></span>
+<span><span class="co"># Validate the converted raster</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">future_hclt_ids</span><span class="op">)</span> <span class="op">==</span> <span class="fl">4L</span>,</span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">future_hclt_ids</span><span class="op">)</span>, <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">future_hclt</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/is.bool.html" class="external-link">is.factor</a></span><span class="op">(</span><span class="va">future_hclt_ids</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. Compute change metrics across the four scenarios</span></span>
+<span><span class="va">future_bioregDiff</span> <span class="op">=</span> <span class="fu">dissmapr</span><span class="fu">::</span><span class="fu"><a href="../reference/map_bioregDiff.html">map_bioregDiff</a></span><span class="op">(</span></span>
+<span>  <span class="va">future_hclt_ids</span>,</span>
+<span>  approach <span class="op">=</span> <span class="st">"all"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspect the output</span></span>
+<span><span class="va">future_bioregDiff</span></span>
+<span><span class="co">#&gt; class       : SpatRaster</span></span>
+<span><span class="co">#&gt; size        : 25, 32, 5  (nrow, ncol, nlyr)</span></span>
+<span><span class="co">#&gt; resolution  : 0.5, 0.4999984  (x, y)</span></span>
+<span><span class="co">#&gt; extent      : 16.75, 32.75, -34.75, -22.25004  (xmin, xmax, ymin, ymax)</span></span>
+<span><span class="co">#&gt; coord. ref. : lon/lat WGS 84 (EPSG:4326)</span></span>
+<span><span class="co">#&gt; source(s)   : memory</span></span>
+<span><span class="co">#&gt; varnames    : </span></span>
+<span><span class="co">#&gt;               </span></span>
+<span><span class="co">#&gt;               </span></span>
+<span><span class="co">#&gt;               future_hclt</span></span>
+<span><span class="co">#&gt;               </span></span>
+<span><span class="co">#&gt; names       : Differ~_Count, Shanno~ntropy, Stability, Transi~quency, Weight~_Index</span></span>
+<span><span class="co">#&gt; min values  :             0,            -0,         0,             0,             0</span></span>
+<span><span class="co">#&gt; max values  :             3,      0.693147,         1,             3,      2.965714</span></span>
+<span></span>
+<span><span class="co"># 3. Resample and mask to the RSA study area</span></span>
 <span><span class="va">mask_future_bioregDiff</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span></span>
-<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">future_bioregDiff</span>, <span class="va">grid_masked</span>, method <span class="op">=</span> <span class="st">"near"</span><span class="op">)</span>,</span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span></span>
+<span>    <span class="va">future_bioregDiff</span>,</span>
+<span>    <span class="va">grid_masked</span>,</span>
+<span>    method <span class="op">=</span> <span class="st">"near"</span></span>
+<span>  <span class="op">)</span>,</span>
 <span>  <span class="va">grid_masked</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 4. Plot all five metrics in a 2-row x 3-column panel</span></span>
-<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># 4. Plot the five change metrics</span></span>
 <span><span class="va">titles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Difference count"</span>,</span>
 <span>  <span class="st">"Shannon entropy"</span>,</span>
@@ -262,18 +341,37 @@ hierarchical map itself.</p>
 <span>  <span class="st">"Transition frequency"</span>,</span>
 <span>  <span class="st">"Weighted change index"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">titles</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">mask_future_bioregDiff</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">titles</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert the boundary once rather than during every iteration</span></span>
+<span><span class="va">rsa_vect</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span></span>
+<span>  mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">mask_future_bioregDiff</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>    <span class="va">mask_future_bioregDiff</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>    <span class="co"># col      = viridisLite::turbo(100),</span></span>
-<span>    col      <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span>    colNA    <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>    axes     <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>    main     <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
+<span>    col <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>    colNA <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    axes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    main <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
 <span>    cex.main <span class="op">=</span> <span class="fl">0.8</span></span>
 <span>  <span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">lines</a></span><span class="op">(</span></span>
+<span>    <span class="va">rsa_vect</span>,</span>
+<span>    col <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>    lwd <span class="op">=</span> <span class="fl">0.4</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Restore the previous graphics settings</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">old_par</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figures/8-bioreg-diff-futures-1.png" class="r-plt" alt="Bioregion sensitivity to change" width="100%"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -322,14 +420,14 @@ hierarchical map itself.</p>
 <span><span class="co">#&gt;  [52] timeDate_4052.112    codetools_0.2-20     listenv_1.0.0       </span></span>
 <span><span class="co">#&gt;  [55] lattice_0.22-9       tibble_3.3.1         plyr_1.8.9          </span></span>
 <span><span class="co">#&gt;  [58] withr_3.0.3          S7_0.2.2             geosphere_1.6-8     </span></span>
-<span><span class="co">#&gt;  [61] evaluate_1.0.5       sf_1.1-1             future_1.70.0       </span></span>
+<span><span class="co">#&gt;  [61] evaluate_1.0.5       sf_1.1-1             future_1.75.0       </span></span>
 <span><span class="co">#&gt;  [64] desc_1.4.3           survival_3.8-6       units_1.0-1         </span></span>
 <span><span class="co">#&gt;  [67] proxy_0.4-29         mclust_6.1.3         pillar_1.11.1       </span></span>
 <span><span class="co">#&gt;  [70] KernSmooth_2.23-26   corrplot_0.95        renv_1.1.4          </span></span>
 <span><span class="co">#&gt;  [73] foreach_1.5.2        stats4_4.6.1         generics_0.1.4      </span></span>
 <span><span class="co">#&gt;  [76] zetadiv_1.3.0        ggplot2_4.0.3        scales_1.4.0        </span></span>
 <span><span class="co">#&gt;  [79] xtable_1.8-8         globals_0.19.1       class_7.3-23        </span></span>
-<span><span class="co">#&gt;  [82] glue_1.8.1           clValid_0.7          emmeans_2.0.3       </span></span>
+<span><span class="co">#&gt;  [82] glue_1.8.1           clValid_0.7          emmeans_2.0.4       </span></span>
 <span><span class="co">#&gt;  [85] tools_4.6.1          data.table_1.18.4    ModelMetrics_1.2.2.2</span></span>
 <span><span class="co">#&gt;  [88] gower_1.0.2          mvtnorm_1.4-2        fs_2.1.0            </span></span>
 <span><span class="co">#&gt;  [91] dotCall64_1.2        grid_4.6.1           tidyr_1.3.2         </span></span>

@@ -209,39 +209,61 @@ names(future_nn)
 #> [1] "kmeans_current" "kmeans_2030"    "kmeans_2040"    "kmeans_2050"
 
 # 4) Mask `result_bioregDiff` to the RSA boundary
-mask_future_nn = terra::mask(resample(future_nn, grid_masked, method = "modal"), grid_masked)
+mask_future_nn = terra::mask(
+  terra::resample(
+    future_nn,
+    grid_masked,
+    method = "modal"
+  ),
+  grid_masked
+)
+
+# Remove any artefactual values introduced during raster processing
+mask_future_nn = terra::ifel(
+  mask_future_nn >= 1 & mask_future_nn <= 8,
+  mask_future_nn,
+  NA
+)
+
+# Give every layer the same complete category table
+bioregion_levels = data.frame(
+  value = 1:8,
+  bioregion = paste("Bioregion", 1:8)
+)
+
+levels(mask_future_nn) =
+  rep(list(bioregion_levels), terra::nlyr(mask_future_nn))
 
 # 5) Quick visual QC in a 2×2 layout
-old_par = par(mfrow = c(2, 2), mar = c(1, 1, 1, 5))
-titles = c("Current",
-            "2030",
-            "2040",
-            "2050")
+pal = RColorBrewer::brewer.pal(8, "Set3")
 
-for (i in 1:4) {
-  ## 1. how many distinct classes in this layer?
-  cls  = sort(unique(values(mask_future_nn[[i]])))
-  cls  = cls[!is.na(cls)]
-  n    = length(cls)
+old_par = par(
+  mfrow = c(2, 2),
+  mar = c(1, 1, 2, 5)
+)
 
-  ## 2. build a discrete palette of n colours
-  pal = if (n <= 12) {
-           RColorBrewer::brewer.pal(n, "Set3")                      # native Set3
-         } else {
-           colorRampPalette(brewer.pal(12, "Set3"))(n) # extended Set3
-         }
+titles = c("Current", "2030", "2040", "2050")
 
-  ## 3. plot
-  plot(mask_future_nn[[i]],
-       col      = pal,
-       type     = "classes",          # treats values as categories
-       colNA    = NA,
-       axes     = FALSE,
-       legend   = TRUE,
-       main     = titles[i],
-       cex.main = 0.8)
+# Now Plot
+for (i in seq_len(nlyr(mask_future_nn))) {
 
-  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = .4)
+  plot(
+    mask_future_nn[[i]],
+    col = pal,
+    type = "classes",
+    all_levels = TRUE,
+    colNA = NA,
+    axes = FALSE,
+    legend = TRUE,
+    main = titles[i],
+    cex.main = 0.8
+  )
+
+  terra::lines(
+    terra::vect(rsa),
+    col = "black",
+    lwd = 0.4
+  )
 }
 ```
 
@@ -304,13 +326,13 @@ sessionInfo()
 #>  [52] listenv_1.0.0        lattice_0.22-9       tibble_3.3.1        
 #>  [55] plyr_1.8.9           withr_3.0.3          S7_0.2.2            
 #>  [58] geosphere_1.6-8      evaluate_1.0.5       sf_1.1-1            
-#>  [61] future_1.70.0        desc_1.4.3           survival_3.8-6      
+#>  [61] future_1.75.0        desc_1.4.3           survival_3.8-6      
 #>  [64] units_1.0-1          proxy_0.4-29         mclust_6.1.3        
 #>  [67] pillar_1.11.1        KernSmooth_2.23-26   corrplot_0.95       
 #>  [70] renv_1.1.4           foreach_1.5.2        stats4_4.6.1        
 #>  [73] generics_0.1.4       zetadiv_1.3.0        scales_1.4.0        
 #>  [76] xtable_1.8-8         globals_0.19.1       class_7.3-23        
-#>  [79] glue_1.8.1           clValid_0.7          emmeans_2.0.3       
+#>  [79] glue_1.8.1           clValid_0.7          emmeans_2.0.4       
 #>  [82] tools_4.6.1          data.table_1.18.4    ModelMetrics_1.2.2.2
 #>  [85] gower_1.0.2          mvtnorm_1.4-2        fs_2.1.0            
 #>  [88] dotCall64_1.2        grid_4.6.1           tidyr_1.3.2         

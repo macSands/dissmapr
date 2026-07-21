@@ -77,19 +77,34 @@ include** (`approach` argument):
 
 ``` r
 
-# Get current nn rasters
-# current_nn = c(bioreg_current$nn$current$kmeans_algn_current,
-#              bioreg_current$nn$current$pam_algn_current,
-#              bioreg_current$nn$current$hclust_algn_current,
-#              bioreg_current$nn$current$gmm_algn_current)
+# Get current nearest-neighbour rasters
+# current_nn = c(
+#   bioreg_current$nn$current$kmeans_algn_current,
+#   bioreg_current$nn$current$pam_algn_current,
+#   bioreg_current$nn$current$hclust_algn_current,
+#   bioreg_current$nn$current$gmm_algn_current
+# )
+
 names(current_nn)
 #> [1] "kmeans_algn_current" "pam_algn_current"    "hclust_algn_current"
 #> [4] "gmm_algn_current"
 
-# Run `map_bioregDiff`
-# 'approach', specifies which metric to compute:
+# map_bioregDiff() operates on the underlying integer cluster IDs.
+# Remove categorical metadata without altering cell values or layer names.
+current_nn_ids = current_nn
+levels(current_nn_ids) = NULL
+
+# Confirm that all input layers are now numeric, non-factor rasters
+stopifnot(
+  terra::nlyr(current_nn_ids) == terra::nlyr(current_nn),
+  identical(names(current_nn_ids), names(current_nn)),
+  !any(terra::is.factor(current_nn_ids))
+)
+
+# Run map_bioregDiff
+# 'approach' specifies which metric(s) to compute
 sens_bioregDiff = dissmapr::map_bioregDiff(
-  current_nn,
+  current_nn_ids,
   approach = "all"
 )
 
@@ -110,26 +125,53 @@ sens_bioregDiff
 #> min values  :             0,            -0,         0,             0,      0.016949
 #> max values  :             3,      1.039721,         1,             3,      2.990113
 
-# Crop to our study area and prepare for plotting
+# Resample and mask to the study area
 mask_sens_bioregDiff = terra::mask(
-  terra::resample(sens_bioregDiff, grid_masked, method = "near"),
+  terra::resample(
+    sens_bioregDiff,
+    grid_masked,
+    method = "near"
+  ),
   grid_masked
 )
 
-# Quick visual QC in a 2-row x 3-column layout
-old_par = par(mfrow = c(2, 3), mar = c(1, 1, 1, 5))
-titles = c("Difference count", "Shannon entropy", "Stability",
-           "Transition frequency", "Weighted change index")
+# Plot titles should correspond to the output layer order
+titles = c(
+  "Difference count",
+  "Shannon entropy",
+  "Stability",
+  "Transition frequency",
+  "Weighted change index"
+)
 
-for (i in seq_along(titles)) {
-  plot(mask_sens_bioregDiff[[i]],
-       col      = viridis(100, direction = -1),
-       colNA    = NA,
-       axes     = FALSE,
-       main     = titles[i],
-       cex.main = 0.8)
-  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+stopifnot(terra::nlyr(mask_sens_bioregDiff) == length(titles))
+
+# Convert the boundary once, outside the plotting loop
+rsa_vect = terra::vect(rsa)
+
+# Quick visual QC in a 2-row x 3-column layout
+old_par = par(
+  mfrow = c(2, 3),
+  mar = c(1, 1, 2, 5)
+)
+
+for (i in seq_len(terra::nlyr(mask_sens_bioregDiff))) {
+  terra::plot(
+    mask_sens_bioregDiff[[i]],
+    col = viridisLite::viridis(100, direction = -1),
+    colNA = NA,
+    axes = FALSE,
+    main = titles[i],
+    cex.main = 0.8
+  )
+
+  terra::lines(
+    rsa_vect,
+    col = "black",
+    lwd = 0.4
+  )
 }
+
 par(old_par)
 ```
 
@@ -150,26 +192,63 @@ reorganization in the hierarchical map itself.
 
 ``` r
 
-# 1. Build a multi‐layer SpatRaster of hierarchical clusters for each scenario
-# Create SpatRast
-# future_hclt = c(bioreg_future$nn$current$hclust_current,
-#              bioreg_future$nn$`2030`$hclust_2030,
-#              bioreg_future$nn$`2040`$hclust_2040,
-#              bioreg_future$nn$`2050`$hclust_2050)
+# 1. Build a multilayer SpatRaster of hierarchical clusters
+# future_hclt = c(
+#   bioreg_future$nn$current$hclust_current,
+#   bioreg_future$nn$`2030`$hclust_2030,
+#   bioreg_future$nn$`2040`$hclust_2040,
+#   bioreg_future$nn$`2050`$hclust_2050
+# )
+
 names(future_hclt)
 #> [1] "hclust_current" "hclust_2030"    "hclust_2040"    "hclust_2050"
 
-# 2. Compute change metrics across those four layers
-future_bioregDiff = dissmapr::map_bioregDiff(future_hclt, approach = "all")
+# map_bioregDiff() requires the underlying numeric cluster IDs.
+# Arithmetic removes the categorical metadata while preserving cell values.
+future_hclt_ids = future_hclt + 0
+names(future_hclt_ids) = names(future_hclt)
 
-# 3. Mask to your RSA boundary (assuming 'grid_masked' is your template)
+# Validate the converted raster
+stopifnot(
+  terra::nlyr(future_hclt_ids) == 4L,
+  identical(names(future_hclt_ids), names(future_hclt)),
+  !any(terra::is.factor(future_hclt_ids))
+)
+
+# 2. Compute change metrics across the four scenarios
+future_bioregDiff = dissmapr::map_bioregDiff(
+  future_hclt_ids,
+  approach = "all"
+)
+
+# Inspect the output
+future_bioregDiff
+#> class       : SpatRaster
+#> size        : 25, 32, 5  (nrow, ncol, nlyr)
+#> resolution  : 0.5, 0.4999984  (x, y)
+#> extent      : 16.75, 32.75, -34.75, -22.25004  (xmin, xmax, ymin, ymax)
+#> coord. ref. : lon/lat WGS 84 (EPSG:4326)
+#> source(s)   : memory
+#> varnames    : 
+#>               
+#>               
+#>               future_hclt
+#>               
+#> names       : Differ~_Count, Shanno~ntropy, Stability, Transi~quency, Weight~_Index
+#> min values  :             0,            -0,         0,             0,             0
+#> max values  :             3,      0.693147,         1,             3,      2.965714
+
+# 3. Resample and mask to the RSA study area
 mask_future_bioregDiff = terra::mask(
-  terra::resample(future_bioregDiff, grid_masked, method = "near"),
+  terra::resample(
+    future_bioregDiff,
+    grid_masked,
+    method = "near"
+  ),
   grid_masked
 )
 
-# 4. Plot all five metrics in a 2-row x 3-column panel
-old_par = par(mfrow = c(2, 3), mar = c(1, 1, 1, 5))
+# 4. Plot the five change metrics
 titles = c(
   "Difference count",
   "Shannon entropy",
@@ -177,18 +256,37 @@ titles = c(
   "Transition frequency",
   "Weighted change index"
 )
-for (i in seq_along(titles)) {
-  plot(
+
+stopifnot(
+  terra::nlyr(mask_future_bioregDiff) == length(titles)
+)
+
+# Convert the boundary once rather than during every iteration
+rsa_vect = terra::vect(rsa)
+
+old_par = par(
+  mfrow = c(2, 3),
+  mar = c(1, 1, 2, 5)
+)
+
+for (i in seq_len(terra::nlyr(mask_future_bioregDiff))) {
+  terra::plot(
     mask_future_bioregDiff[[i]],
-    # col      = viridisLite::turbo(100),
-    col      = viridis(100, direction = -1),
-    colNA    = NA,
-    axes     = FALSE,
-    main     = titles[i],
+    col = viridisLite::viridis(100, direction = -1),
+    colNA = NA,
+    axes = FALSE,
+    main = titles[i],
     cex.main = 0.8
   )
-  plot(terra::vect(rsa), add = TRUE, border = "black", lwd = 0.4)
+
+  terra::lines(
+    rsa_vect,
+    col = "black",
+    lwd = 0.4
+  )
 }
+
+# Restore the previous graphics settings
 par(old_par)
 ```
 
@@ -241,14 +339,14 @@ sessionInfo()
 #>  [52] timeDate_4052.112    codetools_0.2-20     listenv_1.0.0       
 #>  [55] lattice_0.22-9       tibble_3.3.1         plyr_1.8.9          
 #>  [58] withr_3.0.3          S7_0.2.2             geosphere_1.6-8     
-#>  [61] evaluate_1.0.5       sf_1.1-1             future_1.70.0       
+#>  [61] evaluate_1.0.5       sf_1.1-1             future_1.75.0       
 #>  [64] desc_1.4.3           survival_3.8-6       units_1.0-1         
 #>  [67] proxy_0.4-29         mclust_6.1.3         pillar_1.11.1       
 #>  [70] KernSmooth_2.23-26   corrplot_0.95        renv_1.1.4          
 #>  [73] foreach_1.5.2        stats4_4.6.1         generics_0.1.4      
 #>  [76] zetadiv_1.3.0        ggplot2_4.0.3        scales_1.4.0        
 #>  [79] xtable_1.8-8         globals_0.19.1       class_7.3-23        
-#>  [82] glue_1.8.1           clValid_0.7          emmeans_2.0.3       
+#>  [82] glue_1.8.1           clValid_0.7          emmeans_2.0.4       
 #>  [85] tools_4.6.1          data.table_1.18.4    ModelMetrics_1.2.2.2
 #>  [88] gower_1.0.2          mvtnorm_1.4-2        fs_2.1.0            
 #>  [91] dotCall64_1.2        grid_4.6.1           tidyr_1.3.2         

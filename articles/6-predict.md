@@ -35,6 +35,7 @@ zeta2 = inputs$zeta2                       # Pairwise zeta-diversity output
 ispline_gdm_tab = inputs$ispline_gdm_tab   # Fitted I-spline/GDM results table
 grid_spp = inputs$grid_spp                 # Grid-level species data
 rsa = inputs$rsa                           # South Africa boundary
+all_preds = inputs$all_preds
 ```
 
 #### 1. Predict current Zeta Diversity (zeta2) using `predict_dissim()`
@@ -171,6 +172,62 @@ str(env_scenarios, max.level = 1)
 #>  $ 2050   : tibble [415 × 7] (S3: tbl_df/tbl/data.frame)
 ```
 
+#### Or use fixed baseline scaling instead
+
+The future scenarios should be scaled using the current/training means
+and standard deviations, not their own means and standard deviations.
+These parameters must match those used when fitting zeta2.
+
+``` r
+
+# # Baseline scaling parameters
+# env_center = vapply(
+#   env_vars_reduced,
+#   mean,
+#   numeric(1),
+#   na.rm = TRUE
+# )
+# 
+# env_scale = vapply(
+#   env_vars_reduced,
+#   sd,
+#   numeric(1),
+#   na.rm = TRUE
+# )
+# 
+# stopifnot(
+#   all(is.finite(env_scale)),
+#   all(env_scale > 0)
+# )
+# 
+# scale_from_baseline = function(df, center, scale) {
+#   x = as.matrix(df)
+# 
+#   x = sweep(
+#     x,
+#     MARGIN = 2,
+#     STATS = center[colnames(x)],
+#     FUN = "-"
+#   )
+# 
+#   x = sweep(
+#     x,
+#     MARGIN = 2,
+#     STATS = scale[colnames(x)],
+#     FUN = "/"
+#   )
+# 
+#   as.data.frame(x, check.names = FALSE)
+# }
+# 
+# env_scenarios_scaled = purrr::map(
+#   env_scenarios,
+#   scale_from_baseline,
+#   center = env_center,
+#   scale = env_scale
+# )
+```
+
 Next, we loop through each scenario, re-apply the original centering and
 scaling, and call our
 [`predict_dissim()`](https://b-cubed-eu.github.io/dissmapr/reference/predict_dissim.md)
@@ -203,9 +260,28 @@ str(scenario_dfs, max.level=1)
 #>  $ 2040   :'data.frame': 415 obs. of  15 variables:
 #>  $ 2050   :'data.frame': 415 obs. of  15 variables:
 
+# # fixed baseline scaling
+# scenario_dfs = purrr::imap(env_scenarios_scaled, \(scenario_env, scenario_name) {
+#   result = dissmapr::predict_dissim(
+#     grid_spp     = grid_spp,
+#     species_cols = spp_cols,
+#     env_vars     = scenario_env,
+#     zeta_model   = zeta2,
+#     grid_xy      = grid_env,
+#     x_col        = "centroid_lon",
+#     y_col        = "centroid_lat",
+#     skip_scale   = TRUE,
+#     show_plot    = FALSE
+#   )
+# 
+#   result$scenario = scenario_name
+#   result
+# })
+# # str(scenario_dfs, max.level=1)
+
 # all_preds = bind_rows(scenario_dfs) %>%
 #   mutate(scenario = factor(scenario, levels = c("current", names(temp_shifts))))
-all_preds = bind_rows(scenario_dfs) 
+all_preds = dplyr::bind_rows(scenario_dfs)
 head(all_preds)
 #>   temp_mean         iso temp_wetQ temp_dryQ  rain_dry rain_warmQ    obs_sum
 #> 1  1.730095  0.01726121  1.386855 0.5441361 -1.171906 -0.2222718 -0.2926985
@@ -298,14 +374,14 @@ sessionInfo()
 #>  [52] timeDate_4052.112    codetools_0.2-20     listenv_1.0.0       
 #>  [55] lattice_0.22-9       tibble_3.3.1         plyr_1.8.9          
 #>  [58] withr_3.0.3          S7_0.2.2             geosphere_1.6-8     
-#>  [61] evaluate_1.0.5       sf_1.1-1             future_1.70.0       
+#>  [61] evaluate_1.0.5       sf_1.1-1             future_1.75.0       
 #>  [64] desc_1.4.3           survival_3.8-6       units_1.0-1         
 #>  [67] proxy_0.4-29         mclust_6.1.3         pillar_1.11.1       
 #>  [70] KernSmooth_2.23-26   corrplot_0.95        renv_1.1.4          
 #>  [73] foreach_1.5.2        stats4_4.6.1         generics_0.1.4      
 #>  [76] zetadiv_1.3.0        scales_1.4.0         xtable_1.8-8        
 #>  [79] globals_0.19.1       class_7.3-23         glue_1.8.1          
-#>  [82] clValid_0.7          emmeans_2.0.3        tools_4.6.1         
+#>  [82] clValid_0.7          emmeans_2.0.4        tools_4.6.1         
 #>  [85] data.table_1.18.4    ModelMetrics_1.2.2.2 gower_1.0.2         
 #>  [88] mvtnorm_1.4-2        fs_2.1.0             dotCall64_1.2       
 #>  [91] grid_4.6.1           tidyr_1.3.2          ipred_0.9-15        

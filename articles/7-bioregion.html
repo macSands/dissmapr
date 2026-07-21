@@ -286,39 +286,61 @@ quick inspection of bioregion changes across time.</p>
 <span><span class="co">#&gt; [1] "kmeans_current" "kmeans_2030"    "kmeans_2040"    "kmeans_2050"</span></span>
 <span></span>
 <span><span class="co"># 4) Mask `result_bioregDiff` to the RSA boundary</span></span>
-<span><span class="va">mask_future_nn</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">future_nn</span>, <span class="va">grid_masked</span>, method <span class="op">=</span> <span class="st">"modal"</span><span class="op">)</span>, <span class="va">grid_masked</span><span class="op">)</span></span>
+<span><span class="va">mask_future_nn</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span></span>
+<span>    <span class="va">future_nn</span>,</span>
+<span>    <span class="va">grid_masked</span>,</span>
+<span>    method <span class="op">=</span> <span class="st">"modal"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  <span class="va">grid_masked</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Remove any artefactual values introduced during raster processing</span></span>
+<span><span class="va">mask_future_nn</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/ifelse.html" class="external-link">ifel</a></span><span class="op">(</span></span>
+<span>  <span class="va">mask_future_nn</span> <span class="op">&gt;=</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">mask_future_nn</span> <span class="op">&lt;=</span> <span class="fl">8</span>,</span>
+<span>  <span class="va">mask_future_nn</span>,</span>
+<span>  <span class="cn">NA</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Give every layer the same complete category table</span></span>
+<span><span class="va">bioregion_levels</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  value <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span>,</span>
+<span>  bioregion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Bioregion"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/factors.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">mask_future_nn</span><span class="op">)</span> <span class="op">=</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">bioregion_levels</span><span class="op">)</span>, <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">mask_future_nn</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 5) Quick visual QC in a 2×2 layout</span></span>
-<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">titles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Current"</span>,</span>
-<span>            <span class="st">"2030"</span>,</span>
-<span>            <span class="st">"2040"</span>,</span>
-<span>            <span class="st">"2050"</span><span class="op">)</span></span>
+<span><span class="va">pal</span> <span class="op">=</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fl">8</span>, <span class="st">"Set3"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co">## 1. how many distinct classes in this layer?</span></span>
-<span>  <span class="va">cls</span>  <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">mask_future_nn</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">cls</span>  <span class="op">=</span> <span class="va">cls</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">cls</span><span class="op">)</span><span class="op">]</span></span>
-<span>  <span class="va">n</span>    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cls</span><span class="op">)</span></span>
+<span><span class="va">old_par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span></span>
+<span>  mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="co">## 2. build a discrete palette of n colours</span></span>
-<span>  <span class="va">pal</span> <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="va">n</span> <span class="op">&lt;=</span> <span class="fl">12</span><span class="op">)</span> <span class="op">{</span></span>
-<span>           <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="va">n</span>, <span class="st">"Set3"</span><span class="op">)</span>                      <span class="co"># native Set3</span></span>
-<span>         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>           <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html" class="external-link">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fl">12</span>, <span class="st">"Set3"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="co"># extended Set3</span></span>
-<span>         <span class="op">}</span></span>
+<span><span class="va">titles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Current"</span>, <span class="st">"2030"</span>, <span class="st">"2040"</span>, <span class="st">"2050"</span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="co">## 3. plot</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mask_future_nn</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>       col      <span class="op">=</span> <span class="va">pal</span>,</span>
-<span>       type     <span class="op">=</span> <span class="st">"classes"</span>,          <span class="co"># treats values as categories</span></span>
-<span>       colNA    <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>       axes     <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>       legend   <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>       main     <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
-<span>       cex.main <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span><span class="co"># Now Plot</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">mask_future_nn</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"black"</span>, lwd <span class="op">=</span> <span class="fl">.4</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>    <span class="va">mask_future_nn</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    col <span class="op">=</span> <span class="va">pal</span>,</span>
+<span>    type <span class="op">=</span> <span class="st">"classes"</span>,</span>
+<span>    all_levels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    colNA <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    axes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    main <span class="op">=</span> <span class="va">titles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
+<span>    cex.main <span class="op">=</span> <span class="fl">0.8</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">lines</a></span><span class="op">(</span></span>
+<span>    <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rsa</span><span class="op">)</span>,</span>
+<span>    col <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>    lwd <span class="op">=</span> <span class="fl">0.4</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p><img src="figures/7-future-plots-1.png" class="r-plt" alt="Smoothed future bioregion clusters" width="100%"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -374,13 +396,13 @@ hotspots.</p>
 <span><span class="co">#&gt;  [52] listenv_1.0.0        lattice_0.22-9       tibble_3.3.1        </span></span>
 <span><span class="co">#&gt;  [55] plyr_1.8.9           withr_3.0.3          S7_0.2.2            </span></span>
 <span><span class="co">#&gt;  [58] geosphere_1.6-8      evaluate_1.0.5       sf_1.1-1            </span></span>
-<span><span class="co">#&gt;  [61] future_1.70.0        desc_1.4.3           survival_3.8-6      </span></span>
+<span><span class="co">#&gt;  [61] future_1.75.0        desc_1.4.3           survival_3.8-6      </span></span>
 <span><span class="co">#&gt;  [64] units_1.0-1          proxy_0.4-29         mclust_6.1.3        </span></span>
 <span><span class="co">#&gt;  [67] pillar_1.11.1        KernSmooth_2.23-26   corrplot_0.95       </span></span>
 <span><span class="co">#&gt;  [70] renv_1.1.4           foreach_1.5.2        stats4_4.6.1        </span></span>
 <span><span class="co">#&gt;  [73] generics_0.1.4       zetadiv_1.3.0        scales_1.4.0        </span></span>
 <span><span class="co">#&gt;  [76] xtable_1.8-8         globals_0.19.1       class_7.3-23        </span></span>
-<span><span class="co">#&gt;  [79] glue_1.8.1           clValid_0.7          emmeans_2.0.3       </span></span>
+<span><span class="co">#&gt;  [79] glue_1.8.1           clValid_0.7          emmeans_2.0.4       </span></span>
 <span><span class="co">#&gt;  [82] tools_4.6.1          data.table_1.18.4    ModelMetrics_1.2.2.2</span></span>
 <span><span class="co">#&gt;  [85] gower_1.0.2          mvtnorm_1.4-2        fs_2.1.0            </span></span>
 <span><span class="co">#&gt;  [88] dotCall64_1.2        grid_4.6.1           tidyr_1.3.2         </span></span>
