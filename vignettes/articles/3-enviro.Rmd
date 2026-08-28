@@ -72,15 +72,22 @@ The subsections below implement this workflow:
 **Download and sample 19 WorldClim bioclim variables**   
 Fetch the 5-arc-min (~10 km) bioclim stack via `geodata` package and attach values to every centroid.
 
-```{r get-enviro}
+```{r get-enviro, eval=FALSE}
 # Retrieve 19 bioclim layers (≈10-km, WorldClim v2.1) for all grid centroids
-data_path = system.file("extdata", package = "dissmapr")               # cache folder for rasters
+# data_path = system.file("extdata", package = "dissmapr") # cache folder for rasters
+data_path = file.path(
+  tools::R_user_dir("dissmapr", "cache"),
+  "worldclim"
+)
+
+dir.create(data_path, recursive = TRUE, showWarnings = FALSE)
+
 enviro_list = dissmapr::get_enviro_data(
   data       = grid_spp,                  # centroids + obs_sum + spp_rich
   buffer_km  = 10,                        # pad the AOI slightly
   source     = "geodata",                 # WorldClim/SoilGrids interface
   var        = "bio",                     # bioclim variable set
-  res        = 5,                         # 5-arc-min ≈ 10 km
+  res        = 10,                         # 5-arc-min ≈ 10 km
   path       = data_path,
   sp_cols    = 7:ncol(grid_spp),          # ignore species columns
   ext_cols   = c("obs_sum", "spp_rich")   # carry effort & richness through

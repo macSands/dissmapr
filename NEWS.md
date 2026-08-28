@@ -3,6 +3,8 @@
 * Corrected the package version metadata following the 0.2.1 release.
 * Synchronized release metadata across `DESCRIPTION`, `CITATION.cff` and
   `.zenodo.json`.
+* Improved vignette rendering compatibility for the B-Cubed documentation
+  workflow.
 
 # dissmapr 0.2.1
 

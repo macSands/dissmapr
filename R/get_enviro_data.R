@@ -102,20 +102,39 @@ get_enviro_data = function(data,
 
   # download / load rasters
   message("- Acquiring raster stack")
-  env_rast = switch(source,
-                    geodata = switch(var,
-                                     bio  = geodata::worldclim_global("bio",  res, path),
-                                     elev = geodata::worldclim_global("elev", res, path),
-                                     footprint = geodata::footprint(year, path),
-                                     population = geodata::population(year, res, path),
-                                     soil_world = geodata::soil_world(var, depth, stat, path),
-                                     stop("Unsupported `var` for geodata source.")),
-                    local = {
-                      if (inherits(var, "SpatRaster")) var
-                      else if (file.exists(var)) terra::rast(var)
-                      else stop("`var` must be a SpatRaster or file path.")},
-                    stop("`source` must be 'geodata' or 'local'.")
+  env_rast = switch(
+    source,
+    geodata = switch(
+      var,
+      bio = geodata::worldclim_global("bio", res, path),
+      elev = geodata::worldclim_global("elev", res, path),
+      footprint = geodata::footprint(year, path),
+      population = geodata::population(year, res, path),
+      soil_world = geodata::soil_world(var, depth, stat, path),
+      stop("Unsupported `var` for geodata source.")
+    ),
+    local = {
+      if (inherits(var, "SpatRaster")) {
+        var
+      } else if (file.exists(var)) {
+        terra::rast(var)
+      } else {
+        stop("`var` must be a SpatRaster or file path.")
+      }
+    },
+    stop("`source` must be 'geodata' or 'local'.")
   )
+
+  if (is.null(env_rast)) {
+    stop(
+      "Raster acquisition failed: `geodata` returned NULL. ",
+      "This usually means that the remote data download failed or that ",
+      "the downloaded archive could not be unpacked. ",
+      "Check your internet connection, remove incomplete cached files ",
+      "from `path`, and try again.",
+      call. = FALSE
+    )
+  }
 
   if (inherits(env_rast, "SpatRasterDataset")) {
     message("  - Merging ", length(env_rast), " raster files")
