@@ -1,7 +1,7 @@
 Type: Package
 Package: dissmapr
 Title: Workflow for Compositional Dissimilarity and Biodiversity Turnover Analysis
-Version: 0.2.0
+Version: 0.2.2
 Authors@R: c(
     person("Sandra", "MacFadyen", email = "macfadyen@sun.ac.za",
            role = c("aut", "cre"),

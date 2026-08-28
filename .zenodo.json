@@ -1,6 +1,7 @@
 {
   "upload_type": "software",
   "title": "dissmapr: A Novel Framework for Compositional Dissimilarity and Biodiversity Turnover Analysis",
+  "version": "0.2.2",
   "description": "dissmapr provides a reproducible, end-to-end workflow for computing and mapping compositional dissimilarity and biodiversity turnover across large spatial scales. Core features include occurrence-data retrieval, environmental-data extraction, flexible grid generation, order-wise dissimilarity computation (zeta diversity and multi-site generalised dissimilarity modelling) and bioregional mapping.",
   "license": "MIT",
   "access_right": "open",

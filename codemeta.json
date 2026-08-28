@@ -3,10 +3,10 @@
   "@type": "SoftwareSourceCode",
   "identifier": "dissmapr",
   "name": "dissmapr: Workflow for Compositional Dissimilarity and Biodiversity Turnover Analysis",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Tools to compute and map biodiversity turnover at the macroscale. dissmapr provides a reproducible, end-to-end workflow for computing and mapping compositional dissimilarity and biodiversity turnover across large spatial scales.",
   "applicationCategory": "Biodiversity informatics",
-  "releaseNotes": "https://github.com/b-cubed-eu/dissmapr/blob/master/NEWS.md",
+  "releaseNotes": "https://github.com/b-cubed-eu/dissmapr/releases/tag/0.2.2",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -49,14 +49,12 @@
   "codeRepository": "https://github.com/b-cubed-eu/dissmapr",
   "issueTracker": "https://github.com/b-cubed-eu/dissmapr/issues",
   "url": "https://b-cubed-eu.github.io/dissmapr/",
-  "identifier_doi": "https://doi.org/10.5281/zenodo.20842434",
   "relatedLink": [
     "https://b-cubed-eu.github.io/dissmapr/",
-    "https://doi.org/10.5281/zenodo.20842434",
     "https://docs.b-cubed.eu/",
     "https://docs.b-cubed.eu/guides/b3verse/"
   ],
-  "dateModified": "2026-06-25",
+  "dateModified": "2026-08-28",
   "keywords": [
     "dissimilarity",
     "biodiversity turnover",
@@ -69,7 +67,8 @@
     "R"
   ],
   "softwareRequirements": [
-    "R (>= 3.5)",
+    "R (>= 4.1.0)",
+    "RColorBrewer",
     "caret",
     "cluster",
     "clValid",
@@ -89,15 +88,14 @@
     "patchwork",
     "pbapply",
     "purrr",
-    "rcmdcheck",
     "rlang",
     "reshape2",
+    "scales",
     "sf",
     "terra",
+    "tibble",
     "tidyr",
-    "tidyterra",
     "vegan",
-    "viridis",
     "zoo",
     "zetadiv"
   ]
