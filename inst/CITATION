@@ -6,7 +6,7 @@ bibentry(
   author   = person("Sandra", "MacFadyen",
                     comment = c(ORCID = "0000-0002-5316-440X")),
   year     = "2026",
-  note     = "R package version 0.2.0",
+  note     = "R package version 0.2.2",
   doi      = "10.5281/zenodo.20842434",
   url      = "https://github.com/b-cubed-eu/dissmapr"
 )

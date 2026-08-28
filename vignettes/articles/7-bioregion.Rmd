@@ -195,9 +195,9 @@ old_par = par(
 titles = c("Current", "2030", "2040", "2050")
 
 # Now Plot
-for (i in seq_len(nlyr(mask_future_nn))) {
+for (i in seq_len(terra::nlyr(mask_future_nn))) {
 
-  plot(
+  terra::plot(
     mask_future_nn[[i]],
     col = pal,
     type = "classes",

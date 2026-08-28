@@ -1,3 +1,16 @@
+# dissmapr 0.2.2
+
+* Corrected the package version metadata following the 0.2.1 release.
+* Synchronized release metadata across `DESCRIPTION`, `CITATION.cff` and
+  `.zenodo.json`.
+* Improved vignette rendering compatibility for the B-Cubed documentation
+  workflow.
+
+# dissmapr 0.2.1
+
+* Updated package documentation and vignettes.
+* Rebuilt the pkgdown documentation site.
+
 # dissmapr 0.2.0
 
 * Aligned the package with the

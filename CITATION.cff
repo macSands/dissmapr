@@ -1,9 +1,9 @@
-cff-version: 0.2.1
+cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
 title: "dissmapr: A Novel Framework for Compositional Dissimilarity and Biodiversity Turnover Analysis"
-version: 0.2.0
+version: 0.2.2
 doi: 10.5281/zenodo.20842434
-date-released: "2026-06-25"
+date-released: "2026-08-28"
 authors:
   - given-names: Sandra
     family-names: MacFadyen

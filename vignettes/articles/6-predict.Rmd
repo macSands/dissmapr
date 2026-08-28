@@ -123,20 +123,34 @@ amplify = function(x, factor) {
 # 4. Build list of future env tibbles
 env_scenarios = c(
   list(current = env_vars_reduced),
-  map(horizons, function(yr) {
+  purrr::map(horizons, function(yr) {
     df = env_vars_reduced
-    # mean shifts
-    df[temp_vars] = df[temp_vars] + mean_delta$temp[yr]
-    df[iso_vars]  = df[iso_vars]  + mean_delta$iso[yr]
-    df[rain_vars] = df[rain_vars] * mean_delta$rain[yr]
-    df[[obs_var]] = df[[obs_var]] * mean_delta$effort[yr]
-    # amplify spatial variation
-    df[temp_vars] = map_dfc(df[temp_vars], amplify, factor = exagg_factor[yr])
-    df[iso_vars]  = map_dfc(df[iso_vars],  amplify, factor = exagg_factor[yr])
-    # clamp obs_sum
+
+    # Mean shifts
+    df[temp_vars] = df[temp_vars] + mean_delta$temp[[yr]]
+    df[iso_vars]  = df[iso_vars]  + mean_delta$iso[[yr]]
+    df[rain_vars] = df[rain_vars] * mean_delta$rain[[yr]]
+    df[[obs_var]] = df[[obs_var]] * mean_delta$effort[[yr]]
+
+    # Amplify spatial variation
+    df[temp_vars] = purrr::modify(
+      df[temp_vars],
+      amplify,
+      factor = exagg_factor[[yr]]
+    )
+
+    df[iso_vars] = purrr::modify(
+      df[iso_vars],
+      amplify,
+      factor = exagg_factor[[yr]]
+    )
+
+    # Clamp obs_sum
     df[[obs_var]] = pmin(pmax(df[[obs_var]], 50), 8000)
+
     df
-  }) |> set_names(horizons)
+  }) |>
+    purrr::set_names(horizons)
 )
 # names(env_scenarios) = names(horizons)
 
